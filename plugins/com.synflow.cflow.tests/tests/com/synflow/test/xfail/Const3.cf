@@ -1,0 +1,7 @@
+port in u5 toto;
+
+const u4 XXX = 3;
+
+void main() {
+	XXX = toto.read;
+}

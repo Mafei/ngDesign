@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<templates>
+	<template autoinsert="true" context="com.synflow.cflow.Cflow.PortDecls"
+		deleted="false" description="Adds a new input port" enabled="true"
+		id="com.synflow.cflow.InputPort" name="Input port">port sync in ${type} ${name};
+	</template>
+	<template autoinsert="true" context="com.synflow.cflow.Cflow.PortDecls"
+		deleted="false" description="Adds a new output port" enabled="true"
+		id="com.synflow.cflow.OutputPort" name="Output port">port sync out ${type} ${name};
+	</template>
+</templates>

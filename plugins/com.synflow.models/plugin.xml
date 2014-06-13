@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated Core -->
+      <package
+            uri="http://www.synflow.com/2013/Dpn"
+            class="com.synflow.models.dpn.DpnPackage"
+            genModel="model/Core.genmodel"/>
+   </extension>
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated Core -->
+      <package
+            uri="http://www.synflow.com/2013/Graph"
+            class="com.synflow.models.graph.GraphPackage"
+            genModel="model/Core.genmodel"/>
+   </extension>
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated Core -->
+      <package
+            uri="http://www.synflow.com/2013/Ir"
+            class="com.synflow.models.ir.IrPackage"
+            genModel="model/Core.genmodel"/>
+   </extension>
+   <extension
+         point="org.eclipse.emf.ecore.extension_parser">
+      <parser
+            class="com.synflow.models.ir.impl.IrResourceFactoryImpl"
+            type="ir">
+      </parser>
+   </extension>
+</plugin>

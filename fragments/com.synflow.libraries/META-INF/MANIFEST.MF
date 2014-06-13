@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Synflow Libraries
+Bundle-SymbolicName: com.synflow.libraries;singleton:=true
+Bundle-Version: 0.10.0.qualifier
+Bundle-Vendor: Synflow SAS
+Fragment-Host: com.synflow.core;bundle-version="0.10.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Eclipse-BundleShape: dir

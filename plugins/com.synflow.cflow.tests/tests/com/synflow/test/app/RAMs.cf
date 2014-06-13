@@ -1,0 +1,147 @@
+/*******************************************************************************
+ * Copyright (c) 2012-2014 Synflow SAS.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Matthieu Wipliez
+ *    Nicolas Siret
+ *******************************************************************************/
+package com.synflow.test.app.rams;
+
+import std.mem.SinglePortRAM;
+
+network TestSinglePortRam {
+
+	typedef u8 addr_t;
+
+	readerWriter = new task {
+		addr_t i = 2;
+
+		void run() {
+			i = 2;
+			ram.address.write(i);
+			ram.data.write(i << 1);
+
+			i = 3;
+			ram.address.write(i);
+			ram.data.write(i << 1);
+
+			i = 2;
+			ram.address.write(i);
+			fence;
+
+			i = 3;
+			ram.address.write(i);
+			fence;
+
+			ram.q.read;
+			ram.q.read;
+		}
+	};
+
+	ram = new SinglePortRAM({depth: 8, width: 12, numAdditionalRegisters: 0});
+
+}
+
+task Controller {
+
+	out addr_t addr, sync u12 dout; in u12 q;
+
+	typedef u8 addr_t;
+
+	addr_t i = 2;
+
+	void run() {
+		i = 2;
+		addr.write(i);
+		dout.write(i << 1);
+
+		i = 3;
+		addr.write(i);
+		dout.write(i << 1);
+
+		i = 2;
+		addr.write(i);
+		fence;
+
+		i = 3;
+		addr.write(i);
+		fence;
+
+		q.read;
+		q.read;
+	}
+}
+
+network TestDualPortRam {
+
+	properties {
+		clocks: ['clk_a', 'clk_b']
+	}
+
+	ram = new std.mem.DualPortRAM({depth: 8, width: 12});
+
+	ctrl1 = new Controller({clocks: ['clk_a']}); ctrl2 = new Controller({clocks: ['clk_b']});
+
+	ram.reads(ctrl1.addr, ctrl1.dout, ctrl2.addr, ctrl2.dout);
+	ram.writes(ctrl1.q, ctrl2.q);
+}
+
+network TestPseudoDualPortRam {
+
+	reader = new task {
+		in u16 din; out u4 address, sync u16 dout;
+
+		u16 x;
+		u4 i = 15;
+
+		void init() {
+			// 15 cycles waiting
+			for (i = 0; i < 15; i++) {
+			}
+
+			i = 0;
+			address.write(i);
+			i++;
+
+			address.write(i);
+			i++;
+		}
+
+		void run() {
+			x = din.read;
+			assert(x == ((i - 2) & 0b1111) << 1);
+			dout.write(x);
+
+			address.write(i);
+			i++;
+		}
+	};
+
+	ram = new std.mem.PseudoDualPortRAM({depth: 4, width: 16});
+
+	writer = new task {
+		out u4 address, sync u16 dout;
+
+		u4 i;
+
+		void init() {
+			i = 15;
+			address.write(i);
+			dout.write(i << 1);
+			i--;
+
+			for (; i != 15; i--) {
+				address.write(i);
+				dout.write(i << 1);
+			}
+		}
+	};
+
+	ram.reads(reader.address, writer.address, writer.dout);
+	reader.reads(ram.q);
+
+}

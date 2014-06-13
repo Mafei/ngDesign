@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="com.synflow.ngDesign.main"
+      label="ngDesign main feature"
+      version="0.10.0.qualifier"
+      provider-name="Synflow SAS"
+      plugin="com.synflow.ngDesign">
+
+   <description url="https://www.synflow.com">
+      This feature incorporates the ngDesign plugins and branding, as well as all features that the product depends on.
+   </description>
+
+   <copyright url="https://www.synflow.com">
+      Copyright (c) 2012-2014, Synflow SAS
+All rights reserved.
+   </copyright>
+
+   <license url="https://www.synflow.com/studio/license/terms">
+      The license agreement is available at https://www.synflow.com/studio/license/terms
+   </license>
+
+   <url>
+      <update label="Synflow Update Site" url="http://updates.synflow.com"/>
+   </url>
+
+   <includes
+         id="org.eclipse.platform"
+         version="0.0.0"/>
+
+   <requires>
+      <import feature="com.synflow.ngDesign.plugins" version="0.10.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.platform" version="4.2.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.jgit" version="2.0.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.egit" version="2.0.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.emf" version="2.8.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.graphiti.feature" version="0.9.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.gef" version="3.8.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.draw2d" version="3.8.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.jdt" version="3.9.1" match="greaterOrEqual"/>
+      <import feature="org.eclipse.xtext.ui" version="2.5.0" match="greaterOrEqual"/>
+   </requires>
+
+   <plugin
+         id="com.synflow.ngDesign"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

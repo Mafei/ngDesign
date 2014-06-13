@@ -1,0 +1,120 @@
+/*******************************************************************************
+ * Copyright (c) 2012-2014 Synflow SAS.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Matthieu Wipliez
+ *    Nicolas Siret
+ *******************************************************************************/
+package com.synflow.test.app.basics;
+
+network Pipeline {
+
+	properties {
+		test: {
+			in1: [ 0, 65535, 112, 65535, 4095 ],
+			in2: [ 255, 1, 112, 255, 4095 ],
+			outp: [ 255, 0, 224, 254, 8190 ]
+		}
+	}
+
+	in sync u8 a, sync b, sync c; out sync u17 res;
+
+	stage_1 = new task {
+		out sync u9 res;
+		void run() {
+			res.write(a.read + b.read); 
+		}
+	};
+
+	stage_2 = new task {
+		void run() {
+			res.write(stage_1.res.read * c.read); 
+		}
+	};
+
+}
+
+bundle Definitions {
+	typedef u9 count_t;
+	typedef u6 clipped;
+}
+
+network TopCounter {
+
+	out bool OutData, u15 digits;
+
+	counter = new task {
+		out Definitions.count_t count;
+
+		Definitions.count_t count_i;
+
+		void run() { // 9-bit wrap-around counter.
+			count.write(count_i);
+			count_i++;
+		}
+	};
+
+	clip = new task {
+		out Definitions.clipped O;
+
+		void run() {
+			Definitions.count_t local = counter.count.read();
+			O.write(local > 63 ? 63 : (u6) local);
+		}
+	};
+
+	digit = new task {
+		void run() { // Manages the 15-segments display of the Versa board.
+			Definitions.count_t count = counter.count.read;
+			u15 digits;
+			if (count < 100) {
+				digits = 0x01FF;
+			} else if (count < 200) {
+				digits = 0x4FFF;
+			} else if (count < 300) {
+				digits = 0x13DD;
+			} else if (count < 400) {
+				digits = 0x07DD;
+			} else if (count < 500) {
+				digits = 0x4DDD;
+			} else if (count < 511) {
+				digits = 0x25DD;
+			} else {
+				digits = 0x7EAB;
+			}
+			digits.write(digits);
+		}
+	};
+
+	compare = new Compare();
+	compare.reads(clip.O, counter.count);
+	compare.writes(OutData);
+}
+
+task Compare {
+	import com.synflow.test.app.basics.Definitions.*;
+
+	in clipped clip, count_t count; out bool result;
+
+	count_t temp;
+
+	void init() {
+		// reads from "count" in the second cycle
+		idle(1);
+		temp = count.read();
+	}
+
+	/**
+	 * Compares its two inputs.
+	 */
+	void run() {
+		clipped v = clip.read();
+		bool comparison = temp == v;
+		result.write(comparison);
+		temp = count.read();
+	}
+}

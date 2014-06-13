@@ -1,0 +1,40 @@
+package std.lib;
+
+task SynchronizerFF {
+
+	properties {
+		clocks: ['din_clock', 'dout_clock'],
+		implementation: {
+			type: 'builtin'
+		},
+		domains: {
+			din_clock:  ['din'],
+			dout_clock: ['dout']
+		}
+	}
+
+	const int stages = 2;
+
+	in bool din; out bool dout;
+
+}
+
+task SynchronizerMux {
+
+	properties {
+		clocks: ['din_clock', 'dout_clock'],
+		implementation: {
+			type: 'builtin',
+			dependencies: ['std.lib.SynchronizerFF']
+		},
+		domains: {
+			din_clock:  ['din'],
+			dout_clock: ['dout']
+		}
+	}
+
+	const int width = 16, stages = 2;
+
+	in sync u<width> din; out u<width> dout;
+
+}

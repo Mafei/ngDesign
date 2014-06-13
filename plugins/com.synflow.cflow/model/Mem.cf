@@ -1,0 +1,51 @@
+package std.mem;
+
+task SinglePortRAM {
+
+	properties {
+		reset: null,
+		implementation: {type: 'builtin'}
+	}
+
+	const int depth, width, numAdditionalRegisters = 0;
+
+	in u<depth> address, sync u<width> data; out u<width> q;
+
+}
+
+task DualPortRAM {
+
+	properties {
+		reset: null,
+		clocks: ['clock_a', 'clock_b'],
+		implementation: {type: 'builtin'},
+		domains: {
+			clock_a: ['address_a', 'data_a', 'q_a'],
+			clock_b: ['address_b', 'data_b', 'q_b']
+		}
+	}
+
+	const int depth, int width, int numAdditionalRegisters = 0;
+
+	in u<depth> address_a, sync u<width> data_a; out u<width> q_a;
+	in u<depth> address_b, sync u<width> data_b; out u<width> q_b;
+
+}
+
+task PseudoDualPortRAM {
+
+	properties {
+		reset: null,
+		clocks: ['rd_clock', 'wr_clock'],
+		implementation: {type: 'builtin'},
+		domains: {
+			rd_clock: ['rd_address', 'q'],
+			wr_clock: ['wr_address', 'data']
+		}
+	}
+
+	const int depth, int width, int numAdditionalRegisters = 0;
+
+	in u<depth> rd_address, wr_address, sync u<width> data; out u<width> q;
+
+}

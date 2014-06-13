@@ -1,0 +1,116 @@
+/*******************************************************************************
+ * Copyright (c) 2012-2014 Synflow SAS.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Matthieu Wipliez
+ *    Nicolas Siret
+ *******************************************************************************/
+package com.synflow.test.app.fifos;
+
+import std.fifo.SynchronousFIFO;
+
+network TestSynchronousFIFO {
+
+	fifo = new SynchronousFIFO({depth: 4, width: 8});
+	
+	fib = new Fib();
+	sink = new Sink();
+
+	fifo.reads(fib.outp, sink.rdy);
+	sink.reads(fifo.dout, fifo.almost_full, fifo.empty);
+
+}
+
+task Fib {
+	out sync u8 outp;
+
+	u8 n_1 = 1;
+	u8 n = 1;
+	u8 count;
+
+	/**
+	 * Fibonacci
+	 */
+	void init() {
+		for (count = 0 ; count != 11 ; count++) {
+			u8 old_n = n;
+			n += n_1;
+			print("writing ", n, " to outp");
+			outp.write(n);
+	
+			n_1 = old_n;
+		}
+	
+		for (count = 0 ; count != 32 ; count++) {
+		}
+	
+		for (count = 0 ; count != 64 ; count++) {
+			outp.write(count);
+		}
+	
+		for (count = 0 ; count != 128 ; count++) {
+		}
+	
+		for (count = 0 ; count != 255 ; count++) {
+			outp.write(count);
+		}
+	}
+}
+
+task Sink {
+	in sync u8 inp;
+	in bool almostFull, empty; out bool rdy;
+
+	u8 i;
+
+	void init() {
+		for (; i < 15; i++) {
+		}
+	
+		print("writing ", true, " to rdy");
+		rdy.write(true);
+		fence;
+		assert(inp.read == 2);
+		assert(inp.read == 3);
+		assert(inp.read == 5);
+		assert(inp.read == 8);
+		assert(inp.read == 13);
+		assert(inp.read == 21);
+		assert(inp.read == 34);
+		assert(inp.read == 55);
+		assert(inp.read == 89);
+		assert(inp.read == 144);
+		assert(inp.read == 233);
+	
+		while (empty.read()) {
+		}
+		assert(inp.read == 0);
+		rdy.write(false);
+		assert(inp.read == 1);
+	
+		for (i = 0; i < 64; i++) {
+		}
+	
+		rdy.write(true);
+		for (i = 2; i < 16; i++) {
+			assert(inp.read == i);
+		}
+	
+		for (i = 0; i < 32; i++) {
+		}
+	
+		rdy.write(false);
+		while (!almostFull.read()) {
+		}
+	
+		rdy.write(true);
+		for (i = 0; i < 255; i++) {
+			assert(inp.read == i);
+		}
+		print("test passed.");
+	}
+}

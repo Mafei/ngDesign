@@ -1,0 +1,42 @@
+package std.fifo;
+
+task SynchronousFIFO {
+
+	properties {
+		implementation: {
+			type: 'builtin',
+			dependencies: ['com.synflow.fifo.FIFO_Read_Controller', 'com.synflow.fifo.FIFO_Write_Controller',
+				'std.mem.DualPortRAM']
+		}
+	}
+
+	const int depth, width;
+
+	in sync u<width> din; out sync u<width> dout;
+	in bool rdy; out bool full, almost_full, empty;
+
+}
+
+task AsynchronousFIFO {
+
+	properties {
+		clocks: ['din_clock', 'dout_clock'],
+		reset: null,
+		implementation: {
+			type: 'builtin',
+			dependencies:
+				['com.synflow.fifo.FIFO_Read_Controller', 'com.synflow.fifo.FIFO_Write_Controller',
+				'std.mem.DualPortRAM', 'com.synflow.lib.SimpleRegister']
+		},
+		domains: {
+			din_clock:  ['din'],
+			dout_clock: ['dout', 'rdy', 'full', 'almost_full', 'empty']
+		}
+	}
+
+	const int depth, width;
+
+	in sync u<width> din; out sync u<width> dout;
+	in bool rdy; out bool full, almost_full, empty;
+
+}

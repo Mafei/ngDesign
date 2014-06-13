@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="com.synflow.ngDesign.plugins"
+      label="ngDesign plugins feature"
+      version="0.10.0.qualifier"
+      provider-name="Synflow SAS">
+
+   <description url="https://www.synflow.com">
+      This feature contains the plug-ins that make up Synflow ngDesign.
+   </description>
+
+   <copyright url="https://www.synflow.com">
+      Copyright (c) 2012-2014, Synflow SAS
+All rights reserved.
+   </copyright>
+
+   <license url="https://www.synflow.com/studio/license/terms">
+      The license agreement is available at https://www.synflow.com/studio/license/terms
+   </license>
+
+   <url>
+      <update label="Synflow Update Site" url="http://updates.synflow.com"/>
+   </url>
+
+   <plugin
+         id="com.synflow.models"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.synflow.core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.synflow.cflow"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.synflow.cflow.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.synflow.libraries"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"/>
+
+   <plugin
+         id="com.synflow.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

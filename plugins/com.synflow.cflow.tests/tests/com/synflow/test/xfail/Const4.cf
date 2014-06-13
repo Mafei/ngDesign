@@ -1,0 +1,11 @@
+port in u5 toto;
+port out u5 tata;
+
+int f(int x) {
+	x++;
+	return x;
+}
+
+void main() {
+	tata.write(f(toto.read));
+}

@@ -1,0 +1,144 @@
+/*******************************************************************************
+ * Copyright (c) 2012-2014 Synflow SAS.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Matthieu Wipliez - initial API and implementation and/or initial documentation
+ *******************************************************************************/
+module com.synflow.cflow.GenerateCflow
+
+import org.eclipse.emf.mwe.utils.*
+import org.eclipse.xtext.generator.*
+import org.eclipse.xtext.ui.generator.*
+
+var fileExtensions = "cf"
+var projectName = "com.synflow.cflow"
+
+// grammarURI has to be platform:/resource as it is not on the classpath
+var grammarURI = "platform:/resource/${projectName}/src/com/synflow/cflow/Cflow.xtext"
+
+var runtimeProject = "../${projectName}"
+var encoding = "UTF-8"
+
+Workflow {
+
+	bean = StandaloneSetup {
+		// register current projects and its siblings for platform URI map, as they are not on the classpath.
+		platformUri = "${runtimeProject}/.." 
+	}
+
+	component = DirectoryCleaner {
+		directory = "${runtimeProject}/src-gen"
+	}
+
+	component = DirectoryCleaner {
+		directory = "${runtimeProject}/model/generated"
+	}
+
+	component = DirectoryCleaner {
+		directory = "${runtimeProject}.ui/src-gen"
+	}
+
+	component = Generator {
+		pathRtProject = runtimeProject
+		pathUiProject = "${runtimeProject}.ui"
+		pathTestProject = "${runtimeProject}.tests"
+		projectNameRt = projectName
+		projectNameUi = "${projectName}.ui"
+    	encoding = encoding
+
+		language = auto-inject {
+			uri = grammarURI
+
+			// Java API to access grammar elements (required by several other fragments)
+			fragment = grammarAccess.GrammarAccessFragment auto-inject {}
+
+			// Generate java classes for Ecore models
+			fragment = ecore.EMFGeneratorFragment auto-inject {
+				emfRuntimeVersion = "2.9"
+                javaModelDirectory = "/${projectName}/src-gen"
+			}
+
+			// the serialization component
+			fragment = serializer.SerializerFragment auto-inject {}
+
+			// a custom ResourceFactory for use with EMF
+			fragment = resourceFactory.ResourceFactoryFragment auto-inject {}
+
+			// The antlr parser generator fragment.
+			fragment = parser.antlr.XtextAntlrGeneratorFragment {
+			//  options = {
+			//      backtrack = true
+			//  }
+			}
+
+			// java-based API for validation
+			fragment = validation.JavaValidatorFragment auto-inject {
+				composedCheck = "org.eclipse.xtext.validation.ImportUriValidator"
+				composedCheck = "org.eclipse.xtext.validation.NamesAreUniqueValidator"
+				composedCheck = "com.synflow.cflow.internal.validation.ExpressionValidator"
+				composedCheck = "com.synflow.cflow.internal.validation.StructuralValidator"
+				composedCheck = "com.synflow.cflow.internal.validation.WarningValidator"
+			}
+
+			// scoping and exporting API
+			fragment = scoping.ImportNamespacesScopingFragment auto-inject {}
+			fragment = exporting.QualifiedNamesFragment auto-inject {}
+			fragment = builder.BuilderIntegrationFragment auto-inject {}
+
+			// generator API
+			fragment = generator.GeneratorFragment auto-inject {
+				generateStub = false
+				generateMwe = false
+				generateJavaMain = false
+			}
+
+			// formatter API
+			fragment = formatting.FormatterFragment auto-inject {}
+
+			// labeling API
+			fragment = labeling.LabelProviderFragment auto-inject {}
+
+			// outline API
+			fragment = outline.OutlineTreeProviderFragment auto-inject {}
+			fragment = outline.QuickOutlineFragment auto-inject {}
+
+			// quickfix API
+			fragment = quickfix.QuickfixProviderFragment auto-inject {}
+
+			// content assist API
+			fragment = contentAssist.JavaBasedContentAssistFragment auto-inject {}
+
+			// generates a more lightweight Antlr parser and lexer tailored for content assist
+			fragment = parser.antlr.XtextAntlrUiGeneratorFragment auto-inject {}
+
+			// generates junit test support classes into Generator#pathTestProject
+			fragment = junit.Junit4Fragment auto-inject {}
+
+			// project wizard (optional)
+			// fragment = projectWizard.SimpleProjectWizardFragment {
+			//      generatorProjectName = "${projectName}"
+			//      modelFileExtension = file.extensions
+			// }
+
+			// provides the necessary bindings for java types integration
+			//  fragment = types.TypesGeneratorFragment {}
+
+			// generates the required bindings only if the grammar inherits from Xbase
+			// fragment = xbase.XbaseGeneratorFragment {}
+
+			// provides a preference page for template proposals
+			fragment = templates.CodetemplatesGeneratorFragment auto-inject {}
+
+			// rename refactoring
+			fragment = refactoring.RefactorElementNameFragment auto-inject {}
+
+			// provides a compare view
+			fragment = compare.CompareFragment auto-inject {}
+		}
+	}
+
+}

@@ -1,0 +1,404 @@
+/*******************************************************************************
+ * Copyright (c) 2012-2014 Synflow SAS.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Matthieu Wipliez - initial API and implementation and/or initial documentation
+ *******************************************************************************/
+grammar com.synflow.cflow.Cflow hidden(WS, ML_COMMENT, SL_COMMENT)
+
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+
+generate cflow "http://www.synflow.com/cflow/Cflow"
+
+///////////////////////////////////////////////////////////////////////////////
+// top-level entity
+///////////////////////////////////////////////////////////////////////////////
+
+Module:
+	'package' package = QualifiedName ';'
+	(imports += Import)*
+	(entities += NamedEntity)*
+;
+
+Import: 'import' imported += Imported (',' imported += Imported)* ';'
+;
+
+Imported: type=[NamedEntity|QualifiedName] (wildcard ?= '.' '*')?;
+
+QualifiedName:
+	ValidID (=> '.' ValidID)*
+;
+
+ValidID:
+	ID;
+
+NamedEntity: GenericEntity | Bundle;
+
+///////////////////////////////////////////////////////////////////////////////
+// task and network level
+///////////////////////////////////////////////////////////////////////////////
+
+// a generic entity accepts parameters
+GenericEntity: Task | Network;
+
+Task:
+	'task' name=ValidID '{'
+		(imports += Import)*
+		('properties' properties=Obj)?
+		(portDecls += PortDecl | types += Typedef | decls += VarDecl)*
+	'}'
+;
+
+Bundle:
+	'bundle' name=ValidID '{'
+		(imports += Import)*
+		(types += Typedef | decls += VarDecl)*
+	'}'
+;
+
+InstAnonTask returns Task: {Task}
+	'task' '{'
+		(imports += Import)*
+		('properties' properties=Obj)?
+		(portDecls += PortDecl | types += Typedef | decls += VarDecl)*
+	'}'
+;
+
+Network:
+	'network' name=ValidID '{'
+		(imports += Import)*
+		('properties' properties=Obj)?
+		(instances += Inst | portDecls += PortDecl | types += Typedef | connects += Connect | decls += VarDecl)*
+	'}'
+;
+
+Connect:
+	(instance = [Inst|QualifiedName] | this ?= 'this') '.' type=('reads' | 'writes') '(' ports += VarRef (',' ports += VarRef)* ')' ';'
+;
+
+Inst:
+	name=ValidID '=' 'new'
+		(entity=[GenericEntity|QualifiedName] '(' (arguments = Obj)? ')'
+		| task=InstAnonTask) ';'
+;
+
+Array:
+	{Array} '[' (elements += Element (',' elements += Element)*)? ']'
+;
+
+Obj:
+	{Obj} '{' (members += Pair (',' members += Pair)*)? '}'
+;
+
+Pair:
+	key=ID ':' value=Element
+;
+
+Element:
+	Primitive | Obj | Array
+;
+
+Primitive: value=(Literal | Null);
+Null: {Null} 'null';
+
+///////////////////////////////////////////////////////////////////////////////
+// declarations
+///////////////////////////////////////////////////////////////////////////////
+
+// typedef declaration
+Typedef: 'typedef' type=CType name=ValidID ';';
+
+PortDecl: SinglePortDecl | MultiPortDecl;
+SinglePortDecl: direction=('in' | 'out') ports += PortDef (',' ports += PortDef)* ';';
+PortDef: (sync?='sync' (ready?='ready' | ack?='ack')?)? var=PortVariable;
+
+MultiPortDecl: sync?='sync' (ready?='ready' | ack?='ack')? '{' decls += SyncPortDecl+ '}';
+SyncPortDecl returns SinglePortDecl: direction=('in' | 'out') ports += SyncPortDef (',' ports += SyncPortDef)* ';';
+SyncPortDef returns PortDef: (ready?='ready' | ack?='ack')? var=PortVariable;
+
+PortVariable returns Variable: (type = CType)? name = ValidID;
+
+// variable/function declaration
+VarDecl:
+	(constant ?= 'const')?
+	(type = CType | void ?= 'void')
+
+	(variables += Function
+	| variables += StateVar (',' variables += StateVar)* ';')
+;
+
+Function returns Variable:
+	name = ValidID
+	'(' (parameters += Parameter (',' parameters += Parameter)*)? ')'
+	body = Block
+;
+
+StateVar returns Variable:
+	name = ValidID ('[' dimensions += CExpression ']')* ('=' value=Value)?;
+
+Parameter returns Variable: type = CType name = ValidID;
+
+// initial value
+Value: ValueList | ValueExpr;
+ValueExpr: expression = CExpression;
+ValueList:
+	{ValueList} '[' (values += Value (',' values += Value)* )? ']';
+
+///////////////////////////////////////////////////////////////////////////////
+// statements
+///////////////////////////////////////////////////////////////////////////////
+
+VarRef: variable=[Variable|QualifiedName];
+
+StatementAssign:
+	target=ExpressionVariable
+		(	(op='++' | op='--')
+		|	((op='=' | op=ASSIGN_OP) value=CExpression))?;
+
+terminal ASSIGN_OP:
+	'&=' | '|=' | '^=' |
+	'&&=' | '||=' |
+	'+=' | '-=' | '*=' | '/=' | '%=' |
+	'<<=' | '>>='
+;
+
+StatementAssert:
+	'assert' '(' condition = CExpression ')' ';';
+
+Block: {Block}
+	'{'
+		stmts += Statement*
+	'}'
+;
+
+StatementFence: {StatementFence} 'fence' ';';
+
+StatementFor returns StatementLoop:
+	'for' '(' init = (StatementAssign | StatementVariable)? ';' condition=CExpression ';' after=StatementAssign? ')'
+		body = Block;
+
+StatementIdle: {StatementIdle} 'idle' '(' numCycles=CExpression ')' ';';
+
+StatementIf:
+	branches += Branch
+	('else' branches += Branch)*
+	('else' branches += BranchElse)?;
+
+Branch:
+	'if' '(' condition = CExpression ')'
+		body = Block;
+
+BranchElse returns Branch:
+	body = Block;
+
+StatementLabeled: label=ID ':' stmt=Statement;
+
+StatementPrint:
+	{StatementPrint} 'print' '(' (args += CExpression (',' args += CExpression)*)? ')' ';';
+
+StatementReturn:
+	{StatementReturn} 'return' value = CExpression? ';'
+;
+
+StatementVariable:
+	(constant ?= 'const')?
+	type = CType
+	variables += LocalVar (',' variables += LocalVar)*;
+
+LocalVar returns Variable:
+	name = ValidID ('[' dimensions += CExpression ']')* ('=' value=CExpression)?;
+
+StatementWhile returns StatementLoop:
+	'while' '(' condition=CExpression ')'
+		body = Block;
+
+StatementWrite:
+	port=VarRef '.' 'write' '(' value=CExpression ')' ';'
+;
+
+Statement:
+	(StatementAssign ';')
+	| StatementAssert
+	| StatementFence
+	| StatementFor
+	| StatementIdle
+	| StatementIf
+	| StatementLabeled
+	| StatementPrint
+	| StatementReturn
+	| (StatementVariable ';')
+	| StatementWhile
+	| StatementWrite;
+
+///////////////////////////////////////////////////////////////////////////////
+// expressions
+///////////////////////////////////////////////////////////////////////////////
+
+CExpression returns CExpression:
+	ExpressionOr ({ExpressionIf.condition=current} operator='?' then=CExpression ':' else=CExpression)?;
+ExpressionOr returns CExpression:
+	ExpressionAnd ({ExpressionBinary.left=current} operator='||' right=ExpressionAnd)*;
+ExpressionAnd returns CExpression:
+	ExpressionBitor ({ExpressionBinary.left=current} operator='&&' right=ExpressionBitor)*;
+ExpressionBitor returns CExpression:
+	ExpressionBitxor ({ExpressionBinary.left=current} operator='|' right=ExpressionBitxor)*;
+ExpressionBitxor returns CExpression:
+	ExpressionBitand ({ExpressionBinary.left=current} operator='^' right=ExpressionBitand)*;
+ExpressionBitand returns CExpression:
+	ExpressionEq ({ExpressionBinary.left=current} operator='&' right=ExpressionEq)*;
+ExpressionEq returns CExpression:
+	ExpressionRelational ({ExpressionBinary.left=current} operator=('==' | '!=') right=ExpressionRelational)*;
+ExpressionRelational returns CExpression:
+	ExpressionShift ({ExpressionBinary.left=current} operator=('<' | '<=' | '>' | '>=') right=ExpressionShift)*;
+ExpressionShift returns CExpression:
+	ExpressionAdditive ({ExpressionBinary.left=current} operator=('<<' | '>>') right=ExpressionAdditive)*;
+ExpressionAdditive returns CExpression:
+	ExpressionMultiplicative ({ExpressionBinary.left=current} operator=('+' | '-') right=ExpressionMultiplicative)*;
+ExpressionMultiplicative returns CExpression:
+	ExpressionUnary ({ExpressionBinary.left=current} operator=('*' | '/' | '%') right=ExpressionUnary)*;
+
+ExpressionUnary returns CExpression:
+	{ExpressionUnary} unaryOperator=('~' | '!' | '-') expression=ExpressionPostfix
+	| ExpressionPostfix
+;
+
+ExpressionPostfix returns CExpression:
+	=> ExpressionCast
+    | ExpressionVariable
+	| Primary
+;
+
+ExpressionCast:
+	'(' type=CType ')' expression=ExpressionPostfix
+;
+
+ExpressionVariable:
+	source=VarRef ('[' indexes += CExpression ']')* ('.' property=(ValidID | 'available' | 'read'))? ('(' (parameters += CExpression (',' parameters += CExpression)*)? ')')?;
+
+Primary returns CExpression:
+	Literal
+	| => '(' CExpression ')'
+;
+
+Literal returns CExpression:
+      ExpressionBoolean
+	| ExpressionInteger
+    | ExpressionFloat
+    | ExpressionString
+;
+///////////////////////////////////////////////////////////////////////////////
+// literal expressions
+///////////////////////////////////////////////////////////////////////////////
+
+ExpressionBoolean: value=BOOL;
+
+ExpressionFloat: value=FLOAT;
+
+ExpressionInteger: value=INTEGER;
+
+ExpressionString: value=STRING;
+
+
+
+BOOL returns ecore::EBoolean: 'true' | 'false';
+
+
+
+terminal INTEGER returns ecore::EBigInteger: (DECIMAL | HEX | BIN);
+
+terminal fragment DIGIT_DEC: '0'..'9';
+
+terminal fragment DIGIT_HEX: DIGIT_DEC | 'a'..'f' | 'A'..'F';
+
+terminal fragment DECIMAL: '-'? DIGIT_DEC ('_'? DIGIT_DEC)*;
+
+terminal fragment HEX: '0' 'x' DIGIT_HEX ('_'? DIGIT_HEX)*;
+
+terminal fragment BIN: '0' 'b' ('0' | '1') ('_'? ('0' | '1'))*;
+
+
+
+terminal FLOAT returns ecore::EBigDecimal: '-'? REAL;
+
+terminal fragment REAL:
+	DIGIT_DEC+ '.' DIGIT_DEC* EXPONENT?
+|	'.' DIGIT_DEC+ EXPONENT?
+|	DIGIT_DEC+ EXPONENT;
+
+terminal fragment EXPONENT: ('e'|'E') ('+' | '-')? DIGIT_DEC+;
+
+///////////////////////////////////////////////////////////////////////////////
+// types
+///////////////////////////////////////////////////////////////////////////////
+
+CType:
+	TypeRef
+	| TypeDecl
+	| TypeGen
+;
+
+terminal TYPE_INT: 'i' ('1'..'9') ('0'..'9')*;
+terminal TYPE_UINT: 'u' ('1'..'9') ('0'..'9')*;
+
+TypeRef: typeDef=[Typedef|QualifiedName];
+
+TypeGen: spec=ValidID '<' size=TExpr '>';
+
+TypeDecl:
+	(unsigned?='unsigned'?
+		(spec='char'
+		| spec='short'
+		| spec='int'
+		| spec='long')
+	)
+
+	| spec='bool'
+	| spec='float'
+	| spec='uchar'
+	| spec='ushort'
+	| spec='uint'
+	| spec=TYPE_INT
+	| spec=TYPE_UINT
+	| spec='ulong'
+;
+
+///////////////////////////////////////////////////////////////////////////////
+// type expressions
+///////////////////////////////////////////////////////////////////////////////
+
+TExpr returns CExpression:
+	TExprBitxor ({ExpressionBinary.left=current} operator='|' right=TExprBitxor)*;
+TExprBitxor returns CExpression:
+	TExprBitand ({ExpressionBinary.left=current} operator='^' right=TExprBitand)*;
+TExprBitand returns CExpression:
+	TExprShift ({ExpressionBinary.left=current} operator='&' right=TExprShift)*;
+TExprShift returns CExpression:
+	TExprAdd ({ExpressionBinary.left=current} operator=('<<' | '>>') right=TExprAdd)*;
+TExprAdd returns CExpression:
+	TExprMul ({ExpressionBinary.left=current} operator=('+' | '-') right=TExprMul)*;
+TExprMul returns CExpression:
+	TExprUn ({ExpressionBinary.left=current} operator=('*' | '/' | '%') right=TExprUn)*;
+
+TExprUn returns CExpression:
+	{ExpressionUnary} unaryOperator=('~' | '-') expression=ExpressionPostfix
+	| TExprPostfix;
+
+TExprPostfix returns CExpression:
+    ExpressionInteger
+    | '(' TExpr ')'
+    | ExpressionVariable
+;
+
+// tokens from Xtext except INT (removed because it conflicts with DECIMAL)
+
+terminal ID: ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*;
+terminal STRING:
+	 "'" ( '\\' ('b'|'f'|'n'|'r'|'t'|"'"|'"'|'/'|'\\'|('u' DIGIT_HEX DIGIT_HEX DIGIT_HEX DIGIT_HEX)) | !('\\'|"'") )* "'"
+	|'"' ( '\\' ('b'|'f'|'n'|'r'|'t'|"'"|'"'|'/'|'\\'|('u' DIGIT_HEX DIGIT_HEX DIGIT_HEX DIGIT_HEX)) | !('\\'|'"') )* '"';
+terminal ML_COMMENT: '/*' -> '*/';
+terminal SL_COMMENT: '//' !('\n'|'\r')* ('\r'? '\n')?;
+terminal WS: (' '|'\t'|'\r'|'\n')+;
