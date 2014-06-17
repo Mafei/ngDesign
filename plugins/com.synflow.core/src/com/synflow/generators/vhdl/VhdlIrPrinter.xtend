@@ -37,6 +37,7 @@ import java.util.Collection
 import java.util.List
 import org.eclipse.emf.ecore.EObject
 import java.util.HashMap
+import com.synflow.models.dpn.Port
 
 class VhdlIrPrinter extends VhdlExpressionPrinter {
 	
@@ -148,9 +149,20 @@ class VhdlIrPrinter extends VhdlExpressionPrinter {
 	override caseInstStore(InstStore store) {
 		val target = store.target.variable
 		val type = target.type
-		'''
-		«target.name»«IF store.indexes.empty» <= «ELSE»(«printIndexes(type as TypeArray, store.indexes)») «IF target.local» := «ELSE» <= «ENDIF»«ENDIF»«doSwitch(store.value)»;
-		'''
+		
+		if (target instanceof Port) {
+			'''
+			«target.name» <= std_logic_vector(«doSwitch(store.value)»);
+			'''
+		} else {
+			'''
+			«IF store.indexes.empty»
+			«target.name» <= «doSwitch(store.value)»;
+			«ELSE»
+			«target.name»(«printIndexes(type as TypeArray, store.indexes)») «IF target.local» := «ELSE» <= «ENDIF»«doSwitch(store.value)»;
+			«ENDIF»
+			'''
+		}
 	}
 
 	override caseTypeBool(TypeBool type) '''std_logic'''
