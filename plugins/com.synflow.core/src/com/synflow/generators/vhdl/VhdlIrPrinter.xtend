@@ -36,6 +36,7 @@ import java.util.ArrayList
 import java.util.Collection
 import java.util.List
 import org.eclipse.emf.ecore.EObject
+import java.util.HashMap
 
 class VhdlIrPrinter extends VhdlExpressionPrinter {
 	
@@ -280,4 +281,10 @@ class VhdlIrPrinter extends VhdlExpressionPrinter {
 		res.add('''LF''')
 		res.join(" & ")
 	}
+	
+	def computeVarMap(List<Procedure> procedures) {
+		varMap = new HashMap
+		return HdlGeneratorUtil.computeVarMap(procedures, varMap)
+	}
+	
 }

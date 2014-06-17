@@ -223,9 +223,9 @@ class VhdlDfPrinter extends DpnSwitch<CharSequence> {
 		-------------------------------------------------------------------------------
 		architecture rtl_«actor.simpleName» of «actor.simpleName» is
 
-		  «actionPrinter.declareTypeList(actor.variables)»
+		  «irPrinter.declareTypeList(actor.variables)»
 		  «FOR stateVar : actor.variables»
-		  «actionPrinter.printStateVar(stateVar)»
+		  «irPrinter.printStateVar(stateVar)»
 		  «ENDFOR»
 
 		  «IF !actor.procedures.empty»

@@ -18,8 +18,6 @@ import com.synflow.models.dpn.Port
 import com.synflow.models.dpn.State
 import com.synflow.models.dpn.Transition
 import com.synflow.models.ir.TypeInt
-import com.synflow.models.ir.Var
-import java.util.HashMap
 import java.util.List
 
 import static extension com.synflow.generators.vhdl.HdlGeneratorUtil.*
@@ -31,7 +29,9 @@ import static extension com.synflow.generators.vhdl.HdlGeneratorUtil.*
  * @author Nicolas Siret
  * @author Matthieu Wipliez
  */
-class VhdlActionPrinter extends VhdlIrPrinter {
+class VhdlActionPrinter {
+	
+	val VhdlIrPrinter irPrinter = new VhdlIrPrinter
 
 	def printActions(Actor actor)
 		'''
@@ -44,19 +44,19 @@ class VhdlActionPrinter extends VhdlIrPrinter {
 
 	def private printOneAction(Action action)
 		'''
-		  «doSwitch(action.body.blocks)»
+		  «irPrinter.doSwitch(action.body.blocks)»
 		  «FOR port : action.outputPattern.ports»
 		  «IF port.sync»
 		  «port.name»_send <= '1';
 		  «ENDIF»
 		  «ENDFOR»
 		'''
-		
+
 	def private printActionBody(Action action)
 		'''
 		to_boolean(«FOR port : action.inputPattern.ports»«IF port.sync»«port.name»_send and «ENDIF»«ENDFOR»«printSchedulerCall(action)») then
 		  -- Body of «action.name» (line «action.body.lineNumber»)
-		  «doSwitch(action.body.blocks)»
+		  «irPrinter.doSwitch(action.body.blocks)»
 		  «FOR port : action.outputPattern.ports»
 		  «IF port.sync»
 		  «port.name»_send <= '1';
@@ -80,13 +80,12 @@ class VhdlActionPrinter extends VhdlIrPrinter {
 		'''
 
 	def private printBodyVariables(Actor actor) {
-		varMap = new HashMap<Var, String>
-		val variables = computeVarMap(actor.actions.map([a|a.body]), varMap)
+		val variables = irPrinter.computeVarMap(actor.actions.map([a|a.body]))
 
 		'''
-		«declareTypeList(variables)»
+		«irPrinter.declareTypeList(variables)»
 		«FOR variable : variables»
-		variable «doSwitch(variable)»;
+		variable «irPrinter.doSwitch(variable)»;
 		«ENDFOR»
 		'''
 	}
@@ -102,7 +101,7 @@ class VhdlActionPrinter extends VhdlIrPrinter {
 
 	def private printSchedulerCall(Action action) {
 		if (action.scheduler.inlinable) {
-			doSwitch(action.scheduler.expression)
+			irPrinter.doSwitch(action.scheduler.expression)
 		} else {
 			'''«action.scheduler.name»«IF !action.peekPattern.empty»(«action.peekPattern.ports.join(', ',
 				[p|if (p.type.int && (p.type as TypeInt).signed) '''signed(«p.name»)''' else if (p.type.int) '''unsigned(«p.name»)''' else p.name]
@@ -114,12 +113,12 @@ class VhdlActionPrinter extends VhdlIrPrinter {
 		'''
 		-- Scheduler of «action.name» (line «action.scheduler.lineNumber»)
 		impure function «action.scheduler.name»«printSchedulerParameters(action)» return std_logic is
-		  «declareTypeList(action.scheduler.locals)»
+		  «irPrinter.declareTypeList(action.scheduler.locals)»
 		  «FOR variable : action.scheduler.locals»
-		  variable «doSwitch(variable)»;
+		  variable «irPrinter.doSwitch(variable)»;
 		  «ENDFOR»
 		begin
-		  «doSwitch(action.scheduler.blocks)»
+		  «irPrinter.doSwitch(action.scheduler.blocks)»
 		end function «action.scheduler.name»;
 
 		'''
@@ -127,9 +126,9 @@ class VhdlActionPrinter extends VhdlIrPrinter {
 
 	def private printSchedulerParameters(Action action) {
 		if (!action.peekPattern.empty) {
-			printTypeSize = false
-			val seq = '''(«FOR port : action.peekPattern.ports SEPARATOR '; '»«port.name»_in : «doSwitch(port.type)»«ENDFOR»)'''
-			printTypeSize = true
+			irPrinter.printTypeSize = false
+			val seq = '''(«FOR port : action.peekPattern.ports SEPARATOR '; '»«port.name»_in : «irPrinter.doSwitch(port.type)»«ENDFOR»)'''
+			irPrinter.printTypeSize = true
 			seq
 		}
 	}
@@ -184,7 +183,7 @@ class VhdlActionPrinter extends VhdlIrPrinter {
 		  if reset_n = '0' then
 		    «FOR variable : actor.variables»
 		      «IF variable.assignable»
-		      «variable.name» <= «printInitialValue(variable)»;
+		      «variable.name» <= «irPrinter.printInitialValue(variable)»;
 		      «ENDIF»
 		    «ENDFOR»
 		    «FOR port : actor.outputs»
