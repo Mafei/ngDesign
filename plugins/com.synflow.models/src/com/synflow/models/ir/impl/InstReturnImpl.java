@@ -189,6 +189,9 @@ public class InstReturnImpl extends InstructionImpl implements InstReturn {
 
 	@Override
 	public String toString() {
+		if (getValue() == null) {
+			return "Return(null)";
+		}
 		return super.toString() + "Return(" + new ExpressionPrinter().toString(getValue()) + ")";
 	}
 
