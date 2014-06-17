@@ -102,7 +102,7 @@ class VhdlActionPrinter extends VhdlIrPrinter {
 
 	def private printSchedulerCall(Action action) {
 		if (action.scheduler.inlinable) {
-			doSwitch(action.scheduler)
+			doSwitch(action.scheduler.expression)
 		} else {
 			'''«action.scheduler.name»«IF !action.peekPattern.empty»(«action.peekPattern.ports.join(', ',
 				[p|if (p.type.int && (p.type as TypeInt).signed) '''signed(«p.name»)''' else if (p.type.int) '''unsigned(«p.name»)''' else p.name]
