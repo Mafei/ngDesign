@@ -15,6 +15,7 @@ import com.synflow.models.ir.ExprCast;
 import com.synflow.models.ir.ExprUnary;
 import com.synflow.models.ir.Expression;
 import com.synflow.models.ir.Procedure;
+import com.synflow.models.ir.Type;
 import com.synflow.models.ir.util.IrSwitch;
 
 /**
@@ -27,6 +28,8 @@ import com.synflow.models.ir.util.IrSwitch;
 public abstract class AbstractExpressionTransformer extends IrSwitch<Expression> {
 
 	private Procedure procedure;
+
+	private Type target;
 
 	@Override
 	public Expression caseExprBinary(ExprBinary expr) {
@@ -56,12 +59,19 @@ public abstract class AbstractExpressionTransformer extends IrSwitch<Expression>
 		return procedure;
 	}
 
+	protected Type getTarget() {
+		return target;
+	}
+
 	public void setProcedure(Procedure procedure) {
 		this.procedure = procedure;
 	}
 
-	public Expression transform(Expression expression) {
-		return doSwitch(expression);
+	public Expression transform(Type target, Expression expression) {
+		this.target = target;
+		Expression result = doSwitch(expression);
+		this.target = null;
+		return result;
 	}
 
 }

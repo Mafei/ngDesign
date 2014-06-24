@@ -150,7 +150,7 @@ class VhdlIrPrinter extends VhdlExpressionPrinter {
 		val target = store.target.variable
 		val type = target.type
 		
-		if (target instanceof Port) {
+		if (target instanceof Port && type.int && !store.value.exprInt) {
 			'''
 			«target.name» <= std_logic_vector(«doSwitch(store.value)»);
 			'''
@@ -252,7 +252,7 @@ class VhdlIrPrinter extends VhdlExpressionPrinter {
 		if (type.bool) {
 			"'0'"
 		} else {
-			doSwitch(IrFactory.eINSTANCE.createExprInt(0))
+			printQuotedValue(TypeUtil.getSize(type), 0bi)
 		}
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2013 Synflow SAS.
+ * Copyright (c) 2012-2014 Synflow SAS.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,7 @@ import java.util.Map
  */
 class VhdlExpressionPrinter extends ExpressionPrinter {
 
-	def private static printQuotedValue(int size, BigInteger value) {
+	def static printQuotedValue(int size, BigInteger value) {
 		if (size % 4 == 0) {
 			// print hexadecimal format with the correct size
 			'''x"«String.format("%0" + (size / 4) + "x", value)»"'''
@@ -134,16 +134,17 @@ class VhdlExpressionPrinter extends ExpressionPrinter {
 	}
 
 	override caseExprInt(ExprInt expr) {
-		var value = expr.value
-		val size = TypeUtil.getSize(value)
+		val value = expr.value
+		val size = expr.size
 
 		// always print as sized literal to make lint happier
-		if (value < 0bi) {
-			val unsignedValue = 1bi.shiftLeft(size) + value
-			'''x"«unsignedValue.toString(16)»"'''
-		} else {
-			'''x"«value.toString(16)»"'''
-		}
+		val unsignedValue =
+			if (value < 0bi) {
+				1bi.shiftLeft(size) + value
+			} else {
+				value
+			}
+		printQuotedValue(size, unsignedValue)
 	}
 
 	override caseExprList(ExprList expr) {

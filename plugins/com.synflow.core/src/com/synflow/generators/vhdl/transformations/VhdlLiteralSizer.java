@@ -11,6 +11,8 @@
 package com.synflow.generators.vhdl.transformations;
 
 import com.synflow.core.transformations.AbstractExpressionTransformer;
+import com.synflow.models.ir.ExprInt;
+import com.synflow.models.ir.util.TypeUtil;
 
 /**
  * This class resizes integer literals to match the size of their target's type (when assigning to a
@@ -20,5 +22,12 @@ import com.synflow.core.transformations.AbstractExpressionTransformer;
  *
  */
 public class VhdlLiteralSizer extends AbstractExpressionTransformer {
+
+	@Override
+	public ExprInt caseExprInt(ExprInt expr) {
+		int size = TypeUtil.getSize(getTarget());
+		expr.setSize(size);
+		return expr;
+	}
 
 }
