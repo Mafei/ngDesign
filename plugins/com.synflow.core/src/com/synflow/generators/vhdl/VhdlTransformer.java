@@ -16,11 +16,13 @@ import org.eclipse.emf.ecore.EObject;
 
 import com.synflow.core.transformations.AbstractTransformer;
 import com.synflow.core.transformations.BodyTransformation;
-import com.synflow.core.transformations.CodeCleaner;
-import com.synflow.core.transformations.ExprExtractor;
+import com.synflow.core.transformations.ExpressionTransformation;
 import com.synflow.core.transformations.ModuleTransformation;
 import com.synflow.core.transformations.ProcedureTransformation;
-import com.synflow.core.transformations.StoreOnceTransformation;
+import com.synflow.core.transformations.impl.CodeCleaner;
+import com.synflow.core.transformations.impl.StoreOnceTransformation;
+import com.synflow.generators.vhdl.transformations.VhdlCastAdder;
+import com.synflow.generators.vhdl.transformations.VhdlLiteralSizer;
 import com.synflow.models.dpn.Actor;
 import com.synflow.models.dpn.DPN;
 import com.synflow.models.dpn.Unit;
@@ -71,7 +73,8 @@ public class VhdlTransformer extends AbstractTransformer {
 				new ProcedureTransformation(new SSAVariableRenamer()),
 
 				// adds cast around access to ports
-				new ProcedureTransformation(new ExprExtractor(new VhdlCastAdder())) };
+				new ExpressionTransformation(new VhdlLiteralSizer()),
+				new ExpressionTransformation(new VhdlCastAdder()) };
 
 		// applies transformations
 		for (ModuleTransformation transformation : transformations) {

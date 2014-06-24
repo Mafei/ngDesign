@@ -8,7 +8,7 @@
  * Contributors:
  *    Matthieu Wipliez - initial API and implementation and/or initial documentation
  *******************************************************************************/
-package com.synflow.generators.vhdl;
+package com.synflow.generators.vhdl.transformations;
 
 import com.synflow.core.transformations.AbstractExpressionTransformer;
 import com.synflow.models.dpn.Port;

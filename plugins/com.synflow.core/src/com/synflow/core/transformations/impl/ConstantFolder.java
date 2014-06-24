@@ -8,7 +8,7 @@
  * Contributors:
  *    Matthieu Wipliez - initial API and implementation and/or initial documentation
  *******************************************************************************/
-package com.synflow.core.transformations;
+package com.synflow.core.transformations.impl;
 
 import static java.math.BigInteger.ONE;
 

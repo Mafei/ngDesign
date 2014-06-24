@@ -48,7 +48,7 @@ import com.synflow.cflow.internal.services.Typer;
 import com.synflow.core.ISynflowConstants;
 import com.synflow.core.transformations.ProcedureTransformation;
 import com.synflow.core.transformations.SchedulerTransformation;
-import com.synflow.core.transformations.StoreOnceTransformation;
+import com.synflow.core.transformations.impl.StoreOnceTransformation;
 import com.synflow.models.dpn.Actor;
 import com.synflow.models.dpn.DPN;
 import com.synflow.models.dpn.Entity;
