@@ -182,6 +182,14 @@ public interface IrPackage extends EPackage {
 		EClass EXPR_INT = eINSTANCE.getExprInt();
 
 		/**
+		 * The meta object literal for the '<em><b>Size</b></em>' attribute feature. <!--
+		 * begin-user-doc --> <!-- end-user-doc -->
+		 * 
+		 * @generated
+		 */
+		EAttribute EXPR_INT__SIZE = eINSTANCE.getExprInt_Size();
+
+		/**
 		 * The meta object literal for the '<em><b>Value</b></em>' attribute feature. <!--
 		 * begin-user-doc --> <!-- end-user-doc -->
 		 * 
@@ -1834,13 +1842,22 @@ public interface IrPackage extends EPackage {
 	int EXPR_FLOAT_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 1;
 
 	/**
+	 * The feature id for the '<em><b>Size</b></em>' attribute. <!-- begin-user-doc --> <!--
+	 * end-user-doc -->
+	 * 
+	 * @generated
+	 * @ordered
+	 */
+	int EXPR_INT__SIZE = EXPRESSION_FEATURE_COUNT + 0;
+
+	/**
 	 * The feature id for the '<em><b>Value</b></em>' attribute. <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
 	 * 
 	 * @generated
 	 * @ordered
 	 */
-	int EXPR_INT__VALUE = EXPRESSION_FEATURE_COUNT + 0;
+	int EXPR_INT__VALUE = EXPRESSION_FEATURE_COUNT + 1;
 
 	/**
 	 * The number of structural features of the '<em>Expr Int</em>' class. <!-- begin-user-doc -->
@@ -1849,7 +1866,7 @@ public interface IrPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int EXPR_INT_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 1;
+	int EXPR_INT_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Value</b></em>' containment reference list. <!--
@@ -2513,6 +2530,17 @@ public interface IrPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getExprInt();
+
+	/**
+	 * Returns the meta object for the attribute '{@link com.synflow.models.ir.ExprInt#getSize
+	 * <em>Size</em>}'. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @return the meta object for the attribute '<em>Size</em>'.
+	 * @see com.synflow.models.ir.ExprInt#getSize()
+	 * @see #getExprInt()
+	 * @generated
+	 */
+	EAttribute getExprInt_Size();
 
 	/**
 	 * Returns the meta object for the attribute '{@link com.synflow.models.ir.ExprInt#getValue

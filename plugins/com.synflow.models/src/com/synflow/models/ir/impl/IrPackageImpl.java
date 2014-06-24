@@ -1250,9 +1250,18 @@ public class IrPackageImpl extends EPackageImpl implements IrPackage {
 	 * 
 	 * @generated
 	 */
+	public EAttribute getExprInt_Size() {
+		return (EAttribute) exprIntEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 */
 	@Override
 	public EAttribute getExprInt_Value() {
-		return (EAttribute) exprIntEClass.getEStructuralFeatures().get(0);
+		return (EAttribute) exprIntEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -1528,6 +1537,7 @@ public class IrPackageImpl extends EPackageImpl implements IrPackage {
 		createEAttribute(exprFloatEClass, EXPR_FLOAT__VALUE);
 
 		exprIntEClass = createEClass(EXPR_INT);
+		createEAttribute(exprIntEClass, EXPR_INT__SIZE);
 		createEAttribute(exprIntEClass, EXPR_INT__VALUE);
 
 		exprListEClass = createEClass(EXPR_LIST);
@@ -1830,6 +1840,9 @@ public class IrPackageImpl extends EPackageImpl implements IrPackage {
 
 		initEClass(exprIntEClass, ExprInt.class, "ExprInt", !IS_ABSTRACT, !IS_INTERFACE,
 				IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getExprInt_Size(), ecorePackage.getEInt(), "size", null, 0, 1,
+				ExprInt.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID,
+				IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getExprInt_Value(), ecorePackage.getEBigInteger(), "value", null, 0, 1,
 				ExprInt.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID,
 				IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

@@ -47,6 +47,7 @@ import java.math.BigInteger;
  * <p>
  * The following features are supported:
  * <ul>
+ * <li>{@link com.synflow.models.ir.ExprInt#getSize <em>Size</em>}</li>
  * <li>{@link com.synflow.models.ir.ExprInt#getValue <em>Value</em>}</li>
  * </ul>
  * </p>
@@ -58,12 +59,39 @@ import java.math.BigInteger;
 public interface ExprInt extends Expression {
 
 	/**
+	 * Returns the value of the '<em><b>Size</b></em>' attribute. <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Size</em>' attribute isn't clear, there really should be more of a
+	 * description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * 
+	 * @return the value of the '<em>Size</em>' attribute.
+	 * @see #setSize(int)
+	 * @see com.synflow.models.ir.IrPackage#getExprInt_Size()
+	 * @model
+	 * @generated
+	 */
+	int getSize();
+
+	/**
 	 * Returns the value of this integer expression.
 	 * 
 	 * @return the value of this integer expression
 	 * @model
 	 */
 	BigInteger getValue();
+
+	/**
+	 * Sets the value of the '{@link com.synflow.models.ir.ExprInt#getSize <em>Size</em>}'
+	 * attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @param value
+	 *            the new value of the '<em>Size</em>' attribute.
+	 * @see #getSize()
+	 * @generated
+	 */
+	void setSize(int value);
 
 	void setValue(BigInteger value);
 
