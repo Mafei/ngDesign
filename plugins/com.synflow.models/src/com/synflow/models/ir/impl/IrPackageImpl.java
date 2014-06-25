@@ -1193,7 +1193,7 @@ public class IrPackageImpl extends EPackageImpl implements IrPackage {
 	 * 
 	 * @generated
 	 */
-	public EAttribute getExprCast_ToSigned() {
+	public EAttribute getExprCast_TargetTypeName() {
 		return (EAttribute) exprCastEClass.getEStructuralFeatures().get(2);
 	}
 
@@ -1202,8 +1202,17 @@ public class IrPackageImpl extends EPackageImpl implements IrPackage {
 	 * 
 	 * @generated
 	 */
-	public EAttribute getExprCast_ToUnsigned() {
+	public EAttribute getExprCast_ToSigned() {
 		return (EAttribute) exprCastEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 */
+	public EAttribute getExprCast_ToUnsigned() {
+		return (EAttribute) exprCastEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -1530,6 +1539,7 @@ public class IrPackageImpl extends EPackageImpl implements IrPackage {
 		exprCastEClass = createEClass(EXPR_CAST);
 		createEAttribute(exprCastEClass, EXPR_CAST__CASTED_SIZE);
 		createEReference(exprCastEClass, EXPR_CAST__EXPR);
+		createEAttribute(exprCastEClass, EXPR_CAST__TARGET_TYPE_NAME);
 		createEAttribute(exprCastEClass, EXPR_CAST__TO_SIGNED);
 		createEAttribute(exprCastEClass, EXPR_CAST__TO_UNSIGNED);
 
@@ -1825,6 +1835,9 @@ public class IrPackageImpl extends EPackageImpl implements IrPackage {
 		initEReference(getExprCast_Expr(), this.getExpression(), null, "expr", null, 0, 1,
 				ExprCast.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE,
 				!IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getExprCast_TargetTypeName(), ecorePackage.getEString(), "targetTypeName",
+				null, 0, 1, ExprCast.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
+				!IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getExprCast_ToSigned(), ecorePackage.getEBoolean(), "toSigned", null, 0, 1,
 				ExprCast.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID,
 				IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

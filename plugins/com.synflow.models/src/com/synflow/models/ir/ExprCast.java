@@ -19,6 +19,7 @@ package com.synflow.models.ir;
  * <ul>
  * <li>{@link com.synflow.models.ir.ExprCast#getCastedSize <em>Casted Size</em>}</li>
  * <li>{@link com.synflow.models.ir.ExprCast#getExpr <em>Expr</em>}</li>
+ * <li>{@link com.synflow.models.ir.ExprCast#getTargetTypeName <em>Target Type Name</em>}</li>
  * <li>{@link com.synflow.models.ir.ExprCast#isToSigned <em>To Signed</em>}</li>
  * <li>{@link com.synflow.models.ir.ExprCast#isToUnsigned <em>To Unsigned</em>}</li>
  * </ul>
@@ -112,6 +113,34 @@ public interface ExprCast extends Expression {
 	 * @generated
 	 */
 	void setExpr(Expression value);
+
+	/**
+	 * Returns the value of the '<em><b>Target Type Name</b></em>' attribute. <!-- begin-user-doc
+	 * -->
+	 * <p>
+	 * If the meaning of the '<em>Target Type Name</em>' attribute isn't clear, there really should
+	 * be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * 
+	 * @return the value of the '<em>Target Type Name</em>' attribute.
+	 * @see #setTargetTypeName(String)
+	 * @see com.synflow.models.ir.IrPackage#getExprCast_TargetTypeName()
+	 * @model
+	 * @generated
+	 */
+	String getTargetTypeName();
+
+	/**
+	 * Sets the value of the '{@link com.synflow.models.ir.ExprCast#getTargetTypeName
+	 * <em>Target Type Name</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @param value
+	 *            the new value of the '<em>Target Type Name</em>' attribute.
+	 * @see #getTargetTypeName()
+	 * @generated
+	 */
+	void setTargetTypeName(String value);
 
 	/**
 	 * Sets the value of the '{@link com.synflow.models.ir.ExprCast#isToSigned <em>To Signed</em>}'

@@ -130,6 +130,14 @@ public interface IrPackage extends EPackage {
 		EReference EXPR_CAST__EXPR = eINSTANCE.getExprCast_Expr();
 
 		/**
+		 * The meta object literal for the '<em><b>Target Type Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc --> <!-- end-user-doc -->
+		 * 
+		 * @generated
+		 */
+		EAttribute EXPR_CAST__TARGET_TYPE_NAME = eINSTANCE.getExprCast_TargetTypeName();
+
+		/**
 		 * The meta object literal for the '<em><b>To Signed</b></em>' attribute feature. <!--
 		 * begin-user-doc --> <!-- end-user-doc -->
 		 * 
@@ -1797,13 +1805,22 @@ public interface IrPackage extends EPackage {
 	int EXPR_CAST__EXPR = EXPRESSION_FEATURE_COUNT + 1;
 
 	/**
+	 * The feature id for the '<em><b>Target Type Name</b></em>' attribute. <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 * @ordered
+	 */
+	int EXPR_CAST__TARGET_TYPE_NAME = EXPRESSION_FEATURE_COUNT + 2;
+
+	/**
 	 * The feature id for the '<em><b>To Signed</b></em>' attribute. <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
 	 * 
 	 * @generated
 	 * @ordered
 	 */
-	int EXPR_CAST__TO_SIGNED = EXPRESSION_FEATURE_COUNT + 2;
+	int EXPR_CAST__TO_SIGNED = EXPRESSION_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>To Unsigned</b></em>' attribute. <!-- begin-user-doc --> <!--
@@ -1812,7 +1829,7 @@ public interface IrPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int EXPR_CAST__TO_UNSIGNED = EXPRESSION_FEATURE_COUNT + 3;
+	int EXPR_CAST__TO_UNSIGNED = EXPRESSION_FEATURE_COUNT + 4;
 
 	/**
 	 * The number of structural features of the '<em>Expr Cast</em>' class. <!-- begin-user-doc -->
@@ -1821,7 +1838,7 @@ public interface IrPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int EXPR_CAST_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 4;
+	int EXPR_CAST_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 5;
 
 	/**
 	 * The feature id for the '<em><b>Value</b></em>' attribute. <!-- begin-user-doc --> <!--
@@ -2454,6 +2471,18 @@ public interface IrPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getExprCast_Expr();
+
+	/**
+	 * Returns the meta object for the attribute '
+	 * {@link com.synflow.models.ir.ExprCast#getTargetTypeName <em>Target Type Name</em>}'. <!--
+	 * begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @return the meta object for the attribute '<em>Target Type Name</em>'.
+	 * @see com.synflow.models.ir.ExprCast#getTargetTypeName()
+	 * @see #getExprCast()
+	 * @generated
+	 */
+	EAttribute getExprCast_TargetTypeName();
 
 	/**
 	 * Returns the meta object for the attribute '{@link com.synflow.models.ir.ExprCast#isToSigned

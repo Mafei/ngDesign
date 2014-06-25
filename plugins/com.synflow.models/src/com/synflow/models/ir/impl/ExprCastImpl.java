@@ -24,6 +24,7 @@ import com.synflow.models.ir.IrPackage;
  * <ul>
  * <li>{@link com.synflow.models.ir.impl.ExprCastImpl#getCastedSize <em>Casted Size</em>}</li>
  * <li>{@link com.synflow.models.ir.impl.ExprCastImpl#getExpr <em>Expr</em>}</li>
+ * <li>{@link com.synflow.models.ir.impl.ExprCastImpl#getTargetTypeName <em>Target Type Name</em>}</li>
  * <li>{@link com.synflow.models.ir.impl.ExprCastImpl#isToSigned <em>To Signed</em>}</li>
  * <li>{@link com.synflow.models.ir.impl.ExprCastImpl#isToUnsigned <em>To Unsigned</em>}</li>
  * </ul>
@@ -62,6 +63,26 @@ public class ExprCastImpl extends ExpressionImpl implements ExprCast {
 	 * @ordered
 	 */
 	protected Expression expr;
+
+	/**
+	 * The default value of the '{@link #getTargetTypeName() <em>Target Type Name</em>}' attribute.
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @see #getTargetTypeName()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String TARGET_TYPE_NAME_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getTargetTypeName() <em>Target Type Name</em>}' attribute.
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @see #getTargetTypeName()
+	 * @generated
+	 * @ordered
+	 */
+	protected String targetTypeName = TARGET_TYPE_NAME_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #isToSigned() <em>To Signed</em>}' attribute. <!--
@@ -143,6 +164,8 @@ public class ExprCastImpl extends ExpressionImpl implements ExprCast {
 			return getCastedSize();
 		case IrPackage.EXPR_CAST__EXPR:
 			return getExpr();
+		case IrPackage.EXPR_CAST__TARGET_TYPE_NAME:
+			return getTargetTypeName();
 		case IrPackage.EXPR_CAST__TO_SIGNED:
 			return isToSigned();
 		case IrPackage.EXPR_CAST__TO_UNSIGNED:
@@ -178,6 +201,9 @@ public class ExprCastImpl extends ExpressionImpl implements ExprCast {
 			return castedSize != CASTED_SIZE_EDEFAULT;
 		case IrPackage.EXPR_CAST__EXPR:
 			return expr != null;
+		case IrPackage.EXPR_CAST__TARGET_TYPE_NAME:
+			return TARGET_TYPE_NAME_EDEFAULT == null ? targetTypeName != null
+					: !TARGET_TYPE_NAME_EDEFAULT.equals(targetTypeName);
 		case IrPackage.EXPR_CAST__TO_SIGNED:
 			return toSigned != TO_SIGNED_EDEFAULT;
 		case IrPackage.EXPR_CAST__TO_UNSIGNED:
@@ -199,6 +225,9 @@ public class ExprCastImpl extends ExpressionImpl implements ExprCast {
 			return;
 		case IrPackage.EXPR_CAST__EXPR:
 			setExpr((Expression) newValue);
+			return;
+		case IrPackage.EXPR_CAST__TARGET_TYPE_NAME:
+			setTargetTypeName((String) newValue);
 			return;
 		case IrPackage.EXPR_CAST__TO_SIGNED:
 			setToSigned((Boolean) newValue);
@@ -233,6 +262,9 @@ public class ExprCastImpl extends ExpressionImpl implements ExprCast {
 			return;
 		case IrPackage.EXPR_CAST__EXPR:
 			setExpr((Expression) null);
+			return;
+		case IrPackage.EXPR_CAST__TARGET_TYPE_NAME:
+			setTargetTypeName(TARGET_TYPE_NAME_EDEFAULT);
 			return;
 		case IrPackage.EXPR_CAST__TO_SIGNED:
 			setToSigned(TO_SIGNED_EDEFAULT);
@@ -325,6 +357,28 @@ public class ExprCastImpl extends ExpressionImpl implements ExprCast {
 	 * 
 	 * @generated
 	 */
+	public String getTargetTypeName() {
+		return targetTypeName;
+	}
+
+	/**
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 */
+	public void setTargetTypeName(String newTargetTypeName) {
+		String oldTargetTypeName = targetTypeName;
+		targetTypeName = newTargetTypeName;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET,
+					IrPackage.EXPR_CAST__TARGET_TYPE_NAME, oldTargetTypeName, targetTypeName));
+	}
+
+	/**
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 */
 	public void setToSigned(boolean newToSigned) {
 		boolean oldToSigned = toSigned;
 		toSigned = newToSigned;
@@ -359,6 +413,8 @@ public class ExprCastImpl extends ExpressionImpl implements ExprCast {
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (castedSize: ");
 		result.append(castedSize);
+		result.append(", targetTypeName: ");
+		result.append(targetTypeName);
 		result.append(", toSigned: ");
 		result.append(toSigned);
 		result.append(", toUnsigned: ");
