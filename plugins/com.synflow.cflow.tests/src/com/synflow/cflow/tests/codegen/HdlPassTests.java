@@ -127,6 +127,11 @@ public abstract class HdlPassTests extends CodegenPassTests {
 		return files;
 	}
 
+	protected String getLibraryPath() {
+		String name = getCodeGenerator().getName().toLowerCase();
+		return "../../fragments/com.synflow.libraries/lib/" + name + "/src";
+	}
+
 	protected abstract int runCompileCommand(File sim, String string) throws Exception;
 
 	/**
@@ -188,8 +193,7 @@ public abstract class HdlPassTests extends CodegenPassTests {
 		executeCommand(sim, "vlib", "work").waitFor();
 
 		// compile libraries
-		String name = getCodeGenerator().getName().toLowerCase();
-		String path = "../../fragments/com.synflow.libraries/lib/" + name + "/src";
+		String path = getLibraryPath();
 		String pathLib = new File(path).getCanonicalPath();
 		String fileExt = getCodeGenerator().getFileExtension();
 		for (String lib : getLibraryFiles()) {
