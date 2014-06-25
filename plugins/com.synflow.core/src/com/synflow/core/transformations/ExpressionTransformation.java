@@ -160,7 +160,7 @@ public class ExpressionTransformation extends ModuleTransformation {
 				if (res == expr) {
 					i++;
 				} else {
-					indexes.set(i, res);
+					indexes.add(i, res);
 					i++;
 				}
 			}

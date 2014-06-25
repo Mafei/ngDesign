@@ -17,6 +17,7 @@ import com.synflow.models.ir.Expression;
 import com.synflow.models.ir.Procedure;
 import com.synflow.models.ir.Type;
 import com.synflow.models.ir.util.IrSwitch;
+import com.synflow.models.ir.util.TypeUtil;
 
 /**
  * This interface defines an IR visitor that transforms expressions to match the type system of the
@@ -33,14 +34,16 @@ public abstract class AbstractExpressionTransformer extends IrSwitch<Expression>
 
 	@Override
 	public Expression caseExprBinary(ExprBinary expr) {
-		expr.setE1(doSwitch(expr.getE1()));
-		expr.setE2(doSwitch(expr.getE2()));
+		Type parent = TypeUtil.getType(expr);
+		expr.setE1(transform(parent, expr.getE1()));
+		expr.setE2(transform(parent, expr.getE2()));
 		return expr;
 	}
 
 	@Override
 	public Expression caseExprCast(ExprCast expr) {
-		expr.setExpr(doSwitch(expr.getExpr()));
+		Type parent = TypeUtil.getType(expr);
+		expr.setExpr(transform(parent, expr.getExpr()));
 		return expr;
 	}
 
@@ -51,7 +54,8 @@ public abstract class AbstractExpressionTransformer extends IrSwitch<Expression>
 
 	@Override
 	public Expression caseExprUnary(ExprUnary expr) {
-		expr.setExpr(doSwitch(expr.getExpr()));
+		Type parent = TypeUtil.getType(expr);
+		expr.setExpr(transform(parent, expr.getExpr()));
 		return expr;
 	}
 

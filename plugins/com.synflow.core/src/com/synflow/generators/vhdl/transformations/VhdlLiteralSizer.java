@@ -10,8 +10,15 @@
  *******************************************************************************/
 package com.synflow.generators.vhdl.transformations;
 
+import static com.synflow.models.ir.util.TypeUtil.getLargest;
+import static com.synflow.models.ir.util.TypeUtil.getType;
+
 import com.synflow.core.transformations.AbstractExpressionTransformer;
+import com.synflow.models.ir.ExprBinary;
 import com.synflow.models.ir.ExprInt;
+import com.synflow.models.ir.Expression;
+import com.synflow.models.ir.OpBinary;
+import com.synflow.models.ir.Type;
 import com.synflow.models.ir.util.TypeUtil;
 
 /**
@@ -22,6 +29,24 @@ import com.synflow.models.ir.util.TypeUtil;
  *
  */
 public class VhdlLiteralSizer extends AbstractExpressionTransformer {
+
+	@Override
+	public Expression caseExprBinary(ExprBinary expr) {
+		Expression e1 = expr.getE1();
+		Expression e2 = expr.getE2();
+
+		Type type;
+		OpBinary op = expr.getOp();
+		if (op.isComparison() || op == OpBinary.TIMES) {
+			type = getLargest(getType(e1), getType(e2));
+		} else {
+			type = getType(expr);
+		}
+
+		expr.setE1(transform(type, e1));
+		expr.setE2(transform(type, e2));
+		return expr;
+	}
 
 	@Override
 	public ExprInt caseExprInt(ExprInt expr) {
