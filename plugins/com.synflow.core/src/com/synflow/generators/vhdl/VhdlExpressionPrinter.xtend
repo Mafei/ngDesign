@@ -129,7 +129,7 @@ class VhdlExpressionPrinter extends ExpressionPrinter {
 		} else if (expr.toUnsigned) {
 			'''unsigned(«doSwitch(expr.expr)»)'''
 		} else {
-			doSwitch(expr.expr)
+			'''resize(«doSwitch(expr.expr)», «expr.castedSize»)'''
 		}
 	}
 

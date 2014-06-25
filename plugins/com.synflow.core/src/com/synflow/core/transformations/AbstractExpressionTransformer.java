@@ -42,19 +42,19 @@ public abstract class AbstractExpressionTransformer extends IrSwitch<Expression>
 
 	@Override
 	public Expression caseExprCast(ExprCast expr) {
-		Type parent = TypeUtil.getType(expr);
+		Type parent = TypeUtil.getType(expr.getExpr());
 		expr.setExpr(transform(parent, expr.getExpr()));
 		return expr;
 	}
 
 	@Override
-	public final Expression caseExpression(Expression expr) {
+	public Expression caseExpression(Expression expr) {
 		return expr;
 	}
 
 	@Override
 	public Expression caseExprUnary(ExprUnary expr) {
-		Type parent = TypeUtil.getType(expr);
+		Type parent = TypeUtil.getType(expr.getExpr());
 		expr.setExpr(transform(parent, expr.getExpr()));
 		return expr;
 	}
@@ -72,9 +72,10 @@ public abstract class AbstractExpressionTransformer extends IrSwitch<Expression>
 	}
 
 	public Expression transform(Type target, Expression expression) {
+		Type oldTarget = this.target;
 		this.target = target;
 		Expression result = doSwitch(expression);
-		this.target = null;
+		this.target = oldTarget;
 		return result;
 	}
 
