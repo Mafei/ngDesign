@@ -40,16 +40,6 @@ public class ExprIntImpl extends ExpressionImpl implements ExprInt {
 	protected static final int SIZE_EDEFAULT = 0;
 
 	/**
-	 * The default value of the '{@link #getValue() <em>Value</em>}' attribute. <!-- begin-user-doc
-	 * --> <!-- end-user-doc -->
-	 * 
-	 * @see #getValue()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final BigInteger VALUE_EDEFAULT = null;
-
-	/**
 	 * The cached value of the '{@link #getSize() <em>Size</em>}' attribute. <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * 
@@ -58,6 +48,16 @@ public class ExprIntImpl extends ExpressionImpl implements ExprInt {
 	 * @ordered
 	 */
 	protected int size = SIZE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getValue() <em>Value</em>}' attribute. <!-- begin-user-doc
+	 * --> <!-- end-user-doc -->
+	 * 
+	 * @see #getValue()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final BigInteger VALUE_EDEFAULT = null;
 
 	/**
 	 * The cached value of the '{@link #getValue() <em>Value</em>}' attribute. <!-- begin-user-doc

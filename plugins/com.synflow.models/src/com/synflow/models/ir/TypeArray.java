@@ -37,7 +37,7 @@ public interface TypeArray extends Type {
 	 * 
 	 * @return the value of the '<em>Dimensions</em>' attribute list.
 	 * @see com.synflow.models.ir.IrPackage#getTypeArray_Dimensions()
-	 * @model
+	 * @model unique="false"
 	 * @generated
 	 */
 	EList<Integer> getDimensions();

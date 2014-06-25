@@ -13,7 +13,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
+import org.eclipse.emf.ecore.util.EDataTypeEList;
 import com.synflow.models.ir.IrPackage;
 import com.synflow.models.ir.Type;
 import com.synflow.models.ir.TypeArray;
@@ -166,7 +166,7 @@ public class TypeArrayImpl extends TypeImpl implements TypeArray {
 	 */
 	public EList<Integer> getDimensions() {
 		if (dimensions == null) {
-			dimensions = new EDataTypeUniqueEList<Integer>(Integer.class, this,
+			dimensions = new EDataTypeEList<Integer>(Integer.class, this,
 					IrPackage.TYPE_ARRAY__DIMENSIONS);
 		}
 		return dimensions;

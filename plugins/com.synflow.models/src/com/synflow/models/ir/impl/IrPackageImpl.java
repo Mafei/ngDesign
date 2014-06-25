@@ -1893,7 +1893,7 @@ public class IrPackageImpl extends EPackageImpl implements IrPackage {
 				IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getTypeArray_Dimensions(), ecorePackage.getEInt(), "dimensions", null, 0,
 				-1, TypeArray.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE,
-				!IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+				!IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getTypeArray_ElementType(), this.getType(), null, "elementType", null, 0, 1,
 				TypeArray.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE,
 				!IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
