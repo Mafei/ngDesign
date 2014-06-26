@@ -136,6 +136,17 @@ public interface IrFactory extends EFactory {
 	 * Returns a new object of class '<em>Expr Cast</em>'. <!-- begin-user-doc --> Creates a cast.
 	 * Type's size is copied.<!-- end-user-doc -->
 	 * 
+	 * @param typeName
+	 * @param expr
+	 * 
+	 * @return a new object of class '<em>Expr Cast</em>'.
+	 */
+	ExprCast createExprCast(String typeName, Expression expr);
+
+	/**
+	 * Returns a new object of class '<em>Expr Cast</em>'. <!-- begin-user-doc --> Creates a cast.
+	 * Type's size is copied.<!-- end-user-doc -->
+	 * 
 	 * @param targetType
 	 * @param sourceType
 	 * @param expr

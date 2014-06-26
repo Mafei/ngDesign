@@ -91,6 +91,10 @@ public class ExpressionTransformation extends ModuleTransformation {
 
 		@Override
 		public Void caseInstCall(InstCall call) {
+			if (call.isAssert() || call.isPrint()) {
+				return DONE;
+			}
+
 			List<Var> parameters = call.getProcedure().getParameters();
 			Iterable<Type> types = Iterables.transform(parameters, new Function<Var, Type>() {
 				@Override

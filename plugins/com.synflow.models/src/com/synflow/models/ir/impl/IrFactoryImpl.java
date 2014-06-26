@@ -10,12 +10,14 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collection;
 import java.util.List;
+
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
+
 import com.synflow.models.ir.BlockBasic;
 import com.synflow.models.ir.BlockIf;
 import com.synflow.models.ir.BlockWhile;
@@ -320,6 +322,14 @@ public class IrFactoryImpl extends EFactoryImpl implements IrFactory {
 		ExprCastImpl exprCast = new ExprCastImpl();
 		exprCast.setToUnsigned(toUnsigned);
 		exprCast.setCastedSize(castedSize);
+		exprCast.setExpr(expr);
+		return exprCast;
+	}
+
+	@Override
+	public ExprCast createExprCast(String typeName, Expression expr) {
+		ExprCastImpl exprCast = new ExprCastImpl();
+		exprCast.setTargetTypeName(typeName);
 		exprCast.setExpr(expr);
 		return exprCast;
 	}
