@@ -54,8 +54,6 @@ class VhdlExpressionPrinter extends ExpressionPrinter {
 		}
 	}
 	
-	private boolean useBoolean
-	
 	protected Map<Var, String> varMap
 
 	override caseExprBinary(ExprBinary expr) {
@@ -100,27 +98,12 @@ class VhdlExpressionPrinter extends ExpressionPrinter {
 				first = '''unsigned'(«first»)'''
 			}
 
-			val seq = '''(«first» «toString(op)» «second»)'''
-
-			// update target and signed
-			if (op.comparison) {
-				if (useBoolean) {
-					'''«seq»'''
-				} else {
-					'''to_std_logic(«seq»)'''
-				}
-			} else {
-				seq
-			}
+			'''(«first» «toString(op)» «second»)'''
 		}
 	}
 
 	override caseExprBool(ExprBool expr) {
-		if (useBoolean) {
-			expr.value.toString
-		} else {
-			if (expr.value) "'1'" else "'0'"
-		}
+		if (expr.value) "'1'" else "'0'"
 	}
 
 	override caseExprCast(ExprCast expr) {
@@ -128,6 +111,8 @@ class VhdlExpressionPrinter extends ExpressionPrinter {
 			'''signed(«doSwitch(expr.expr)»)'''
 		} else if (expr.toUnsigned) {
 			'''unsigned(«doSwitch(expr.expr)»)'''
+		} else if (expr.targetTypeName != null) {
+			'''«expr.targetTypeName»(«doSwitch(expr.expr)»)'''
 		} else {
 			'''resize(«doSwitch(expr.expr)», «expr.castedSize»)'''
 		}
@@ -172,12 +157,7 @@ class VhdlExpressionPrinter extends ExpressionPrinter {
 
 	override caseExprVar(ExprVar expr) {
 		val variable = expr.use.variable
-		val name = getName(variable)
-		if (variable.type.bool && useBoolean) {
-			'''to_boolean(«name»)'''
-		} else {
-			name
-		}
+		getName(variable)
 	}
 
 	/**

@@ -10,12 +10,17 @@
  *******************************************************************************/
 package com.synflow.generators.vhdl.transformations;
 
+import org.eclipse.emf.ecore.EObject;
+
 import com.synflow.core.transformations.AbstractExpressionTransformer;
 import com.synflow.models.dpn.Port;
+import com.synflow.models.ir.BlockIf;
+import com.synflow.models.ir.BlockWhile;
 import com.synflow.models.ir.ExprCast;
 import com.synflow.models.ir.ExprVar;
 import com.synflow.models.ir.Expression;
 import com.synflow.models.ir.IrFactory;
+import com.synflow.models.ir.Type;
 import com.synflow.models.ir.TypeInt;
 import com.synflow.models.ir.Var;
 
@@ -28,24 +33,45 @@ import com.synflow.models.ir.Var;
 public class VhdlCastAdder extends AbstractExpressionTransformer {
 
 	@Override
+	public Expression caseExpression(Expression expr) {
+		if (expr.isExprBool() || expr.isExprVar()) {
+			return expr;
+		}
+
+		if (getTarget().isBool()) {
+			EObject cter = expr.eContainer();
+			if (cter instanceof Expression || cter instanceof BlockIf || cter instanceof BlockWhile) {
+				return expr;
+			}
+
+			ExprCast cast = IrFactory.eINSTANCE.createExprCast();
+			cast.setTargetTypeName("to_std_logic");
+			cast.setExpr(expr);
+			return cast;
+		}
+		return expr;
+	}
+
+	@Override
 	public Expression caseExprVar(ExprVar expr) {
 		Var variable = expr.getUse().getVariable();
-		if (variable.getType().isInt()) {
-			TypeInt type = (TypeInt) variable.getType();
+		Type type = variable.getType();
+		if (type.isInt()) {
+			TypeInt typeInt = (TypeInt) type;
 			if (variable instanceof Port) {
 				ExprCast cast = IrFactory.eINSTANCE.createExprCast();
-				if (type.isSigned()) {
+				if (typeInt.isSigned()) {
 					cast.setToSigned(true);
 				} else {
 					cast.setToUnsigned(true);
 				}
 
-				cast.setCastedSize(type.getSize());
+				cast.setCastedSize(typeInt.getSize());
 				cast.setExpr(expr);
 				return cast;
 			}
 		}
-		return expr;
+		return caseExpression(expr);
 	}
 
 }

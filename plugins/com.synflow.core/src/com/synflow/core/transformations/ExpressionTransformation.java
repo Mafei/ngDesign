@@ -125,6 +125,7 @@ public class ExpressionTransformation extends ModuleTransformation {
 			Type type = store.getTarget().getVariable().getType();
 			if (!store.getIndexes().isEmpty()) {
 				visitIndexes(type, store.getIndexes());
+				type = ((TypeArray) type).getElementType();
 			}
 
 			store.setValue(visitExpr(type, store.getValue()));
