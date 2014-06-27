@@ -37,6 +37,8 @@ public interface IrFactory extends EFactory {
 	 */
 	void addLocal(Procedure procedure, Var variable);
 
+	Expression castToUnsigned(int amount, Expression index);
+
 	/**
 	 * Returns a new object of class '<em>Block Basic</em>'. <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
@@ -119,18 +121,6 @@ public interface IrFactory extends EFactory {
 	 * @generated
 	 */
 	ExprCast createExprCast();
-
-	/**
-	 * Returns a new object of class '<em>Expr Cast</em>'. <!-- begin-user-doc --> Creates a cast.
-	 * Type's size is copied.<!-- end-user-doc -->
-	 * 
-	 * @param toUnsigned
-	 * @param castedSize
-	 * @param expr
-	 * 
-	 * @return a new object of class '<em>Expr Cast</em>'.
-	 */
-	ExprCast createExprCast(boolean toUnsigned, int castedSize, Expression expr);
 
 	/**
 	 * Returns a new object of class '<em>Expr Cast</em>'. <!-- begin-user-doc --> Creates a cast.

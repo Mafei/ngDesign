@@ -39,7 +39,6 @@ import com.synflow.cflow.services.Evaluator;
 import com.synflow.models.dpn.Entity;
 import com.synflow.models.ir.Block;
 import com.synflow.models.ir.BlockIf;
-import com.synflow.models.ir.ExprCast;
 import com.synflow.models.ir.Expression;
 import com.synflow.models.ir.InstLoad;
 import com.synflow.models.ir.InstStore;
@@ -226,8 +225,7 @@ public class IrBuilder {
 			for (Expression index : expressions) {
 				int size = itD.next();
 				int amount = TypeUtil.getSize(size - 1);
-				ExprCast cast = eINSTANCE.createExprCast(true, amount, index);
-				casted.add(cast);
+				casted.add(eINSTANCE.castToUnsigned(amount, index));
 			}
 		}
 

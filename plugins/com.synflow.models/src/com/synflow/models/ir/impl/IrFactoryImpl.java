@@ -116,6 +116,20 @@ public class IrFactoryImpl extends EFactoryImpl implements IrFactory {
 		procedure.getLocals().add(variable);
 	}
 
+	@Override
+	public Expression castToUnsigned(int castedSize, Expression expr) {
+		if (expr.isExprInt()) {
+			((ExprInt) expr).setSize(castedSize);
+			return expr;
+		} else {
+			ExprCastImpl exprCast = new ExprCastImpl();
+			exprCast.setToUnsigned(true);
+			exprCast.setCastedSize(castedSize);
+			exprCast.setExpr(expr);
+			return exprCast;
+		}
+	}
+
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * 
@@ -314,15 +328,6 @@ public class IrFactoryImpl extends EFactoryImpl implements IrFactory {
 	 */
 	public ExprCast createExprCast() {
 		ExprCastImpl exprCast = new ExprCastImpl();
-		return exprCast;
-	}
-
-	@Override
-	public ExprCast createExprCast(boolean toUnsigned, int castedSize, Expression expr) {
-		ExprCastImpl exprCast = new ExprCastImpl();
-		exprCast.setToUnsigned(toUnsigned);
-		exprCast.setCastedSize(castedSize);
-		exprCast.setExpr(expr);
 		return exprCast;
 	}
 
