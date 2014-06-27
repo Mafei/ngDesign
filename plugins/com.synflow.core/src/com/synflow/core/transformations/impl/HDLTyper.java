@@ -55,9 +55,9 @@ public class HDLTyper extends AbstractExpressionTransformer {
 
 				if (ti1.isSigned() ^ ti2.isSigned()) {
 					if (ti2.isSigned()) {
-						expr.setE1(eINSTANCE.createExprCast(tiCommon, ti1, expr.getE1()));
+						expr.setE1(castIfNeeded(tiCommon, ti1, expr.getE1()));
 					} else {
-						expr.setE2(eINSTANCE.createExprCast(tiCommon, ti2, expr.getE2()));
+						expr.setE2(castIfNeeded(tiCommon, ti2, expr.getE2()));
 					}
 				}
 			}
@@ -86,6 +86,10 @@ public class HDLTyper extends AbstractExpressionTransformer {
 
 	@Override
 	public Expression caseExpression(Expression expr) {
+		if (expr.isExprList()) {
+			return expr;
+		}
+
 		Type type = TypeUtil.getType(expr);
 		return castIfNeeded(getTarget(), type, expr);
 	}

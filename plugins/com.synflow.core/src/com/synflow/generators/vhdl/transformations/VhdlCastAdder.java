@@ -13,6 +13,7 @@ package com.synflow.generators.vhdl.transformations;
 import static com.synflow.models.ir.IrFactory.eINSTANCE;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
 
 import com.synflow.core.transformations.AbstractExpressionTransformer;
 import com.synflow.models.dpn.Port;
@@ -20,9 +21,11 @@ import com.synflow.models.ir.BlockIf;
 import com.synflow.models.ir.BlockWhile;
 import com.synflow.models.ir.ExprBinary;
 import com.synflow.models.ir.ExprCast;
+import com.synflow.models.ir.ExprInt;
 import com.synflow.models.ir.ExprVar;
 import com.synflow.models.ir.Expression;
 import com.synflow.models.ir.IrFactory;
+import com.synflow.models.ir.IrPackage.Literals;
 import com.synflow.models.ir.Type;
 import com.synflow.models.ir.TypeInt;
 import com.synflow.models.ir.Var;
@@ -57,6 +60,17 @@ public class VhdlCastAdder extends AbstractExpressionTransformer {
 
 		if (booleanExpected) {
 			return eINSTANCE.createExprCast("to_boolean", expr);
+		}
+
+		return expr;
+	}
+
+	@Override
+	public Expression caseExprInt(ExprInt expr) {
+		EStructuralFeature feature = expr.eContainingFeature();
+		if (feature == Literals.INST_LOAD__INDEXES || feature == Literals.INST_STORE__INDEXES) {
+			// force conversion to unsigned
+			return eINSTANCE.createExprCast("unsigned'", expr);
 		}
 
 		return expr;
