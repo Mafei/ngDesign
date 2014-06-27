@@ -24,6 +24,7 @@ import com.synflow.models.ir.ExprCast;
 import com.synflow.models.ir.ExprInt;
 import com.synflow.models.ir.ExprVar;
 import com.synflow.models.ir.Expression;
+import com.synflow.models.ir.InstCall;
 import com.synflow.models.ir.IrFactory;
 import com.synflow.models.ir.IrPackage.Literals;
 import com.synflow.models.ir.Type;
@@ -46,7 +47,8 @@ public class VhdlCastAdder extends AbstractExpressionTransformer {
 		}
 
 		EObject cter = expr.eContainer();
-		boolean booleanExpected = cter instanceof BlockIf || cter instanceof BlockWhile;
+		boolean booleanExpected = cter instanceof BlockIf || cter instanceof BlockWhile
+				|| (cter instanceof InstCall && ((InstCall) cter).isAssert());
 		if (expr instanceof ExprBinary) {
 			ExprBinary exprBin = (ExprBinary) expr;
 			if (exprBin.getOp().isComparison()) {
