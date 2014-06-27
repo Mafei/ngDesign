@@ -12,10 +12,10 @@
 package com.synflow.generators.vhdl
 
 import com.synflow.models.OrccRuntimeException
+import com.synflow.models.dpn.Port
 import com.synflow.models.ir.BlockBasic
 import com.synflow.models.ir.BlockIf
 import com.synflow.models.ir.BlockWhile
-import com.synflow.models.ir.ExprInt
 import com.synflow.models.ir.Expression
 import com.synflow.models.ir.InstAssign
 import com.synflow.models.ir.InstCall
@@ -34,11 +34,16 @@ import com.synflow.models.ir.Var
 import com.synflow.models.ir.util.TypeUtil
 import java.util.ArrayList
 import java.util.Collection
+import java.util.HashMap
 import java.util.List
 import org.eclipse.emf.ecore.EObject
-import java.util.HashMap
-import com.synflow.models.dpn.Port
 
+/**
+ * This class defines the VHDL printer for the IR.
+ * 
+ * @author Nicolas Siret
+ * @author Matthieu Wipliez
+ */
 class VhdlIrPrinter extends VhdlExpressionPrinter {
 	
 	protected static TypeBool typeBool = IrFactory.eINSTANCE.createTypeBool
@@ -112,6 +117,11 @@ class VhdlIrPrinter extends VhdlExpressionPrinter {
 		}
 	}
 
+	override caseInstLoad(InstLoad load)
+		'''
+		«getName(load.target.variable)» := «load.source.variable.name»«IF !load.indexes.empty»(«printIndexes(load.source.variable.type as TypeArray, load.indexes)»)«ENDIF»;
+		'''
+
 	override caseInstReturn(InstReturn instReturn) {
 		if (instReturn.value != null) {
 			'''
@@ -119,32 +129,6 @@ class VhdlIrPrinter extends VhdlExpressionPrinter {
 			'''
 		}
 	}
-
-	def private printIndexes(TypeArray type, List<Expression> indexes) {
-		var list = new ArrayList<CharSequence>
-		var i = 0
-		for (index : indexes) {
-			val dim = type.dimensions.get(i) - 1
-			val dimSize = TypeUtil.getSize(dim)
-			val res =
-				if (index instanceof ExprInt) {
-					val value = index.value
-					'''to_unsigned(«value», «dimSize»)'''
-				} else {
-					doSwitch(index)
-				}
-			list.add(res)
-
-			i = i + 1
-		}
-
-		'''to_integer(«list.join(" & ")»)'''
-	}
-
-	override caseInstLoad(InstLoad load)
-		'''
-		«getName(load.target.variable)» := «load.source.variable.name»«IF !load.indexes.empty»(«printIndexes(load.source.variable.type as TypeArray, load.indexes)»)«ENDIF»;
-		'''
 
 	override caseInstStore(InstStore store) {
 		val target = store.target.variable
@@ -209,6 +193,10 @@ class VhdlIrPrinter extends VhdlExpressionPrinter {
 	
 	def private printCallParams(List<Var> parameters, List<Expression> arguments) {
 		'''«FOR expr : arguments SEPARATOR ", "»«doSwitch(expr)»«ENDFOR»'''
+	}
+
+	def private printIndexes(TypeArray type, List<Expression> indexes) {
+		'''to_integer(«indexes.map[index|doSwitch(index)].join(' & ')»)'''
 	}
 
 	/**
