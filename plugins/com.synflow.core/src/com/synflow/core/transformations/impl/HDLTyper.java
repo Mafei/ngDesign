@@ -17,6 +17,7 @@ import java.util.Set;
 
 import com.synflow.core.transformations.AbstractExpressionTransformer;
 import com.synflow.models.ir.ExprBinary;
+import com.synflow.models.ir.ExprInt;
 import com.synflow.models.ir.ExprResize;
 import com.synflow.models.ir.ExprTypeConv;
 import com.synflow.models.ir.Expression;
@@ -81,6 +82,14 @@ public class HDLTyper extends AbstractExpressionTransformer {
 
 		Type type = TypeUtil.getType(expr);
 		return eINSTANCE.cast(getTarget(), type, expr);
+	}
+
+	@Override
+	public Expression caseExprInt(ExprInt expr) {
+		// set the size of integer literals
+		int size = TypeUtil.getSize(getTarget());
+		expr.setSize(size);
+		return expr;
 	}
 
 	@Override

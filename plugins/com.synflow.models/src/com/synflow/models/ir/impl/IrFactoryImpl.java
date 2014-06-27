@@ -121,11 +121,6 @@ public class IrFactoryImpl extends EFactoryImpl implements IrFactory {
 
 	@Override
 	public Expression cast(Type targetType, Type sourceType, Expression expr) {
-		int size = TypeUtil.getSize(targetType);
-		if (expr.isExprInt()) {
-			((ExprInt) expr).setSize(size);
-		}
-
 		if (sourceType.isInt() && targetType.isInt()) {
 			TypeInt srcInt = (TypeInt) sourceType;
 			TypeInt tgtInt = (TypeInt) targetType;
@@ -134,15 +129,15 @@ public class IrFactoryImpl extends EFactoryImpl implements IrFactory {
 				// first convert to the correct type
 				String typeName = tgtInt.isSigned() ? SIGNED : UNSIGNED;
 				expr = convert(typeName, expr);
-			} else if (expr.isExprInt()) {
-				// if ExprInt and no difference in signedness, just returns expr
-				return expr;
 			}
 
-			ExprResizeImpl resize = new ExprResizeImpl();
-			resize.setTargetSize(size);
-			resize.setExpr(expr);
-			return resize;
+			// resize only if necessary
+			if (tgtInt.getSize() != srcInt.getSize()) {
+				ExprResizeImpl resize = new ExprResizeImpl();
+				resize.setTargetSize(tgtInt.getSize());
+				resize.setExpr(expr);
+				return resize;
+			}
 		}
 
 		return expr;
@@ -152,13 +147,20 @@ public class IrFactoryImpl extends EFactoryImpl implements IrFactory {
 	public Expression castToUnsigned(int size, Expression expr) {
 		if (expr.isExprInt()) {
 			((ExprInt) expr).setSize(size);
-			return expr;
-		} else {
-			ExprResizeImpl exprCast = new ExprResizeImpl();
-			exprCast.setTargetSize(size);
-			exprCast.setExpr(convert(UNSIGNED, expr));
-			return exprCast;
 		}
+
+		Type type = TypeUtil.getType(expr);
+		if (type.isInt() && ((TypeInt) type).isSigned()) {
+			if (expr.isExprInt()) {
+				return convert(UNSIGNED, expr);
+			} else {
+				ExprResizeImpl exprCast = new ExprResizeImpl();
+				exprCast.setTargetSize(size);
+				exprCast.setExpr(convert(UNSIGNED, expr));
+				return exprCast;
+			}
+		}
+		return expr;
 	}
 
 	@Override

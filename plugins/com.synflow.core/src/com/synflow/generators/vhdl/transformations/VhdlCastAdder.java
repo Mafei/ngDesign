@@ -23,6 +23,7 @@ import com.synflow.models.ir.BlockIf;
 import com.synflow.models.ir.BlockWhile;
 import com.synflow.models.ir.ExprBinary;
 import com.synflow.models.ir.ExprInt;
+import com.synflow.models.ir.ExprTypeConv;
 import com.synflow.models.ir.ExprVar;
 import com.synflow.models.ir.Expression;
 import com.synflow.models.ir.InstCall;
@@ -74,6 +75,12 @@ public class VhdlCastAdder extends AbstractExpressionTransformer {
 		if (feature == Literals.INST_LOAD__INDEXES || feature == Literals.INST_STORE__INDEXES) {
 			// force conversion to unsigned
 			return eINSTANCE.convert("unsigned'", expr);
+		} else {
+			EObject cter = expr.eContainer();
+			if (cter instanceof ExprTypeConv) {
+				ExprTypeConv typeConv = (ExprTypeConv) cter;
+				typeConv.setTypeName(typeConv.getTypeName() + "'");
+			}
 		}
 
 		return expr;
