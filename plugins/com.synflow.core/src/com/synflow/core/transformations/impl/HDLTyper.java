@@ -18,7 +18,6 @@ import java.util.Set;
 import com.synflow.core.transformations.AbstractExpressionTransformer;
 import com.synflow.models.ir.ExprBinary;
 import com.synflow.models.ir.ExprCast;
-import com.synflow.models.ir.ExprInt;
 import com.synflow.models.ir.Expression;
 import com.synflow.models.ir.OpBinary;
 import com.synflow.models.ir.Procedure;
@@ -55,9 +54,9 @@ public class HDLTyper extends AbstractExpressionTransformer {
 
 				if (ti1.isSigned() ^ ti2.isSigned()) {
 					if (ti2.isSigned()) {
-						expr.setE1(castIfNeeded(tiCommon, ti1, expr.getE1()));
+						expr.setE1(eINSTANCE.cast(tiCommon, ti1, expr.getE1()));
 					} else {
-						expr.setE2(castIfNeeded(tiCommon, ti2, expr.getE2()));
+						expr.setE2(eINSTANCE.cast(tiCommon, ti2, expr.getE2()));
 					}
 				}
 			}
@@ -91,17 +90,7 @@ public class HDLTyper extends AbstractExpressionTransformer {
 		}
 
 		Type type = TypeUtil.getType(expr);
-		return castIfNeeded(getTarget(), type, expr);
-	}
-
-	private Expression castIfNeeded(Type target, Type type, Expression expr) {
-		int size = TypeUtil.getSize(target);
-		if (expr.isExprInt()) {
-			((ExprInt) expr).setSize(size);
-		} else if (size != TypeUtil.getSize(type)) {
-			return eINSTANCE.createExprCast(target, type, expr);
-		}
-		return expr;
+		return eINSTANCE.cast(getTarget(), type, expr);
 	}
 
 	@Override

@@ -40,7 +40,6 @@ import com.synflow.models.ir.ExprFloat;
 import com.synflow.models.ir.ExprInt;
 import com.synflow.models.ir.ExprList;
 import com.synflow.models.ir.ExprString;
-import com.synflow.models.ir.ExprTernary;
 import com.synflow.models.ir.ExprUnary;
 import com.synflow.models.ir.ExprVar;
 import com.synflow.models.ir.Expression;
@@ -112,16 +111,6 @@ public class ExpressionPrinter extends IrSwitch<Void> {
 		builder.append(expr.getCastedSize());
 		builder.append(") ");
 		doSwitch(expr.getExpr());
-		return DONE;
-	}
-
-	@Override
-	public Void caseExprTernary(ExprTernary expr) {
-		doSwitch(expr.getE1());
-		builder.append(" ? ");
-		doSwitch(expr.getE2());
-		builder.append(" : ");
-		doSwitch(expr.getE3());
 		return DONE;
 	}
 

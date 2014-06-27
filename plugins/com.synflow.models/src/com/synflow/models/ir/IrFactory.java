@@ -37,6 +37,18 @@ public interface IrFactory extends EFactory {
 	 */
 	void addLocal(Procedure procedure, Var variable);
 
+	/**
+	 * Returns a new object of class '<em>Expr Cast</em>'. <!-- begin-user-doc --> Creates a cast.
+	 * Type's size is copied.<!-- end-user-doc -->
+	 * 
+	 * @param targetType
+	 * @param sourceType
+	 * @param expr
+	 * 
+	 * @return a new object of class '<em>Expr Cast</em>'.
+	 */
+	Expression cast(Type targetType, Type sourceType, Expression expr);
+
 	Expression castToUnsigned(int amount, Expression index);
 
 	/**
@@ -134,18 +146,6 @@ public interface IrFactory extends EFactory {
 	ExprCast createExprCast(String typeName, Expression expr);
 
 	/**
-	 * Returns a new object of class '<em>Expr Cast</em>'. <!-- begin-user-doc --> Creates a cast.
-	 * Type's size is copied.<!-- end-user-doc -->
-	 * 
-	 * @param targetType
-	 * @param sourceType
-	 * @param expr
-	 * 
-	 * @return a new object of class '<em>Expr Cast</em>'.
-	 */
-	ExprCast createExprCast(Type targetType, Type sourceType, Expression expr);
-
-	/**
 	 * Returns a new object of class '<em>Expr Float</em>'. <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
 	 * 
@@ -186,10 +186,6 @@ public interface IrFactory extends EFactory {
 
 	ExprList createExprList(List<Expression> exprs);
 
-	Expression createExprMax(Expression e1, Expression e2);
-
-	Expression createExprMin(Expression e1, Expression e2);
-
 	/**
 	 * Returns a new object of class '<em>Expr String</em>'. <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
@@ -199,18 +195,25 @@ public interface IrFactory extends EFactory {
 	 */
 	ExprString createExprString();
 
-	ExprString createExprString(String value);
-
 	/**
-	 * Returns a new object of class '<em>Expr Ternary</em>'. <!-- begin-user-doc --> <!--
+	 * Returns a new object of class '<em>Expr Resize</em>'. <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
 	 * 
-	 * @return a new object of class '<em>Expr Ternary</em>'.
+	 * @return a new object of class '<em>Expr Resize</em>'.
 	 * @generated
 	 */
-	ExprTernary createExprTernary();
+	ExprResize createExprResize();
 
-	ExprTernary createExprTernary(Expression e1, Expression e2, Expression e3);
+	/**
+	 * Returns a new object of class '<em>Expr Type Conv</em>'. <!-- begin-user-doc --> <!--
+	 * end-user-doc -->
+	 * 
+	 * @return a new object of class '<em>Expr Type Conv</em>'.
+	 * @generated
+	 */
+	ExprTypeConv createExprTypeConv();
+
+	ExprString createExprString(String value);
 
 	/**
 	 * Returns a new object of class '<em>Expr Unary</em>'. <!-- begin-user-doc --> <!--

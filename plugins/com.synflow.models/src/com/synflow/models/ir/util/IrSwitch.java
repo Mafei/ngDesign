@@ -6,40 +6,7 @@
  */
 package com.synflow.models.ir.util;
 
-import com.synflow.models.ir.Block;
-import com.synflow.models.ir.BlockBasic;
-import com.synflow.models.ir.BlockIf;
-import com.synflow.models.ir.BlockWhile;
-import com.synflow.models.ir.Def;
-import com.synflow.models.ir.ExprBinary;
-import com.synflow.models.ir.ExprBool;
-import com.synflow.models.ir.ExprCast;
-import com.synflow.models.ir.ExprFloat;
-import com.synflow.models.ir.ExprInt;
-import com.synflow.models.ir.ExprList;
-import com.synflow.models.ir.ExprString;
-import com.synflow.models.ir.ExprTernary;
-import com.synflow.models.ir.ExprUnary;
-import com.synflow.models.ir.ExprVar;
-import com.synflow.models.ir.Expression;
-import com.synflow.models.ir.InstAssign;
-import com.synflow.models.ir.InstCall;
-import com.synflow.models.ir.InstLoad;
-import com.synflow.models.ir.InstPhi;
-import com.synflow.models.ir.InstReturn;
-import com.synflow.models.ir.InstStore;
-import com.synflow.models.ir.Instruction;
-import com.synflow.models.ir.IrPackage;
-import com.synflow.models.ir.Procedure;
-import com.synflow.models.ir.Type;
-import com.synflow.models.ir.TypeArray;
-import com.synflow.models.ir.TypeBool;
-import com.synflow.models.ir.TypeFloat;
-import com.synflow.models.ir.TypeInt;
-import com.synflow.models.ir.TypeString;
-import com.synflow.models.ir.TypeVoid;
-import com.synflow.models.ir.Use;
-import com.synflow.models.ir.Var;
+import com.synflow.models.ir.*;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.util.Switch;
@@ -222,17 +189,32 @@ public class IrSwitch<T> extends Switch<T> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Expr Ternary</em>'. <!--
+	 * Returns the result of interpreting the object as an instance of '<em>Expr Resize</em>'. <!--
 	 * begin-user-doc --> This implementation returns null; returning a non-null result will
 	 * terminate the switch. <!-- end-user-doc -->
 	 * 
 	 * @param object
 	 *            the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Expr Ternary</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>Expr Resize</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T caseExprTernary(ExprTernary object) {
+	public T caseExprResize(ExprResize object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Expr Type Conv</em>'.
+	 * <!-- begin-user-doc --> This implementation returns null; returning a non-null result will
+	 * terminate the switch. <!-- end-user-doc -->
+	 * 
+	 * @param object
+	 *            the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Expr Type Conv</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseExprTypeConv(ExprTypeConv object) {
 		return null;
 	}
 
@@ -779,11 +761,20 @@ public class IrSwitch<T> extends Switch<T> {
 				result = defaultCase(theEObject);
 			return result;
 		}
-		case IrPackage.EXPR_TERNARY: {
-			ExprTernary exprTernary = (ExprTernary) theEObject;
-			T result = caseExprTernary(exprTernary);
+		case IrPackage.EXPR_RESIZE: {
+			ExprResize exprResize = (ExprResize) theEObject;
+			T result = caseExprResize(exprResize);
 			if (result == null)
-				result = caseExpression(exprTernary);
+				result = caseExpression(exprResize);
+			if (result == null)
+				result = defaultCase(theEObject);
+			return result;
+		}
+		case IrPackage.EXPR_TYPE_CONV: {
+			ExprTypeConv exprTypeConv = (ExprTypeConv) theEObject;
+			T result = caseExprTypeConv(exprTypeConv);
+			if (result == null)
+				result = caseExpression(exprTypeConv);
 			if (result == null)
 				result = defaultCase(theEObject);
 			return result;

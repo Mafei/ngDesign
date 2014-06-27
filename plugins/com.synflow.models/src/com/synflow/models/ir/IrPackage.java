@@ -242,38 +242,56 @@ public interface IrPackage extends EPackage {
 		EAttribute EXPR_STRING__VALUE = eINSTANCE.getExprString_Value();
 
 		/**
-		 * The meta object literal for the '{@link com.synflow.models.ir.impl.ExprTernaryImpl
-		 * <em>Expr Ternary</em>}' class. <!-- begin-user-doc --> <!-- end-user-doc -->
+		 * The meta object literal for the '{@link com.synflow.models.ir.impl.ExprResizeImpl
+		 * <em>Expr Resize</em>}' class. <!-- begin-user-doc --> <!-- end-user-doc -->
 		 * 
-		 * @see com.synflow.models.ir.impl.ExprTernaryImpl
-		 * @see com.synflow.models.ir.impl.IrPackageImpl#getExprTernary()
+		 * @see com.synflow.models.ir.impl.ExprResizeImpl
+		 * @see com.synflow.models.ir.impl.IrPackageImpl#getExprResize()
 		 * @generated
 		 */
-		EClass EXPR_TERNARY = eINSTANCE.getExprTernary();
+		EClass EXPR_RESIZE = eINSTANCE.getExprResize();
 
 		/**
-		 * The meta object literal for the '<em><b>E1</b></em>' containment reference feature. <!--
+		 * The meta object literal for the '<em><b>Expr</b></em>' containment reference feature.
+		 * <!-- begin-user-doc --> <!-- end-user-doc -->
+		 * 
+		 * @generated
+		 */
+		EReference EXPR_RESIZE__EXPR = eINSTANCE.getExprResize_Expr();
+
+		/**
+		 * The meta object literal for the '<em><b>Target Size</b></em>' attribute feature. <!--
 		 * begin-user-doc --> <!-- end-user-doc -->
 		 * 
 		 * @generated
 		 */
-		EReference EXPR_TERNARY__E1 = eINSTANCE.getExprTernary_E1();
+		EAttribute EXPR_RESIZE__TARGET_SIZE = eINSTANCE.getExprResize_TargetSize();
 
 		/**
-		 * The meta object literal for the '<em><b>E2</b></em>' containment reference feature. <!--
+		 * The meta object literal for the '{@link com.synflow.models.ir.impl.ExprTypeConvImpl
+		 * <em>Expr Type Conv</em>}' class. <!-- begin-user-doc --> <!-- end-user-doc -->
+		 * 
+		 * @see com.synflow.models.ir.impl.ExprTypeConvImpl
+		 * @see com.synflow.models.ir.impl.IrPackageImpl#getExprTypeConv()
+		 * @generated
+		 */
+		EClass EXPR_TYPE_CONV = eINSTANCE.getExprTypeConv();
+
+		/**
+		 * The meta object literal for the '<em><b>Expr</b></em>' containment reference feature.
+		 * <!-- begin-user-doc --> <!-- end-user-doc -->
+		 * 
+		 * @generated
+		 */
+		EReference EXPR_TYPE_CONV__EXPR = eINSTANCE.getExprTypeConv_Expr();
+
+		/**
+		 * The meta object literal for the '<em><b>Type Name</b></em>' attribute feature. <!--
 		 * begin-user-doc --> <!-- end-user-doc -->
 		 * 
 		 * @generated
 		 */
-		EReference EXPR_TERNARY__E2 = eINSTANCE.getExprTernary_E2();
-
-		/**
-		 * The meta object literal for the '<em><b>E3</b></em>' containment reference feature. <!--
-		 * begin-user-doc --> <!-- end-user-doc -->
-		 * 
-		 * @generated
-		 */
-		EReference EXPR_TERNARY__E3 = eINSTANCE.getExprTernary_E3();
+		EAttribute EXPR_TYPE_CONV__TYPE_NAME = eINSTANCE.getExprTypeConv_TypeName();
 
 		/**
 		 * The meta object literal for the '{@link com.synflow.models.ir.impl.ExprUnaryImpl
@@ -985,7 +1003,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getDef()
 	 * @generated
 	 */
-	int DEF = 30;
+	int DEF = 31;
 
 	/**
 	 * The singleton instance of the package. <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -1083,7 +1101,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getExprUnary()
 	 * @generated
 	 */
-	int EXPR_UNARY = 21;
+	int EXPR_UNARY = 22;
 
 	/**
 	 * The meta object id for the '{@link com.synflow.models.ir.impl.ExprVarImpl <em>Expr Var</em>}'
@@ -1093,7 +1111,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getExprVar()
 	 * @generated
 	 */
-	int EXPR_VAR = 22;
+	int EXPR_VAR = 23;
 
 	/**
 	 * The meta object id for the '{@link com.synflow.models.ir.impl.ExpressionImpl
@@ -1183,7 +1201,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getOpBinary()
 	 * @generated
 	 */
-	int OP_BINARY = 33;
+	int OP_BINARY = 34;
 
 	/**
 	 * The meta object id for the '{@link com.synflow.models.ir.OpUnary <em>Op Unary</em>}' enum.
@@ -1193,7 +1211,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getOpUnary()
 	 * @generated
 	 */
-	int OP_UNARY = 34;
+	int OP_UNARY = 35;
 
 	/**
 	 * The meta object id for the '{@link com.synflow.models.ir.impl.ProcedureImpl
@@ -1922,50 +1940,78 @@ public interface IrPackage extends EPackage {
 	int EXPR_STRING_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 1;
 
 	/**
-	 * The meta object id for the '{@link com.synflow.models.ir.impl.ExprTernaryImpl
-	 * <em>Expr Ternary</em>}' class. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * The meta object id for the '{@link com.synflow.models.ir.impl.ExprResizeImpl
+	 * <em>Expr Resize</em>}' class. <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * 
-	 * @see com.synflow.models.ir.impl.ExprTernaryImpl
-	 * @see com.synflow.models.ir.impl.IrPackageImpl#getExprTernary()
+	 * @see com.synflow.models.ir.impl.ExprResizeImpl
+	 * @see com.synflow.models.ir.impl.IrPackageImpl#getExprResize()
 	 * @generated
 	 */
-	int EXPR_TERNARY = 20;
+	int EXPR_RESIZE = 20;
 
 	/**
-	 * The feature id for the '<em><b>E1</b></em>' containment reference. <!-- begin-user-doc -->
+	 * The feature id for the '<em><b>Expr</b></em>' containment reference. <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * 
 	 * @generated
 	 * @ordered
 	 */
-	int EXPR_TERNARY__E1 = EXPRESSION_FEATURE_COUNT + 0;
+	int EXPR_RESIZE__EXPR = EXPRESSION_FEATURE_COUNT + 0;
 
 	/**
-	 * The feature id for the '<em><b>E2</b></em>' containment reference. <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * The feature id for the '<em><b>Target Size</b></em>' attribute. <!-- begin-user-doc --> <!--
+	 * end-user-doc -->
 	 * 
 	 * @generated
 	 * @ordered
 	 */
-	int EXPR_TERNARY__E2 = EXPRESSION_FEATURE_COUNT + 1;
+	int EXPR_RESIZE__TARGET_SIZE = EXPRESSION_FEATURE_COUNT + 1;
 
 	/**
-	 * The feature id for the '<em><b>E3</b></em>' containment reference. <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int EXPR_TERNARY__E3 = EXPRESSION_FEATURE_COUNT + 2;
-
-	/**
-	 * The number of structural features of the '<em>Expr Ternary</em>' class. <!-- begin-user-doc
+	 * The number of structural features of the '<em>Expr Resize</em>' class. <!-- begin-user-doc
 	 * --> <!-- end-user-doc -->
 	 * 
 	 * @generated
 	 * @ordered
 	 */
-	int EXPR_TERNARY_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 3;
+	int EXPR_RESIZE_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 2;
+
+	/**
+	 * The meta object id for the '{@link com.synflow.models.ir.impl.ExprTypeConvImpl
+	 * <em>Expr Type Conv</em>}' class. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @see com.synflow.models.ir.impl.ExprTypeConvImpl
+	 * @see com.synflow.models.ir.impl.IrPackageImpl#getExprTypeConv()
+	 * @generated
+	 */
+	int EXPR_TYPE_CONV = 21;
+
+	/**
+	 * The feature id for the '<em><b>Expr</b></em>' containment reference. <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 * @ordered
+	 */
+	int EXPR_TYPE_CONV__EXPR = EXPRESSION_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Type Name</b></em>' attribute. <!-- begin-user-doc --> <!--
+	 * end-user-doc -->
+	 * 
+	 * @generated
+	 * @ordered
+	 */
+	int EXPR_TYPE_CONV__TYPE_NAME = EXPRESSION_FEATURE_COUNT + 1;
+
+	/**
+	 * The number of structural features of the '<em>Expr Type Conv</em>' class. <!-- begin-user-doc
+	 * --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 * @ordered
+	 */
+	int EXPR_TYPE_CONV_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Expr</b></em>' containment reference. <!-- begin-user-doc -->
@@ -2020,7 +2066,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getType()
 	 * @generated
 	 */
-	int TYPE = 23;
+	int TYPE = 24;
 
 	/**
 	 * The number of structural features of the '<em>Type</em>' class. <!-- begin-user-doc --> <!--
@@ -2039,7 +2085,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getTypeBool()
 	 * @generated
 	 */
-	int TYPE_BOOL = 25;
+	int TYPE_BOOL = 26;
 
 	/**
 	 * The meta object id for the '{@link com.synflow.models.ir.impl.TypeFloatImpl
@@ -2049,7 +2095,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getTypeFloat()
 	 * @generated
 	 */
-	int TYPE_FLOAT = 26;
+	int TYPE_FLOAT = 27;
 
 	/**
 	 * The meta object id for the '{@link com.synflow.models.ir.impl.TypeIntImpl <em>Type Int</em>}'
@@ -2059,7 +2105,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getTypeInt()
 	 * @generated
 	 */
-	int TYPE_INT = 27;
+	int TYPE_INT = 28;
 
 	/**
 	 * The meta object id for the '{@link com.synflow.models.ir.impl.TypeStringImpl
@@ -2069,7 +2115,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getTypeString()
 	 * @generated
 	 */
-	int TYPE_STRING = 28;
+	int TYPE_STRING = 29;
 
 	/**
 	 * The meta object id for the '{@link com.synflow.models.ir.impl.TypeVoidImpl
@@ -2079,7 +2125,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getTypeVoid()
 	 * @generated
 	 */
-	int TYPE_VOID = 29;
+	int TYPE_VOID = 30;
 
 	/**
 	 * The meta object id for the '{@link com.synflow.models.ir.impl.UseImpl <em>Use</em>}' class.
@@ -2089,7 +2135,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getUse()
 	 * @generated
 	 */
-	int USE = 32;
+	int USE = 33;
 
 	/**
 	 * The meta object id for the '{@link com.synflow.models.ir.impl.VarImpl <em>Var</em>}' class.
@@ -2099,7 +2145,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getVar()
 	 * @generated
 	 */
-	int VAR = 31;
+	int VAR = 32;
 
 	/**
 	 * The meta object id for the '{@link com.synflow.models.ir.impl.TypeArrayImpl
@@ -2109,7 +2155,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getTypeArray()
 	 * @generated
 	 */
-	int TYPE_ARRAY = 24;
+	int TYPE_ARRAY = 25;
 
 	/**
 	 * The feature id for the '<em><b>Dimensions</b></em>' containment reference list. <!--
@@ -2626,50 +2672,72 @@ public interface IrPackage extends EPackage {
 	EAttribute getExprString_Value();
 
 	/**
-	 * Returns the meta object for class '{@link com.synflow.models.ir.ExprTernary
-	 * <em>Expr Ternary</em>}'. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * Returns the meta object for class '{@link com.synflow.models.ir.ExprResize
+	 * <em>Expr Resize</em>}'. <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * 
-	 * @return the meta object for class '<em>Expr Ternary</em>'.
-	 * @see com.synflow.models.ir.ExprTernary
+	 * @return the meta object for class '<em>Expr Resize</em>'.
+	 * @see com.synflow.models.ir.ExprResize
 	 * @generated
 	 */
-	EClass getExprTernary();
+	EClass getExprResize();
 
 	/**
 	 * Returns the meta object for the containment reference '
-	 * {@link com.synflow.models.ir.ExprTernary#getE1 <em>E1</em>}'. <!-- begin-user-doc --> <!--
+	 * {@link com.synflow.models.ir.ExprResize#getExpr <em>Expr</em>}'. <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
 	 * 
-	 * @return the meta object for the containment reference '<em>E1</em>'.
-	 * @see com.synflow.models.ir.ExprTernary#getE1()
-	 * @see #getExprTernary()
+	 * @return the meta object for the containment reference '<em>Expr</em>'.
+	 * @see com.synflow.models.ir.ExprResize#getExpr()
+	 * @see #getExprResize()
 	 * @generated
 	 */
-	EReference getExprTernary_E1();
+	EReference getExprResize_Expr();
+
+	/**
+	 * Returns the meta object for the attribute '
+	 * {@link com.synflow.models.ir.ExprResize#getTargetSize <em>Target Size</em>}'. <!--
+	 * begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @return the meta object for the attribute '<em>Target Size</em>'.
+	 * @see com.synflow.models.ir.ExprResize#getTargetSize()
+	 * @see #getExprResize()
+	 * @generated
+	 */
+	EAttribute getExprResize_TargetSize();
+
+	/**
+	 * Returns the meta object for class '{@link com.synflow.models.ir.ExprTypeConv
+	 * <em>Expr Type Conv</em>}'. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @return the meta object for class '<em>Expr Type Conv</em>'.
+	 * @see com.synflow.models.ir.ExprTypeConv
+	 * @generated
+	 */
+	EClass getExprTypeConv();
 
 	/**
 	 * Returns the meta object for the containment reference '
-	 * {@link com.synflow.models.ir.ExprTernary#getE2 <em>E2</em>}'. <!-- begin-user-doc --> <!--
-	 * end-user-doc -->
+	 * {@link com.synflow.models.ir.ExprTypeConv#getExpr <em>Expr</em>}'. <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * 
-	 * @return the meta object for the containment reference '<em>E2</em>'.
-	 * @see com.synflow.models.ir.ExprTernary#getE2()
-	 * @see #getExprTernary()
+	 * @return the meta object for the containment reference '<em>Expr</em>'.
+	 * @see com.synflow.models.ir.ExprTypeConv#getExpr()
+	 * @see #getExprTypeConv()
 	 * @generated
 	 */
-	EReference getExprTernary_E2();
+	EReference getExprTypeConv_Expr();
 
 	/**
-	 * Returns the meta object for the containment reference '
-	 * {@link com.synflow.models.ir.ExprTernary#getE3 <em>E3</em>}'. <!-- begin-user-doc --> <!--
-	 * end-user-doc -->
+	 * Returns the meta object for the attribute '
+	 * {@link com.synflow.models.ir.ExprTypeConv#getTypeName <em>Type Name</em>}'. <!--
+	 * begin-user-doc --> <!-- end-user-doc -->
 	 * 
-	 * @return the meta object for the containment reference '<em>E3</em>'.
-	 * @see com.synflow.models.ir.ExprTernary#getE3()
-	 * @see #getExprTernary()
+	 * @return the meta object for the attribute '<em>Type Name</em>'.
+	 * @see com.synflow.models.ir.ExprTypeConv#getTypeName()
+	 * @see #getExprTypeConv()
 	 * @generated
 	 */
-	EReference getExprTernary_E3();
+	EAttribute getExprTypeConv_TypeName();
 
 	/**
 	 * Returns the meta object for class '{@link com.synflow.models.ir.ExprUnary

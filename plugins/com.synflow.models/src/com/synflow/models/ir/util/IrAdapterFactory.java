@@ -6,40 +6,7 @@
  */
 package com.synflow.models.ir.util;
 
-import com.synflow.models.ir.Block;
-import com.synflow.models.ir.BlockBasic;
-import com.synflow.models.ir.BlockIf;
-import com.synflow.models.ir.BlockWhile;
-import com.synflow.models.ir.Def;
-import com.synflow.models.ir.ExprBinary;
-import com.synflow.models.ir.ExprBool;
-import com.synflow.models.ir.ExprCast;
-import com.synflow.models.ir.ExprFloat;
-import com.synflow.models.ir.ExprInt;
-import com.synflow.models.ir.ExprList;
-import com.synflow.models.ir.ExprString;
-import com.synflow.models.ir.ExprTernary;
-import com.synflow.models.ir.ExprUnary;
-import com.synflow.models.ir.ExprVar;
-import com.synflow.models.ir.Expression;
-import com.synflow.models.ir.InstAssign;
-import com.synflow.models.ir.InstCall;
-import com.synflow.models.ir.InstLoad;
-import com.synflow.models.ir.InstPhi;
-import com.synflow.models.ir.InstReturn;
-import com.synflow.models.ir.InstStore;
-import com.synflow.models.ir.Instruction;
-import com.synflow.models.ir.IrPackage;
-import com.synflow.models.ir.Procedure;
-import com.synflow.models.ir.Type;
-import com.synflow.models.ir.TypeArray;
-import com.synflow.models.ir.TypeBool;
-import com.synflow.models.ir.TypeFloat;
-import com.synflow.models.ir.TypeInt;
-import com.synflow.models.ir.TypeString;
-import com.synflow.models.ir.TypeVoid;
-import com.synflow.models.ir.Use;
-import com.synflow.models.ir.Var;
+import com.synflow.models.ir.*;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
@@ -168,8 +135,13 @@ public class IrAdapterFactory extends AdapterFactoryImpl {
 		}
 
 		@Override
-		public Adapter caseExprTernary(ExprTernary object) {
-			return createExprTernaryAdapter();
+		public Adapter caseExprResize(ExprResize object) {
+			return createExprResizeAdapter();
+		}
+
+		@Override
+		public Adapter caseExprTypeConv(ExprTypeConv object) {
+			return createExprTypeConvAdapter();
 		}
 
 		@Override
@@ -400,16 +372,30 @@ public class IrAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link com.synflow.models.ir.ExprTernary
-	 * <em>Expr Ternary</em>}'. <!-- begin-user-doc --> This default implementation returns null so
+	 * Creates a new adapter for an object of class '{@link com.synflow.models.ir.ExprResize
+	 * <em>Expr Resize</em>}'. <!-- begin-user-doc --> This default implementation returns null so
 	 * that we can easily ignore cases; it's useful to ignore a case when inheritance will catch all
 	 * the cases anyway. <!-- end-user-doc -->
 	 * 
 	 * @return the new adapter.
-	 * @see com.synflow.models.ir.ExprTernary
+	 * @see com.synflow.models.ir.ExprResize
 	 * @generated
 	 */
-	public Adapter createExprTernaryAdapter() {
+	public Adapter createExprResizeAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link com.synflow.models.ir.ExprTypeConv
+	 * <em>Expr Type Conv</em>}'. <!-- begin-user-doc --> This default implementation returns null
+	 * so that we can easily ignore cases; it's useful to ignore a case when inheritance will catch
+	 * all the cases anyway. <!-- end-user-doc -->
+	 * 
+	 * @return the new adapter.
+	 * @see com.synflow.models.ir.ExprTypeConv
+	 * @generated
+	 */
+	public Adapter createExprTypeConvAdapter() {
 		return null;
 	}
 

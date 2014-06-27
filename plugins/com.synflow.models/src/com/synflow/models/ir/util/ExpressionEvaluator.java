@@ -37,7 +37,6 @@ import com.synflow.models.ir.ExprBool;
 import com.synflow.models.ir.ExprFloat;
 import com.synflow.models.ir.ExprInt;
 import com.synflow.models.ir.ExprString;
-import com.synflow.models.ir.ExprTernary;
 import com.synflow.models.ir.ExprUnary;
 import com.synflow.models.ir.ExprVar;
 import com.synflow.models.ir.Expression;
@@ -78,16 +77,6 @@ public class ExpressionEvaluator extends IrSwitch<Object> {
 		// note the difference with the caseExprString method from the
 		// expression printer: here we return the string without quotes
 		return expr.getValue();
-	}
-
-	@Override
-	public Object caseExprTernary(ExprTernary expr) {
-		Object cond = doSwitch(expr.getE1());
-		if (ValueUtil.isTrue(cond)) {
-			return doSwitch(expr.getE2());
-		} else {
-			return doSwitch(expr.getE3());
-		}
 	}
 
 	@Override

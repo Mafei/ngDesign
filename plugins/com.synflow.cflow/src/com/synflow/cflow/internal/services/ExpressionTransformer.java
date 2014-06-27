@@ -18,7 +18,6 @@ import com.synflow.cflow.cflow.CExpression;
 import com.synflow.cflow.cflow.ExpressionBinary;
 import com.synflow.cflow.cflow.ExpressionBoolean;
 import com.synflow.cflow.cflow.ExpressionFloat;
-import com.synflow.cflow.cflow.ExpressionIf;
 import com.synflow.cflow.cflow.ExpressionInteger;
 import com.synflow.cflow.cflow.ExpressionString;
 import com.synflow.cflow.cflow.ExpressionUnary;
@@ -60,12 +59,6 @@ public class ExpressionTransformer extends CflowSwitch<Expression> implements Tr
 	@Override
 	public Expression caseExpressionFloat(ExpressionFloat expression) {
 		return eINSTANCE.createExprFloat(expression.getValue());
-	}
-
-	@Override
-	public Expression caseExpressionIf(ExpressionIf expression) {
-		return eINSTANCE.createExprTernary(doSwitch(expression.getCondition()),
-				doSwitch(expression.getThen()), doSwitch(expression.getElse()));
 	}
 
 	@Override

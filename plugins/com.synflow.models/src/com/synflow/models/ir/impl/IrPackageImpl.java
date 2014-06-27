@@ -27,8 +27,9 @@ import com.synflow.models.ir.ExprCast;
 import com.synflow.models.ir.ExprFloat;
 import com.synflow.models.ir.ExprInt;
 import com.synflow.models.ir.ExprList;
+import com.synflow.models.ir.ExprResize;
 import com.synflow.models.ir.ExprString;
-import com.synflow.models.ir.ExprTernary;
+import com.synflow.models.ir.ExprTypeConv;
 import com.synflow.models.ir.ExprUnary;
 import com.synflow.models.ir.ExprVar;
 import com.synflow.models.ir.Expression;
@@ -264,7 +265,14 @@ public class IrPackageImpl extends EPackageImpl implements IrPackage {
 	 * 
 	 * @generated
 	 */
-	private EClass exprTernaryEClass = null;
+	private EClass exprResizeEClass = null;
+
+	/**
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 */
+	private EClass exprTypeConvEClass = null;
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -1318,8 +1326,8 @@ public class IrPackageImpl extends EPackageImpl implements IrPackage {
 	 * 
 	 * @generated
 	 */
-	public EClass getExprTernary() {
-		return exprTernaryEClass;
+	public EClass getExprResize() {
+		return exprResizeEClass;
 	}
 
 	/**
@@ -1327,8 +1335,8 @@ public class IrPackageImpl extends EPackageImpl implements IrPackage {
 	 * 
 	 * @generated
 	 */
-	public EReference getExprTernary_E1() {
-		return (EReference) exprTernaryEClass.getEStructuralFeatures().get(0);
+	public EReference getExprResize_Expr() {
+		return (EReference) exprResizeEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -1336,8 +1344,8 @@ public class IrPackageImpl extends EPackageImpl implements IrPackage {
 	 * 
 	 * @generated
 	 */
-	public EReference getExprTernary_E2() {
-		return (EReference) exprTernaryEClass.getEStructuralFeatures().get(1);
+	public EAttribute getExprResize_TargetSize() {
+		return (EAttribute) exprResizeEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -1345,8 +1353,26 @@ public class IrPackageImpl extends EPackageImpl implements IrPackage {
 	 * 
 	 * @generated
 	 */
-	public EReference getExprTernary_E3() {
-		return (EReference) exprTernaryEClass.getEStructuralFeatures().get(2);
+	public EClass getExprTypeConv() {
+		return exprTypeConvEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 */
+	public EReference getExprTypeConv_Expr() {
+		return (EReference) exprTypeConvEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 */
+	public EAttribute getExprTypeConv_TypeName() {
+		return (EAttribute) exprTypeConvEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -1556,10 +1582,13 @@ public class IrPackageImpl extends EPackageImpl implements IrPackage {
 		exprStringEClass = createEClass(EXPR_STRING);
 		createEAttribute(exprStringEClass, EXPR_STRING__VALUE);
 
-		exprTernaryEClass = createEClass(EXPR_TERNARY);
-		createEReference(exprTernaryEClass, EXPR_TERNARY__E1);
-		createEReference(exprTernaryEClass, EXPR_TERNARY__E2);
-		createEReference(exprTernaryEClass, EXPR_TERNARY__E3);
+		exprResizeEClass = createEClass(EXPR_RESIZE);
+		createEReference(exprResizeEClass, EXPR_RESIZE__EXPR);
+		createEAttribute(exprResizeEClass, EXPR_RESIZE__TARGET_SIZE);
+
+		exprTypeConvEClass = createEClass(EXPR_TYPE_CONV);
+		createEReference(exprTypeConvEClass, EXPR_TYPE_CONV__EXPR);
+		createEAttribute(exprTypeConvEClass, EXPR_TYPE_CONV__TYPE_NAME);
 
 		exprUnaryEClass = createEClass(EXPR_UNARY);
 		createEReference(exprUnaryEClass, EXPR_UNARY__EXPR);
@@ -1656,7 +1685,8 @@ public class IrPackageImpl extends EPackageImpl implements IrPackage {
 		exprIntEClass.getESuperTypes().add(this.getExpression());
 		exprListEClass.getESuperTypes().add(this.getExpression());
 		exprStringEClass.getESuperTypes().add(this.getExpression());
-		exprTernaryEClass.getESuperTypes().add(this.getExpression());
+		exprResizeEClass.getESuperTypes().add(this.getExpression());
+		exprTypeConvEClass.getESuperTypes().add(this.getExpression());
 		exprUnaryEClass.getESuperTypes().add(this.getExpression());
 		exprVarEClass.getESuperTypes().add(this.getExpression());
 		typeArrayEClass.getESuperTypes().add(this.getType());
@@ -1872,17 +1902,23 @@ public class IrPackageImpl extends EPackageImpl implements IrPackage {
 				ExprString.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE,
 				!IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(exprTernaryEClass, ExprTernary.class, "ExprTernary", !IS_ABSTRACT,
+		initEClass(exprResizeEClass, ExprResize.class, "ExprResize", !IS_ABSTRACT, !IS_INTERFACE,
+				IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getExprResize_Expr(), this.getExpression(), null, "expr", null, 0, 1,
+				ExprResize.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE,
+				!IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getExprResize_TargetSize(), ecorePackage.getEInt(), "targetSize", null, 0,
+				1, ExprResize.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE,
+				!IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(exprTypeConvEClass, ExprTypeConv.class, "ExprTypeConv", !IS_ABSTRACT,
 				!IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getExprTernary_E1(), this.getExpression(), null, "e1", null, 0, 1,
-				ExprTernary.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE,
+		initEReference(getExprTypeConv_Expr(), this.getExpression(), null, "expr", null, 0, 1,
+				ExprTypeConv.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE,
 				!IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getExprTernary_E2(), this.getExpression(), null, "e2", null, 0, 1,
-				ExprTernary.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE,
-				!IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getExprTernary_E3(), this.getExpression(), null, "e3", null, 0, 1,
-				ExprTernary.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE,
-				!IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getExprTypeConv_TypeName(), ecorePackage.getEString(), "typeName", null, 0,
+				1, ExprTypeConv.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE,
+				!IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(exprUnaryEClass, ExprUnary.class, "ExprUnary", !IS_ABSTRACT, !IS_INTERFACE,
 				IS_GENERATED_INSTANCE_CLASS);

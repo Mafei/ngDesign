@@ -48,7 +48,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import com.synflow.cflow.CflowUtil;
 import com.synflow.cflow.cflow.Block;
@@ -179,10 +178,7 @@ public class FunctionTransformer extends CflowSwitch<EObject> implements Transfo
 		Type sourceType = typer.getType(expression.getExpression());
 		Expression expr = transformExpr(expression.getExpression());
 
-		if (EcoreUtil.equals(sourceType, targetType)) {
-			return expr;
-		}
-		return IrFactory.eINSTANCE.createExprCast(targetType, sourceType, expr);
+		return eINSTANCE.cast(targetType, sourceType, expr);
 	}
 
 	@Override

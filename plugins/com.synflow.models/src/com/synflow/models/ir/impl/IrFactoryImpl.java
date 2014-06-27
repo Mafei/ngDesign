@@ -28,8 +28,9 @@ import com.synflow.models.ir.ExprCast;
 import com.synflow.models.ir.ExprFloat;
 import com.synflow.models.ir.ExprInt;
 import com.synflow.models.ir.ExprList;
+import com.synflow.models.ir.ExprResize;
 import com.synflow.models.ir.ExprString;
-import com.synflow.models.ir.ExprTernary;
+import com.synflow.models.ir.ExprTypeConv;
 import com.synflow.models.ir.ExprUnary;
 import com.synflow.models.ir.ExprVar;
 import com.synflow.models.ir.Expression;
@@ -114,6 +115,38 @@ public class IrFactoryImpl extends EFactoryImpl implements IrFactory {
 
 		variable.setName(name);
 		procedure.getLocals().add(variable);
+	}
+
+	@Override
+	public Expression cast(Type targetType, Type sourceType, Expression expr) {
+		int size = TypeUtil.getSize(targetType);
+		if (expr.isExprInt()) {
+			((ExprInt) expr).setSize(size);
+		}
+
+		if (sourceType.isInt() && targetType.isInt()) {
+			TypeInt srcInt = (TypeInt) sourceType;
+			TypeInt tgtInt = (TypeInt) targetType;
+
+			if (expr.isExprInt() && !(srcInt.isSigned() ^ tgtInt.isSigned())) {
+				// if ExprInt and no difference in signedness, just returns expr
+				return expr;
+			}
+
+			ExprCastImpl exprCast = new ExprCastImpl();
+			if (srcInt.isSigned() && !tgtInt.isSigned()) {
+				exprCast.setToUnsigned(true);
+			}
+			if (!srcInt.isSigned() && tgtInt.isSigned()) {
+				exprCast.setToSigned(true);
+			}
+			exprCast.setCastedSize(size);
+			exprCast.setExpr(expr);
+
+			return exprCast;
+		}
+
+		return expr;
 	}
 
 	@Override
@@ -208,8 +241,10 @@ public class IrFactoryImpl extends EFactoryImpl implements IrFactory {
 			return createExprList();
 		case IrPackage.EXPR_STRING:
 			return createExprString();
-		case IrPackage.EXPR_TERNARY:
-			return createExprTernary();
+		case IrPackage.EXPR_RESIZE:
+			return createExprResize();
+		case IrPackage.EXPR_TYPE_CONV:
+			return createExprTypeConv();
 		case IrPackage.EXPR_UNARY:
 			return createExprUnary();
 		case IrPackage.EXPR_VAR:
@@ -339,26 +374,6 @@ public class IrFactoryImpl extends EFactoryImpl implements IrFactory {
 		return exprCast;
 	}
 
-	@Override
-	public ExprCast createExprCast(Type targetType, Type sourceType, Expression value) {
-		ExprCastImpl exprCast = new ExprCastImpl();
-
-		if (sourceType.isInt() && targetType.isInt()) {
-			TypeInt srcInt = (TypeInt) sourceType;
-			TypeInt tgtInt = (TypeInt) targetType;
-			if (srcInt.isSigned() && !tgtInt.isSigned()) {
-				exprCast.setToUnsigned(true);
-			}
-			if (!srcInt.isSigned() && tgtInt.isSigned()) {
-				exprCast.setToSigned(true);
-			}
-			exprCast.setCastedSize(tgtInt.getSize());
-			exprCast.setExpr(value);
-		}
-
-		return exprCast;
-	}
-
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * 
@@ -435,24 +450,6 @@ public class IrFactoryImpl extends EFactoryImpl implements IrFactory {
 		return exprList;
 	}
 
-	@Override
-	public Expression createExprMax(Expression e1, Expression e2) {
-		ExprTernaryImpl exprTernary = new ExprTernaryImpl();
-		exprTernary.setE1(createExprBinary(IrUtil.copy(e1), OpBinary.GT, IrUtil.copy(e2)));
-		exprTernary.setE2(IrUtil.copy(e1));
-		exprTernary.setE3(IrUtil.copy(e2));
-		return exprTernary;
-	}
-
-	@Override
-	public Expression createExprMin(Expression e1, Expression e2) {
-		ExprTernaryImpl exprTernary = new ExprTernaryImpl();
-		exprTernary.setE1(createExprBinary(IrUtil.copy(e1), OpBinary.LT, IrUtil.copy(e2)));
-		exprTernary.setE2(IrUtil.copy(e1));
-		exprTernary.setE3(IrUtil.copy(e2));
-		return exprTernary;
-	}
-
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * 
@@ -463,11 +460,14 @@ public class IrFactoryImpl extends EFactoryImpl implements IrFactory {
 		return exprString;
 	}
 
-	@Override
-	public ExprString createExprString(String value) {
-		ExprStringImpl exprString = new ExprStringImpl();
-		exprString.setValue(value);
-		return exprString;
+	/**
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 */
+	public ExprResize createExprResize() {
+		ExprResizeImpl exprResize = new ExprResizeImpl();
+		return exprResize;
 	}
 
 	/**
@@ -475,18 +475,16 @@ public class IrFactoryImpl extends EFactoryImpl implements IrFactory {
 	 * 
 	 * @generated
 	 */
-	public ExprTernary createExprTernary() {
-		ExprTernaryImpl exprTernary = new ExprTernaryImpl();
-		return exprTernary;
+	public ExprTypeConv createExprTypeConv() {
+		ExprTypeConvImpl exprTypeConv = new ExprTypeConvImpl();
+		return exprTypeConv;
 	}
 
 	@Override
-	public ExprTernary createExprTernary(Expression e1, Expression e2, Expression e3) {
-		ExprTernaryImpl exprTernary = new ExprTernaryImpl();
-		exprTernary.setE1(e1);
-		exprTernary.setE2(e2);
-		exprTernary.setE3(e3);
-		return exprTernary;
+	public ExprString createExprString(String value) {
+		ExprStringImpl exprString = new ExprStringImpl();
+		exprString.setValue(value);
+		return exprString;
 	}
 
 	/**

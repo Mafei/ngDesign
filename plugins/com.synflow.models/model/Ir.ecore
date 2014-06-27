@@ -116,13 +116,15 @@
   <eClassifiers xsi:type="ecore:EClass" name="ExprString" eSuperTypes="#//Expression">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ExprTernary" eSuperTypes="#//Expression">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="e1" eType="#//Expression"
+  <eClassifiers xsi:type="ecore:EClass" name="ExprResize" eSuperTypes="#//Expression">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="expr" eType="#//Expression"
         containment="true" resolveProxies="false"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="e2" eType="#//Expression"
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="targetSize" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ExprTypeConv" eSuperTypes="#//Expression">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="expr" eType="#//Expression"
         containment="true" resolveProxies="false"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="e3" eType="#//Expression"
-        containment="true" resolveProxies="false"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="typeName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ExprUnary" eSuperTypes="#//Expression">
     <eStructuralFeatures xsi:type="ecore:EReference" name="expr" eType="#//Expression"
