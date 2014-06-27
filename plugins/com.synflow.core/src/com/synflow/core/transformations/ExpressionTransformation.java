@@ -14,12 +14,13 @@ import static com.synflow.models.ir.IrFactory.eINSTANCE;
 import static com.synflow.models.util.SwitchUtil.CASCADE;
 import static com.synflow.models.util.SwitchUtil.DONE;
 
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
 
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.synflow.models.dpn.Action;
 import com.synflow.models.dpn.Actor;
@@ -91,18 +92,26 @@ public class ExpressionTransformation extends ModuleTransformation {
 
 		@Override
 		public Void caseInstCall(InstCall call) {
-			if (call.isAssert() || call.isPrint()) {
-				return DONE;
-			}
-
-			List<Var> parameters = call.getProcedure().getParameters();
-			Iterable<Type> types = Iterables.transform(parameters, new Function<Var, Type>() {
-				@Override
-				public Type apply(Var variable) {
-					return variable.getType();
+			Iterable<? extends Type> types;
+			if (call.isAssert()) {
+				types = ImmutableSet.of(eINSTANCE.createTypeBool());
+			} else if (call.isPrint()) {
+				// create a list rather than an iterable to avoid concurrent modifications later
+				List<Type> list = new ArrayList<>();
+				for (Expression expr : call.getArguments()) {
+					list.add(TypeUtil.getType(expr));
 				}
-			});
-			visitExprList(types, call.getArguments());
+				types = list;
+			} else {
+				List<Var> parameters = call.getProcedure().getParameters();
+				types = Iterables.transform(parameters, new Function<Var, Type>() {
+					@Override
+					public Type apply(Var variable) {
+						return variable.getType();
+					}
+				});
+			}
+			transformer.visitExprList(types, call.getArguments());
 			return DONE;
 		}
 
@@ -129,7 +138,6 @@ public class ExpressionTransformation extends ModuleTransformation {
 			Type type = store.getTarget().getVariable().getType();
 			if (!store.getIndexes().isEmpty()) {
 				visitIndexes(type, store.getIndexes());
-				type = ((TypeArray) type).getElementType();
 			}
 
 			store.setValue(visitExpr(type, store.getValue()));
@@ -153,22 +161,13 @@ public class ExpressionTransformation extends ModuleTransformation {
 		}
 
 		private Expression visitExpr(Type target, Expression expression) {
-			return transformer.transform(target, expression);
-		}
-
-		private void visitExprList(Iterable<Type> types, EList<Expression> indexes) {
-			Iterator<Type> it = types.iterator();
-			int i = 0;
-			while (i < indexes.size()) {
-				final Expression expr = indexes.get(i);
-				final Expression res = visitExpr(it.next(), expr);
-				if (res == expr) {
-					i++;
-				} else {
-					indexes.add(i, res);
-					i++;
-				}
+			Type type;
+			if (target.isArray()) {
+				type = ((TypeArray) target).getElementType();
+			} else {
+				type = target;
 			}
+			return transformer.transform(type, expression);
 		}
 
 		private void visitIndexes(Type type, EList<Expression> indexes) {
@@ -181,7 +180,7 @@ public class ExpressionTransformation extends ModuleTransformation {
 								return eINSTANCE.createTypeInt(TypeUtil.getSize(size - 1), false);
 							}
 						});
-				visitExprList(types, indexes);
+				transformer.visitExprList(types, indexes);
 			}
 		}
 

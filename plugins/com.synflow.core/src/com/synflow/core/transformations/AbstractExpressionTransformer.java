@@ -10,8 +10,15 @@
  *******************************************************************************/
 package com.synflow.core.transformations;
 
+import java.util.Iterator;
+
+import org.eclipse.emf.common.util.EList;
+
+import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.synflow.models.ir.ExprBinary;
 import com.synflow.models.ir.ExprCast;
+import com.synflow.models.ir.ExprList;
 import com.synflow.models.ir.ExprUnary;
 import com.synflow.models.ir.Expression;
 import com.synflow.models.ir.Procedure;
@@ -53,6 +60,12 @@ public abstract class AbstractExpressionTransformer extends IrSwitch<Expression>
 	}
 
 	@Override
+	public Expression caseExprList(ExprList expr) {
+		visitExprList(expr.getValue());
+		return caseExpression(expr);
+	}
+
+	@Override
 	public Expression caseExprUnary(ExprUnary expr) {
 		Type parent = TypeUtil.getType(expr.getExpr());
 		expr.setExpr(transform(parent, expr.getExpr()));
@@ -77,6 +90,35 @@ public abstract class AbstractExpressionTransformer extends IrSwitch<Expression>
 		Expression result = doSwitch(expression);
 		this.target = oldTarget;
 		return result;
+	}
+
+	private void visitExprList(EList<Expression> indexes) {
+		visitExprList(Functions.constant(target), indexes);
+	}
+
+	private void visitExprList(Function<Object, Type> fun, EList<Expression> indexes) {
+		int i = 0;
+		while (i < indexes.size()) {
+			final Expression expr = indexes.get(i);
+			final Expression res = transform(fun.apply(null), expr);
+			if (res != expr) {
+				// replace "expr" by "res"
+				// we need to use "add" and not "set" because "expr" was removed from the list
+				// so the list might not be big enough
+				indexes.add(i, res);
+			}
+			i++;
+		}
+	}
+
+	protected void visitExprList(Iterable<? extends Type> types, EList<Expression> indexes) {
+		final Iterator<? extends Type> it = types.iterator();
+		visitExprList(new Function<Object, Type>() {
+			@Override
+			public Type apply(Object arg0) {
+				return it.next();
+			}
+		}, indexes);
 	}
 
 }
