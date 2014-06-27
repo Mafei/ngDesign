@@ -16,8 +16,8 @@ import java.math.BigInteger;
 
 import com.synflow.models.ir.ExprBinary;
 import com.synflow.models.ir.ExprBool;
-import com.synflow.models.ir.ExprCast;
 import com.synflow.models.ir.ExprInt;
+import com.synflow.models.ir.ExprResize;
 import com.synflow.models.ir.ExprUnary;
 import com.synflow.models.ir.Expression;
 import com.synflow.models.ir.IrFactory;
@@ -69,7 +69,7 @@ public class ConstantFolder extends IrSwitch<Expression> {
 	}
 
 	@Override
-	public Expression caseExprCast(ExprCast expr) {
+	public Expression caseExprResize(ExprResize expr) {
 		Expression subExpr = doSwitch(expr.getExpr());
 		expr.setExpr(subExpr);
 
@@ -89,8 +89,8 @@ public class ConstantFolder extends IrSwitch<Expression> {
 			}
 		} else if (op == OpUnary.BITNOT) {
 			if (subExpr.isCast()) {
-				ExprCast cast = (ExprCast) subExpr;
-				int size = cast.getCastedSize();
+				ExprResize cast = (ExprResize) subExpr;
+				int size = cast.getTargetSize();
 				subExpr = cast.getExpr();
 				if (subExpr.isExprInt()) {
 					BigInteger value = ((ExprInt) subExpr).getValue();

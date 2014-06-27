@@ -14,10 +14,11 @@ package com.synflow.generators.vhdl
 import com.synflow.generators.ExpressionPrinter
 import com.synflow.models.ir.ExprBinary
 import com.synflow.models.ir.ExprBool
-import com.synflow.models.ir.ExprCast
 import com.synflow.models.ir.ExprInt
 import com.synflow.models.ir.ExprList
+import com.synflow.models.ir.ExprResize
 import com.synflow.models.ir.ExprString
+import com.synflow.models.ir.ExprTypeConv
 import com.synflow.models.ir.ExprUnary
 import com.synflow.models.ir.ExprVar
 import com.synflow.models.ir.OpBinary
@@ -106,18 +107,6 @@ class VhdlExpressionPrinter extends ExpressionPrinter {
 		if (expr.value) "'1'" else "'0'"
 	}
 
-	override caseExprCast(ExprCast expr) {
-		if (expr.toSigned) {
-			'''signed(«doSwitch(expr.expr)»)'''
-		} else if (expr.toUnsigned) {
-			'''unsigned(«doSwitch(expr.expr)»)'''
-		} else if (expr.targetTypeName != null) {
-			'''«expr.targetTypeName»(«doSwitch(expr.expr)»)'''
-		} else {
-			'''resize(«doSwitch(expr.expr)», «expr.castedSize»)'''
-		}
-	}
-
 	override caseExprInt(ExprInt expr) {
 		val value = expr.value
 		val size = expr.size
@@ -134,6 +123,14 @@ class VhdlExpressionPrinter extends ExpressionPrinter {
 
 	override caseExprList(ExprList expr) {
 		'''«FOR subExpr : expr.value SEPARATOR ", "»«doSwitch(subExpr, Integer.MAX_VALUE, 0)»«ENDFOR»'''
+	}
+
+	override caseExprResize(ExprResize expr) {
+		'''resize(«doSwitch(expr.expr)», «expr.targetSize»)'''
+	}
+
+	override caseExprTypeConv(ExprTypeConv expr) {
+		'''«expr.typeName»(«doSwitch(expr.expr)»)'''
 	}
 
 	override caseExprString(ExprString expr)

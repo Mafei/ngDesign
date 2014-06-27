@@ -17,8 +17,9 @@ import org.eclipse.emf.common.util.EList;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.synflow.models.ir.ExprBinary;
-import com.synflow.models.ir.ExprCast;
 import com.synflow.models.ir.ExprList;
+import com.synflow.models.ir.ExprResize;
+import com.synflow.models.ir.ExprTypeConv;
 import com.synflow.models.ir.ExprUnary;
 import com.synflow.models.ir.Expression;
 import com.synflow.models.ir.Procedure;
@@ -48,13 +49,6 @@ public abstract class AbstractExpressionTransformer extends IrSwitch<Expression>
 	}
 
 	@Override
-	public Expression caseExprCast(ExprCast expr) {
-		Type parent = TypeUtil.getType(expr.getExpr());
-		expr.setExpr(transform(parent, expr.getExpr()));
-		return caseExpression(expr);
-	}
-
-	@Override
 	public Expression caseExpression(Expression expr) {
 		return expr;
 	}
@@ -66,8 +60,22 @@ public abstract class AbstractExpressionTransformer extends IrSwitch<Expression>
 	}
 
 	@Override
-	public Expression caseExprUnary(ExprUnary expr) {
+	public Expression caseExprResize(ExprResize expr) {
 		Type parent = TypeUtil.getType(expr.getExpr());
+		expr.setExpr(transform(parent, expr.getExpr()));
+		return caseExpression(expr);
+	}
+
+	@Override
+	public Expression caseExprTypeConv(ExprTypeConv expr) {
+		Type parent = TypeUtil.getType(expr.getExpr());
+		expr.setExpr(transform(parent, expr.getExpr()));
+		return caseExpression(expr);
+	}
+
+	@Override
+	public Expression caseExprUnary(ExprUnary expr) {
+		Type parent = TypeUtil.getType(expr);
 		expr.setExpr(transform(parent, expr.getExpr()));
 		return caseExpression(expr);
 	}

@@ -35,11 +35,12 @@ import java.util.Iterator;
 
 import com.synflow.models.ir.ExprBinary;
 import com.synflow.models.ir.ExprBool;
-import com.synflow.models.ir.ExprCast;
 import com.synflow.models.ir.ExprFloat;
 import com.synflow.models.ir.ExprInt;
 import com.synflow.models.ir.ExprList;
+import com.synflow.models.ir.ExprResize;
 import com.synflow.models.ir.ExprString;
+import com.synflow.models.ir.ExprTypeConv;
 import com.synflow.models.ir.ExprUnary;
 import com.synflow.models.ir.ExprVar;
 import com.synflow.models.ir.Expression;
@@ -101,20 +102,6 @@ public class ExpressionPrinter extends IrSwitch<Void> {
 	}
 
 	@Override
-	public Void caseExprCast(ExprCast expr) {
-		builder.append('(');
-		if (expr.isToSigned()) {
-			builder.append('i');
-		} else if (expr.isToUnsigned()) {
-			builder.append('u');
-		}
-		builder.append(expr.getCastedSize());
-		builder.append(") ");
-		doSwitch(expr.getExpr());
-		return DONE;
-	}
-
-	@Override
 	public Void caseExprBool(ExprBool expr) {
 		builder.append(expr.isValue());
 		return DONE;
@@ -153,12 +140,30 @@ public class ExpressionPrinter extends IrSwitch<Void> {
 	}
 
 	@Override
+	public Void caseExprResize(ExprResize expr) {
+		builder.append("resize(");
+		doSwitch(expr.getExpr());
+		builder.append(')');
+		builder.append(expr.getTargetSize());
+		return DONE;
+	}
+
+	@Override
 	public Void caseExprString(ExprString expr) {
 		// note the difference with the caseExprString method from the
 		// expression evaluator: quotes around the string
 		builder.append('"');
 		builder.append(expr.getValue());
 		builder.append('"');
+		return DONE;
+	}
+
+	@Override
+	public Void caseExprTypeConv(ExprTypeConv expr) {
+		builder.append(expr.getTypeName());
+		builder.append('(');
+		doSwitch(expr.getExpr());
+		builder.append(')');
 		return DONE;
 	}
 

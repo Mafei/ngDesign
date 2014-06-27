@@ -23,7 +23,6 @@ import com.synflow.models.ir.BlockWhile;
 import com.synflow.models.ir.Def;
 import com.synflow.models.ir.ExprBinary;
 import com.synflow.models.ir.ExprBool;
-import com.synflow.models.ir.ExprCast;
 import com.synflow.models.ir.ExprFloat;
 import com.synflow.models.ir.ExprInt;
 import com.synflow.models.ir.ExprList;
@@ -224,13 +223,6 @@ public class IrPackageImpl extends EPackageImpl implements IrPackage {
 	 * @generated
 	 */
 	private EClass exprBoolEClass = null;
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	private EClass exprCastEClass = null;
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -1183,60 +1175,6 @@ public class IrPackageImpl extends EPackageImpl implements IrPackage {
 	 * 
 	 * @generated
 	 */
-	public EClass getExprCast() {
-		return exprCastEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	public EReference getExprCast_Expr() {
-		return (EReference) exprCastEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	public EAttribute getExprCast_TargetTypeName() {
-		return (EAttribute) exprCastEClass.getEStructuralFeatures().get(2);
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	public EAttribute getExprCast_ToSigned() {
-		return (EAttribute) exprCastEClass.getEStructuralFeatures().get(3);
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	public EAttribute getExprCast_ToUnsigned() {
-		return (EAttribute) exprCastEClass.getEStructuralFeatures().get(4);
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	public EAttribute getExprCast_CastedSize() {
-		return (EAttribute) exprCastEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
 	@Override
 	public EClass getExprFloat() {
 		return exprFloatEClass;
@@ -1562,13 +1500,6 @@ public class IrPackageImpl extends EPackageImpl implements IrPackage {
 		exprBoolEClass = createEClass(EXPR_BOOL);
 		createEAttribute(exprBoolEClass, EXPR_BOOL__VALUE);
 
-		exprCastEClass = createEClass(EXPR_CAST);
-		createEAttribute(exprCastEClass, EXPR_CAST__CASTED_SIZE);
-		createEReference(exprCastEClass, EXPR_CAST__EXPR);
-		createEAttribute(exprCastEClass, EXPR_CAST__TARGET_TYPE_NAME);
-		createEAttribute(exprCastEClass, EXPR_CAST__TO_SIGNED);
-		createEAttribute(exprCastEClass, EXPR_CAST__TO_UNSIGNED);
-
 		exprFloatEClass = createEClass(EXPR_FLOAT);
 		createEAttribute(exprFloatEClass, EXPR_FLOAT__VALUE);
 
@@ -1680,7 +1611,6 @@ public class IrPackageImpl extends EPackageImpl implements IrPackage {
 		instStoreEClass.getESuperTypes().add(this.getInstruction());
 		exprBinaryEClass.getESuperTypes().add(this.getExpression());
 		exprBoolEClass.getESuperTypes().add(this.getExpression());
-		exprCastEClass.getESuperTypes().add(this.getExpression());
 		exprFloatEClass.getESuperTypes().add(this.getExpression());
 		exprIntEClass.getESuperTypes().add(this.getExpression());
 		exprListEClass.getESuperTypes().add(this.getExpression());
@@ -1856,24 +1786,6 @@ public class IrPackageImpl extends EPackageImpl implements IrPackage {
 		initEAttribute(getExprBool_Value(), ecorePackage.getEBoolean(), "value", null, 0, 1,
 				ExprBool.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID,
 				IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		initEClass(exprCastEClass, ExprCast.class, "ExprCast", !IS_ABSTRACT, !IS_INTERFACE,
-				IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getExprCast_CastedSize(), ecorePackage.getEInt(), "castedSize", null, 0, 1,
-				ExprCast.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID,
-				IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getExprCast_Expr(), this.getExpression(), null, "expr", null, 0, 1,
-				ExprCast.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE,
-				!IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getExprCast_TargetTypeName(), ecorePackage.getEString(), "targetTypeName",
-				null, 0, 1, ExprCast.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
-				!IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getExprCast_ToSigned(), ecorePackage.getEBoolean(), "toSigned", null, 0, 1,
-				ExprCast.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID,
-				IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getExprCast_ToUnsigned(), ecorePackage.getEBoolean(), "toUnsigned", null, 0,
-				1, ExprCast.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE,
-				!IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(exprFloatEClass, ExprFloat.class, "ExprFloat", !IS_ABSTRACT, !IS_INTERFACE,
 				IS_GENERATED_INSTANCE_CLASS);

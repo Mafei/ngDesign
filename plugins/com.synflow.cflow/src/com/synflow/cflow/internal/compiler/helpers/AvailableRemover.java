@@ -14,10 +14,11 @@ import org.eclipse.emf.ecore.EObject;
 
 import com.synflow.models.ir.ExprBinary;
 import com.synflow.models.ir.ExprBool;
-import com.synflow.models.ir.ExprCast;
 import com.synflow.models.ir.ExprFloat;
 import com.synflow.models.ir.ExprInt;
+import com.synflow.models.ir.ExprResize;
 import com.synflow.models.ir.ExprString;
+import com.synflow.models.ir.ExprTypeConv;
 import com.synflow.models.ir.ExprUnary;
 import com.synflow.models.ir.ExprVar;
 import com.synflow.models.ir.Expression;
@@ -56,17 +57,6 @@ public class AvailableRemover extends IrSwitch<EObject> {
 	}
 
 	@Override
-	public ExprCast caseExprCast(ExprCast expr) {
-		Expression e = visit(expr.getExpr());
-		if (e == null) {
-			return null;
-		}
-
-		expr.setExpr(e);
-		return expr;
-	}
-
-	@Override
 	public Expression caseExpression(Expression expr) {
 		// this is the default case for expression
 		// it must return null and not expr
@@ -85,7 +75,29 @@ public class AvailableRemover extends IrSwitch<EObject> {
 	}
 
 	@Override
+	public ExprResize caseExprResize(ExprResize expr) {
+		Expression e = visit(expr.getExpr());
+		if (e == null) {
+			return null;
+		}
+
+		expr.setExpr(e);
+		return expr;
+	}
+
+	@Override
 	public ExprString caseExprString(ExprString expr) {
+		return expr;
+	}
+
+	@Override
+	public ExprTypeConv caseExprTypeConv(ExprTypeConv expr) {
+		Expression e = visit(expr.getExpr());
+		if (e == null) {
+			return null;
+		}
+
+		expr.setExpr(e);
 		return expr;
 	}
 

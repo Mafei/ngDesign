@@ -29,16 +29,6 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  */
 public class ExprTypeConvImpl extends ExpressionImpl implements ExprTypeConv {
 	/**
-	 * The default value of the '{@link #getTypeName() <em>Type Name</em>}' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #getTypeName()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String TYPE_NAME_EDEFAULT = null;
-
-	/**
 	 * The cached value of the '{@link #getExpr() <em>Expr</em>}' containment reference. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
 	 * 
@@ -47,6 +37,16 @@ public class ExprTypeConvImpl extends ExpressionImpl implements ExprTypeConv {
 	 * @ordered
 	 */
 	protected Expression expr;
+
+	/**
+	 * The default value of the '{@link #getTypeName() <em>Type Name</em>}' attribute. <!--
+	 * begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @see #getTypeName()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String TYPE_NAME_EDEFAULT = null;
 
 	/**
 	 * The cached value of the '{@link #getTypeName() <em>Type Name</em>}' attribute. <!--

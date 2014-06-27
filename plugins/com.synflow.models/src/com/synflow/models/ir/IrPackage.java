@@ -112,56 +112,6 @@ public interface IrPackage extends EPackage {
 		EAttribute EXPR_BOOL__VALUE = eINSTANCE.getExprBool_Value();
 
 		/**
-		 * The meta object literal for the '{@link com.synflow.models.ir.impl.ExprCastImpl
-		 * <em>Expr Cast</em>}' class. <!-- begin-user-doc --> <!-- end-user-doc -->
-		 * 
-		 * @see com.synflow.models.ir.impl.ExprCastImpl
-		 * @see com.synflow.models.ir.impl.IrPackageImpl#getExprCast()
-		 * @generated
-		 */
-		EClass EXPR_CAST = eINSTANCE.getExprCast();
-
-		/**
-		 * The meta object literal for the '<em><b>Expr</b></em>' containment reference feature.
-		 * <!-- begin-user-doc --> <!-- end-user-doc -->
-		 * 
-		 * @generated
-		 */
-		EReference EXPR_CAST__EXPR = eINSTANCE.getExprCast_Expr();
-
-		/**
-		 * The meta object literal for the '<em><b>Target Type Name</b></em>' attribute feature.
-		 * <!-- begin-user-doc --> <!-- end-user-doc -->
-		 * 
-		 * @generated
-		 */
-		EAttribute EXPR_CAST__TARGET_TYPE_NAME = eINSTANCE.getExprCast_TargetTypeName();
-
-		/**
-		 * The meta object literal for the '<em><b>To Signed</b></em>' attribute feature. <!--
-		 * begin-user-doc --> <!-- end-user-doc -->
-		 * 
-		 * @generated
-		 */
-		EAttribute EXPR_CAST__TO_SIGNED = eINSTANCE.getExprCast_ToSigned();
-
-		/**
-		 * The meta object literal for the '<em><b>To Unsigned</b></em>' attribute feature. <!--
-		 * begin-user-doc --> <!-- end-user-doc -->
-		 * 
-		 * @generated
-		 */
-		EAttribute EXPR_CAST__TO_UNSIGNED = eINSTANCE.getExprCast_ToUnsigned();
-
-		/**
-		 * The meta object literal for the '<em><b>Casted Size</b></em>' attribute feature. <!--
-		 * begin-user-doc --> <!-- end-user-doc -->
-		 * 
-		 * @generated
-		 */
-		EAttribute EXPR_CAST__CASTED_SIZE = eINSTANCE.getExprCast_CastedSize();
-
-		/**
 		 * The meta object literal for the '{@link com.synflow.models.ir.impl.ExprFloatImpl
 		 * <em>Expr Float</em>}' class. <!-- begin-user-doc --> <!-- end-user-doc -->
 		 * 
@@ -1003,7 +953,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getDef()
 	 * @generated
 	 */
-	int DEF = 31;
+	int DEF = 30;
 
 	/**
 	 * The singleton instance of the package. <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -1061,7 +1011,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getExprFloat()
 	 * @generated
 	 */
-	int EXPR_FLOAT = 16;
+	int EXPR_FLOAT = 15;
 
 	/**
 	 * The meta object id for the '{@link com.synflow.models.ir.impl.ExprIntImpl <em>Expr Int</em>}'
@@ -1071,7 +1021,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getExprInt()
 	 * @generated
 	 */
-	int EXPR_INT = 17;
+	int EXPR_INT = 16;
 
 	/**
 	 * The meta object id for the '{@link com.synflow.models.ir.impl.ExprListImpl
@@ -1081,7 +1031,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getExprList()
 	 * @generated
 	 */
-	int EXPR_LIST = 18;
+	int EXPR_LIST = 17;
 
 	/**
 	 * The meta object id for the '{@link com.synflow.models.ir.impl.ExprStringImpl
@@ -1091,7 +1041,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getExprString()
 	 * @generated
 	 */
-	int EXPR_STRING = 19;
+	int EXPR_STRING = 18;
 
 	/**
 	 * The meta object id for the '{@link com.synflow.models.ir.impl.ExprUnaryImpl
@@ -1101,7 +1051,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getExprUnary()
 	 * @generated
 	 */
-	int EXPR_UNARY = 22;
+	int EXPR_UNARY = 21;
 
 	/**
 	 * The meta object id for the '{@link com.synflow.models.ir.impl.ExprVarImpl <em>Expr Var</em>}'
@@ -1111,7 +1061,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getExprVar()
 	 * @generated
 	 */
-	int EXPR_VAR = 23;
+	int EXPR_VAR = 22;
 
 	/**
 	 * The meta object id for the '{@link com.synflow.models.ir.impl.ExpressionImpl
@@ -1201,7 +1151,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getOpBinary()
 	 * @generated
 	 */
-	int OP_BINARY = 34;
+	int OP_BINARY = 33;
 
 	/**
 	 * The meta object id for the '{@link com.synflow.models.ir.OpUnary <em>Op Unary</em>}' enum.
@@ -1211,7 +1161,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getOpUnary()
 	 * @generated
 	 */
-	int OP_UNARY = 35;
+	int OP_UNARY = 34;
 
 	/**
 	 * The meta object id for the '{@link com.synflow.models.ir.impl.ProcedureImpl
@@ -1795,70 +1745,6 @@ public interface IrPackage extends EPackage {
 	int EXPR_BOOL_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 1;
 
 	/**
-	 * The meta object id for the '{@link com.synflow.models.ir.impl.ExprCastImpl
-	 * <em>Expr Cast</em>}' class. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see com.synflow.models.ir.impl.ExprCastImpl
-	 * @see com.synflow.models.ir.impl.IrPackageImpl#getExprCast()
-	 * @generated
-	 */
-	int EXPR_CAST = 15;
-
-	/**
-	 * The feature id for the '<em><b>Casted Size</b></em>' containment reference. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int EXPR_CAST__CASTED_SIZE = EXPRESSION_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Expr</b></em>' containment reference. <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int EXPR_CAST__EXPR = EXPRESSION_FEATURE_COUNT + 1;
-
-	/**
-	 * The feature id for the '<em><b>Target Type Name</b></em>' attribute. <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int EXPR_CAST__TARGET_TYPE_NAME = EXPRESSION_FEATURE_COUNT + 2;
-
-	/**
-	 * The feature id for the '<em><b>To Signed</b></em>' attribute. <!-- begin-user-doc --> <!--
-	 * end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int EXPR_CAST__TO_SIGNED = EXPRESSION_FEATURE_COUNT + 3;
-
-	/**
-	 * The feature id for the '<em><b>To Unsigned</b></em>' attribute. <!-- begin-user-doc --> <!--
-	 * end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int EXPR_CAST__TO_UNSIGNED = EXPRESSION_FEATURE_COUNT + 4;
-
-	/**
-	 * The number of structural features of the '<em>Expr Cast</em>' class. <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int EXPR_CAST_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 5;
-
-	/**
 	 * The feature id for the '<em><b>Value</b></em>' attribute. <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
 	 * 
@@ -1947,7 +1833,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getExprResize()
 	 * @generated
 	 */
-	int EXPR_RESIZE = 20;
+	int EXPR_RESIZE = 19;
 
 	/**
 	 * The feature id for the '<em><b>Expr</b></em>' containment reference. <!-- begin-user-doc -->
@@ -1984,7 +1870,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getExprTypeConv()
 	 * @generated
 	 */
-	int EXPR_TYPE_CONV = 21;
+	int EXPR_TYPE_CONV = 20;
 
 	/**
 	 * The feature id for the '<em><b>Expr</b></em>' containment reference. <!-- begin-user-doc -->
@@ -2066,7 +1952,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getType()
 	 * @generated
 	 */
-	int TYPE = 24;
+	int TYPE = 23;
 
 	/**
 	 * The number of structural features of the '<em>Type</em>' class. <!-- begin-user-doc --> <!--
@@ -2085,7 +1971,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getTypeBool()
 	 * @generated
 	 */
-	int TYPE_BOOL = 26;
+	int TYPE_BOOL = 25;
 
 	/**
 	 * The meta object id for the '{@link com.synflow.models.ir.impl.TypeFloatImpl
@@ -2095,7 +1981,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getTypeFloat()
 	 * @generated
 	 */
-	int TYPE_FLOAT = 27;
+	int TYPE_FLOAT = 26;
 
 	/**
 	 * The meta object id for the '{@link com.synflow.models.ir.impl.TypeIntImpl <em>Type Int</em>}'
@@ -2105,7 +1991,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getTypeInt()
 	 * @generated
 	 */
-	int TYPE_INT = 28;
+	int TYPE_INT = 27;
 
 	/**
 	 * The meta object id for the '{@link com.synflow.models.ir.impl.TypeStringImpl
@@ -2115,7 +2001,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getTypeString()
 	 * @generated
 	 */
-	int TYPE_STRING = 29;
+	int TYPE_STRING = 28;
 
 	/**
 	 * The meta object id for the '{@link com.synflow.models.ir.impl.TypeVoidImpl
@@ -2125,7 +2011,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getTypeVoid()
 	 * @generated
 	 */
-	int TYPE_VOID = 30;
+	int TYPE_VOID = 29;
 
 	/**
 	 * The meta object id for the '{@link com.synflow.models.ir.impl.UseImpl <em>Use</em>}' class.
@@ -2135,7 +2021,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getUse()
 	 * @generated
 	 */
-	int USE = 33;
+	int USE = 32;
 
 	/**
 	 * The meta object id for the '{@link com.synflow.models.ir.impl.VarImpl <em>Var</em>}' class.
@@ -2145,7 +2031,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getVar()
 	 * @generated
 	 */
-	int VAR = 32;
+	int VAR = 31;
 
 	/**
 	 * The meta object id for the '{@link com.synflow.models.ir.impl.TypeArrayImpl
@@ -2155,7 +2041,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getTypeArray()
 	 * @generated
 	 */
-	int TYPE_ARRAY = 25;
+	int TYPE_ARRAY = 24;
 
 	/**
 	 * The feature id for the '<em><b>Dimensions</b></em>' containment reference list. <!--
@@ -2495,75 +2381,6 @@ public interface IrPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getExprBool_Value();
-
-	/**
-	 * Returns the meta object for class '{@link com.synflow.models.ir.ExprCast <em>Expr Cast</em>}
-	 * '. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @return the meta object for class '<em>Expr Cast</em>'.
-	 * @see com.synflow.models.ir.ExprCast
-	 * @generated
-	 */
-	EClass getExprCast();
-
-	/**
-	 * Returns the meta object for the containment reference '
-	 * {@link com.synflow.models.ir.ExprCast#getExpr <em>Expr</em>}'. <!-- begin-user-doc --> <!--
-	 * end-user-doc -->
-	 * 
-	 * @return the meta object for the containment reference '<em>Expr</em>'.
-	 * @see com.synflow.models.ir.ExprCast#getExpr()
-	 * @see #getExprCast()
-	 * @generated
-	 */
-	EReference getExprCast_Expr();
-
-	/**
-	 * Returns the meta object for the attribute '
-	 * {@link com.synflow.models.ir.ExprCast#getTargetTypeName <em>Target Type Name</em>}'. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @return the meta object for the attribute '<em>Target Type Name</em>'.
-	 * @see com.synflow.models.ir.ExprCast#getTargetTypeName()
-	 * @see #getExprCast()
-	 * @generated
-	 */
-	EAttribute getExprCast_TargetTypeName();
-
-	/**
-	 * Returns the meta object for the attribute '{@link com.synflow.models.ir.ExprCast#isToSigned
-	 * <em>To Signed</em>}'. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @return the meta object for the attribute '<em>To Signed</em>'.
-	 * @see com.synflow.models.ir.ExprCast#isToSigned()
-	 * @see #getExprCast()
-	 * @generated
-	 */
-	EAttribute getExprCast_ToSigned();
-
-	/**
-	 * Returns the meta object for the attribute '
-	 * {@link com.synflow.models.ir.ExprCast#isToUnsigned <em>To Unsigned</em>}'. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @return the meta object for the attribute '<em>To Unsigned</em>'.
-	 * @see com.synflow.models.ir.ExprCast#isToUnsigned()
-	 * @see #getExprCast()
-	 * @generated
-	 */
-	EAttribute getExprCast_ToUnsigned();
-
-	/**
-	 * Returns the meta object for the containment reference '
-	 * {@link com.synflow.models.ir.ExprCast#getCastedSize <em>Casted Size</em>}'. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @return the meta object for the containment reference '<em>Casted Size</em>'.
-	 * @see com.synflow.models.ir.ExprCast#getCastedSize()
-	 * @see #getExprCast()
-	 * @generated
-	 */
-	EAttribute getExprCast_CastedSize();
 
 	/**
 	 * Returns the meta object for class '{@link com.synflow.models.ir.Expression

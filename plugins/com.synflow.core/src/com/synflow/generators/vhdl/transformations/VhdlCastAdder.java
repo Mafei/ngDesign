@@ -10,6 +10,8 @@
  *******************************************************************************/
 package com.synflow.generators.vhdl.transformations;
 
+import static com.synflow.models.ir.ExprTypeConv.SIGNED;
+import static com.synflow.models.ir.ExprTypeConv.UNSIGNED;
 import static com.synflow.models.ir.IrFactory.eINSTANCE;
 
 import org.eclipse.emf.ecore.EObject;
@@ -20,7 +22,6 @@ import com.synflow.models.dpn.Port;
 import com.synflow.models.ir.BlockIf;
 import com.synflow.models.ir.BlockWhile;
 import com.synflow.models.ir.ExprBinary;
-import com.synflow.models.ir.ExprCast;
 import com.synflow.models.ir.ExprInt;
 import com.synflow.models.ir.ExprVar;
 import com.synflow.models.ir.Expression;
@@ -56,12 +57,12 @@ public class VhdlCastAdder extends AbstractExpressionTransformer {
 					return expr;
 				}
 
-				return eINSTANCE.createExprCast("to_std_logic", expr);
+				return eINSTANCE.convert("to_std_logic", expr);
 			}
 		}
 
 		if (booleanExpected) {
-			return eINSTANCE.createExprCast("to_boolean", expr);
+			return eINSTANCE.convert("to_boolean", expr);
 		}
 
 		return expr;
@@ -72,7 +73,7 @@ public class VhdlCastAdder extends AbstractExpressionTransformer {
 		EStructuralFeature feature = expr.eContainingFeature();
 		if (feature == Literals.INST_LOAD__INDEXES || feature == Literals.INST_STORE__INDEXES) {
 			// force conversion to unsigned
-			return eINSTANCE.createExprCast("unsigned'", expr);
+			return eINSTANCE.convert("unsigned'", expr);
 		}
 
 		return expr;
@@ -85,16 +86,8 @@ public class VhdlCastAdder extends AbstractExpressionTransformer {
 		if (type.isInt()) {
 			TypeInt typeInt = (TypeInt) type;
 			if (variable instanceof Port) {
-				ExprCast cast = IrFactory.eINSTANCE.createExprCast();
-				if (typeInt.isSigned()) {
-					cast.setToSigned(true);
-				} else {
-					cast.setToUnsigned(true);
-				}
-
-				cast.setCastedSize(typeInt.getSize());
-				cast.setExpr(expr);
-				return cast;
+				String typeName = typeInt.isSigned() ? SIGNED : UNSIGNED;
+				return IrFactory.eINSTANCE.convert(typeName, expr);
 			}
 		}
 		return caseExpression(expr);

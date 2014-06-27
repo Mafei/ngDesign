@@ -99,21 +99,6 @@ public class IrSwitch<T> extends Switch<T> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Expr Cast</em>'. <!--
-	 * begin-user-doc --> This implementation returns null; returning a non-null result will
-	 * terminate the switch. <!-- end-user-doc -->
-	 * 
-	 * @param object
-	 *            the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Expr Cast</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T caseExprCast(ExprCast object) {
-		return null;
-	}
-
-	/**
 	 * Returns the result of interpreting the object as an instance of '<em>Expression</em>'. <!--
 	 * begin-user-doc --> This implementation returns null; returning a non-null result will
 	 * terminate the switch. <!-- end-user-doc -->
@@ -712,15 +697,6 @@ public class IrSwitch<T> extends Switch<T> {
 			T result = caseExprBool(exprBool);
 			if (result == null)
 				result = caseExpression(exprBool);
-			if (result == null)
-				result = defaultCase(theEObject);
-			return result;
-		}
-		case IrPackage.EXPR_CAST: {
-			ExprCast exprCast = (ExprCast) theEObject;
-			T result = caseExprCast(exprCast);
-			if (result == null)
-				result = caseExpression(exprCast);
 			if (result == null)
 				result = defaultCase(theEObject);
 			return result;

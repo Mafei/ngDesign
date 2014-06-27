@@ -49,7 +49,24 @@ public interface IrFactory extends EFactory {
 	 */
 	Expression cast(Type targetType, Type sourceType, Expression expr);
 
-	Expression castToUnsigned(int amount, Expression index);
+	/**
+	 * Creates resize(unsigned(expr), size)
+	 * @param size
+	 * @param expr
+	 * @return
+	 */
+	Expression castToUnsigned(int size, Expression expr);
+
+	/**
+	 * Returns a new object of class '<em>Expr Cast</em>'. <!-- begin-user-doc --> Creates a cast.
+	 * Type's size is copied.<!-- end-user-doc -->
+	 * 
+	 * @param typeName
+	 * @param expr
+	 * 
+	 * @return a new object of class '<em>Expr Cast</em>'.
+	 */
+	ExprTypeConv convert(String typeName, Expression expr);
 
 	/**
 	 * Returns a new object of class '<em>Block Basic</em>'. <!-- begin-user-doc --> <!--
@@ -126,26 +143,6 @@ public interface IrFactory extends EFactory {
 	ExprBool createExprBool(boolean value);
 
 	/**
-	 * Returns a new object of class '<em>Expr Cast</em>'. <!-- begin-user-doc --> <!-- end-user-doc
-	 * -->
-	 * 
-	 * @return a new object of class '<em>Expr Cast</em>'.
-	 * @generated
-	 */
-	ExprCast createExprCast();
-
-	/**
-	 * Returns a new object of class '<em>Expr Cast</em>'. <!-- begin-user-doc --> Creates a cast.
-	 * Type's size is copied.<!-- end-user-doc -->
-	 * 
-	 * @param typeName
-	 * @param expr
-	 * 
-	 * @return a new object of class '<em>Expr Cast</em>'.
-	 */
-	ExprCast createExprCast(String typeName, Expression expr);
-
-	/**
 	 * Returns a new object of class '<em>Expr Float</em>'. <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
 	 * 
@@ -187,15 +184,6 @@ public interface IrFactory extends EFactory {
 	ExprList createExprList(List<Expression> exprs);
 
 	/**
-	 * Returns a new object of class '<em>Expr String</em>'. <!-- begin-user-doc --> <!--
-	 * end-user-doc -->
-	 * 
-	 * @return a new object of class '<em>Expr String</em>'.
-	 * @generated
-	 */
-	ExprString createExprString();
-
-	/**
 	 * Returns a new object of class '<em>Expr Resize</em>'. <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
 	 * 
@@ -205,6 +193,17 @@ public interface IrFactory extends EFactory {
 	ExprResize createExprResize();
 
 	/**
+	 * Returns a new object of class '<em>Expr String</em>'. <!-- begin-user-doc --> <!--
+	 * end-user-doc -->
+	 * 
+	 * @return a new object of class '<em>Expr String</em>'.
+	 * @generated
+	 */
+	ExprString createExprString();
+
+	ExprString createExprString(String value);
+
+	/**
 	 * Returns a new object of class '<em>Expr Type Conv</em>'. <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
 	 * 
@@ -212,8 +211,6 @@ public interface IrFactory extends EFactory {
 	 * @generated
 	 */
 	ExprTypeConv createExprTypeConv();
-
-	ExprString createExprString(String value);
 
 	/**
 	 * Returns a new object of class '<em>Expr Unary</em>'. <!-- begin-user-doc --> <!--

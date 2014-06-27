@@ -110,11 +110,6 @@ public class IrAdapterFactory extends AdapterFactoryImpl {
 		}
 
 		@Override
-		public Adapter caseExprCast(ExprCast object) {
-			return createExprCastAdapter();
-		}
-
-		@Override
 		public Adapter caseExprFloat(ExprFloat object) {
 			return createExprFloatAdapter();
 		}
@@ -284,20 +279,6 @@ public class IrAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createExprBoolAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link com.synflow.models.ir.ExprCast
-	 * <em>Expr Cast</em>}'. <!-- begin-user-doc --> This default implementation returns null so
-	 * that we can easily ignore cases; it's useful to ignore a case when inheritance will catch all
-	 * the cases anyway. <!-- end-user-doc -->
-	 * 
-	 * @return the new adapter.
-	 * @see com.synflow.models.ir.ExprCast
-	 * @generated
-	 */
-	public Adapter createExprCastAdapter() {
 		return null;
 	}
 

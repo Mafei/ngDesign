@@ -17,7 +17,8 @@ import java.util.Set;
 
 import com.synflow.core.transformations.AbstractExpressionTransformer;
 import com.synflow.models.ir.ExprBinary;
-import com.synflow.models.ir.ExprCast;
+import com.synflow.models.ir.ExprResize;
+import com.synflow.models.ir.ExprTypeConv;
 import com.synflow.models.ir.Expression;
 import com.synflow.models.ir.OpBinary;
 import com.synflow.models.ir.Procedure;
@@ -73,17 +74,6 @@ public class HDLTyper extends AbstractExpressionTransformer {
 	}
 
 	@Override
-	public Expression caseExprCast(ExprCast cast) {
-		if (visited.contains(cast)) {
-			return cast;
-		}
-		visited.add(cast);
-
-		// visit sub expression
-		return super.caseExprCast(cast);
-	}
-
-	@Override
 	public Expression caseExpression(Expression expr) {
 		if (expr.isExprList()) {
 			return expr;
@@ -91,6 +81,28 @@ public class HDLTyper extends AbstractExpressionTransformer {
 
 		Type type = TypeUtil.getType(expr);
 		return eINSTANCE.cast(getTarget(), type, expr);
+	}
+
+	@Override
+	public Expression caseExprResize(ExprResize cast) {
+		if (visited.contains(cast)) {
+			return cast;
+		}
+		visited.add(cast);
+
+		// visit sub expression
+		return super.caseExprResize(cast);
+	}
+
+	@Override
+	public Expression caseExprTypeConv(ExprTypeConv cast) {
+		if (visited.contains(cast)) {
+			return cast;
+		}
+		visited.add(cast);
+
+		// visit sub expression
+		return super.caseExprTypeConv(cast);
 	}
 
 	@Override

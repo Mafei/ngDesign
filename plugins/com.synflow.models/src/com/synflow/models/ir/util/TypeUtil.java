@@ -45,11 +45,12 @@ import java.util.Iterator;
 
 import com.synflow.models.ir.ExprBinary;
 import com.synflow.models.ir.ExprBool;
-import com.synflow.models.ir.ExprCast;
 import com.synflow.models.ir.ExprFloat;
 import com.synflow.models.ir.ExprInt;
 import com.synflow.models.ir.ExprList;
+import com.synflow.models.ir.ExprResize;
 import com.synflow.models.ir.ExprString;
+import com.synflow.models.ir.ExprTypeConv;
 import com.synflow.models.ir.ExprUnary;
 import com.synflow.models.ir.ExprVar;
 import com.synflow.models.ir.Expression;
@@ -84,25 +85,6 @@ public class TypeUtil {
 		}
 
 		@Override
-		public Type caseExprCast(ExprCast cast) {
-			Type typeExpr = getType(cast.getExpr());
-			boolean signed = false;
-			if (typeExpr != null && typeExpr.isInt()) {
-				signed = ((TypeInt) typeExpr).isSigned();
-			}
-
-			TypeInt type = IrFactory.eINSTANCE.createTypeInt();
-			if (cast.isToSigned()) {
-				signed = true;
-			} else if (cast.isToUnsigned()) {
-				signed = false;
-			}
-			type.setSigned(signed);
-			type.setSize(cast.getCastedSize());
-			return type;
-		}
-
-		@Override
 		public Type caseExprFloat(ExprFloat expr) {
 			int precision = expr.getValue().precision();
 			if (precision <= 11) {
@@ -125,8 +107,38 @@ public class TypeUtil {
 		}
 
 		@Override
+		public Type caseExprResize(ExprResize cast) {
+			Type type = getType(cast.getExpr());
+			boolean signed = false;
+			if (type != null && type.isInt()) {
+				signed = ((TypeInt) type).isSigned();
+				return IrFactory.eINSTANCE.createTypeInt(cast.getTargetSize(), signed);
+			}
+			return type;
+		}
+
+		@Override
 		public Type caseExprString(ExprString expr) {
 			return IrFactory.eINSTANCE.createTypeString();
+		}
+
+		@Override
+		public Type caseExprTypeConv(ExprTypeConv cast) {
+			Type typeExpr = getType(cast.getExpr());
+			boolean signed = false;
+			if (typeExpr != null && typeExpr.isInt()) {
+				signed = ((TypeInt) typeExpr).isSigned();
+			}
+
+			TypeInt type = IrFactory.eINSTANCE.createTypeInt();
+			if (ExprTypeConv.SIGNED.equals(cast.getTypeName())) {
+				signed = true;
+			} else if (ExprTypeConv.UNSIGNED.equals(cast.getTypeName())) {
+				signed = false;
+			}
+			type.setSigned(signed);
+			type.setSize(TypeUtil.getSize(typeExpr));
+			return type;
 		}
 
 		@Override

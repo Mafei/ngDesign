@@ -6,6 +6,9 @@
  */
 package com.synflow.models.ir.impl;
 
+import static com.synflow.models.ir.ExprTypeConv.SIGNED;
+import static com.synflow.models.ir.ExprTypeConv.UNSIGNED;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collection;
@@ -24,7 +27,6 @@ import com.synflow.models.ir.BlockWhile;
 import com.synflow.models.ir.Def;
 import com.synflow.models.ir.ExprBinary;
 import com.synflow.models.ir.ExprBool;
-import com.synflow.models.ir.ExprCast;
 import com.synflow.models.ir.ExprFloat;
 import com.synflow.models.ir.ExprInt;
 import com.synflow.models.ir.ExprList;
@@ -128,39 +130,43 @@ public class IrFactoryImpl extends EFactoryImpl implements IrFactory {
 			TypeInt srcInt = (TypeInt) sourceType;
 			TypeInt tgtInt = (TypeInt) targetType;
 
-			if (expr.isExprInt() && !(srcInt.isSigned() ^ tgtInt.isSigned())) {
+			if (srcInt.isSigned() ^ tgtInt.isSigned()) {
+				// first convert to the correct type
+				String typeName = tgtInt.isSigned() ? SIGNED : UNSIGNED;
+				expr = convert(typeName, expr);
+			} else if (expr.isExprInt()) {
 				// if ExprInt and no difference in signedness, just returns expr
 				return expr;
 			}
 
-			ExprCastImpl exprCast = new ExprCastImpl();
-			if (srcInt.isSigned() && !tgtInt.isSigned()) {
-				exprCast.setToUnsigned(true);
-			}
-			if (!srcInt.isSigned() && tgtInt.isSigned()) {
-				exprCast.setToSigned(true);
-			}
-			exprCast.setCastedSize(size);
-			exprCast.setExpr(expr);
-
-			return exprCast;
+			ExprResizeImpl resize = new ExprResizeImpl();
+			resize.setTargetSize(size);
+			resize.setExpr(expr);
+			return resize;
 		}
 
 		return expr;
 	}
 
 	@Override
-	public Expression castToUnsigned(int castedSize, Expression expr) {
+	public Expression castToUnsigned(int size, Expression expr) {
 		if (expr.isExprInt()) {
-			((ExprInt) expr).setSize(castedSize);
+			((ExprInt) expr).setSize(size);
 			return expr;
 		} else {
-			ExprCastImpl exprCast = new ExprCastImpl();
-			exprCast.setToUnsigned(true);
-			exprCast.setCastedSize(castedSize);
-			exprCast.setExpr(expr);
+			ExprResizeImpl exprCast = new ExprResizeImpl();
+			exprCast.setTargetSize(size);
+			exprCast.setExpr(convert(UNSIGNED, expr));
 			return exprCast;
 		}
+	}
+
+	@Override
+	public ExprTypeConv convert(String typeName, Expression expr) {
+		ExprTypeConvImpl exprTypeConv = new ExprTypeConvImpl();
+		exprTypeConv.setTypeName(typeName);
+		exprTypeConv.setExpr(expr);
+		return exprTypeConv;
 	}
 
 	/**
@@ -231,8 +237,6 @@ public class IrFactoryImpl extends EFactoryImpl implements IrFactory {
 			return createExprBinary();
 		case IrPackage.EXPR_BOOL:
 			return createExprBool();
-		case IrPackage.EXPR_CAST:
-			return createExprCast();
 		case IrPackage.EXPR_FLOAT:
 			return createExprFloat();
 		case IrPackage.EXPR_INT:
@@ -361,24 +365,6 @@ public class IrFactoryImpl extends EFactoryImpl implements IrFactory {
 	 * 
 	 * @generated
 	 */
-	public ExprCast createExprCast() {
-		ExprCastImpl exprCast = new ExprCastImpl();
-		return exprCast;
-	}
-
-	@Override
-	public ExprCast createExprCast(String typeName, Expression expr) {
-		ExprCastImpl exprCast = new ExprCastImpl();
-		exprCast.setTargetTypeName(typeName);
-		exprCast.setExpr(expr);
-		return exprCast;
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
 	public ExprFloat createExprFloat() {
 		ExprFloatImpl exprFloat = new ExprFloatImpl();
 		return exprFloat;
@@ -455,16 +441,6 @@ public class IrFactoryImpl extends EFactoryImpl implements IrFactory {
 	 * 
 	 * @generated
 	 */
-	public ExprString createExprString() {
-		ExprStringImpl exprString = new ExprStringImpl();
-		return exprString;
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
 	public ExprResize createExprResize() {
 		ExprResizeImpl exprResize = new ExprResizeImpl();
 		return exprResize;
@@ -475,9 +451,9 @@ public class IrFactoryImpl extends EFactoryImpl implements IrFactory {
 	 * 
 	 * @generated
 	 */
-	public ExprTypeConv createExprTypeConv() {
-		ExprTypeConvImpl exprTypeConv = new ExprTypeConvImpl();
-		return exprTypeConv;
+	public ExprString createExprString() {
+		ExprStringImpl exprString = new ExprStringImpl();
+		return exprString;
 	}
 
 	@Override
@@ -485,6 +461,16 @@ public class IrFactoryImpl extends EFactoryImpl implements IrFactory {
 		ExprStringImpl exprString = new ExprStringImpl();
 		exprString.setValue(value);
 		return exprString;
+	}
+
+	/**
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 */
+	public ExprTypeConv createExprTypeConv() {
+		ExprTypeConvImpl exprTypeConv = new ExprTypeConvImpl();
+		return exprTypeConv;
 	}
 
 	/**
