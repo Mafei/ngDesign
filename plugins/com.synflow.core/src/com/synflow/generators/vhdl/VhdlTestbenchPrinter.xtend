@@ -151,7 +151,7 @@ class VhdlTestbenchPrinter extends DpnSwitch<CharSequence> {
 
 		begin
 
-		  «name» : entity work.«name»
+		  «namer.getName(entity)» : entity work.«namer.getName(entity)»
 		  port map (
 		    «IF !combinational»
 		    «FOR clock : clocks»

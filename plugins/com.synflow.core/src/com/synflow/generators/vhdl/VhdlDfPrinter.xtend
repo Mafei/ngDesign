@@ -208,7 +208,7 @@ class VhdlDfPrinter extends DpnSwitch<CharSequence> {
 		«printImports(actor)»
 
 		-------------------------------------------------------------------------------
-		entity «actor.simpleName» is
+		entity «namer.getName(actor)» is
 		  port (
 		    «IF !combinational»
 		                                          -- Standard I/Os
@@ -217,11 +217,11 @@ class VhdlDfPrinter extends DpnSwitch<CharSequence> {
 		    «ENDIF»
 		                                          -- Actor I/Os
 		    «ports.join(";\n")»);
-		end «actor.simpleName»;
+		end «namer.getName(actor)»;
 
 
 		-------------------------------------------------------------------------------
-		architecture rtl_«actor.simpleName» of «actor.simpleName» is
+		architecture rtl_«actor.simpleName» of «namer.getName(actor)» is
 
 		  «irPrinter.declareTypeList(actor.variables)»
 		  «FOR stateVar : actor.variables»

@@ -14,6 +14,7 @@ import com.synflow.models.dpn.Port
 import com.synflow.models.ir.Var
 import java.util.Set
 import java.util.regex.Pattern
+import com.synflow.models.dpn.Entity
 
 /**
  * This class defines a Namer, that knows how to print ports and variables, and
@@ -70,6 +71,15 @@ class Namer {
 
 	def private String escape(String name) {
 		'''«first»«name»«last»'''
+	}
+
+	def getName(Entity entity) {
+		val name = entity.simpleName
+		if (needsEscaping(name)) {
+			name.escape
+		} else {
+			name
+		}
 	}
 
 	def getName(Port port) {
