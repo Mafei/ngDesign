@@ -321,14 +321,14 @@ public class TypeUtil {
 	 *            a type
 	 * @return a size (1 for bool)
 	 */
-	public static Integer getSize(Type type) {
+	public static int getSize(Type type) {
 		if (type.isBool()) {
 			return 1;
 		} else if (type.isInt()) {
 			TypeInt typeInt = (TypeInt) type;
 			return typeInt.getSize();
 		}
-		return null;
+		return 0;
 	}
 
 	/**
