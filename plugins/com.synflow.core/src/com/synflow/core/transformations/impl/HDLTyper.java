@@ -12,17 +12,12 @@ package com.synflow.core.transformations.impl;
 
 import static com.synflow.models.ir.IrFactory.eINSTANCE;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import com.synflow.core.transformations.AbstractExpressionTransformer;
 import com.synflow.models.ir.ExprBinary;
 import com.synflow.models.ir.ExprInt;
 import com.synflow.models.ir.ExprResize;
-import com.synflow.models.ir.ExprTypeConv;
 import com.synflow.models.ir.Expression;
 import com.synflow.models.ir.OpBinary;
-import com.synflow.models.ir.Procedure;
 import com.synflow.models.ir.Type;
 import com.synflow.models.ir.TypeInt;
 import com.synflow.models.ir.util.TypeUtil;
@@ -36,42 +31,47 @@ import com.synflow.models.ir.util.TypeUtil;
  */
 public class HDLTyper extends AbstractExpressionTransformer {
 
-	private Set<Expression> visited;
-
 	@Override
 	public Expression caseExprBinary(ExprBinary expr) {
 		OpBinary op = expr.getOp();
-		if (op.isComparison()) {
-			Type t1 = TypeUtil.getType(expr.getE1());
-			Type t2 = TypeUtil.getType(expr.getE2());
+		Type t1 = TypeUtil.getType(expr.getE1());
+		Type t2 = TypeUtil.getType(expr.getE2());
 
-			Type common = TypeUtil.getLargest(t1, t2);
-			expr.setE1(transform(common, expr.getE1()));
-			expr.setE2(transform(common, expr.getE2()));
-
-			if (t1.isInt() && t2.isInt()) {
-				TypeInt ti1 = (TypeInt) t1;
-				TypeInt ti2 = (TypeInt) t2;
-				TypeInt tiCommon = (TypeInt) TypeUtil.getLargest(t1, t2);
-
-				if (ti1.isSigned() ^ ti2.isSigned()) {
-					if (ti2.isSigned()) {
-						expr.setE1(eINSTANCE.cast(tiCommon, ti1, expr.getE1()));
-					} else {
-						expr.setE2(eINSTANCE.cast(tiCommon, ti2, expr.getE2()));
-					}
-				}
-			}
+		Type type;
+		if (op == OpBinary.TIMES) {
+			// cast to their respective type
+			expr.setE1(transform(t1, expr.getE1()));
+			expr.setE2(transform(t2, expr.getE2()));
+			type = getTarget();
 		} else {
-			// cast to size computed by IR type system
-			// example: in "(a * b) >> 1", (a * b) is cast to size(a) * size(b)
+			if (op.isArithmetic() || op == OpBinary.SHIFT_LEFT) {
+				// cast to target size (as computed by IR type system)
+				type = TypeUtil.getType(expr, true);
+			} else {
+				// cast to largest common type
+				type = TypeUtil.getLargest(t1, t2);
+			}
 
-			Type type = TypeUtil.getType(expr, true);
 			expr.setE1(transform(type, expr.getE1()));
 			expr.setE2(transform(type, expr.getE2()));
 		}
 
-		return caseExpression(expr);
+		if (op.isComparison()) {
+			if (t1.isInt() && t2.isInt()) {
+				boolean isSignedT1 = ((TypeInt) t1).isSigned();
+				boolean isSignedT2 = ((TypeInt) t2).isSigned();
+				if (isSignedT1 ^ isSignedT2) {
+					if (isSignedT2) {
+						expr.setE1(eINSTANCE.cast(type, t1, expr.getE1()));
+					} else {
+						expr.setE2(eINSTANCE.cast(type, t2, expr.getE2()));
+					}
+				}
+			}
+			return expr;
+		}
+
+		return eINSTANCE.cast(getTarget(), type, expr);
 	}
 
 	@Override
@@ -93,31 +93,16 @@ public class HDLTyper extends AbstractExpressionTransformer {
 	}
 
 	@Override
-	public Expression caseExprResize(ExprResize cast) {
-		if (visited.contains(cast)) {
-			return cast;
+	public Expression caseExprResize(ExprResize resize) {
+		// resize literals directly
+		Expression expr = resize.getExpr();
+		if (expr.isExprInt()) {
+			((ExprInt) expr).setSize(resize.getTargetSize());
+			return expr;
 		}
-		visited.add(cast);
 
 		// visit sub expression
-		return super.caseExprResize(cast);
-	}
-
-	@Override
-	public Expression caseExprTypeConv(ExprTypeConv cast) {
-		if (visited.contains(cast)) {
-			return cast;
-		}
-		visited.add(cast);
-
-		// visit sub expression
-		return super.caseExprTypeConv(cast);
-	}
-
-	@Override
-	public void setProcedure(Procedure procedure) {
-		visited = new LinkedHashSet<>();
-		super.setProcedure(procedure);
+		return super.caseExprResize(resize);
 	}
 
 }
