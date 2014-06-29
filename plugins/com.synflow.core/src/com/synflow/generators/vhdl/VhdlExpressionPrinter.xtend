@@ -89,7 +89,7 @@ class VhdlExpressionPrinter extends ExpressionPrinter {
 				// always resize after shift right
 				// because VHDL may not agree with the IR here
 				// (since the IR is more precise and actually reduce the type)
-				'''resize(shift_right(«doSwitch(e1, Integer.MAX_VALUE, 0)», «amount»), 5)'''
+				'''shift_right(«doSwitch(e1, Integer.MAX_VALUE, 0)», «amount»)'''
 			}
 		} else {
 			var first = doSwitch(e1, nextPrec, 0)
