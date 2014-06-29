@@ -132,12 +132,12 @@ public class IrFactoryImpl extends EFactoryImpl implements IrFactory {
 			}
 
 			// resize only if necessary
-			if (tgtInt.getSize() != srcInt.getSize()) {
+			//if (tgtInt.getSize() != srcInt.getSize()) {
 				ExprResizeImpl resize = new ExprResizeImpl();
 				resize.setTargetSize(tgtInt.getSize());
 				resize.setExpr(expr);
 				return resize;
-			}
+			//}
 		}
 
 		return expr;
