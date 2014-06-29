@@ -41,10 +41,10 @@ public class VhdlCodeGenerator extends AbstractGenerator {
 			"is", "label", "library", "linkage", "literal", "loop", "map", "mod", "nand", "new",
 			"next", "nor", "not", "null", "of", "on", "open", "or", "others", "out", "package",
 			"port", "postponed", "procedure", "process", "pure", "range", "record", "register",
-			"reject", "rem", "report", "return", "rol", "ror", "select", "severity", "signal",
-			"shared", "sla", "sll", "sra", "srl", "subtype", "then", "to", "transport", "type",
-			"unaffected", "units", "until", "use", "variable", "wait", "when", "while", "with",
-			"xnor", "xor");
+			"reject", "rem", "report", "resize", "return", "rol", "ror", "select", "severity",
+			"signal", "shared", "sla", "sll", "sra", "srl", "subtype", "then", "to", "transport",
+			"type", "unaffected", "units", "until", "use", "variable", "wait", "when", "while",
+			"with", "xnor", "xor");
 
 	private Namer namer;
 
