@@ -94,11 +94,6 @@ class VhdlExpressionPrinter extends ExpressionPrinter {
 		} else {
 			var first = doSwitch(e1, nextPrec, 0)
 			val second = doSwitch(e2, nextPrec, 1)
-			// special case because of VHDL typing
-			if (op.comparison && e1.exprInt && e2.exprInt) {
-				first = '''unsigned'(«first»)'''
-			}
-
 			'''(«first» «toString(op)» «second»)'''
 		}
 	}
@@ -139,11 +134,6 @@ class VhdlExpressionPrinter extends ExpressionPrinter {
 
 	override caseExprUnary(ExprUnary expr) {
 		var subExpr = doSwitch(expr.expr, Integer.MIN_VALUE, branch)
-
-		// special case because of VHDL typing
-		if (expr.expr.exprInt) {
-			subExpr = '''unsigned'(«subExpr»)'''
-		}
 
 		switch (expr.op) {
 		case OpUnary.MINUS: '''0 - «subExpr»'''
