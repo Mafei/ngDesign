@@ -27,16 +27,6 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  */
 public class ExprResizeImpl extends ExpressionImpl implements ExprResize {
 	/**
-	 * The default value of the '{@link #getTargetSize() <em>Target Size</em>}' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #getTargetSize()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final int TARGET_SIZE_EDEFAULT = 0;
-
-	/**
 	 * The cached value of the '{@link #getExpr() <em>Expr</em>}' containment reference. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
 	 * 
@@ -45,6 +35,16 @@ public class ExprResizeImpl extends ExpressionImpl implements ExprResize {
 	 * @ordered
 	 */
 	protected Expression expr;
+
+	/**
+	 * The default value of the '{@link #getTargetSize() <em>Target Size</em>}' attribute. <!--
+	 * begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @see #getTargetSize()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final int TARGET_SIZE_EDEFAULT = 0;
 
 	/**
 	 * The cached value of the '{@link #getTargetSize() <em>Target Size</em>}' attribute. <!--

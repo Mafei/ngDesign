@@ -6,6 +6,7 @@
  */
 package com.synflow.models.ir.impl;
 
+import com.synflow.models.ir.*;
 import static com.synflow.models.ir.ExprTypeConv.SIGNED;
 import static com.synflow.models.ir.ExprTypeConv.UNSIGNED;
 
@@ -266,6 +267,8 @@ public class IrFactoryImpl extends EFactoryImpl implements IrFactory {
 			return createTypeBool();
 		case IrPackage.TYPE_FLOAT:
 			return createTypeFloat();
+		case IrPackage.TYPE_GEN:
+			return createTypeGen();
 		case IrPackage.TYPE_INT:
 			return createTypeInt();
 		case IrPackage.TYPE_STRING:
@@ -825,6 +828,16 @@ public class IrFactoryImpl extends EFactoryImpl implements IrFactory {
 	public TypeFloat createTypeFloat() {
 		TypeFloatImpl typeFloat = new TypeFloatImpl();
 		return typeFloat;
+	}
+
+	/**
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 */
+	public TypeGen createTypeGen() {
+		TypeGenImpl typeGen = new TypeGenImpl();
+		return typeGen;
 	}
 
 	public TypeFloat createTypeFloat(int size) {

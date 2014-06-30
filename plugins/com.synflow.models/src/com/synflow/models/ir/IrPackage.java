@@ -748,6 +748,32 @@ public interface IrPackage extends EPackage {
 		EAttribute TYPE_FLOAT__SIZE = eINSTANCE.getTypeFloat_Size();
 
 		/**
+		 * The meta object literal for the '{@link com.synflow.models.ir.impl.TypeGenImpl
+		 * <em>Type Gen</em>}' class. <!-- begin-user-doc --> <!-- end-user-doc -->
+		 * 
+		 * @see com.synflow.models.ir.impl.TypeGenImpl
+		 * @see com.synflow.models.ir.impl.IrPackageImpl#getTypeGen()
+		 * @generated
+		 */
+		EClass TYPE_GEN = eINSTANCE.getTypeGen();
+
+		/**
+		 * The meta object literal for the '<em><b>Size</b></em>' containment reference feature.
+		 * <!-- begin-user-doc --> <!-- end-user-doc -->
+		 * 
+		 * @generated
+		 */
+		EReference TYPE_GEN__SIZE = eINSTANCE.getTypeGen_Size();
+
+		/**
+		 * The meta object literal for the '<em><b>Type Name</b></em>' attribute feature. <!--
+		 * begin-user-doc --> <!-- end-user-doc -->
+		 * 
+		 * @generated
+		 */
+		EAttribute TYPE_GEN__TYPE_NAME = eINSTANCE.getTypeGen_TypeName();
+
+		/**
 		 * The meta object literal for the '{@link com.synflow.models.ir.impl.TypeIntImpl
 		 * <em>Type Int</em>}' class. <!-- begin-user-doc --> <!-- end-user-doc -->
 		 * 
@@ -953,7 +979,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getDef()
 	 * @generated
 	 */
-	int DEF = 30;
+	int DEF = 31;
 
 	/**
 	 * The singleton instance of the package. <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -1151,7 +1177,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getOpBinary()
 	 * @generated
 	 */
-	int OP_BINARY = 33;
+	int OP_BINARY = 34;
 
 	/**
 	 * The meta object id for the '{@link com.synflow.models.ir.OpUnary <em>Op Unary</em>}' enum.
@@ -1161,7 +1187,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getOpUnary()
 	 * @generated
 	 */
-	int OP_UNARY = 34;
+	int OP_UNARY = 35;
 
 	/**
 	 * The meta object id for the '{@link com.synflow.models.ir.impl.ProcedureImpl
@@ -1991,7 +2017,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getTypeInt()
 	 * @generated
 	 */
-	int TYPE_INT = 27;
+	int TYPE_INT = 28;
 
 	/**
 	 * The meta object id for the '{@link com.synflow.models.ir.impl.TypeStringImpl
@@ -2001,7 +2027,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getTypeString()
 	 * @generated
 	 */
-	int TYPE_STRING = 28;
+	int TYPE_STRING = 29;
 
 	/**
 	 * The meta object id for the '{@link com.synflow.models.ir.impl.TypeVoidImpl
@@ -2011,7 +2037,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getTypeVoid()
 	 * @generated
 	 */
-	int TYPE_VOID = 29;
+	int TYPE_VOID = 30;
 
 	/**
 	 * The meta object id for the '{@link com.synflow.models.ir.impl.UseImpl <em>Use</em>}' class.
@@ -2021,7 +2047,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getUse()
 	 * @generated
 	 */
-	int USE = 32;
+	int USE = 33;
 
 	/**
 	 * The meta object id for the '{@link com.synflow.models.ir.impl.VarImpl <em>Var</em>}' class.
@@ -2031,7 +2057,7 @@ public interface IrPackage extends EPackage {
 	 * @see com.synflow.models.ir.impl.IrPackageImpl#getVar()
 	 * @generated
 	 */
-	int VAR = 31;
+	int VAR = 32;
 
 	/**
 	 * The meta object id for the '{@link com.synflow.models.ir.impl.TypeArrayImpl
@@ -2096,6 +2122,43 @@ public interface IrPackage extends EPackage {
 	 * @ordered
 	 */
 	int TYPE_FLOAT_FEATURE_COUNT = TYPE_FEATURE_COUNT + 1;
+
+	/**
+	 * The meta object id for the '{@link com.synflow.models.ir.impl.TypeGenImpl <em>Type Gen</em>}'
+	 * class. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @see com.synflow.models.ir.impl.TypeGenImpl
+	 * @see com.synflow.models.ir.impl.IrPackageImpl#getTypeGen()
+	 * @generated
+	 */
+	int TYPE_GEN = 27;
+
+	/**
+	 * The feature id for the '<em><b>Size</b></em>' containment reference. <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 * @ordered
+	 */
+	int TYPE_GEN__SIZE = TYPE_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Type Name</b></em>' attribute. <!-- begin-user-doc --> <!--
+	 * end-user-doc -->
+	 * 
+	 * @generated
+	 * @ordered
+	 */
+	int TYPE_GEN__TYPE_NAME = TYPE_FEATURE_COUNT + 1;
+
+	/**
+	 * The number of structural features of the '<em>Type Gen</em>' class. <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 * @ordered
+	 */
+	int TYPE_GEN_FEATURE_COUNT = TYPE_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Signed</b></em>' attribute. <!-- begin-user-doc --> <!--
@@ -3205,6 +3268,39 @@ public interface IrPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getTypeFloat_Size();
+
+	/**
+	 * Returns the meta object for class '{@link com.synflow.models.ir.TypeGen <em>Type Gen</em>}'.
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @return the meta object for class '<em>Type Gen</em>'.
+	 * @see com.synflow.models.ir.TypeGen
+	 * @generated
+	 */
+	EClass getTypeGen();
+
+	/**
+	 * Returns the meta object for the containment reference '
+	 * {@link com.synflow.models.ir.TypeGen#getSize <em>Size</em>}'. <!-- begin-user-doc --> <!--
+	 * end-user-doc -->
+	 * 
+	 * @return the meta object for the containment reference '<em>Size</em>'.
+	 * @see com.synflow.models.ir.TypeGen#getSize()
+	 * @see #getTypeGen()
+	 * @generated
+	 */
+	EReference getTypeGen_Size();
+
+	/**
+	 * Returns the meta object for the attribute '{@link com.synflow.models.ir.TypeGen#getTypeName
+	 * <em>Type Name</em>}'. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @return the meta object for the attribute '<em>Type Name</em>'.
+	 * @see com.synflow.models.ir.TypeGen#getTypeName()
+	 * @see #getTypeGen()
+	 * @generated
+	 */
+	EAttribute getTypeGen_TypeName();
 
 	/**
 	 * Returns the meta object for class '{@link com.synflow.models.ir.TypeInt <em>Type Int</em>}'.
