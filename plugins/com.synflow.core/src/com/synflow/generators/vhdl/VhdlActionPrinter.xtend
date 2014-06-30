@@ -42,16 +42,6 @@ class VhdlActionPrinter {
 		«ENDFOR»
 		'''
 
-	def private printOneAction(Action action)
-		'''
-		  «irPrinter.doSwitch(action.body.blocks)»
-		  «FOR port : action.outputPattern.ports»
-		  «IF port.sync»
-		  «port.name»_send <= '1';
-		  «ENDIF»
-		  «ENDFOR»
-		'''
-
 	def private printActionBody(Action action)
 		'''
 		to_boolean(«FOR port : action.inputPattern.ports»«IF port.sync»«port.name»_send and «ENDIF»«ENDFOR»«printSchedulerCall(action)») then
@@ -160,10 +150,7 @@ class VhdlActionPrinter {
 
 	def private printSyncActions(List<Action> actions)
 		'''
-		«IF actions.empty»
-		«ELSEIF actions.size.equals(1)»
-		«printOneAction(actions.head)»
-		«ELSE»
+		«IF !actions.empty»
 		if «printActionBody(actions.head)»
 		«FOR action : actions.tail»
 			elsif «printActionBody(action)»
