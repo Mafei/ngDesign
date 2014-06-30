@@ -18,6 +18,7 @@ import java.math.BigInteger;
 import com.synflow.core.transformations.AbstractExpressionTransformer;
 import com.synflow.models.ir.ExprBinary;
 import com.synflow.models.ir.ExprInt;
+import com.synflow.models.ir.ExprResize;
 import com.synflow.models.ir.Expression;
 import com.synflow.models.ir.OpBinary;
 import com.synflow.models.ir.Type;
@@ -100,6 +101,18 @@ public abstract class HDLTyper extends AbstractExpressionTransformer {
 		exprInt.setSize(targetSize);
 
 		return expr;
+	}
+
+	@Override
+	public Expression caseExprResize(ExprResize resize) {
+		Expression expr = resize.getExpr();
+		if (expr.isExprInt()) {
+			// special case for integer expressions
+			return transform(getTarget(), expr);
+		}
+
+		// visit sub expression
+		return super.caseExprResize(resize);
 	}
 
 	protected Expression cast(Type target, Type source, Expression expr) {
