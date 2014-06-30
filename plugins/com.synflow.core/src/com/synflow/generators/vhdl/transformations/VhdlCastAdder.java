@@ -121,12 +121,13 @@ public class VhdlCastAdder extends AbstractExpressionTransformer {
 	}
 
 	@Override
-	public Expression caseExprUnary(ExprUnary expr) {
-		if (expr.getExpr().isExprInt()) {
-			expr.setExpr(eINSTANCE.convert(UNSIGNED, expr));
+	public Expression caseExprUnary(ExprUnary exprUn) {
+		Expression expr = exprUn.getExpr();
+		if (expr.isExprInt()) {
+			exprUn.setExpr(eINSTANCE.convert(UNSIGNED, expr));
 		}
 
-		return super.caseExprUnary(expr);
+		return super.caseExprUnary(exprUn);
 	}
 
 	@Override
