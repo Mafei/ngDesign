@@ -10,13 +10,8 @@
  *******************************************************************************/
 package com.synflow.core.transformations.impl;
 
-import static java.math.BigInteger.ONE;
-
-import java.math.BigInteger;
-
 import com.synflow.models.ir.ExprBinary;
 import com.synflow.models.ir.ExprBool;
-import com.synflow.models.ir.ExprInt;
 import com.synflow.models.ir.ExprResize;
 import com.synflow.models.ir.ExprUnary;
 import com.synflow.models.ir.Expression;
@@ -86,18 +81,6 @@ public class ConstantFolder extends IrSwitch<Expression> {
 				return IrFactory.eINSTANCE.createExprBool(false);
 			} else if (isFalse(subExpr)) {
 				return IrFactory.eINSTANCE.createExprBool(true);
-			}
-		} else if (op == OpUnary.BITNOT) {
-			if (subExpr.isCast()) {
-				ExprResize cast = (ExprResize) subExpr;
-				int size = cast.getTargetSize();
-				subExpr = cast.getExpr();
-				if (subExpr.isExprInt()) {
-					BigInteger value = ((ExprInt) subExpr).getValue();
-					BigInteger mask = ONE.shiftLeft(size).subtract(ONE);
-					BigInteger notValue = value.not().and(mask);
-					return IrFactory.eINSTANCE.createExprInt(notValue);
-				}
 			}
 		}
 
