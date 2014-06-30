@@ -64,11 +64,6 @@ public abstract class ExpressionImpl extends EObjectImpl implements Expression {
 	}
 
 	@Override
-	public boolean isCast() {
-		return false;
-	}
-
-	@Override
 	public boolean isExprBinary() {
 		return false;
 	}
@@ -90,6 +85,11 @@ public abstract class ExpressionImpl extends EObjectImpl implements Expression {
 
 	@Override
 	public boolean isExprList() {
+		return false;
+	}
+
+	@Override
+	public boolean isExprResize() {
 		return false;
 	}
 

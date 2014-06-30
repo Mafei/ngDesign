@@ -49,8 +49,6 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface Expression extends EObject {
 
-	boolean isCast();
-
 	/**
 	 * Returns true if the expression is a binary expression.
 	 * 
@@ -85,6 +83,8 @@ public interface Expression extends EObject {
 	 * @return true if the expression is a list expression
 	 */
 	boolean isExprList();
+
+	boolean isExprResize();
 
 	/**
 	 * Returns true if the expression is a string expression.
