@@ -20,9 +20,9 @@ import com.synflow.core.transformations.ExpressionTransformation;
 import com.synflow.core.transformations.ModuleTransformation;
 import com.synflow.core.transformations.ProcedureTransformation;
 import com.synflow.core.transformations.impl.CodeCleaner;
-import com.synflow.core.transformations.impl.HDLTyper;
 import com.synflow.core.transformations.impl.StoreOnceTransformation;
 import com.synflow.generators.vhdl.transformations.VhdlCastAdder;
+import com.synflow.generators.vhdl.transformations.VhdlTyper;
 import com.synflow.models.dpn.Actor;
 import com.synflow.models.dpn.DPN;
 import com.synflow.models.dpn.Unit;
@@ -73,7 +73,7 @@ public class VhdlTransformer extends AbstractTransformer {
 				new ProcedureTransformation(new SSAVariableRenamer()),
 
 				// adds cast around access to ports
-				new ExpressionTransformation(new HDLTyper()),
+				new ExpressionTransformation(new VhdlTyper()),
 				new ExpressionTransformation(new VhdlCastAdder()) };
 
 		// applies transformations

@@ -23,13 +23,13 @@ import com.synflow.models.ir.TypeInt;
 import com.synflow.models.ir.util.TypeUtil;
 
 /**
- * This class resizes integer literals to match the size of their target's type (when assigning to a
- * variable) or the size of the surrounding expression.
+ * This class add resize and type conversions to match common HDL behavior. This class must be
+ * extended to handle VHDL-specific and Verilog-specific behavior.
  * 
  * @author Matthieu Wipliez
  *
  */
-public class HDLTyper extends AbstractExpressionTransformer {
+public abstract class HDLTyper extends AbstractExpressionTransformer {
 
 	@Override
 	public Expression caseExprBinary(ExprBinary expr) {
@@ -38,23 +38,16 @@ public class HDLTyper extends AbstractExpressionTransformer {
 		Type t2 = TypeUtil.getType(expr.getE2());
 
 		Type type;
-		if (op == OpBinary.TIMES) {
-			// cast to their respective type
-			expr.setE1(transform(t1, expr.getE1()));
-			expr.setE2(transform(t2, expr.getE2()));
-			type = getTarget();
+		if (op.isArithmetic() || op == OpBinary.SHIFT_LEFT) {
+			// cast to target size (as computed by IR type system)
+			type = TypeUtil.getType(expr, true);
 		} else {
-			if (op.isArithmetic() || op == OpBinary.SHIFT_LEFT) {
-				// cast to target size (as computed by IR type system)
-				type = TypeUtil.getType(expr, true);
-			} else {
-				// cast to largest common type
-				type = TypeUtil.getLargest(t1, t2);
-			}
-
-			expr.setE1(transform(type, expr.getE1()));
-			expr.setE2(transform(type, expr.getE2()));
+			// cast to largest common type
+			type = TypeUtil.getLargest(t1, t2);
 		}
+
+		expr.setE1(transform(type, expr.getE1()));
+		expr.setE2(transform(type, expr.getE2()));
 
 		if (op.isComparison()) {
 			if (t1.isInt() && t2.isInt()) {
