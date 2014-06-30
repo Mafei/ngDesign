@@ -41,16 +41,30 @@ public interface IrFactory extends EFactory {
 	 * Returns a new object of class '<em>Expr Cast</em>'. <!-- begin-user-doc --> Creates a cast.
 	 * Type's size is copied.<!-- end-user-doc -->
 	 * 
-	 * @param targetType
-	 * @param sourceType
+	 * @param target
+	 * @param source
 	 * @param expr
 	 * 
 	 * @return a new object of class '<em>Expr Cast</em>'.
 	 */
-	Expression cast(Type targetType, Type sourceType, Expression expr);
+	Expression cast(Type target, Type source, Expression expr);
+
+	/**
+	 * Returns a new object of class '<em>Expr Cast</em>'. <!-- begin-user-doc --> Creates a cast.
+	 * Type's size is copied.<!-- end-user-doc -->
+	 * 
+	 * @param target
+	 * @param source
+	 * @param expr
+	 * @param forceResize
+	 * 
+	 * @return a new object of class '<em>Expr Cast</em>'.
+	 */
+	Expression cast(Type target, Type source, Expression expr, boolean forceResize);
 
 	/**
 	 * Creates resize(unsigned(expr), size)
+	 * 
 	 * @param size
 	 * @param expr
 	 * @return

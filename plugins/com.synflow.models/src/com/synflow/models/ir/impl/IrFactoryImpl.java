@@ -120,10 +120,15 @@ public class IrFactoryImpl extends EFactoryImpl implements IrFactory {
 	}
 
 	@Override
-	public Expression cast(Type targetType, Type sourceType, Expression expr) {
-		if (sourceType.isInt() && targetType.isInt()) {
-			TypeInt srcInt = (TypeInt) sourceType;
-			TypeInt tgtInt = (TypeInt) targetType;
+	public Expression cast(Type target, Type source, Expression expr) {
+		return cast(target, source, expr, true);
+	}
+
+	@Override
+	public Expression cast(Type target, Type source, Expression expr, boolean forceResize) {
+		if (source.isInt() && target.isInt()) {
+			TypeInt srcInt = (TypeInt) source;
+			TypeInt tgtInt = (TypeInt) target;
 
 			if (srcInt.isSigned() ^ tgtInt.isSigned()) {
 				// first convert to the correct type
@@ -132,12 +137,12 @@ public class IrFactoryImpl extends EFactoryImpl implements IrFactory {
 			}
 
 			// resize only if necessary
-			//if (tgtInt.getSize() != srcInt.getSize()) {
+			if (tgtInt.getSize() != srcInt.getSize() || forceResize) {
 				ExprResizeImpl resize = new ExprResizeImpl();
 				resize.setTargetSize(tgtInt.getSize());
 				resize.setExpr(expr);
 				return resize;
-			//}
+			}
 		}
 
 		return expr;
