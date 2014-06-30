@@ -61,15 +61,15 @@ public abstract class AbstractExpressionTransformer extends IrSwitch<Expression>
 
 	@Override
 	public Expression caseExprResize(ExprResize resize) {
-		Type parent = TypeUtil.getType(resize.getExpr());
-		resize.setExpr(transform(parent, resize.getExpr()));
+		Type type = TypeUtil.getType(resize);
+		resize.setExpr(transform(type, resize.getExpr()));
 		return caseExpression(resize);
 	}
 
 	@Override
 	public Expression caseExprTypeConv(ExprTypeConv typeConv) {
-		Type parent = TypeUtil.getType(typeConv.getExpr());
-		typeConv.setExpr(transform(parent, typeConv.getExpr()));
+		Type type = TypeUtil.getType(typeConv);
+		typeConv.setExpr(transform(type, typeConv.getExpr()));
 		return caseExpression(typeConv);
 	}
 

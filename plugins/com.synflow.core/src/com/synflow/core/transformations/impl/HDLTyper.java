@@ -18,7 +18,6 @@ import java.math.BigInteger;
 import com.synflow.core.transformations.AbstractExpressionTransformer;
 import com.synflow.models.ir.ExprBinary;
 import com.synflow.models.ir.ExprInt;
-import com.synflow.models.ir.ExprResize;
 import com.synflow.models.ir.Expression;
 import com.synflow.models.ir.OpBinary;
 import com.synflow.models.ir.Type;
@@ -83,35 +82,24 @@ public abstract class HDLTyper extends AbstractExpressionTransformer {
 	@Override
 	public Expression caseExprInt(ExprInt expr) {
 		// set the size of integer literals
-		int size = TypeUtil.getSize(getTarget());
-		expr.setSize(size);
-		return expr;
-	}
+		int targetSize = TypeUtil.getSize(getTarget());
 
-	@Override
-	public Expression caseExprResize(ExprResize resize) {
-		// resize literals directly
-		Expression expr = resize.getExpr();
-		if (expr.isExprInt()) {
-			ExprInt exprInt = (ExprInt) expr;
-			BigInteger value = exprInt.getValue();
-			int size = TypeUtil.getSize(value);
+		ExprInt exprInt = (ExprInt) expr;
+		BigInteger value = exprInt.getValue();
+		int size = TypeUtil.getSize(value);
 
-			if (resize.getTargetSize() < size) {
-				BigInteger unsigned = getUnsigned(value, size);
-				BigInteger mask = ONE.shiftLeft(resize.getTargetSize()).subtract(ONE);
-				value = unsigned.and(mask);
-			} else {
-				value = getUnsigned(value, resize.getTargetSize());
-			}
-
-			exprInt.setValue(value);
-			exprInt.setSize(resize.getTargetSize());
-			return expr;
+		if (targetSize < size) {
+			BigInteger unsigned = getUnsigned(value, size);
+			BigInteger mask = ONE.shiftLeft(targetSize).subtract(ONE);
+			value = unsigned.and(mask);
+		} else {
+			value = getUnsigned(value, targetSize);
 		}
 
-		// visit sub expression
-		return super.caseExprResize(resize);
+		exprInt.setValue(value);
+		exprInt.setSize(targetSize);
+
+		return expr;
 	}
 
 	protected Expression cast(Type target, Type source, Expression expr) {
