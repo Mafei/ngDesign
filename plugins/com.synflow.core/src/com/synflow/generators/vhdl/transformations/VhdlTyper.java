@@ -10,6 +10,8 @@
  *******************************************************************************/
 package com.synflow.generators.vhdl.transformations;
 
+import static com.synflow.models.ir.IrFactory.eINSTANCE;
+
 import com.synflow.core.transformations.impl.HDLTyper;
 import com.synflow.models.ir.ExprBinary;
 import com.synflow.models.ir.Expression;
@@ -38,6 +40,18 @@ public class VhdlTyper extends HDLTyper {
 		} else {
 			return super.caseExprBinary(expr);
 		}
+	}
+
+	@Override
+	protected Expression cast(Type target, Type source, Expression expr) {
+		// resize only if necessary
+		boolean forceResize = false;
+		if (expr.isExprBinary()) {
+			OpBinary op = ((ExprBinary) expr).getOp();
+			forceResize = (op == OpBinary.SHIFT_LEFT || op == OpBinary.SHIFT_RIGHT);
+		}
+
+		return eINSTANCE.cast(target, source, expr, forceResize);
 	}
 
 }

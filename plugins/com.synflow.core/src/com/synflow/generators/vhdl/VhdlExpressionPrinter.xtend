@@ -103,17 +103,7 @@ class VhdlExpressionPrinter extends ExpressionPrinter {
 	}
 
 	override caseExprInt(ExprInt expr) {
-		val value = expr.value
-		val size = expr.size
-
-		// always print as sized literal to make lint happier
-		val unsignedValue =
-			if (value < 0bi) {
-				1bi.shiftLeft(size) + value
-			} else {
-				value
-			}
-		printQuotedValue(size, unsignedValue)
+		printQuotedValue(expr.size, expr.value)
 	}
 
 	override caseExprList(ExprList expr) {

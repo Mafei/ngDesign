@@ -11,6 +11,9 @@
 package com.synflow.core.transformations.impl;
 
 import static com.synflow.models.ir.IrFactory.eINSTANCE;
+import static java.math.BigInteger.ONE;
+
+import java.math.BigInteger;
 
 import com.synflow.core.transformations.AbstractExpressionTransformer;
 import com.synflow.models.ir.ExprBinary;
@@ -55,16 +58,16 @@ public abstract class HDLTyper extends AbstractExpressionTransformer {
 				boolean isSignedT2 = ((TypeInt) t2).isSigned();
 				if (isSignedT1 ^ isSignedT2) {
 					if (isSignedT2) {
-						expr.setE1(eINSTANCE.cast(type, t1, expr.getE1()));
+						expr.setE1(cast(type, t1, expr.getE1()));
 					} else {
-						expr.setE2(eINSTANCE.cast(type, t2, expr.getE2()));
+						expr.setE2(cast(type, t2, expr.getE2()));
 					}
 				}
 			}
 			return expr;
 		}
 
-		return eINSTANCE.cast(getTarget(), type, expr);
+		return cast(getTarget(), type, expr);
 	}
 
 	@Override
@@ -74,7 +77,7 @@ public abstract class HDLTyper extends AbstractExpressionTransformer {
 		}
 
 		Type type = TypeUtil.getType(expr);
-		return eINSTANCE.cast(getTarget(), type, expr);
+		return cast(getTarget(), type, expr);
 	}
 
 	@Override
@@ -90,12 +93,37 @@ public abstract class HDLTyper extends AbstractExpressionTransformer {
 		// resize literals directly
 		Expression expr = resize.getExpr();
 		if (expr.isExprInt()) {
-			((ExprInt) expr).setSize(resize.getTargetSize());
+			ExprInt exprInt = (ExprInt) expr;
+			BigInteger value = exprInt.getValue();
+			int size = TypeUtil.getSize(value);
+
+			if (resize.getTargetSize() < size) {
+				BigInteger unsigned = getUnsigned(value, size);
+				BigInteger mask = ONE.shiftLeft(resize.getTargetSize()).subtract(ONE);
+				value = unsigned.and(mask);
+			} else {
+				value = getUnsigned(value, resize.getTargetSize());
+			}
+
+			exprInt.setValue(value);
+			exprInt.setSize(resize.getTargetSize());
 			return expr;
 		}
 
 		// visit sub expression
 		return super.caseExprResize(resize);
+	}
+
+	protected Expression cast(Type target, Type source, Expression expr) {
+		return eINSTANCE.cast(target, source, expr);
+	}
+
+	private BigInteger getUnsigned(BigInteger value, int size) {
+		if (value.signum() < 0) {
+			return ONE.shiftLeft(size).add(value);
+		} else {
+			return value;
+		}
 	}
 
 }

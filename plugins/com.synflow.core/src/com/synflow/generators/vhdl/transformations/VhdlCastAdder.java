@@ -23,15 +23,19 @@ import com.synflow.models.ir.BlockIf;
 import com.synflow.models.ir.BlockWhile;
 import com.synflow.models.ir.ExprBinary;
 import com.synflow.models.ir.ExprInt;
+import com.synflow.models.ir.ExprResize;
 import com.synflow.models.ir.ExprTypeConv;
+import com.synflow.models.ir.ExprUnary;
 import com.synflow.models.ir.ExprVar;
 import com.synflow.models.ir.Expression;
 import com.synflow.models.ir.InstCall;
 import com.synflow.models.ir.IrFactory;
 import com.synflow.models.ir.IrPackage.Literals;
+import com.synflow.models.ir.OpBinary;
 import com.synflow.models.ir.Type;
 import com.synflow.models.ir.TypeInt;
 import com.synflow.models.ir.Var;
+import com.synflow.models.ir.util.TypeUtil;
 
 /**
  * This class adds 'signed' or 'unsigned' around accesses from/to ports, and calls to
@@ -41,6 +45,18 @@ import com.synflow.models.ir.Var;
  *
  */
 public class VhdlCastAdder extends AbstractExpressionTransformer {
+
+	@Override
+	public Expression caseExprBinary(ExprBinary expr) {
+		OpBinary op = expr.getOp();
+		Expression e1 = expr.getE1();
+		Expression e2 = expr.getE2();
+		if (op.isComparison() && e1.isExprInt() && e2.isExprInt()) {
+			expr.setE1(eINSTANCE.convert(UNSIGNED, e1));
+		}
+
+		return super.caseExprBinary(expr);
+	}
 
 	@Override
 	public Expression caseExpression(Expression expr) {
@@ -74,16 +90,43 @@ public class VhdlCastAdder extends AbstractExpressionTransformer {
 		EStructuralFeature feature = expr.eContainingFeature();
 		if (feature == Literals.INST_LOAD__INDEXES || feature == Literals.INST_STORE__INDEXES) {
 			// force conversion to unsigned
-			return eINSTANCE.convert("unsigned'", expr);
-		} else {
-			EObject cter = expr.eContainer();
-			if (cter instanceof ExprTypeConv) {
-				ExprTypeConv typeConv = (ExprTypeConv) cter;
-				typeConv.setTypeName(typeConv.getTypeName() + "'");
-			}
+			return transform(getTarget(), eINSTANCE.convert(UNSIGNED, expr));
 		}
 
 		return expr;
+	}
+
+	@Override
+	public Expression caseExprResize(ExprResize resize) {
+		resize = (ExprResize) super.caseExprResize(resize);
+
+		Type type = TypeUtil.getType(resize.getExpr());
+		if (resize.getTargetSize() < TypeUtil.getSize(type)) {
+			if (type.isInt() && ((TypeInt) type).isSigned()) {
+				ExprTypeConv typeConv = eINSTANCE.convert(UNSIGNED, resize.getExpr());
+				resize.setExpr(typeConv);
+				return eINSTANCE.convert(SIGNED, resize);
+			}
+		}
+		return resize;
+	}
+
+	@Override
+	public Expression caseExprTypeConv(ExprTypeConv typeConv) {
+		if (typeConv.getExpr().isExprInt()) {
+			typeConv.setTypeName(typeConv.getTypeName() + "'");
+		}
+
+		return super.caseExprTypeConv(typeConv);
+	}
+
+	@Override
+	public Expression caseExprUnary(ExprUnary expr) {
+		if (expr.getExpr().isExprInt()) {
+			expr.setExpr(eINSTANCE.convert(UNSIGNED, expr));
+		}
+
+		return super.caseExprUnary(expr);
 	}
 
 	@Override
