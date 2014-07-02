@@ -15,14 +15,12 @@ import static com.synflow.models.ir.ExprTypeConv.UNSIGNED;
 import static com.synflow.models.ir.IrFactory.eINSTANCE;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EStructuralFeature;
 
 import com.synflow.core.transformations.AbstractExpressionTransformer;
 import com.synflow.models.dpn.Port;
 import com.synflow.models.ir.BlockIf;
 import com.synflow.models.ir.BlockWhile;
 import com.synflow.models.ir.ExprBinary;
-import com.synflow.models.ir.ExprInt;
 import com.synflow.models.ir.ExprResize;
 import com.synflow.models.ir.ExprTypeConv;
 import com.synflow.models.ir.ExprUnary;
@@ -30,7 +28,6 @@ import com.synflow.models.ir.ExprVar;
 import com.synflow.models.ir.Expression;
 import com.synflow.models.ir.InstCall;
 import com.synflow.models.ir.IrFactory;
-import com.synflow.models.ir.IrPackage.Literals;
 import com.synflow.models.ir.OpBinary;
 import com.synflow.models.ir.Type;
 import com.synflow.models.ir.TypeInt;
@@ -80,17 +77,6 @@ public class VhdlCastAdder extends AbstractExpressionTransformer {
 
 		if (booleanExpected) {
 			return eINSTANCE.convert("to_boolean", expr);
-		}
-
-		return expr;
-	}
-
-	@Override
-	public Expression caseExprInt(ExprInt expr) {
-		EStructuralFeature feature = expr.eContainingFeature();
-		if (feature == Literals.INST_LOAD__INDEXES || feature == Literals.INST_STORE__INDEXES) {
-			// force conversion to unsigned
-			return transform(getTarget(), eINSTANCE.convert(UNSIGNED, expr));
 		}
 
 		return expr;
