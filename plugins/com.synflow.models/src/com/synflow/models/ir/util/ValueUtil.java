@@ -51,6 +51,7 @@ import com.synflow.models.ir.ExprFloat;
 import com.synflow.models.ir.ExprInt;
 import com.synflow.models.ir.ExprList;
 import com.synflow.models.ir.ExprString;
+import com.synflow.models.ir.ExprTypeConv;
 import com.synflow.models.ir.Expression;
 import com.synflow.models.ir.IrFactory;
 import com.synflow.models.ir.OpBinary;
@@ -487,6 +488,8 @@ public class ValueUtil {
 				return ((ExprInt) expr).getValue();
 			} else if (expr.isExprString()) {
 				return ((ExprString) expr).getValue();
+			} else if (expr.isExprTypeConv()) {
+				return getValue(((ExprTypeConv) expr).getExpr());
 			} else if (expr.isExprList()) {
 				throw new OrccRuntimeException("list type not supported yet in getValue");
 			}

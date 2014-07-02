@@ -99,6 +99,11 @@ public abstract class ExpressionImpl extends EObjectImpl implements Expression {
 	}
 
 	@Override
+	public boolean isExprTypeConv() {
+		return false;
+	}
+
+	@Override
 	public boolean isExprUnary() {
 		return false;
 	}

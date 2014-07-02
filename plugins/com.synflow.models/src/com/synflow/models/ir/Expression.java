@@ -93,6 +93,8 @@ public interface Expression extends EObject {
 	 */
 	boolean isExprString();
 
+	boolean isExprTypeConv();
+
 	/**
 	 * Returns true if the expression is a unary expression.
 	 * 

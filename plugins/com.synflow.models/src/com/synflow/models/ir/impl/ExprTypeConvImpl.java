@@ -198,6 +198,11 @@ public class ExprTypeConvImpl extends ExpressionImpl implements ExprTypeConv {
 		return typeName;
 	}
 
+	@Override
+	public boolean isExprTypeConv() {
+		return true;
+	}
+
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * 
