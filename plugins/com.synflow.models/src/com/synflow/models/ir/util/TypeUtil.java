@@ -98,7 +98,11 @@ public class TypeUtil {
 
 		@Override
 		public Type caseExprInt(ExprInt expr) {
-			return IrFactory.eINSTANCE.createTypeIntOrUint(expr.getValue());
+			TypeInt type = IrFactory.eINSTANCE.createTypeIntOrUint(expr.getValue());
+			if (expr.getSize() != 0) {
+				type.setSize(expr.getSize());
+			}
+			return type;
 		}
 
 		@Override
