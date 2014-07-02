@@ -6,7 +6,6 @@
  */
 package com.synflow.models.ir.impl;
 
-import com.synflow.models.ir.*;
 import static com.synflow.models.ir.ExprTypeConv.SIGNED;
 import static com.synflow.models.ir.ExprTypeConv.UNSIGNED;
 
@@ -52,6 +51,7 @@ import com.synflow.models.ir.Type;
 import com.synflow.models.ir.TypeArray;
 import com.synflow.models.ir.TypeBool;
 import com.synflow.models.ir.TypeFloat;
+import com.synflow.models.ir.TypeGen;
 import com.synflow.models.ir.TypeInt;
 import com.synflow.models.ir.TypeString;
 import com.synflow.models.ir.TypeVoid;
@@ -151,19 +151,18 @@ public class IrFactoryImpl extends EFactoryImpl implements IrFactory {
 
 	@Override
 	public Expression castToUnsigned(int size, Expression expr) {
-		if (expr.isExprInt()) {
-			((ExprInt) expr).setSize(size);
-		}
-
 		Type type = TypeUtil.getType(expr);
-		if (type.isInt() && ((TypeInt) type).isSigned()) {
+		if (type.isInt()) {
+			Expression unsigned = convert(UNSIGNED, expr);
+
 			if (expr.isExprInt()) {
-				return convert(UNSIGNED, expr);
+				((ExprInt) expr).setSize(size);
+				return unsigned;
 			} else {
-				ExprResizeImpl exprCast = new ExprResizeImpl();
-				exprCast.setTargetSize(size);
-				exprCast.setExpr(convert(UNSIGNED, expr));
-				return exprCast;
+				ExprResizeImpl resize = new ExprResizeImpl();
+				resize.setTargetSize(size);
+				resize.setExpr(unsigned);
+				return resize;
 			}
 		}
 		return expr;
@@ -830,6 +829,12 @@ public class IrFactoryImpl extends EFactoryImpl implements IrFactory {
 		return typeFloat;
 	}
 
+	public TypeFloat createTypeFloat(int size) {
+		TypeFloatImpl typeFloat = new TypeFloatImpl();
+		typeFloat.setSize(size);
+		return typeFloat;
+	}
+
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * 
@@ -838,12 +843,6 @@ public class IrFactoryImpl extends EFactoryImpl implements IrFactory {
 	public TypeGen createTypeGen() {
 		TypeGenImpl typeGen = new TypeGenImpl();
 		return typeGen;
-	}
-
-	public TypeFloat createTypeFloat(int size) {
-		TypeFloatImpl typeFloat = new TypeFloatImpl();
-		typeFloat.setSize(size);
-		return typeFloat;
 	}
 
 	/**
