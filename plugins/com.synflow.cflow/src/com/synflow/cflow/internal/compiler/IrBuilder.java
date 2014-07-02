@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Synflow SAS.
+ * Copyright (c) 2013-2014 Synflow SAS.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -214,22 +214,9 @@ public class IrBuilder {
 
 		// loads (but do not perform bit selection)
 		List<CExpression> subIndexes = indexes.subList(0, dimensions);
-		List<Expression> expressions = transformExpressions(subIndexes);
-		List<Expression> casted = new ArrayList<>(expressions.size());
+		List<Expression> expressions = transformIndexes(type, subIndexes);
 
-		// cast indexes (only if type is an array => there are indexes to cast)
-		if (type.isArray()) {
-			Iterator<Integer> itD = ((TypeArray) type).getDimensions().iterator();
-
-			// cast indexes
-			for (Expression index : expressions) {
-				int size = itD.next();
-				int amount = TypeUtil.getSize(size - 1);
-				casted.add(eINSTANCE.castToUnsigned(amount, index));
-			}
-		}
-
-		InstLoad load = eINSTANCE.createInstLoad(lineNumber, target, source, casted);
+		InstLoad load = eINSTANCE.createInstLoad(lineNumber, target, source, expressions);
 		add(load);
 
 		return target;
@@ -305,7 +292,7 @@ public class IrBuilder {
 	 * @param value
 	 *            value of the bit
 	 */
-	private void storeBit(int lineNumber, Var target, List<CExpression> indexes, Var local,
+	private void storeBit(int lineNumber, Var target, List<Expression> indexes, Var local,
 			int index, Expression expr) {
 		// get value
 		if (isTrue(expr)) {
@@ -350,7 +337,7 @@ public class IrBuilder {
 	 * @param index
 	 *            index of the bit to set
 	 */
-	private void storeBitClear(int lineNumber, Var target, List<CExpression> indexes, Var local,
+	private void storeBitClear(int lineNumber, Var target, List<Expression> indexes, Var local,
 			int index) {
 		Type type = local.getType();
 		int size = ((TypeInt) type).getSize();
@@ -359,8 +346,7 @@ public class IrBuilder {
 		Expression value = eINSTANCE.createExprBinary(eINSTANCE.createExprVar(local),
 				OpBinary.BITAND, eINSTANCE.createExprInt(mask));
 
-		List<Expression> expressions = transformExpressions(indexes);
-		InstStore store = eINSTANCE.createInstStore(lineNumber, target, expressions, value);
+		InstStore store = eINSTANCE.createInstStore(lineNumber, target, indexes, value);
 		add(store);
 	}
 
@@ -379,14 +365,13 @@ public class IrBuilder {
 	 * @param index
 	 *            index of the bit to set
 	 */
-	private void storeBitSet(int lineNumber, Var target, List<CExpression> indexes, Var local,
+	private void storeBitSet(int lineNumber, Var target, List<Expression> indexes, Var local,
 			int index) {
 		BigInteger mask = ZERO.setBit(index);
 		Expression value = eINSTANCE.createExprBinary(eINSTANCE.createExprVar(local),
 				OpBinary.BITOR, eINSTANCE.createExprInt(mask));
 
-		List<Expression> expressions = transformExpressions(indexes);
-		InstStore store = eINSTANCE.createInstStore(lineNumber, target, expressions, value);
+		InstStore store = eINSTANCE.createInstStore(lineNumber, target, indexes, value);
 		add(store);
 	}
 
@@ -424,19 +409,20 @@ public class IrBuilder {
 
 			// select indexes (but not bit selection)
 			List<CExpression> subIndexes = indexes.subList(0, dimensions);
+			List<Expression> expressions = transformIndexes(target.getType(), subIndexes);
 
 			// select bit index
 			CExpression exprIndex = indexes.get(indexes.size() - 1);
 			int index = Evaluator.getIntValue(exprIndex);
 
 			// store the bit
-			storeBit(lineNumber, target, subIndexes, local, index, expr);
+			storeBit(lineNumber, target, expressions, local, index, expr);
 			return;
 		}
 
 		// transform indexes
 		List<Expression> expressions;
-		expressions = hasIndexes ? transformExpressions(indexes) : emptyList();
+		expressions = hasIndexes ? transformIndexes(target.getType(), indexes) : emptyList();
 
 		// "normal" store
 		InstStore store = eINSTANCE.createInstStore(lineNumber, target, expressions, expr);
@@ -471,8 +457,8 @@ public class IrBuilder {
 
 	/**
 	 * Transforms the given AST expressions to a list of IR expressions. In the process nodes may be
-	 * created and added to the current {@link #procedure}, since many RVC-CAL expressions are
-	 * expressed with IR statements.
+	 * created and added to the current {@link #procedure}, since many expressions are expressed
+	 * with IR statements.
 	 * 
 	 * @param expressions
 	 *            a list of AST expressions
@@ -486,6 +472,32 @@ public class IrBuilder {
 		}
 
 		return irExpressions;
+	}
+
+	/**
+	 * Transforms the given AST expressions to a list of IR expressions and convert them to
+	 * unsigned.
+	 * 
+	 * @param expressions
+	 *            a list of AST expressions
+	 * @return a list of IR expressions
+	 */
+	private List<Expression> transformIndexes(Type type, List<CExpression> expressions) {
+		List<Expression> irExpressions = transformExpressions(expressions);
+		List<Expression> casted = new ArrayList<>(irExpressions.size());
+
+		// cast indexes (only if type is an array => there are indexes to cast)
+		if (type.isArray()) {
+			Iterator<Integer> itD = ((TypeArray) type).getDimensions().iterator();
+
+			// cast indexes
+			for (Expression index : irExpressions) {
+				int size = itD.next();
+				int amount = TypeUtil.getSize(size - 1);
+				casted.add(eINSTANCE.castToUnsigned(amount, index));
+			}
+		}
+		return casted;
 	}
 
 }
