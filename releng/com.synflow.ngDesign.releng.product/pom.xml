@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+  xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.synflow</groupId>
+    <artifactId>com.synflow.ngDesign.releng</artifactId>
+    <version><!-- ${studio-version} -->0.10.0.qualifier</version>
+    <relativePath>../../releng/com.synflow.ngDesign.releng</relativePath>
+  </parent>
+
+  <artifactId>com.synflow.ngDesign.releng.product</artifactId>
+  <packaging>eclipse-repository</packaging>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>target-platform-configuration</artifactId>
+        <version>${tycho-version}</version>
+        <configuration>
+          <!-- ignore optional dependencies in the product -->
+          <dependency-resolution>
+            <optionalDependencies>ignore</optionalDependencies>
+          </dependency-resolution>
+        </configuration>
+      </plugin>
+
+      <!-- install products -->
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-p2-director-plugin</artifactId>
+        <version>${tycho-version}</version>
+
+        <executions>
+          <!-- install the product and compress using the p2 director -->
+          <execution>
+            <id>create-product-distributions</id>
+            <goals>
+              <goal>materialize-products</goal>
+              <goal>archive-products</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <!-- by default uses the zip format for Windows -->
+          <formats>
+            <linux>tar.gz</linux>
+            <macosx>tar.gz</macosx>
+          </formats>
+          <products>
+            <product>
+              <id>ngDesign</id>
+              <!-- put contents in the "ngDesign" root folder inside archive -->
+              <rootFolder>ngDesign</rootFolder>
+            </product>
+          </products>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
