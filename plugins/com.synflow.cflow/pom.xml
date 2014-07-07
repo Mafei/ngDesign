@@ -1,71 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+  xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-	<modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>com.synflow</groupId>
-		<artifactId>com.synflow.releng</artifactId>
-		<version><!-- ${studio-version} -->0.10.0.qualifier</version>
-		<relativePath>../../releng/com.synflow.releng</relativePath>
-	</parent>
+  <parent>
+    <groupId>com.synflow</groupId>
+    <artifactId>com.synflow.ngDesign.releng</artifactId>
+    <version><!-- ${studio-version} -->0.10.0.qualifier</version>
+    <relativePath>../../releng/com.synflow.ngDesign.releng</relativePath>
+  </parent>
 
-	<artifactId>com.synflow.cflow</artifactId>
-	<packaging>eclipse-plugin</packaging>
+  <artifactId>com.synflow.cflow</artifactId>
+  <packaging>eclipse-plugin</packaging>
 
-	<build>
-		<plugins>
-            <!-- Run MWE2 -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.2.1</version>
-                <executions>
-                    <execution>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <includeProjectDependencies>false</includeProjectDependencies>
-                    <includePluginDependencies>true</includePluginDependencies>
-                    <mainClass>org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher</mainClass>
-                    <arguments>
-                        <argument>file://${project.basedir}/src/com/synflow/cflow/GenerateCflow.mwe2</argument>
-                        <argument>-p</argument>
-                        <argument>runtimeProject=/${project.basedir}</argument>
-                    </arguments>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.synflow</groupId>
-                        <artifactId>com.synflow.cflow.postprocessor</artifactId>
-                        <version><!-- ${studio-version} -->0.10.0.qualifier</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.eclipse.xtext</groupId>
-                        <artifactId>org.eclipse.xtext.xtext</artifactId>
-                        <version>2.5.0</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-
-            <!-- Proguard -->
-            <plugin>
-                <groupId>com.github.wvengen</groupId>
-                <artifactId>proguard-maven-plugin</artifactId>
-                <executions>
-                   <execution>
-                       <phase>package</phase>
-                       <goals><goal>proguard</goal></goals>
-                   </execution>
-                </executions>
-            </plugin>
-		</plugins>
-	</build>
+  <build>
+    <plugins>
+      <!-- Run MWE2 -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.2.1</version>
+        <executions>
+          <execution>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>java</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <includeProjectDependencies>false</includeProjectDependencies>
+          <includePluginDependencies>true</includePluginDependencies>
+          <mainClass>org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher</mainClass>
+          <arguments>
+            <argument>file://${project.basedir}/src/com/synflow/cflow/GenerateCflow.mwe2</argument>
+            <argument>-p</argument>
+            <argument>runtimeProject=/${project.basedir}</argument>
+          </arguments>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>com.synflow</groupId>
+            <artifactId>com.synflow.cflow.postprocessor</artifactId>
+            <version><!-- ${studio-version} -->0.10.0.qualifier</version>
+          </dependency>
+          <dependency>
+            <groupId>org.eclipse.xtext</groupId>
+            <artifactId>org.eclipse.xtext.xtext</artifactId>
+            <version>2.5.0</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>
