@@ -15,8 +15,8 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>../../features/com.synflow.ngDesign.main</module>
-    <module>../../features/com.synflow.ngDesign.plugins</module>
+    <module>../../features/com.synflow.ngDesign.feature</module>
+    <module>../../features/com.synflow.ngDesign.ide</module>
     <module>../../fragments/com.synflow.libraries</module>
     <module>../../plugins/com.synflow.cflow</module>
     <module>../../plugins/com.synflow.cflow.postprocessor</module>

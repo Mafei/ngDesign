@@ -60,7 +60,8 @@ If you do not agree to the terms and conditions of this Agreement, do not use, d
    </plugins>
 
    <features>
-      <feature id="com.synflow.ngDesign.main" installMode="root"/>
+      <feature id="com.synflow.ngDesign.feature"/>
+      <feature id="com.synflow.ngDesign.ide" installMode="root"/>
    </features>
 
    <configurations>

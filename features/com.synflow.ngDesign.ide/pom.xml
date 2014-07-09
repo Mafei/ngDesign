@@ -12,7 +12,7 @@
     <relativePath>../../releng/com.synflow.ngDesign.releng</relativePath>
   </parent>
 
-  <artifactId>com.synflow.ngDesign.plugins</artifactId>
+  <artifactId>com.synflow.ngDesign.ide</artifactId>
   <packaging>eclipse-feature</packaging>
 
 </project>
