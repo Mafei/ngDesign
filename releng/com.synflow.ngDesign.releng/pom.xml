@@ -24,7 +24,7 @@
     <module>../../plugins/com.synflow.core</module>
     <module>../../plugins/com.synflow.models</module>
     <module>../../plugins/com.synflow.ngDesign</module>
-    <module>../../plugins/com.synflow.ui</module>
+    <module>../../plugins/com.synflow.ngDesign.ui</module>
     <module>../../releng/com.synflow.ngDesign.releng.product</module>
   </modules>
 
