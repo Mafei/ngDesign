@@ -64,7 +64,7 @@ All rights reserved.
          fragment="true"/>
 
    <plugin
-         id="com.synflow.ui"
+         id="com.synflow.ngDesign.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"

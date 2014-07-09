@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Synflow ngDesign UI
-Bundle-SymbolicName: com.synflow.ui;singleton:=true
+Bundle-SymbolicName: com.synflow.ngDesign.ui;singleton:=true
 Bundle-Version: 0.10.0.qualifier
 Bundle-Activator: com.synflow.ui.internal.SynflowUi
 Bundle-Vendor: Synflow SAS
