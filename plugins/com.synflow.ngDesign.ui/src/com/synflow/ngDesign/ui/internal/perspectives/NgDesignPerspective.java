@@ -38,7 +38,7 @@ import com.synflow.ngDesign.ui.internal.wizards.NewProjectWizard;
  * others are hardcoded and may be subject to change.
  */
 @SuppressWarnings("restriction")
-public class SynflowPerspective implements IPerspectiveFactory {
+public class NgDesignPerspective implements IPerspectiveFactory {
 
 	private static final String LOG_VIEW = "org.eclipse.pde.runtime.LogView";
 

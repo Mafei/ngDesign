@@ -10,12 +10,12 @@
       <wizard
             category="com.synflow.ngDesign.ui.categorySynflow"
             class="com.synflow.ngDesign.ui.internal.wizards.NewProjectWizard"
-            finalPerspective="com.synflow.ngDesign.ui.perspectives.SynflowPerspective"
+            finalPerspective="com.synflow.ngDesign.ui.perspectives.NgDesignPerspective"
             hasPages="true"
             icon="icons/newsfprj_wiz.gif"
             id="com.synflow.ngDesign.ui.wizards.newProject"
             name="Synflow Project"
-            preferredPerspectives="com.synflow.ngDesign.ui.perspectives.SynflowPerspective"
+            preferredPerspectives="com.synflow.ngDesign.ui.perspectives.NgDesignPerspective"
             project="true">
          <description>
             Create a Synflow project
@@ -216,9 +216,9 @@
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            class="com.synflow.ngDesign.ui.internal.perspectives.SynflowPerspective"
+            class="com.synflow.ngDesign.ui.internal.perspectives.NgDesignPerspective"
             icon="icons/synflow.png"
-            id="com.synflow.ngDesign.ui.perspectives.SynflowPerspective"
+            id="com.synflow.ngDesign.ui.perspectives.NgDesignPerspective"
             name="Synflow">
       </perspective>
    </extension>
