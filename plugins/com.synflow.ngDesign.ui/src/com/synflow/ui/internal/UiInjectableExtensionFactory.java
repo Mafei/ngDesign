@@ -25,7 +25,7 @@ public class UiInjectableExtensionFactory extends InjectableExtensionFactory {
 
 	@Override
 	protected Bundle getBundle() {
-		return SynflowUi.getDefault().getBundle();
+		return NgDesignUi.getDefault().getBundle();
 	}
 
 }

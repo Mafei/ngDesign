@@ -17,7 +17,7 @@ import org.osgi.framework.BundleContext;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class SynflowUi extends AbstractUIPlugin {
+public class NgDesignUi extends AbstractUIPlugin {
 
 	public static final String COMMAND_TYPE_EXPORT_TYPE = "com.synflow.ui.exportType";
 
@@ -26,17 +26,17 @@ public class SynflowUi extends AbstractUIPlugin {
 	public static final String IMG_LIC_OK = "icons/license_ok.png";
 
 	// The shared instance
-	private static SynflowUi plugin;
+	private static NgDesignUi plugin;
 
 	// The plug-in WIZARD_ID
-	public static final String PLUGIN_ID = "com.synflow.ui"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "com.synflow.ngDesign.ui"; //$NON-NLS-1$
 
 	/**
 	 * Returns the shared instance
 	 * 
 	 * @return the shared instance
 	 */
-	public static SynflowUi getDefault() {
+	public static NgDesignUi getDefault() {
 		return plugin;
 	}
 
@@ -57,7 +57,7 @@ public class SynflowUi extends AbstractUIPlugin {
 	/**
 	 * The constructor
 	 */
-	public SynflowUi() {
+	public NgDesignUi() {
 	}
 
 	@Override

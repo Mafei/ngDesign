@@ -48,7 +48,7 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 import com.synflow.core.SynflowCore;
 import com.synflow.ui.internal.FilteredRefinementDialog;
-import com.synflow.ui.internal.SynflowUi;
+import com.synflow.ui.internal.NgDesignUi;
 
 /**
  * This class defines the main tab for simulation configuration type.
@@ -62,7 +62,7 @@ public class SimulationTab extends AbstractLaunchConfigurationTab {
 		@Override
 		public Image getImage(Object element) {
 			ImageDescriptor desc;
-			desc = SynflowUi.getImageDescriptor("icons/sfprj.gif");
+			desc = NgDesignUi.getImageDescriptor("icons/sfprj.gif");
 			return desc.createImage();
 		}
 
@@ -209,7 +209,7 @@ public class SimulationTab extends AbstractLaunchConfigurationTab {
 
 	@Override
 	public Image getImage() {
-		return SynflowUi.getImageDescriptor("icons/cflow_app.gif")
+		return NgDesignUi.getImageDescriptor("icons/cflow_app.gif")
 				.createImage();
 	}
 

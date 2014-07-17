@@ -199,11 +199,11 @@ public class FilteredRefinementDialog extends FilteredItemsSelectionDialog {
 
 	@Override
 	protected IDialogSettings getDialogSettings() {
-		IDialogSettings settings = SynflowUi.getDefault().getDialogSettings()
+		IDialogSettings settings = NgDesignUi.getDefault().getDialogSettings()
 				.getSection(DIALOG_SETTINGS);
 
 		if (settings == null) {
-			settings = SynflowUi.getDefault().getDialogSettings()
+			settings = NgDesignUi.getDefault().getDialogSettings()
 					.addNewSection(DIALOG_SETTINGS);
 		}
 

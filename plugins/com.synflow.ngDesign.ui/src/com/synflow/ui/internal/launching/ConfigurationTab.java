@@ -45,7 +45,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import com.synflow.ui.internal.SynflowUi;
+import com.synflow.ui.internal.NgDesignUi;
 
 /**
  * This class defines the main tab for simulation configuration type.
@@ -173,7 +173,7 @@ public class ConfigurationTab extends AbstractLaunchConfigurationTab {
 
 	@Override
 	public Image getImage() {
-		return SynflowUi.getImageDescriptor("icons/settings.gif").createImage();
+		return NgDesignUi.getImageDescriptor("icons/settings.gif").createImage();
 	}
 
 	@Override

@@ -11,7 +11,7 @@
  *******************************************************************************/
 package com.synflow.ui.internal.handlers;
 
-import static com.synflow.ui.internal.SynflowUi.COMMAND_TYPE_EXPORT_TYPE;
+import static com.synflow.ui.internal.NgDesignUi.COMMAND_TYPE_EXPORT_TYPE;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
