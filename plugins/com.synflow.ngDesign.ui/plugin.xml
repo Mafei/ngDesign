@@ -4,18 +4,18 @@
    <extension
          point="org.eclipse.ui.newWizards">
       <category
-            id="com.synflow.ui.categorySynflow"
+            id="com.synflow.ngDesign.ui.categorySynflow"
             name="Synflow">
       </category>
       <wizard
-            category="com.synflow.ui.categorySynflow"
-            class="com.synflow.ui.internal.wizards.NewProjectWizard"
-            finalPerspective="com.synflow.ui.perspectives.SynflowPerspective"
+            category="com.synflow.ngDesign.ui.categorySynflow"
+            class="com.synflow.ngDesign.ui.internal.wizards.NewProjectWizard"
+            finalPerspective="com.synflow.ngDesign.ui.perspectives.SynflowPerspective"
             hasPages="true"
             icon="icons/newsfprj_wiz.gif"
-            id="com.synflow.ui.wizards.newProject"
+            id="com.synflow.ngDesign.ui.wizards.newProject"
             name="Synflow Project"
-            preferredPerspectives="com.synflow.ui.perspectives.SynflowPerspective"
+            preferredPerspectives="com.synflow.ngDesign.ui.perspectives.SynflowPerspective"
             project="true">
          <description>
             Create a Synflow project
@@ -25,8 +25,8 @@
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
-            class="com.synflow.ui.internal.properties.ProjectPropertiesPage"
-            id="com.synflow.ui.projectPage"
+            class="com.synflow.ngDesign.ui.internal.properties.ProjectPropertiesPage"
+            id="com.synflow.ngDesign.ui.projectPage"
             name="Synflow">
          <enabledWhen>
             <adapt
@@ -42,28 +42,28 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            id="com.synflow.ui.commandExport"
+            id="com.synflow.ngDesign.ui.commandExport"
             name="export">
          <commandParameter
-               id="com.synflow.ui.exportType"
+               id="com.synflow.ngDesign.ui.exportType"
                name="type"
                optional="false">
          </commandParameter>
       </command>
       <command
-            id="com.synflow.ui.commandGenTest"
+            id="com.synflow.ngDesign.ui.commandGenTest"
             name="generateTest">
       </command>
       <command
-            id="com.synflow.ui.commandConvertDesign"
+            id="com.synflow.ngDesign.ui.commandConvertDesign"
             name="convertDesign">
       </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="com.synflow.ui.internal.UiInjectableExtensionFactory:com.synflow.ui.internal.handlers.ExportHandler"
-            commandId="com.synflow.ui.commandExport">
+            class="com.synflow.ngDesign.ui.internal.UiInjectableExtensionFactory:com.synflow.ngDesign.ui.internal.handlers.ExportHandler"
+            commandId="com.synflow.ngDesign.ui.commandExport">
          <enabledWhen>
                <with
                      variable="selection">
@@ -80,8 +80,8 @@
          </enabledWhen>
       </handler>
       <handler
-            class="com.synflow.ui.internal.UiInjectableExtensionFactory:com.synflow.ui.internal.handlers.GenerateTestHandler"
-            commandId="com.synflow.ui.commandGenTest">
+            class="com.synflow.ngDesign.ui.internal.UiInjectableExtensionFactory:com.synflow.ngDesign.ui.internal.handlers.GenerateTestHandler"
+            commandId="com.synflow.ngDesign.ui.commandGenTest">
          <enabledWhen>
             <with
                   variable="selection">
@@ -108,8 +108,8 @@
          </enabledWhen>
       </handler>
       <handler
-            class="com.synflow.ui.internal.UiInjectableExtensionFactory:com.synflow.ui.internal.handlers.ConvertDesignHandler"
-            commandId="com.synflow.ui.commandConvertDesign">
+            class="com.synflow.ngDesign.ui.internal.UiInjectableExtensionFactory:com.synflow.ngDesign.ui.internal.handlers.ConvertDesignHandler"
+            commandId="com.synflow.ngDesign.ui.commandConvertDesign">
          <enabledWhen>
             <with
                   variable="selection">
@@ -136,45 +136,45 @@
             allPopups="false"
             locationURI="toolbar:org.eclipse.ui.main.toolbar">
          <toolbar
-               id="com.synflow.ui.toolbar"
+               id="com.synflow.ngDesign.ui.toolbar"
                label="Synflow toolbar">
             <command
-                  commandId="com.synflow.ui.commandExport"
+                  commandId="com.synflow.ngDesign.ui.commandExport"
                   icon="icons/modelsim.gif"
                   style="push"
                   tooltip="Export TCL script and wave.do for Modelsim">
                <parameter
-                     name="com.synflow.ui.exportType"
+                     name="com.synflow.ngDesign.ui.exportType"
                      value="Vsim">
                </parameter>
             </command>
             <command
-                  commandId="com.synflow.ui.commandExport"
+                  commandId="com.synflow.ngDesign.ui.commandExport"
                   icon="icons/altera.gif"
                   style="push"
                   tooltip="Export to Altera Quartus II project">
                <parameter
-                     name="com.synflow.ui.exportType"
+                     name="com.synflow.ngDesign.ui.exportType"
                      value="Quartus">
                </parameter>
             </command>
             <command
-                  commandId="com.synflow.ui.commandExport"
+                  commandId="com.synflow.ngDesign.ui.commandExport"
                   icon="icons/xilinx.gif"
                   style="push"
                   tooltip="Export to Xilinx ISE project">
                <parameter
-                     name="com.synflow.ui.exportType"
+                     name="com.synflow.ngDesign.ui.exportType"
                      value="Ise">
                </parameter>
             </command>
 			<command
-         commandId="com.synflow.ui.commandExport"
+         commandId="com.synflow.ngDesign.ui.commandExport"
          icon="icons/diamond.gif"
          style="push"
          tooltip="Export to Lattice Diamond project">
                <parameter
-                     name="com.synflow.ui.exportType"
+                     name="com.synflow.ngDesign.ui.exportType"
                      value="Diamond">
                </parameter>
             </command>
@@ -182,13 +182,13 @@
       </menuContribution>
       <menuContribution
             allPopups="false"
-            locationURI="popup:com.synflow.ui.projectExplorer?endof=additions">
+            locationURI="popup:com.synflow.ngDesign.ui.projectExplorer?endof=additions">
          <separator
-               name="com.synflow.ui.popupProjectExplorerSeparator"
+               name="com.synflow.ngDesign.ui.popupProjectExplorerSeparator"
                visible="true">
          </separator>
          <command
-               commandId="com.synflow.ui.commandGenTest"
+               commandId="com.synflow.ngDesign.ui.commandGenTest"
                label="Generate test"
                style="push">
             <visibleWhen
@@ -196,7 +196,7 @@
             </visibleWhen>
          </command>
          <command
-               commandId="com.synflow.ui.commandConvertDesign"
+               commandId="com.synflow.ngDesign.ui.commandConvertDesign"
                label="Convert design"
                style="push">
             <visibleWhen
@@ -209,29 +209,29 @@
          point="org.eclipse.ui.ide.projectNatureImages">
       <image
             icon="icons/sfprj.gif"
-            id="com.synflow.ui.natureImage"
+            id="com.synflow.ngDesign.ui.natureImage"
             natureId="com.synflow.core.nature">
       </image>
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            class="com.synflow.ui.internal.perspectives.SynflowPerspective"
+            class="com.synflow.ngDesign.ui.internal.perspectives.SynflowPerspective"
             icon="icons/synflow.png"
-            id="com.synflow.ui.perspectives.SynflowPerspective"
+            id="com.synflow.ngDesign.ui.perspectives.SynflowPerspective"
             name="Synflow">
       </perspective>
    </extension>
  <extension
        point="org.eclipse.debug.ui.launchShortcuts">
     <shortcut
-          class="com.synflow.ui.internal.launching.LaunchShortcut"
+          class="com.synflow.ngDesign.ui.internal.launching.LaunchShortcut"
           icon="icons/cflow_app.gif"
-          id="com.synflow.ui.shortcutSimulation"
+          id="com.synflow.ngDesign.ui.shortcutSimulation"
           label="C~ Simulation"
           modes="run,debug">
        <configurationType
-             id="com.synflow.ui.launchConfigurationSimulation"></configurationType>
+             id="com.synflow.ngDesign.ui.launchConfigurationSimulation"></configurationType>
        <contextualLaunch>
           <enablement>
              <with
@@ -286,8 +286,8 @@
  <extension
        point="org.eclipse.debug.core.launchConfigurationTypes">
     <launchConfigurationType
-          delegate="com.synflow.ui.internal.UiInjectableExtensionFactory:com.synflow.ui.internal.launching.LaunchDelegateSimulation"
-          id="com.synflow.ui.launchConfigurationSimulation"
+          delegate="com.synflow.ngDesign.ui.internal.UiInjectableExtensionFactory:com.synflow.ngDesign.ui.internal.launching.LaunchDelegateSimulation"
+          id="com.synflow.ngDesign.ui.launchConfigurationSimulation"
           modes="run,debug"
           name="C~ Simulation"
           public="true">
@@ -296,45 +296,45 @@
  <extension
        point="org.eclipse.debug.ui.launchConfigurationTabGroups">
     <launchConfigurationTabGroup
-          class="com.synflow.ui.internal.launching.SimulationTabGroup"
-          id="com.synflow.ui.launchConfigurationTabGroupSimulation"
-          type="com.synflow.ui.launchConfigurationSimulation">
+          class="com.synflow.ngDesign.ui.internal.launching.SimulationTabGroup"
+          id="com.synflow.ngDesign.ui.launchConfigurationTabGroupSimulation"
+          type="com.synflow.ngDesign.ui.launchConfigurationSimulation">
     </launchConfigurationTabGroup>
  </extension>
  <extension
        point="org.eclipse.debug.ui.launchConfigurationTypeImages">
     <launchConfigurationTypeImage
-          configTypeID="com.synflow.ui.launchConfigurationSimulation"
+          configTypeID="com.synflow.ngDesign.ui.launchConfigurationSimulation"
           icon="icons/cflow_app.gif"
-          id="com.synflow.ui.launchConfigurationTypeImage">
+          id="com.synflow.ngDesign.ui.launchConfigurationTypeImage">
     </launchConfigurationTypeImage>
  </extension>
  <extension
        point="org.eclipse.ui.views">
     <category
-          id="com.synflow.ui"
+          id="com.synflow.ngDesign.ui"
           name="Synflow">
     </category>
     <view
-          category="com.synflow.ui"
-          class="com.synflow.ui.internal.views.WaveView"
+          category="com.synflow.ngDesign.ui"
+          class="com.synflow.ngDesign.ui.internal.views.WaveView"
           icon="icons/wave.gif"
-          id="com.synflow.ui.views.WaveView"
+          id="com.synflow.ngDesign.ui.views.WaveView"
           name="WaveView">
     </view>
     <view
-          category="com.synflow.ui"
-          class="com.synflow.ui.internal.navigator.ProjectExplorer"
+          category="com.synflow.ngDesign.ui"
+          class="com.synflow.ngDesign.ui.internal.navigator.ProjectExplorer"
           icon="icons/package.gif"
-          id="com.synflow.ui.projectExplorer"
+          id="com.synflow.ngDesign.ui.projectExplorer"
           name="Project Explorer">
     </view>
  </extension>
  <extension
        point="org.eclipse.ltk.core.refactoring.renameParticipants">
     <renameParticipant
-          class="com.synflow.ui.internal.refactoring.CflowRenameParticipant"
-          id="com.synflow.ui.renameParticipantCf"
+          class="com.synflow.ngDesign.ui.internal.refactoring.CflowRenameParticipant"
+          id="com.synflow.ngDesign.ui.renameParticipantCf"
           name="Rename C~ task">
        <enablement>
           <with variable="affectedNatures">
@@ -355,8 +355,8 @@
  <extension
        point="org.eclipse.ltk.core.refactoring.moveParticipants">
     <moveParticipant
-          class="com.synflow.ui.internal.refactoring.CflowMoveParticipant"
-          id="com.synflow.ui.moveParticipantCf"
+          class="com.synflow.ngDesign.ui.internal.refactoring.CflowMoveParticipant"
+          id="com.synflow.ngDesign.ui.moveParticipantCf"
           name="Move C~ task">
        <enablement>
           <with
@@ -386,9 +386,9 @@
        point="org.eclipse.ui.navigator.navigatorContent">
     <navigatorContent
           activeByDefault="true"
-          contentProvider="com.synflow.ui.internal.navigator.CflowContentProvider"
+          contentProvider="com.synflow.ngDesign.ui.internal.navigator.CflowContentProvider"
           icon="icons/package.gif"
-          id="com.synflow.ui.navigatorContent"
+          id="com.synflow.ngDesign.ui.navigatorContent"
           labelProvider="com.synflow.cflow.ui.CflowExecutableExtensionFactory:com.synflow.cflow.ui.labeling.CflowNavigatorLabelProvider"
           name="Synflow Navigator"
           priority="high">
@@ -412,8 +412,8 @@
              </instanceof>
           </or></possibleChildren>
        <actionProvider
-             class="com.synflow.ui.internal.navigator.SynflowNewActionProvider"
-             id="com.synflow.ui.navigator.actions.NewAction">
+             class="com.synflow.ngDesign.ui.internal.navigator.SynflowNewActionProvider"
+             id="com.synflow.ngDesign.ui.navigator.actions.NewAction">
           <enablement>
              <or>
                 <adapt
@@ -429,8 +429,8 @@
           </enablement>
        </actionProvider>
        <actionProvider
-             class="com.synflow.ui.internal.navigator.SynflowActionProvider"
-             id="com.synflow.ui.navigator.actions.EditActions"
+             class="com.synflow.ngDesign.ui.internal.navigator.SynflowActionProvider"
+             id="com.synflow.ngDesign.ui.navigator.actions.EditActions"
              overrides="org.eclipse.ui.navigator.resources.actions.EditActions">
           <enablement>
              <adapt
@@ -439,8 +439,8 @@
           </enablement>
        </actionProvider>
        <commonSorter
-             class="com.synflow.ui.internal.navigator.ProjectExplorerSorter"
-             id="com.synflow.ui.navigator.ProjectExplorerSorter">
+             class="com.synflow.ngDesign.ui.internal.navigator.ProjectExplorerSorter"
+             id="com.synflow.ngDesign.ui.navigator.ProjectExplorerSorter">
        </commonSorter>
        <commonWizard
              type="new"
@@ -508,13 +508,13 @@
  <extension
        point="org.eclipse.ui.navigator.viewer">
     <viewerContentBinding
-          viewerId="com.synflow.ui.projectExplorer">
+          viewerId="com.synflow.ngDesign.ui.projectExplorer">
        <includes>
           <contentExtension
                 pattern="org.eclipse.ui.navigator.resourceContent">
           </contentExtension>
           <contentExtension
-                pattern="com.synflow.ui.navigatorContent">
+                pattern="com.synflow.ngDesign.ui.navigatorContent">
           </contentExtension>
           <contentExtension
                 pattern="org.eclipse.ui.navigator.resources.filters.*">
@@ -528,10 +528,10 @@
        </includes>
     </viewerContentBinding>
     <viewerActionBinding
-          viewerId="com.synflow.ui.projectExplorer">
+          viewerId="com.synflow.ngDesign.ui.projectExplorer">
        <includes>
           <actionExtension
-                pattern="com.synflow.ui.navigator.actions.*">
+                pattern="com.synflow.ngDesign.ui.navigator.actions.*">
           </actionExtension>
           <actionExtension
                 pattern="org.eclipse.ui.navigator.resources.*">
@@ -550,7 +550,7 @@
  <extension
        point="org.eclipse.ui.decorators">
     <decorator
-          class="com.synflow.ui.internal.navigator.CflowLabelDecorator"
+          class="com.synflow.ngDesign.ui.internal.navigator.CflowLabelDecorator"
           id="com.synflow.cflow.ui.decorator"
           label="C~ decorator"
           lightweight="true"
