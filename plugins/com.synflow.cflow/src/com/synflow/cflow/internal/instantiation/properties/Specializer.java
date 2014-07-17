@@ -14,13 +14,14 @@ import static com.google.common.collect.Iterables.concat;
 import static com.synflow.core.IProperties.IMPL_BUILTIN;
 import static com.synflow.core.IProperties.IMPL_EXTERNAL;
 import static com.synflow.core.IProperties.PROP_TYPE;
+import static com.synflow.models.ir.IrFactory.eINSTANCE;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.synflow.cflow.internal.services.ExpressionTransformer;
+import com.google.gson.JsonPrimitive;
 import com.synflow.core.util.CoreUtil;
 import com.synflow.models.dpn.Argument;
 import com.synflow.models.dpn.DpnFactory;
@@ -58,7 +59,7 @@ public class Specializer {
 				} else {
 					parameters.add(variable);
 
-					Expression value = new ExpressionTransformer(null).transformJson(jsonValue);
+					Expression value = transformJson(jsonValue);
 					if (value == null) {
 						errorHandler.addError(jsonValue,
 								"Instantiation: invalid value for constant '" + name + "'");
@@ -71,6 +72,27 @@ public class Specializer {
 		}
 
 		entity.getParameters().addAll(parameters);
+	}
+
+	/**
+	 * Returns an IR expression from the given JSON element.
+	 * 
+	 * @param json
+	 *            a JSON element (should be a primitive)
+	 * @return an expression, or <code>null</code>
+	 */
+	public Expression transformJson(JsonElement json) {
+		if (json.isJsonPrimitive()) {
+			JsonPrimitive primitive = json.getAsJsonPrimitive();
+			if (primitive.isBoolean()) {
+				return eINSTANCE.createExprBool(primitive.getAsBoolean());
+			} else if (primitive.isNumber()) {
+				return eINSTANCE.createExprInt(primitive.getAsBigInteger());
+			} else if (primitive.isString()) {
+				return eINSTANCE.createExprString(primitive.getAsString());
+			}
+		}
+		return null;
 	}
 
 	public void visitArguments(Instance instance) {

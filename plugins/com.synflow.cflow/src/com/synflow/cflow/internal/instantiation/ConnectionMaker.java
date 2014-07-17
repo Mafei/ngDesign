@@ -11,7 +11,6 @@
 package com.synflow.cflow.internal.instantiation;
 
 import static com.synflow.cflow.CflowConstants.TYPE_READS;
-import static com.synflow.models.util.SwitchUtil.visit;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -107,14 +106,9 @@ public class ConnectionMaker {
 
 	private void checkPortAssociation(Connect connect, Instance instance, int index, VarRef ref,
 			Port targetPort) {
-		// resolves type of source ref
-		Type srcType = getResolvedPortType(ref);
-
-		// resolves type of target port
-		Type tgtType = IrUtil.copy(targetPort.getType());
-		if (instance != null) {
-			visit(new TypeResolver(instance), tgtType);
-		}
+		// get port types
+		Type srcType = instantiator.getPort(ref.getVariable()).getType();
+		Type tgtType = targetPort.getType();
 
 		// check assign
 		INode node = NodeModelUtils.getNode(ref);
@@ -195,9 +189,6 @@ public class ConnectionMaker {
 			String portName = name.toString("_");
 			thisPort.setName(portName);
 
-			// we need to replace references to parameters by actual values
-			visit(new TypeResolver(otherInst), thisPort.getType());
-
 			// if this is an input port, remove it from the port map
 			if (isInput) {
 				portMap.remove(otherInst, otherPort);
@@ -241,26 +232,6 @@ public class ConnectionMaker {
 		IEObjectDescription eObjectDescription = scope.getSingleElement(qualifiedLinkName);
 
 		return instantiator.getInstance((Inst) eObjectDescription.getEObjectOrProxy());
-	}
-
-	/**
-	 * Returns the resolved type of the port referenced by <code>ref</code>.
-	 * 
-	 * @param ref
-	 *            reference to a C~ port variable
-	 * @return an IR type resolved
-	 */
-	private Type getResolvedPortType(VarRef ref) {
-		Port port = instantiator.getPort(ref.getVariable());
-		Instance otherInst = getInstance(ref);
-		if (otherInst == null) {
-			return port.getType();
-		} else {
-			// we need to replace references to parameters by actual values
-			Type type = IrUtil.copy(port.getType());
-			visit(new TypeResolver(otherInst), type);
-			return type;
-		}
 	}
 
 	/**

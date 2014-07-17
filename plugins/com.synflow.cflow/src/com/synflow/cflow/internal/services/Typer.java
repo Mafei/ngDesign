@@ -73,13 +73,11 @@ import com.synflow.cflow.cflow.util.CflowSwitch;
 import com.synflow.cflow.internal.instantiation.IInstantiator;
 import com.synflow.cflow.services.Evaluator;
 import com.synflow.models.dpn.Port;
-import com.synflow.models.ir.Expression;
 import com.synflow.models.ir.IrFactory;
 import com.synflow.models.ir.OpBinary;
 import com.synflow.models.ir.OpUnary;
 import com.synflow.models.ir.Type;
 import com.synflow.models.ir.TypeArray;
-import com.synflow.models.ir.util.ExpressionEvaluator;
 import com.synflow.models.ir.util.IrUtil;
 import com.synflow.models.ir.util.TypeUtil;
 import com.synflow.models.ir.util.ValueUtil;
@@ -254,8 +252,7 @@ public class Typer extends CflowSwitch<Type> {
 	@Override
 	public Type caseTypeGen(TypeGen type) {
 		String spec = type.getSpec();
-		Expression expr = new ExpressionTransformer(instantiator).doSwitch(type.getSize());
-		int size = new ExpressionEvaluator().evaluateAsInteger(expr);
+		int size = Evaluator.getIntValue(type.getSize());
 		return IrFactory.eINSTANCE.createTypeInt(size, "i".equals(spec));
 	}
 
