@@ -170,11 +170,6 @@ public class IrAdapterFactory extends AdapterFactoryImpl {
 		}
 
 		@Override
-		public Adapter caseTypeGen(TypeGen object) {
-			return createTypeGenAdapter();
-		}
-
-		@Override
 		public Adapter caseTypeInt(TypeInt object) {
 			return createTypeIntAdapter();
 		}
@@ -620,20 +615,6 @@ public class IrAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createTypeFloatAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link com.synflow.models.ir.TypeGen
-	 * <em>Type Gen</em>}'. <!-- begin-user-doc --> This default implementation returns null so that
-	 * we can easily ignore cases; it's useful to ignore a case when inheritance will catch all the
-	 * cases anyway. <!-- end-user-doc -->
-	 * 
-	 * @return the new adapter.
-	 * @see com.synflow.models.ir.TypeGen
-	 * @generated
-	 */
-	public Adapter createTypeGenAdapter() {
 		return null;
 	}
 

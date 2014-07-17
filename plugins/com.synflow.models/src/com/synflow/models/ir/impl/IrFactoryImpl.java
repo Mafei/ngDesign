@@ -8,19 +8,16 @@ package com.synflow.models.ir.impl;
 
 import static com.synflow.models.ir.ExprTypeConv.SIGNED;
 import static com.synflow.models.ir.ExprTypeConv.UNSIGNED;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collection;
 import java.util.List;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
-
 import com.synflow.models.ir.BlockBasic;
 import com.synflow.models.ir.BlockIf;
 import com.synflow.models.ir.BlockWhile;
@@ -51,7 +48,6 @@ import com.synflow.models.ir.Type;
 import com.synflow.models.ir.TypeArray;
 import com.synflow.models.ir.TypeBool;
 import com.synflow.models.ir.TypeFloat;
-import com.synflow.models.ir.TypeGen;
 import com.synflow.models.ir.TypeInt;
 import com.synflow.models.ir.TypeString;
 import com.synflow.models.ir.TypeVoid;
@@ -266,8 +262,6 @@ public class IrFactoryImpl extends EFactoryImpl implements IrFactory {
 			return createTypeBool();
 		case IrPackage.TYPE_FLOAT:
 			return createTypeFloat();
-		case IrPackage.TYPE_GEN:
-			return createTypeGen();
 		case IrPackage.TYPE_INT:
 			return createTypeInt();
 		case IrPackage.TYPE_STRING:
@@ -833,16 +827,6 @@ public class IrFactoryImpl extends EFactoryImpl implements IrFactory {
 		TypeFloatImpl typeFloat = new TypeFloatImpl();
 		typeFloat.setSize(size);
 		return typeFloat;
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	public TypeGen createTypeGen() {
-		TypeGenImpl typeGen = new TypeGenImpl();
-		return typeGen;
 	}
 
 	/**

@@ -553,15 +553,6 @@ public interface IrFactory extends EFactory {
 	TypeFloat createTypeFloat();
 
 	/**
-	 * Returns a new object of class '<em>Type Gen</em>'. <!-- begin-user-doc --> <!-- end-user-doc
-	 * -->
-	 * 
-	 * @return a new object of class '<em>Type Gen</em>'.
-	 * @generated
-	 */
-	TypeGen createTypeGen();
-
-	/**
 	 * Creates a new float type with the given size (the size could only be 16, 32 or 64).
 	 * 
 	 * @param size

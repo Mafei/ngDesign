@@ -47,7 +47,6 @@ import com.synflow.models.ir.Procedure;
 import com.synflow.models.ir.Type;
 import com.synflow.models.ir.TypeBool;
 import com.synflow.models.ir.TypeFloat;
-import com.synflow.models.ir.TypeGen;
 import com.synflow.models.ir.TypeInt;
 import com.synflow.models.ir.TypeArray;
 import com.synflow.models.ir.TypeString;
@@ -87,13 +86,6 @@ public class IrPackageImpl extends EPackageImpl implements IrPackage {
 	 * @generated
 	 */
 	private EClass typeFloatEClass = null;
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	private EClass typeGenEClass = null;
-
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * 
@@ -440,25 +432,7 @@ public class IrPackageImpl extends EPackageImpl implements IrPackage {
 	 * @generated
 	 */
 	public EClass getTypeGen() {
-		return typeGenEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	public EReference getTypeGen_Size() {
-		return (EReference) typeGenEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	public EAttribute getTypeGen_TypeName() {
-		return (EAttribute) typeGenEClass.getEStructuralFeatures().get(1);
+		return typeEClass;
 	}
 
 	/**
@@ -1574,10 +1548,6 @@ public class IrPackageImpl extends EPackageImpl implements IrPackage {
 		typeFloatEClass = createEClass(TYPE_FLOAT);
 		createEAttribute(typeFloatEClass, TYPE_FLOAT__SIZE);
 
-		typeGenEClass = createEClass(TYPE_GEN);
-		createEReference(typeGenEClass, TYPE_GEN__SIZE);
-		createEAttribute(typeGenEClass, TYPE_GEN__TYPE_NAME);
-
 		typeIntEClass = createEClass(TYPE_INT);
 		createEAttribute(typeIntEClass, TYPE_INT__SIGNED);
 		createEAttribute(typeIntEClass, TYPE_INT__SIZE);
@@ -1661,7 +1631,6 @@ public class IrPackageImpl extends EPackageImpl implements IrPackage {
 		typeArrayEClass.getESuperTypes().add(this.getType());
 		typeBoolEClass.getESuperTypes().add(this.getType());
 		typeFloatEClass.getESuperTypes().add(this.getType());
-		typeGenEClass.getESuperTypes().add(this.getType());
 		typeIntEClass.getESuperTypes().add(this.getType());
 		typeStringEClass.getESuperTypes().add(this.getType());
 		typeVoidEClass.getESuperTypes().add(this.getType());
@@ -1907,15 +1876,6 @@ public class IrPackageImpl extends EPackageImpl implements IrPackage {
 		initEAttribute(getTypeFloat_Size(), ecorePackage.getEInt(), "size", null, 0, 1,
 				TypeFloat.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE,
 				!IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		initEClass(typeGenEClass, TypeGen.class, "TypeGen", !IS_ABSTRACT, !IS_INTERFACE,
-				IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getTypeGen_Size(), this.getExpression(), null, "size", null, 0, 1,
-				TypeGen.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE,
-				!IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getTypeGen_TypeName(), ecorePackage.getEString(), "typeName", null, 0, 1,
-				TypeGen.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID,
-				IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(typeIntEClass, TypeInt.class, "TypeInt", !IS_ABSTRACT, !IS_INTERFACE,
 				IS_GENERATED_INSTANCE_CLASS);
