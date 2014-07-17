@@ -101,55 +101,15 @@ class VhdlDfPrinter extends DpnSwitch<CharSequence> {
 	}
 
 	/**
-	 * If the port is TypeInt, if it is unsigned prints "std_logic_vector (size - 1 downto 0) ", if it is signed, "signed [size - 1 : 0] ".
-	 * If the port is TypeBool, does not print anything.
+	 * If the port is TypeInt, prints "std_logic_vector(size - 1 downto 0)".
+	 * If the port is TypeBool, prints "std_logic"
 	 */
 	def printPortType(Port port) {
 		if (port.type.int) {
-			'''«printPortRange(port)» '''
+			val typeInt = port.type as TypeInt
+			'''std_logic_vector («typeInt.size - 1» downto 0)'''
 		} else {
 			'''std_logic'''
-		}
-	}
-
-	def public final printPortRange(Port port) {
-		if (port.type.int) {
-			val typeInt = port.type as TypeInt
-			printTypeUnsigned(typeInt.size)
-		}
-	}
-
-	/**
-	 * Prints '[size - 1 : 0]'. If possible, evaluates type.size - 1 and prints an integer.
-	 */
-	def private printTypeUnsigned(int size) {
-		'''std_logic_vector («size - 1» downto 0)'''
-	}
-
-	/**
-	 * If the port has a type and it is not boolean, prints "[size - 1 : 0] "
-	 */
-	def printPortTypeResolved(Instance instance, Port port) {
-		val type = port.type
-		if (type.int) {
-			// TODO val size = new ExprResolver(instance).doSwitch((type as TypeInt).size)
-			val size = (type as TypeInt).size
-			val res = '''«printTypeUnsigned(size)» '''
-
-			// remove new expression so we clean up uses
-			// do this *after* evaluating/printing expression
-			// TODO IrUtil.delete(size)
-
-			res
-		}
-	}
-	
-	def portType(Port port, String IOtype) {
-		if (port.type.bool) {
-			'''«IOtype»std_logic'''
-		} else {
-			val size = (port.type as TypeInt).size
-			'''«IOtype»std_logic_vector(«size - 1» downto 0)'''
 		}
 	}
 
