@@ -88,7 +88,14 @@ public class ExpressionEvaluator extends IrSwitch<Object> {
 	@Override
 	public Object caseExprVar(ExprVar expr) {
 		Var var = expr.getUse().getVariable();
-		return var.getValue();
+		Object value = var.getValue();
+		if (value == null) {
+			// return the variable's initial value
+			value = ValueUtil.getValue(var.getInitialValue());
+			var.setValue(value);
+		}
+
+		return value;
 	}
 
 	/**
