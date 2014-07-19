@@ -21,10 +21,6 @@ public class NgDesignUi extends AbstractUIPlugin {
 
 	public static final String COMMAND_TYPE_EXPORT_TYPE = "com.synflow.ngDesign.ui.exportType";
 
-	public static final String IMG_LIC_ERR = "icons/license_err.png";
-
-	public static final String IMG_LIC_OK = "icons/license_ok.png";
-
 	// The shared instance
 	private static NgDesignUi plugin;
 

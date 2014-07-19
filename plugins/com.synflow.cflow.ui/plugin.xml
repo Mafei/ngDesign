@@ -459,14 +459,14 @@
   <extension
         point="org.eclipse.ui.views">
      <view
-           category="com.synflow.ui"
+           category="com.synflow.ngDesign.ui"
            class="com.synflow.cflow.ui.CflowExecutableExtensionFactory:com.synflow.cflow.ui.views.FsmView"
            icon="icons/fsm.gif"
            id="com.synflow.cflow.ui.views.FsmView"
            name="FSM">
      </view>
      <view
-           category="com.synflow.ui"
+           category="com.synflow.ngDesign.ui"
            class="com.synflow.cflow.ui.CflowExecutableExtensionFactory:com.synflow.cflow.ui.views.GraphView"
            icon="icons/design.gif"
            id="com.synflow.cflow.ui.views.GraphView"
