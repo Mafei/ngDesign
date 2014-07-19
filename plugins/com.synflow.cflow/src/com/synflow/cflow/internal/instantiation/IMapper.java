@@ -24,17 +24,17 @@ import com.synflow.models.ir.Procedure;
 import com.synflow.models.ir.Var;
 
 /**
- * This interface defines an instantiator.
+ * This interface defines an mapper.
  * 
  * @author Matthieu Wipliez
  * 
  */
-@ImplementedBy(InstantiatorImpl.class)
-public interface IInstantiator {
+@ImplementedBy(MapperImpl.class)
+public interface IMapper {
 
 	/**
 	 * Returns the built-in resources created during instantiation, and clears the internal copy
-	 * maintained by this instantiator.
+	 * maintained by this mapper.
 	 * 
 	 * @return an iterable over resources
 	 */

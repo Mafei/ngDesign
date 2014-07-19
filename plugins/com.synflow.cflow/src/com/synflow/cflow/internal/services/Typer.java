@@ -70,7 +70,7 @@ import com.synflow.cflow.cflow.ValueList;
 import com.synflow.cflow.cflow.VarRef;
 import com.synflow.cflow.cflow.Variable;
 import com.synflow.cflow.cflow.util.CflowSwitch;
-import com.synflow.cflow.internal.instantiation.IInstantiator;
+import com.synflow.cflow.internal.instantiation.IMapper;
 import com.synflow.cflow.services.Evaluator;
 import com.synflow.models.dpn.Port;
 import com.synflow.models.ir.IrFactory;
@@ -108,7 +108,7 @@ public class Typer extends CflowSwitch<Type> {
 	}
 
 	@Inject
-	private IInstantiator instantiator;
+	private IMapper mapper;
 
 	@Override
 	public Type caseExpressionBinary(ExpressionBinary expression) {
@@ -308,7 +308,7 @@ public class Typer extends CflowSwitch<Type> {
 	public Type caseVarRef(VarRef ref) {
 		Variable variable = ref.getVariable();
 		if (CflowUtil.isPort(variable)) {
-			Port port = instantiator.getPort(ref);
+			Port port = mapper.getPort(ref);
 			return port.getType();
 		}
 

@@ -70,13 +70,13 @@ import com.synflow.models.ir.Var;
 import com.synflow.models.ir.util.ValueUtil;
 
 /**
- * This class defines the default implementation of the instantiator.
+ * This class defines the default implementation of the mapper.
  * 
  * @author Matthieu Wipliez
  * 
  */
 @Singleton
-public class InstantiatorImpl extends CflowSwitch<Entity> implements IInstantiator {
+public class MapperImpl extends CflowSwitch<Entity> implements IMapper {
 
 	private List<Resource> builtins;
 
@@ -104,7 +104,7 @@ public class InstantiatorImpl extends CflowSwitch<Entity> implements IInstantiat
 	@Inject
 	private Typer typer;
 
-	public InstantiatorImpl() {
+	public MapperImpl() {
 		builtins = new ArrayList<>();
 	}
 
@@ -222,7 +222,7 @@ public class InstantiatorImpl extends CflowSwitch<Entity> implements IInstantiat
 			return result;
 		}
 
-		return cache.get(Pair.of(InstantiatorImpl.class.getName(), entity), entity.eResource(),
+		return cache.get(Pair.of(MapperImpl.class.getName(), entity), entity.eResource(),
 				new Provider<Entity>() {
 					@Override
 					public Entity get() {
@@ -237,7 +237,7 @@ public class InstantiatorImpl extends CflowSwitch<Entity> implements IInstantiat
 
 	@Override
 	public Instance getInstance(final Inst inst) {
-		return cache.get(Pair.of(InstantiatorImpl.class.getName(), inst), inst.eResource(),
+		return cache.get(Pair.of(MapperImpl.class.getName(), inst), inst.eResource(),
 				new Provider<Instance>() {
 					@Override
 					public Instance get() {
@@ -248,7 +248,7 @@ public class InstantiatorImpl extends CflowSwitch<Entity> implements IInstantiat
 
 	@Override
 	public Port getPort(final Variable port) {
-		return cache.get(Pair.of(InstantiatorImpl.class.getName(), port), port.eResource(),
+		return cache.get(Pair.of(MapperImpl.class.getName(), port), port.eResource(),
 				new Provider<Port>() {
 					@Override
 					public Port get() {
@@ -285,7 +285,7 @@ public class InstantiatorImpl extends CflowSwitch<Entity> implements IInstantiat
 
 		INode node = NodeModelUtils.getNode(ref);
 		final String link = NodeModelUtils.getTokenText(node);
-		return cache.get(Tuples.create(InstantiatorImpl.class.getName(), inst, link),
+		return cache.get(Tuples.create(MapperImpl.class.getName(), inst, link),
 				ref.eResource(), new Provider<Port>() {
 					@Override
 					public Port get() {
@@ -317,7 +317,7 @@ public class InstantiatorImpl extends CflowSwitch<Entity> implements IInstantiat
 	private <T> T getVariable(final Variable variable, final Class<T> type) {
 		final Entity entity = getEntity(variable);
 
-		return cache.get(Pair.of(InstantiatorImpl.class.getName(), variable), variable.eResource(),
+		return cache.get(Pair.of(MapperImpl.class.getName(), variable), variable.eResource(),
 				new Provider<T>() {
 					@Override
 					public T get() {

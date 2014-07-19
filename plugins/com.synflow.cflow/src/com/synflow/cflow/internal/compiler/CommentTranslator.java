@@ -44,7 +44,7 @@ import com.synflow.cflow.cflow.Task;
 import com.synflow.cflow.cflow.VarDecl;
 import com.synflow.cflow.cflow.Variable;
 import com.synflow.cflow.cflow.util.CflowSwitch;
-import com.synflow.cflow.internal.instantiation.IInstantiator;
+import com.synflow.cflow.internal.instantiation.IMapper;
 import com.synflow.models.util.Void;
 
 /**
@@ -127,10 +127,10 @@ public class CommentTranslator extends CflowSwitch<Void> {
 
 	private JsonArray copyright;
 
-	private IInstantiator instantiator;
+	private IMapper mapper;
 
-	public CommentTranslator(IInstantiator instantiator) {
-		this.instantiator = instantiator;
+	public CommentTranslator(IMapper mapper) {
+		this.mapper = mapper;
 	}
 
 	@Override
@@ -237,7 +237,7 @@ public class CommentTranslator extends CflowSwitch<Void> {
 	 * @param entity
 	 */
 	private void setJavadoc(NamedEntity entity, EList<VarDecl> decls) {
-		JsonObject properties = instantiator.getEntity(entity).getProperties();
+		JsonObject properties = mapper.getEntity(entity).getProperties();
 		if (copyright != null) {
 			properties.add(PROP_COPYRIGHT, copyright);
 		}

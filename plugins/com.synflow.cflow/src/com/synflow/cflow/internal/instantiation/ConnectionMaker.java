@@ -61,7 +61,7 @@ public class ConnectionMaker {
 	private IQualifiedNameConverter converter;
 
 	@Inject
-	private IInstantiator instantiator;
+	private IMapper mapper;
 
 	/**
 	 * A map whose keys are Instance or DPN, and whose values are ports that can be written to
@@ -107,7 +107,7 @@ public class ConnectionMaker {
 	private void checkPortAssociation(Connect connect, Instance instance, int index, VarRef ref,
 			Port targetPort) {
 		// get port types
-		Type srcType = instantiator.getPort(ref.getVariable()).getType();
+		Type srcType = mapper.getPort(ref.getVariable()).getType();
 		Type tgtType = targetPort.getType();
 
 		// check assign
@@ -116,7 +116,7 @@ public class ConnectionMaker {
 		checkAssign(srcName, srcType, tgtType, connect, Literals.CONNECT__PORTS, index);
 
 		// check ports have the same interface type
-		Port sourcePort = instantiator.getPort(ref);
+		Port sourcePort = mapper.getPort(ref);
 		if (sourcePort.getInterface() != targetPort.getInterface()) {
 			addError(new ErrorMarker("Port mismatch: incompatible interface type between "
 					+ srcName + " and '" + targetPort.getName() + "'", connect,
@@ -168,9 +168,9 @@ public class ConnectionMaker {
 		boolean isSimpleName = size == 1;
 
 		// create connection
-		Instance instance = instantiator.getInstance(thisInst);
+		Instance instance = mapper.getInstance(thisInst);
 		DPN dpn = instance.getDPN();
-		Port otherPort = instantiator.getPort(ref.getVariable());
+		Port otherPort = mapper.getPort(ref.getVariable());
 		boolean isInput = IrUtil.isInput(otherPort);
 
 		// compute otherEndPoint and portName
@@ -231,7 +231,7 @@ public class ConnectionMaker {
 		QualifiedName qualifiedLinkName = converter.toQualifiedName(name.getFirstSegment());
 		IEObjectDescription eObjectDescription = scope.getSingleElement(qualifiedLinkName);
 
-		return instantiator.getInstance((Inst) eObjectDescription.getEObjectOrProxy());
+		return mapper.getInstance((Inst) eObjectDescription.getEObjectOrProxy());
 	}
 
 	/**
@@ -250,7 +250,7 @@ public class ConnectionMaker {
 
 	void makeConnection(Connect connect) {
 		Network network = (Network) connect.eContainer();
-		DPN dpn = (DPN) instantiator.getEntity(network);
+		DPN dpn = (DPN) mapper.getEntity(network);
 		Instance instance = null;
 		String name;
 
@@ -263,7 +263,7 @@ public class ConnectionMaker {
 				ports = dpn.getInputs();
 			}
 		} else {
-			instance = instantiator.getInstance(connect.getInstance());
+			instance = mapper.getInstance(connect.getInstance());
 			name = instance.getName();
 			Entity entity = instance.getEntity();
 			if (TYPE_READS.equals(connect.getType())) {
@@ -290,7 +290,7 @@ public class ConnectionMaker {
 				break;
 			}
 
-			Port sourcePort = instantiator.getPort(ref.getVariable());
+			Port sourcePort = mapper.getPort(ref.getVariable());
 
 			// removes sourcePort from portMap
 			// this is done for any combination of this/instance and reads/writes

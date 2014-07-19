@@ -28,7 +28,7 @@ import com.synflow.cflow.cflow.Inst;
 import com.synflow.cflow.cflow.Network;
 import com.synflow.cflow.cflow.Variable;
 import com.synflow.cflow.internal.instantiation.ClockDomainComputer;
-import com.synflow.cflow.internal.instantiation.IInstantiator;
+import com.synflow.cflow.internal.instantiation.IMapper;
 import com.synflow.models.dpn.Connection;
 import com.synflow.models.dpn.DPN;
 import com.synflow.models.dpn.Endpoint;
@@ -45,11 +45,11 @@ import com.synflow.models.graph.Edge;
 
 public class NetworkChecker extends Checker {
 
-	private final IInstantiator instantiator;
+	private final IMapper mapper;
 
-	public NetworkChecker(ValidationMessageAcceptor acceptor, IInstantiator instantiator) {
+	public NetworkChecker(ValidationMessageAcceptor acceptor, IMapper mapper) {
 		super(acceptor);
-		this.instantiator = instantiator;
+		this.mapper = mapper;
 	}
 
 	/**
@@ -115,7 +115,7 @@ public class NetworkChecker extends Checker {
 	 */
 	private void checkConnectivity(Network network, DPN dpn) {
 		for (Variable variable : CflowUtil.getPorts(network.getPortDecls(), DIR_OUT)) {
-			Port port = instantiator.getPort(variable);
+			Port port = mapper.getPort(variable);
 			int num = dpn.getNumIncoming(port);
 			if (num == 0) {
 				error("Connectivity: unconnected output port '" + port.getName() + "'", variable,
@@ -128,14 +128,14 @@ public class NetworkChecker extends Checker {
 		}
 
 		for (Inst inst : network.getInstances()) {
-			Instance instance = instantiator.getInstance(inst);
+			Instance instance = mapper.getInstance(inst);
 			GenericEntity entity = inst.getEntity();
 			if (entity == null) {
 				entity = inst.getTask();
 			}
 
 			for (Variable variable : CflowUtil.getPorts(entity.getPortDecls(), DIR_IN)) {
-				Port port = instantiator.getPort(variable);
+				Port port = mapper.getPort(variable);
 				int num = dpn.getNumIncoming(instance, port);
 
 				EObject source;

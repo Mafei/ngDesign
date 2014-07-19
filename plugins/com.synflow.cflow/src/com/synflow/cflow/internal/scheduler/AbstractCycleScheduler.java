@@ -45,7 +45,7 @@ import com.synflow.cflow.cflow.StatementWrite;
 import com.synflow.cflow.cflow.VarRef;
 import com.synflow.cflow.cflow.Variable;
 import com.synflow.cflow.internal.TransformerUtil;
-import com.synflow.cflow.internal.instantiation.IInstantiator;
+import com.synflow.cflow.internal.instantiation.IMapper;
 import com.synflow.cflow.internal.services.VoidCflowSwitch;
 import com.synflow.cflow.services.Evaluator;
 import com.synflow.models.dpn.Actor;
@@ -71,13 +71,13 @@ public abstract class AbstractCycleScheduler extends VoidCflowSwitch {
 	/**
 	 * Creates a new cycle scheduler that will schedule cycles in the given actor.
 	 * 
-	 * @param instantiator
-	 *            instantiator
+	 * @param mapper
+	 *            mapper
 	 * @param actor
 	 *            an actor
 	 */
-	public AbstractCycleScheduler(IInstantiator instantiator, Actor actor) {
-		schedule = new ScheduleFsm(instantiator, actor);
+	public AbstractCycleScheduler(IMapper mapper, Actor actor) {
+		schedule = new ScheduleFsm(mapper, actor);
 	}
 
 	/**

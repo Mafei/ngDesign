@@ -74,7 +74,7 @@ import com.synflow.cflow.cflow.StatementVariable;
 import com.synflow.cflow.cflow.Variable;
 import com.synflow.cflow.cflow.util.CflowSwitch;
 import com.synflow.cflow.internal.AstUtil;
-import com.synflow.cflow.internal.instantiation.IInstantiator;
+import com.synflow.cflow.internal.instantiation.IMapper;
 import com.synflow.cflow.internal.services.Typer;
 import com.synflow.cflow.services.Evaluator;
 import com.synflow.models.dpn.Entity;
@@ -112,8 +112,8 @@ public class FunctionTransformer extends CflowSwitch<EObject> implements Transfo
 	 * @param entity
 	 *            IR entity being created
 	 */
-	public FunctionTransformer(IInstantiator instantiator, Typer typer, Entity entity) {
-		this(typer, new IrBuilder(instantiator, typer, entity));
+	public FunctionTransformer(IMapper mapper, Typer typer, Entity entity) {
+		this(typer, new IrBuilder(mapper, typer, entity));
 	}
 
 	/**

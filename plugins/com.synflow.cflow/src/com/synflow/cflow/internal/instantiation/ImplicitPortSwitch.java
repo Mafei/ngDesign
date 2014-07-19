@@ -30,10 +30,10 @@ import com.synflow.models.util.Void;
  */
 public class ImplicitPortSwitch extends VoidCflowSwitch {
 
-	private IInstantiator instantiator;
+	private IMapper mapper;
 
-	public ImplicitPortSwitch(IInstantiator instantiator) {
-		this.instantiator = instantiator;
+	public ImplicitPortSwitch(IMapper mapper) {
+		this.mapper = mapper;
 	}
 
 	@Override
@@ -41,7 +41,7 @@ public class ImplicitPortSwitch extends VoidCflowSwitch {
 		VarRef ref = expr.getSource();
 		String property = expr.getProperty();
 		if (PROP_READ.equals(property) || PROP_AVAILABLE.equals(property)) {
-			instantiator.getPort(ref);
+			mapper.getPort(ref);
 		}
 
 		return super.caseExpressionVariable(expr);
@@ -53,7 +53,7 @@ public class ImplicitPortSwitch extends VoidCflowSwitch {
 		super.caseStatementWrite(stmt);
 
 		// visit port
-		instantiator.getPort(stmt.getPort());
+		mapper.getPort(stmt.getPort());
 		return DONE;
 	}
 

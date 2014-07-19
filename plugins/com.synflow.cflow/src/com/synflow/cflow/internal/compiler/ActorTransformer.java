@@ -30,7 +30,7 @@ import com.synflow.cflow.cflow.StatementWrite;
 import com.synflow.cflow.cflow.VarRef;
 import com.synflow.cflow.cflow.Variable;
 import com.synflow.cflow.internal.TransformerUtil;
-import com.synflow.cflow.internal.instantiation.IInstantiator;
+import com.synflow.cflow.internal.instantiation.IMapper;
 import com.synflow.cflow.internal.services.Typer;
 import com.synflow.models.dpn.Actor;
 import com.synflow.models.dpn.FSM;
@@ -56,8 +56,8 @@ public class ActorTransformer extends FunctionTransformer {
 	 * @param actor
 	 *            actor
 	 */
-	public ActorTransformer(IInstantiator instantiator, Typer typer, Actor actor) {
-		super(typer, new ActorBuilder(instantiator, typer, actor));
+	public ActorTransformer(IMapper mapper, Typer typer, Actor actor) {
+		super(typer, new ActorBuilder(mapper, typer, actor));
 		lines = new ArrayDeque<>();
 	}
 

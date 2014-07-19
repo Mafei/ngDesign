@@ -31,7 +31,7 @@ import com.synflow.cflow.cflow.Network;
 import com.synflow.cflow.cflow.Task;
 import com.synflow.cflow.cflow.Variable;
 import com.synflow.cflow.internal.ErrorMarker;
-import com.synflow.cflow.internal.instantiation.IInstantiator;
+import com.synflow.cflow.internal.instantiation.IMapper;
 import com.synflow.cflow.internal.scheduler.CycleDetector;
 import com.synflow.cflow.internal.services.Typer;
 import com.synflow.cflow.internal.validation.NetworkChecker;
@@ -48,7 +48,7 @@ import com.synflow.models.dpn.DPN;
 public class CflowJavaValidator extends AbstractCflowJavaValidator {
 
 	@Inject
-	private IInstantiator instantiator;
+	private IMapper mapper;
 
 	@Inject
 	private Typer typer;
@@ -61,7 +61,7 @@ public class CflowJavaValidator extends AbstractCflowJavaValidator {
 			return;
 		}
 
-		NetworkChecker networkChecker = new NetworkChecker(this, instantiator);
+		NetworkChecker networkChecker = new NetworkChecker(this, mapper);
 
 		for (NamedEntity cfEntity : module.getEntities()) {
 			try {
@@ -71,13 +71,13 @@ public class CflowJavaValidator extends AbstractCflowJavaValidator {
 					// step 1: instantiate
 					// translates and checks properties
 					// instantiates and checks arguments
-					DPN dpn = (DPN) instantiator.getEntity(network);
+					DPN dpn = (DPN) mapper.getEntity(network);
 
 					// step 2: check connectivity
 					// must occur after instantiation
 					networkChecker.checkDPN(network, dpn);
 				} else {
-					instantiator.getEntity(cfEntity);
+					mapper.getEntity(cfEntity);
 				}
 			} finally {
 				if (cfEntity instanceof GenericEntity) {
@@ -117,7 +117,7 @@ public class CflowJavaValidator extends AbstractCflowJavaValidator {
 			error(message, setup, Literals.VARIABLE__NAME, ERR_MAIN_FUNCTION_BAD_TYPE);
 		}
 
-		Actor actor = (Actor) instantiator.getEntity(task);
+		Actor actor = (Actor) mapper.getEntity(task);
 		if (actor.getProperties().getAsJsonArray(PROP_CLOCKS).size() == 0) {
 			validate(task, setup, loop);
 		}
@@ -153,7 +153,7 @@ public class CflowJavaValidator extends AbstractCflowJavaValidator {
 		}
 
 		if (run != null) {
-			if (new CycleDetector(instantiator).hasCycleBreaks(run)) {
+			if (new CycleDetector(mapper).hasCycleBreaks(run)) {
 				String message = "A combinational task must not have cycle breaks";
 				error(message, run, null, -1);
 			}

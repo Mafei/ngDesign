@@ -33,7 +33,7 @@ import java.util.Map;
 import com.synflow.cflow.CflowUtil;
 import com.synflow.cflow.cflow.CExpression;
 import com.synflow.cflow.cflow.Variable;
-import com.synflow.cflow.internal.instantiation.IInstantiator;
+import com.synflow.cflow.internal.instantiation.IMapper;
 import com.synflow.cflow.internal.services.Typer;
 import com.synflow.cflow.services.Evaluator;
 import com.synflow.models.dpn.Entity;
@@ -68,7 +68,7 @@ public class IrBuilder {
 
 	protected final Entity entity;
 
-	protected final IInstantiator instantiator;
+	protected final IMapper mapper;
 
 	private Map<Variable, Var> localMap;
 
@@ -87,8 +87,8 @@ public class IrBuilder {
 	 * @param entity
 	 *            target IR entity
 	 */
-	public IrBuilder(IInstantiator instantiator, Typer typer, Entity entity) {
-		this.instantiator = instantiator;
+	public IrBuilder(IMapper mapper, Typer typer, Entity entity) {
+		this.mapper = mapper;
 		this.typer = typer;
 		this.entity = entity;
 
@@ -169,7 +169,7 @@ public class IrBuilder {
 			return localMap.get(variable);
 		}
 
-		return instantiator.getVar(variable);
+		return mapper.getVar(variable);
 	}
 
 	public final Procedure getProcedure() {
@@ -184,7 +184,7 @@ public class IrBuilder {
 	 * @return the IR procedure that corresponds to the given function
 	 */
 	final Procedure getProcedure(Variable function) {
-		return instantiator.getProcedure(function);
+		return mapper.getProcedure(function);
 	}
 
 	/**
@@ -261,7 +261,7 @@ public class IrBuilder {
 	 * @param function
 	 */
 	final void setProcedure(Variable function) {
-		procedure = instantiator.getProcedure(function);
+		procedure = mapper.getProcedure(function);
 		blocks = procedure.getBlocks();
 	}
 

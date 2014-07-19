@@ -22,7 +22,7 @@ import com.google.common.collect.Iterables;
 import com.synflow.cflow.cflow.VarRef;
 import com.synflow.cflow.cflow.Variable;
 import com.synflow.cflow.internal.compiler.helpers.AvailableRemover;
-import com.synflow.cflow.internal.instantiation.IInstantiator;
+import com.synflow.cflow.internal.instantiation.IMapper;
 import com.synflow.cflow.internal.services.Typer;
 import com.synflow.models.dpn.Action;
 import com.synflow.models.dpn.Actor;
@@ -54,8 +54,8 @@ public class ActorBuilder extends IrBuilder {
 
 	private Pattern writePattern;
 
-	public ActorBuilder(IInstantiator instantiator, Typer typer, Actor actor) {
-		super(instantiator, typer, actor);
+	public ActorBuilder(IMapper mapper, Typer typer, Actor actor) {
+		super(mapper, typer, actor);
 
 		existingSet = ImmutableSet.copyOf(Iterables.transform(
 				Iterables.concat(actor.getInputs(), actor.getOutputs(), actor.getVariables()),
@@ -157,7 +157,7 @@ public class ActorBuilder extends IrBuilder {
 	 * @return an IR Var
 	 */
 	final Var getPatternVar(Pattern pattern, VarRef ref) {
-		Port port = instantiator.getPort(ref);
+		Port port = mapper.getPort(ref);
 		if (!pattern.contains(port)) {
 			pattern.add(port);
 		}

@@ -41,7 +41,7 @@ import com.synflow.cflow.internal.compiler.helpers.FsmBeautifier;
 import com.synflow.cflow.internal.compiler.helpers.LoadStoreReplacer;
 import com.synflow.cflow.internal.compiler.helpers.SideEffectRemover;
 import com.synflow.cflow.internal.compiler.helpers.VariablePromoter;
-import com.synflow.cflow.internal.instantiation.IInstantiator;
+import com.synflow.cflow.internal.instantiation.IMapper;
 import com.synflow.cflow.internal.scheduler.CycleScheduler;
 import com.synflow.cflow.internal.scheduler.IfScheduler;
 import com.synflow.cflow.internal.services.Typer;
@@ -68,7 +68,7 @@ public class ModuleCompilerImpl extends CflowSwitch<Void> implements IModuleComp
 	private IFileSystemAccess fsa;
 
 	@Inject
-	private IInstantiator instantiator;
+	private IMapper mapper;
 
 	@Inject
 	private Typer typer;
@@ -88,14 +88,14 @@ public class ModuleCompilerImpl extends CflowSwitch<Void> implements IModuleComp
 	@Override
 	public Void caseModule(Module module) {
 		// translate comments for this module
-		new CommentTranslator(instantiator).doSwitch(module);
+		new CommentTranslator(mapper).doSwitch(module);
 
 		return visit(this, module.getEntities());
 	}
 
 	@Override
 	public Void caseNetwork(Network network) {
-		DPN dpn = (DPN) instantiator.getEntity(network);
+		DPN dpn = (DPN) mapper.getEntity(network);
 		for (Inst inst : network.getInstances()) {
 			doSwitch(inst);
 		}
@@ -112,7 +112,7 @@ public class ModuleCompilerImpl extends CflowSwitch<Void> implements IModuleComp
 	}
 
 	private Entity createEntity(Bundle bundle) {
-		Unit unit = (Unit) instantiator.getEntity(bundle);
+		Unit unit = (Unit) mapper.getEntity(bundle);
 		transformDeclarations(unit, bundle.getDecls());
 
 		new ProcedureTransformation(new LoadStoreReplacer()).doSwitch(unit);
@@ -120,7 +120,7 @@ public class ModuleCompilerImpl extends CflowSwitch<Void> implements IModuleComp
 	}
 
 	private Entity createEntity(Task task) {
-		Actor actor = (Actor) instantiator.getEntity(task);
+		Actor actor = (Actor) mapper.getEntity(task);
 		transformDeclarations(actor, task.getDecls());
 		transformActor(actor, task);
 
@@ -153,7 +153,7 @@ public class ModuleCompilerImpl extends CflowSwitch<Void> implements IModuleComp
 
 	@Override
 	public void serializeBuiltins() {
-		for (Resource resource : instantiator.getBuiltins()) {
+		for (Resource resource : mapper.getBuiltins()) {
 			EObject contents = resource.getContents().get(0);
 			if (contents instanceof Entity) {
 				serialize((Entity) contents);
@@ -188,10 +188,10 @@ public class ModuleCompilerImpl extends CflowSwitch<Void> implements IModuleComp
 		}
 
 		// schedules cycles, if statements, and transforms actor
-		CycleScheduler scheduler = new CycleScheduler(instantiator, actor);
+		CycleScheduler scheduler = new CycleScheduler(mapper, actor);
 		scheduler.schedule(setup, loop);
-		new IfScheduler(instantiator, actor).visit();
-		new ActorTransformer(instantiator, typer, actor).visit();
+		new IfScheduler(mapper, actor).visit();
+		new ActorTransformer(mapper, typer, actor).visit();
 
 		// post-process FSM: rename states and actions
 		new FsmBeautifier().visit(actor);
@@ -210,13 +210,13 @@ public class ModuleCompilerImpl extends CflowSwitch<Void> implements IModuleComp
 			if (CflowUtil.isFunction(variable)) {
 				if (CflowUtil.isConstant(variable)) {
 					// visit constant functions
-					FunctionTransformer transformer = new FunctionTransformer(instantiator, typer,
+					FunctionTransformer transformer = new FunctionTransformer(mapper, typer,
 							entity);
 					transformer.doSwitch(variable);
 				}
 			} else {
-				// visit variables (they are automatically added to the entity by instantiator)
-				instantiator.getVar(variable);
+				// visit variables (they are automatically added to the entity by mapper)
+				mapper.getVar(variable);
 			}
 		}
 	}
