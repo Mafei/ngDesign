@@ -35,8 +35,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.synflow.cflow.cflow.CflowPackage.Literals;
-import com.synflow.cflow.cflow.GenericEntity;
 import com.synflow.cflow.cflow.Inst;
+import com.synflow.cflow.cflow.Instantiable;
 import com.synflow.cflow.cflow.Network;
 import com.synflow.cflow.cflow.Obj;
 import com.synflow.cflow.internal.ErrorMarker;
@@ -79,8 +79,8 @@ public class PropertiesSupport implements IJsonErrorHandler {
 		}
 	}
 
-	public PropertiesSupport(GenericEntity entity) {
-		this(entity, Literals.GENERIC_ENTITY__PROPERTIES, entity.getErrors());
+	public PropertiesSupport(Instantiable entity) {
+		this(entity, Literals.INSTANTIABLE__PROPERTIES, entity.getErrors());
 	}
 
 	public PropertiesSupport(Inst inst) {

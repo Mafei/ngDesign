@@ -36,14 +36,14 @@ QualifiedName:
 ValidID:
 	ID;
 
-NamedEntity: GenericEntity | Bundle;
+NamedEntity: Bundle | Instantiable;
 
 ///////////////////////////////////////////////////////////////////////////////
 // task and network level
 ///////////////////////////////////////////////////////////////////////////////
 
-// a generic entity accepts parameters
-GenericEntity: Task | Network;
+// task and network can be instantiated, not bundle
+Instantiable: Task | Network;
 
 Task:
 	'task' name=ValidID '{'
@@ -82,7 +82,7 @@ Connect:
 
 Inst:
 	name=ValidID '=' 'new'
-		(entity=[GenericEntity|QualifiedName] '(' (arguments = Obj)? ')'
+		(entity=[Instantiable|QualifiedName] '(' (arguments = Obj)? ')'
 		| task=InstAnonTask) ';'
 ;
 

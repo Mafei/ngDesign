@@ -73,7 +73,7 @@
                   <iterate
                         ifEmpty="false">
                      <instanceof
-                           value="com.synflow.cflow.cflow.GenericEntity">
+                           value="com.synflow.cflow.cflow.Instantiable">
                      </instanceof>
                   </iterate>
                </with>

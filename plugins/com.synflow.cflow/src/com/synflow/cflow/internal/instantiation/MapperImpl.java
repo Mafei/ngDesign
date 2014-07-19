@@ -41,8 +41,8 @@ import com.synflow.cflow.CflowUtil;
 import com.synflow.cflow.UriComputer;
 import com.synflow.cflow.cflow.Bundle;
 import com.synflow.cflow.cflow.Connect;
-import com.synflow.cflow.cflow.GenericEntity;
 import com.synflow.cflow.cflow.Inst;
+import com.synflow.cflow.cflow.Instantiable;
 import com.synflow.cflow.cflow.Module;
 import com.synflow.cflow.cflow.NamedEntity;
 import com.synflow.cflow.cflow.Network;
@@ -181,11 +181,11 @@ public class MapperImpl extends CflowSwitch<Entity> implements IMapper {
 
 		// get Entity from inst
 		final Task task = inst.getTask();
-		final GenericEntity genericEntity = task == null ? inst.getEntity() : task;
+		final Instantiable instantiable = task == null ? inst.getEntity() : task;
 
 		try {
 			this.context = EcoreUtil.getURI(inst);
-			Entity entity = getEntity(genericEntity);
+			Entity entity = getEntity(instantiable);
 			instance.setEntity(entity);
 		} finally {
 			this.context = null;
@@ -258,8 +258,8 @@ public class MapperImpl extends CflowSwitch<Entity> implements IMapper {
 
 						Port dpnPort = DpnFactory.eINSTANCE.createPort(type, name, ifType);
 						PortDef portDef = (PortDef) port.eContainer();
-						GenericEntity genericEntity = EcoreUtil2.getContainerOfType(portDef,
-								GenericEntity.class);
+						Instantiable genericEntity = EcoreUtil2.getContainerOfType(portDef,
+								Instantiable.class);
 						Entity entity = getEntity(genericEntity);
 						if (CflowUtil.isInput(port)) {
 							entity.getInputs().add(dpnPort);
@@ -370,19 +370,19 @@ public class MapperImpl extends CflowSwitch<Entity> implements IMapper {
 	 * 
 	 * @param entity
 	 *            IR entity
-	 * @param genericEntity
+	 * @param instantiable
 	 *            C~ entity
 	 */
-	private void transformGenericEntity(Entity entity, GenericEntity genericEntity) {
-		transformNamedEntity(entity, genericEntity);
+	private void transformGenericEntity(Entity entity, Instantiable instantiable) {
+		transformNamedEntity(entity, instantiable);
 
 		// transform ports
-		for (Variable variable : CflowUtil.getPorts(genericEntity.getPortDecls())) {
+		for (Variable variable : CflowUtil.getPorts(instantiable.getPortDecls())) {
 			getPort(variable);
 		}
 
 		// transform properties
-		new PropertiesSupport(genericEntity).setProperties(entity);
+		new PropertiesSupport(instantiable).setProperties(entity);
 	}
 
 	/**

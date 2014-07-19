@@ -31,7 +31,7 @@ import org.eclipse.xtext.validation.Check;
 import com.synflow.cflow.CflowUtil;
 import com.synflow.cflow.cflow.CflowPackage.Literals;
 import com.synflow.cflow.cflow.ExpressionVariable;
-import com.synflow.cflow.cflow.GenericEntity;
+import com.synflow.cflow.cflow.Instantiable;
 import com.synflow.cflow.cflow.StatementAssign;
 import com.synflow.cflow.cflow.StatementVariable;
 import com.synflow.cflow.cflow.VarRef;
@@ -79,7 +79,7 @@ public class WarningValidator extends AbstractDeclarativeValidator {
 			return;
 		}
 
-		GenericEntity entity = getContainerOfType(variable, GenericEntity.class);
+		Instantiable entity = getContainerOfType(variable, Instantiable.class);
 		if (entity == null) {
 			// do not warn for variables in bundles
 			return;

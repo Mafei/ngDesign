@@ -43,8 +43,8 @@ import com.synflow.cflow.cflow.Bundle;
 import com.synflow.cflow.cflow.CflowPackage.Literals;
 import com.synflow.cflow.cflow.Connect;
 import com.synflow.cflow.cflow.ExpressionVariable;
-import com.synflow.cflow.cflow.GenericEntity;
 import com.synflow.cflow.cflow.Inst;
+import com.synflow.cflow.cflow.Instantiable;
 import com.synflow.cflow.cflow.Module;
 import com.synflow.cflow.cflow.Network;
 import com.synflow.cflow.cflow.PortDecl;
@@ -78,7 +78,7 @@ public class CflowScopeProvider extends AbstractDeclarativeScopeProvider {
 		return descriptions;
 	}
 
-	private Iterable<IEObjectDescription> getPortDescs(GenericEntity entity, String direction) {
+	private Iterable<IEObjectDescription> getPortDescs(Instantiable entity, String direction) {
 		Iterable<Variable> ports = CflowUtil.getPorts(entity.getPortDecls(), direction);
 		return Iterables.transform(ports, new Function<Variable, IEObjectDescription>() {
 			@Override
@@ -93,7 +93,7 @@ public class CflowScopeProvider extends AbstractDeclarativeScopeProvider {
 		Iterable<PortDecl> portDecls;
 		Task task = inst.getTask();
 		if (task == null) {
-			GenericEntity entity = inst.getEntity();
+			Instantiable entity = inst.getEntity();
 			if (entity == null) {
 				return ImmutableSet.of();
 			}

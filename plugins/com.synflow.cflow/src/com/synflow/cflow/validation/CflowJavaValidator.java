@@ -24,7 +24,7 @@ import org.eclipse.xtext.validation.Check;
 import com.google.inject.Inject;
 import com.synflow.cflow.CflowUtil;
 import com.synflow.cflow.cflow.CflowPackage.Literals;
-import com.synflow.cflow.cflow.GenericEntity;
+import com.synflow.cflow.cflow.Instantiable;
 import com.synflow.cflow.cflow.Module;
 import com.synflow.cflow.cflow.NamedEntity;
 import com.synflow.cflow.cflow.Network;
@@ -80,8 +80,8 @@ public class CflowJavaValidator extends AbstractCflowJavaValidator {
 					mapper.getEntity(cfEntity);
 				}
 			} finally {
-				if (cfEntity instanceof GenericEntity) {
-					printErrors((GenericEntity) cfEntity);
+				if (cfEntity instanceof Instantiable) {
+					printErrors((Instantiable) cfEntity);
 				}
 			}
 		}
@@ -123,7 +123,7 @@ public class CflowJavaValidator extends AbstractCflowJavaValidator {
 		}
 	}
 
-	private void printErrors(GenericEntity entity) {
+	private void printErrors(Instantiable entity) {
 		for (ErrorMarker error : entity.getErrors()) {
 			acceptError(error.getMessage(), error.getSource(), error.getFeature(),
 					error.getIndex(), null);

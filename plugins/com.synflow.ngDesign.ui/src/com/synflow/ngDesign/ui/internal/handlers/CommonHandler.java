@@ -18,7 +18,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 
-import com.synflow.cflow.cflow.GenericEntity;
+import com.synflow.cflow.cflow.Instantiable;
 import com.synflow.cflow.ui.CflowExecutableExtensionFactory;
 import com.synflow.core.SynflowCore;
 import com.synflow.core.util.CoreUtil;
@@ -67,18 +67,18 @@ public abstract class CommonHandler extends AbstractHandler {
 
 			Object selection = appContext.getVariable("selection");
 			Object elt = ((IStructuredSelection) selection).getFirstElement();
-			GenericEntity genericEntity = (GenericEntity) elt;
-			IFile file = EcoreHelper.getFile(genericEntity);
+			Instantiable instantiable = (Instantiable) elt;
+			IFile file = EcoreHelper.getFile(instantiable);
 
 			CflowExecutableExtensionFactory factory = new CflowExecutableExtensionFactory();
 			try {
 				factory.setInitializationData(null, null, IQualifiedNameProvider.class.getName());
 				Object obj = factory.create();
 				IQualifiedNameProvider provider = (IQualifiedNameProvider) obj;
-				String name = provider.getFullyQualifiedName(genericEntity).toString();
+				String name = provider.getFullyQualifiedName(instantiable).toString();
 				IFile irFile = CoreUtil.getIrFile(file.getProject(), name);
 
-				ResourceSet set = genericEntity.eResource().getResourceSet();
+				ResourceSet set = instantiable.eResource().getResourceSet();
 				Entity entity = EcoreHelper.getEObject(set, irFile);
 				return entity;
 			} catch (CoreException e) {

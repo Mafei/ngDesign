@@ -145,7 +145,7 @@ class CflowPostProcessor {
 
 		addClasses(p)
 		addDataTypes(p)
-		updateGenericEntity(p)
+		updateInstantiable(p)
 	}
 
 	def private void setBody(EOperation op, String contents) {
@@ -161,14 +161,14 @@ class CflowPostProcessor {
 	}
 	
 	/**
-	 * Updates the GenericEntity class by adding an attribute 'internalErrors' and a 'getErrors' method.
+	 * Updates the Instantiable class by adding an attribute 'internalErrors' and a 'getErrors' method.
 	 * 
 	 * 'getErrors' initializes internalErrors with a BasicEList so adding errors to the entity
 	 * does not cause its containing resource to be considered modified (otherwise this breaks the
 	 * instantiator).
 	 */
-	def private updateGenericEntity(EPackage p) {
-		val classEntity = p.getEClassifier('GenericEntity') as EClass
+	def private updateInstantiable(EPackage p) {
+		val classEntity = p.getEClassifier('Instantiable') as EClass
 		val typeErrorMarker = p.getEClassifier('ErrorMarker') as EDataType
 		val typeList = p.getEClassifier('EList') as EDataType
 

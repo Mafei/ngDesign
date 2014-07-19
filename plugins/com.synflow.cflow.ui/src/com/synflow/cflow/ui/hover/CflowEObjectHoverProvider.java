@@ -28,8 +28,8 @@ import com.synflow.cflow.CflowUtil;
 import com.synflow.cflow.cflow.CExpression;
 import com.synflow.cflow.cflow.CType;
 import com.synflow.cflow.cflow.ExpressionInteger;
-import com.synflow.cflow.cflow.GenericEntity;
 import com.synflow.cflow.cflow.Inst;
+import com.synflow.cflow.cflow.Instantiable;
 import com.synflow.cflow.cflow.Network;
 import com.synflow.cflow.cflow.Task;
 import com.synflow.cflow.cflow.Typedef;
@@ -65,7 +65,7 @@ public class CflowEObjectHoverProvider extends DefaultEObjectHoverProvider {
 		}
 
 		@Override
-		public String caseGenericEntity(GenericEntity entity) {
+		public String caseInstantiable(Instantiable entity) {
 			Iterable<Variable> portsIn = CflowUtil.getPorts(entity.getPortDecls(), DIR_IN);
 			Iterable<Variable> portsOut = CflowUtil.getPorts(entity.getPortDecls(), DIR_OUT);
 			Iterable<String> itIn = Iterables.transform(portsIn, toStringPort);
@@ -102,12 +102,12 @@ public class CflowEObjectHoverProvider extends DefaultEObjectHoverProvider {
 
 		@Override
 		public String caseNetwork(Network network) {
-			return "network " + caseGenericEntity(network);
+			return "network " + caseInstantiable(network);
 		}
 
 		@Override
 		public String caseTask(Task task) {
-			return "task " + caseGenericEntity(task);
+			return "task " + caseInstantiable(task);
 		}
 
 		@Override

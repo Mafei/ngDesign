@@ -38,7 +38,7 @@ import com.synflow.cflow.cflow.Block;
 import com.synflow.cflow.cflow.CExpression;
 import com.synflow.cflow.cflow.CflowPackage.Literals;
 import com.synflow.cflow.cflow.ExpressionVariable;
-import com.synflow.cflow.cflow.GenericEntity;
+import com.synflow.cflow.cflow.Instantiable;
 import com.synflow.cflow.cflow.Module;
 import com.synflow.cflow.cflow.PortDef;
 import com.synflow.cflow.cflow.SinglePortDecl;
@@ -228,7 +228,7 @@ public class StructuralValidator extends AbstractDeclarativeValidator {
 		}
 
 		// set flag "module is actor"
-		GenericEntity entity = EcoreUtil2.getContainerOfType(variable, GenericEntity.class);
+		Instantiable entity = EcoreUtil2.getContainerOfType(variable, Instantiable.class);
 
 		// check initial value
 		if (!checkStateVarValue(entity != null, variable)) {

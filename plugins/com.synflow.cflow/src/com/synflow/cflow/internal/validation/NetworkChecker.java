@@ -23,8 +23,8 @@ import com.google.common.base.Objects;
 import com.google.gson.JsonArray;
 import com.synflow.cflow.CflowUtil;
 import com.synflow.cflow.cflow.CflowPackage.Literals;
-import com.synflow.cflow.cflow.GenericEntity;
 import com.synflow.cflow.cflow.Inst;
+import com.synflow.cflow.cflow.Instantiable;
 import com.synflow.cflow.cflow.Network;
 import com.synflow.cflow.cflow.Variable;
 import com.synflow.cflow.internal.instantiation.ClockDomainComputer;
@@ -129,7 +129,7 @@ public class NetworkChecker extends Checker {
 
 		for (Inst inst : network.getInstances()) {
 			Instance instance = mapper.getInstance(inst);
-			GenericEntity entity = inst.getEntity();
+			Instantiable entity = inst.getEntity();
 			if (entity == null) {
 				entity = inst.getTask();
 			}
