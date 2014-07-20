@@ -50,7 +50,7 @@ import com.synflow.models.dpn.Unit;
  * @author Matthieu Wipliez
  *
  */
-public class EntityMaker extends CflowSwitch<Entity> {
+public class EntityMapper extends CflowSwitch<Entity> {
 
 	@Inject
 	private IQualifiedNameConverter converter;

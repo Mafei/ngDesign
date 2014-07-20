@@ -42,7 +42,7 @@ public class InstantiatorImpl extends CflowSwitch<Void> implements IInstantiator
 	private List<Entity> entities;
 
 	@Inject
-	private EntityMaker entityMaker;
+	private EntityMapper entityMapper;
 
 	private Map<Entity, NamedEntity> map;
 
@@ -87,7 +87,7 @@ public class InstantiatorImpl extends CflowSwitch<Void> implements IInstantiator
 	}
 
 	private Entity getOrCreateEntity(Inst inst) {
-		Entity entity = entityMaker.getOrCreateEntity(map, inst);
+		Entity entity = entityMapper.getOrCreateEntity(map, inst);
 		entities.add(entity);
 		return entity;
 	}
