@@ -12,6 +12,7 @@ package com.synflow.cflow.internal.instantiation;
 
 import com.google.inject.ImplementedBy;
 import com.synflow.cflow.cflow.Instantiable;
+import com.synflow.models.dpn.Entity;
 
 /**
  * This interface defines an instantiator.
@@ -21,6 +22,13 @@ import com.synflow.cflow.cflow.Instantiable;
  */
 @ImplementedBy(InstantiatorImpl.class)
 public interface IInstantiator {
+
+	/**
+	 * Returns the entities that have been instantiated.
+	 * 
+	 * @return an iterable over entities
+	 */
+	Iterable<Entity> getEntities();
 
 	void instantiate(Instantiable entity);
 

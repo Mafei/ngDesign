@@ -13,6 +13,7 @@ package com.synflow.cflow.internal.instantiation;
 import static com.synflow.models.util.SwitchUtil.DONE;
 import static com.synflow.models.util.SwitchUtil.visit;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +24,10 @@ import com.synflow.cflow.cflow.Instantiable;
 import com.synflow.cflow.cflow.NamedEntity;
 import com.synflow.cflow.cflow.Network;
 import com.synflow.cflow.cflow.util.CflowSwitch;
+import com.synflow.models.dpn.DPN;
+import com.synflow.models.dpn.DpnFactory;
 import com.synflow.models.dpn.Entity;
+import com.synflow.models.dpn.Instance;
 import com.synflow.models.util.Void;
 
 /**
@@ -42,12 +46,13 @@ public class InstantiatorImpl extends CflowSwitch<Void> implements IInstantiator
 
 	private Map<Entity, NamedEntity> map;
 
-	@Inject
-	private SkeletonMaker skeletonMaker;
+	private Entity parent;
 
 	@Override
 	public Void caseInst(Inst inst) {
-		translateEntity(inst);
+		Instance instance = createInstance(inst);
+		Entity entity = getOrCreateEntity(inst);
+		instance.setEntity(entity);
 		return DONE;
 	}
 
@@ -57,16 +62,39 @@ public class InstantiatorImpl extends CflowSwitch<Void> implements IInstantiator
 		return DONE;
 	}
 
+	/**
+	 * Creates an instance from the given Inst object.
+	 * 
+	 * @param inst
+	 *            a C~ instance
+	 * @return an IR instance
+	 */
+	private Instance createInstance(Inst inst) {
+		// create instance and adds to DPN
+		final Instance instance = DpnFactory.eINSTANCE.createInstance();
+		instance.setName(inst.getName());
+		final DPN dpn = (DPN) parent;
+		dpn.add(instance);
+
+		return instance;
+	}
+
+	@Override
+	public Iterable<Entity> getEntities() {
+		List<Entity> result = entities;
+		entities = new ArrayList<>();
+		return result;
+	}
+
+	private Entity getOrCreateEntity(Inst inst) {
+		Entity entity = entityMaker.getOrCreateEntity(map, inst);
+		entities.add(entity);
+		return entity;
+	}
+
 	@Override
 	public void instantiate(Instantiable entity) {
 		doSwitch(entity);
-	}
-
-	private Entity translateEntity(Inst inst) {
-		Entity entity = entityMaker.createEntity(map, inst);
-		entities.add(entity);
-		skeletonMaker.createSkeleton(map, entity);
-		return entity;
 	}
 
 }
