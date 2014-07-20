@@ -15,16 +15,13 @@ import static com.synflow.models.util.SwitchUtil.visit;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.synflow.cflow.cflow.Inst;
 import com.synflow.cflow.cflow.Instantiable;
-import com.synflow.cflow.cflow.NamedEntity;
 import com.synflow.cflow.cflow.Network;
 import com.synflow.cflow.cflow.util.CflowSwitch;
-import com.synflow.models.dpn.DPN;
 import com.synflow.models.dpn.DpnFactory;
 import com.synflow.models.dpn.Entity;
 import com.synflow.models.dpn.Instance;
@@ -44,9 +41,7 @@ public class InstantiatorImpl extends CflowSwitch<Void> implements IInstantiator
 	@Inject
 	private EntityMapper entityMapper;
 
-	private Map<Entity, NamedEntity> map;
-
-	private Entity parent;
+	// private Entity parent;
 
 	@Override
 	public Void caseInst(Inst inst) {
@@ -73,8 +68,9 @@ public class InstantiatorImpl extends CflowSwitch<Void> implements IInstantiator
 		// create instance and adds to DPN
 		final Instance instance = DpnFactory.eINSTANCE.createInstance();
 		instance.setName(inst.getName());
-		final DPN dpn = (DPN) parent;
-		dpn.add(instance);
+		// TODO add instance to parent
+		// final DPN dpn = (DPN) parent;
+		// dpn.add(instance);
 
 		return instance;
 	}
@@ -87,7 +83,7 @@ public class InstantiatorImpl extends CflowSwitch<Void> implements IInstantiator
 	}
 
 	private Entity getOrCreateEntity(Inst inst) {
-		Entity entity = entityMapper.getOrCreateEntity(map, inst);
+		Entity entity = entityMapper.getOrCreateEntity(inst);
 		entities.add(entity);
 		return entity;
 	}

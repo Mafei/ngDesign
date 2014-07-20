@@ -10,6 +10,7 @@
  *******************************************************************************/
 package com.synflow.cflow.internal.instantiation;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
@@ -55,6 +56,8 @@ public class EntityMapper extends CflowSwitch<Entity> {
 	@Inject
 	private IQualifiedNameConverter converter;
 
+	private Map<Entity, NamedEntity> map;
+
 	@Inject
 	private IQualifiedNameProvider qualifiedNameProvider;
 
@@ -63,6 +66,10 @@ public class EntityMapper extends CflowSwitch<Entity> {
 
 	@Inject
 	private SkeletonMaker skeletonMaker;
+
+	public EntityMapper() {
+		map = new HashMap<>();
+	}
 
 	@Override
 	public Entity caseBundle(Bundle bundle) {
@@ -86,8 +93,7 @@ public class EntityMapper extends CflowSwitch<Entity> {
 		return actor;
 	}
 
-	public Entity createEntity(Map<Entity, NamedEntity> map, Resource resource,
-			NamedEntity cxEntity, String name) {
+	public Entity createEntity(Resource resource, NamedEntity cxEntity, String name) {
 		// add entity to resource
 		Entity entity = doSwitch(cxEntity);
 		entity.setName(name);
@@ -149,13 +155,11 @@ public class EntityMapper extends CflowSwitch<Entity> {
 	/**
 	 * Attempts to find the entity instantiated by the given instance.
 	 * 
-	 * @param map
-	 *            map from IR entity to Cx entity
 	 * @param inst
 	 *            a Cx instance
 	 * @return an entity
 	 */
-	public Entity getOrCreateEntity(Map<Entity, NamedEntity> map, Inst inst) {
+	public Entity getOrCreateEntity(Inst inst) {
 		Instantiable cxEntity;
 		if (inst.getTask() == null) {
 			cxEntity = inst.getEntity();
@@ -186,7 +190,7 @@ public class EntityMapper extends CflowSwitch<Entity> {
 			resource.getContents().clear();
 		}
 
-		return createEntity(map, resource, cxEntity, name);
+		return createEntity(resource, cxEntity, name);
 	}
 
 }
