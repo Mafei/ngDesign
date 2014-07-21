@@ -16,11 +16,11 @@ import static com.synflow.cflow.CflowConstants.NAME_SETUP;
 import static com.synflow.cflow.CflowConstants.NAME_SETUP_DEPRECATED;
 import static com.synflow.cflow.validation.IssueCodes.ERR_MAIN_FUNCTION_BAD_TYPE;
 import static com.synflow.core.IProperties.PROP_CLOCKS;
-import static org.eclipse.xtext.validation.CheckType.EXPENSIVE;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
 import org.eclipse.xtext.validation.Check;
+import org.eclipse.xtext.validation.CheckType;
 
 import com.google.inject.Inject;
 import com.synflow.cflow.CflowUtil;
@@ -32,7 +32,6 @@ import com.synflow.cflow.cflow.Network;
 import com.synflow.cflow.cflow.Task;
 import com.synflow.cflow.cflow.Variable;
 import com.synflow.cflow.internal.ErrorMarker;
-import com.synflow.cflow.internal.instantiation.IInstantiator;
 import com.synflow.cflow.internal.instantiation.IMapper;
 import com.synflow.cflow.internal.scheduler.CycleDetector;
 import com.synflow.cflow.internal.services.Typer;
@@ -40,6 +39,7 @@ import com.synflow.cflow.internal.validation.NetworkChecker;
 import com.synflow.cflow.internal.validation.TypeChecker;
 import com.synflow.models.dpn.Actor;
 import com.synflow.models.dpn.DPN;
+import com.synflow.models.dpn.Entity;
 
 /**
  * This class defines a validator for C~ source files.
@@ -48,9 +48,6 @@ import com.synflow.models.dpn.DPN;
  * 
  */
 public class CflowJavaValidator extends AbstractCflowJavaValidator {
-
-	@Inject
-	private IInstantiator instantiator;
 
 	@Inject
 	private IMapper mapper;
@@ -135,7 +132,7 @@ public class CflowJavaValidator extends AbstractCflowJavaValidator {
 		}
 	}
 
-	@Check(EXPENSIVE)
+	@Check(CheckType.NORMAL)
 	public void testInstantiation(Module module) {
 		EList<Diagnostic> errors = module.eResource().getErrors();
 		if (!errors.isEmpty()) {
@@ -145,8 +142,11 @@ public class CflowJavaValidator extends AbstractCflowJavaValidator {
 
 		for (NamedEntity cxEntity : module.getEntities()) {
 			if (cxEntity instanceof Instantiable) {
-				Instantiable instantiable = (Instantiable) cxEntity;
-				instantiator.instantiate(instantiable);
+				for (Entity entity : mapper.getMappings(cxEntity)) {
+					mapper.setMapping(entity);
+					new TypeChecker(this, typer).doSwitch(cxEntity);
+					mapper.restoreMapping();
+				}
 			}
 		}
 	}

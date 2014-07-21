@@ -8,8 +8,9 @@
  * Contributors:
  *    Matthieu Wipliez - initial API and implementation and/or initial documentation
  *******************************************************************************/
-package com.synflow.cflow.internal.instantiation;
+package com.synflow.cflow.internal.instantiation.v2;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,9 +25,11 @@ import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.scoping.IScope;
 import org.eclipse.xtext.scoping.IScopeProvider;
+import org.eclipse.xtext.util.IResourceScopeCache;
 
 import com.google.gson.JsonObject;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.synflow.cflow.UriComputer;
 import com.synflow.cflow.cflow.Bundle;
 import com.synflow.cflow.cflow.CflowPackage.Literals;
@@ -60,6 +63,9 @@ public class EntityMapper extends CflowSwitch<Entity> {
 
 	@Inject
 	private IQualifiedNameProvider qualifiedNameProvider;
+
+	@Inject
+	private IResourceScopeCache cache;
 
 	@Inject
 	private IScopeProvider scopeProvider;
@@ -179,16 +185,26 @@ public class EntityMapper extends CflowSwitch<Entity> {
 		Resource resource = set.getResource(uri, false);
 		if (resource == null) {
 			resource = set.createResource(uri);
-		} else {
-			if (resource.getTimeStamp() >= cxResource.getTimeStamp()) {
+			try {
+				resource.load(null);
+
 				// resource is up-to-date, returns existing entity
 				EObject contents = resource.getContents().get(0);
 				return (Entity) contents;
-			}
+			} catch (IOException e) {
 
-			// resource is stale, will replace its contents
-			resource.getContents().clear();
+			}
 		}
+		
+		cache.get(null, null, new Provider<Entity>() {
+			@Override
+			public Entity get() {
+				return null;
+			}
+		});
+
+		// resource is stale, will replace its contents
+		resource.getContents().clear();
 
 		return createEntity(resource, cxEntity, name);
 	}

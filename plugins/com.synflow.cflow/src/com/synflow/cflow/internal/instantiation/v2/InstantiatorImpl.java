@@ -8,7 +8,7 @@
  * Contributors:
  *    Matthieu Wipliez - initial API and implementation and/or initial documentation
  *******************************************************************************/
-package com.synflow.cflow.internal.instantiation;
+package com.synflow.cflow.internal.instantiation.v2;
 
 import static com.synflow.models.util.SwitchUtil.DONE;
 import static com.synflow.models.util.SwitchUtil.visit;
@@ -20,6 +20,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.synflow.cflow.cflow.Inst;
 import com.synflow.cflow.cflow.Instantiable;
+import com.synflow.cflow.cflow.NamedEntity;
 import com.synflow.cflow.cflow.Network;
 import com.synflow.cflow.cflow.util.CflowSwitch;
 import com.synflow.models.dpn.DpnFactory;
@@ -41,7 +42,14 @@ public class InstantiatorImpl extends CflowSwitch<Void> implements IInstantiator
 	@Inject
 	private EntityMapper entityMapper;
 
-	// private Entity parent;
+	private InstModel model;
+
+	@Inject
+	private InstModelBuilder modelBuilder;
+
+	public InstantiatorImpl() {
+		entities = new ArrayList<>();
+	}
 
 	@Override
 	public Void caseInst(Inst inst) {
@@ -91,6 +99,14 @@ public class InstantiatorImpl extends CflowSwitch<Void> implements IInstantiator
 	@Override
 	public void instantiate(Instantiable entity) {
 		doSwitch(entity);
+	}
+
+	@Override
+	public InstModel getInstModel(NamedEntity entity) {
+		if (model == null) {
+			model = modelBuilder.buildModel(entity);
+		}
+		return model;
 	}
 
 }

@@ -134,7 +134,8 @@ public class ModuleCompilerImpl extends CflowSwitch<Void> implements IModuleComp
 		return actor;
 	}
 
-	private void serialize(Entity entity) {
+	@Override
+	public void serialize(Entity entity) {
 		// create resource
 		String name = entity.getName();
 

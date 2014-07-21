@@ -61,6 +61,8 @@ public interface IMapper {
 	 */
 	Instance getInstance(Inst inst);
 
+	Iterable<Entity> getMappings(NamedEntity entity);
+
 	/**
 	 * Returns the IR port associated with the given variable.
 	 * 
@@ -84,5 +86,9 @@ public interface IMapper {
 	Procedure getProcedure(Variable function);
 
 	Var getVar(Variable variable);
+
+	void restoreMapping();
+
+	void setMapping(Entity entity);
 
 }

@@ -14,6 +14,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.generator.IFileSystemAccess;
 
 import com.google.inject.ImplementedBy;
+import com.synflow.models.dpn.Entity;
 import com.synflow.models.util.Void;
 
 /**
@@ -26,6 +27,8 @@ import com.synflow.models.util.Void;
 public interface IModuleCompiler {
 
 	Void doSwitch(EObject eObject);
+
+	void serialize(Entity entity);
 
 	void serializeBuiltins();
 

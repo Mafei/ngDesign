@@ -8,7 +8,7 @@
  * Contributors:
  *    Matthieu Wipliez - initial API and implementation and/or initial documentation
  *******************************************************************************/
-package com.synflow.cflow.internal.instantiation;
+package com.synflow.cflow.internal.instantiation.v2;
 
 import static com.synflow.cflow.internal.TransformerUtil.getStartLine;
 import static com.synflow.models.util.SwitchUtil.DONE;
@@ -125,8 +125,14 @@ public class SkeletonMaker extends DpnSwitch<Void> {
 	}
 
 	private void translateStateVars() {
-		// TODO Auto-generated method stub
-
+		// TODO
+		// for (Variable variable : xxx) {
+		// cache.get(variable, resource, new Provider<>() {
+		// void apply() {
+		// transformVariable();
+		// }
+		// });
+		// }
 	}
 
 }

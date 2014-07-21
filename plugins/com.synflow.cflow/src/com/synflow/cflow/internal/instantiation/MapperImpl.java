@@ -53,6 +53,9 @@ import com.synflow.cflow.cflow.Variable;
 import com.synflow.cflow.cflow.util.CflowSwitch;
 import com.synflow.cflow.internal.CopyOf;
 import com.synflow.cflow.internal.instantiation.properties.PropertiesSupport;
+import com.synflow.cflow.internal.instantiation.v2.IInstantiator;
+import com.synflow.cflow.internal.instantiation.v2.InstInfo;
+import com.synflow.cflow.internal.instantiation.v2.InstModel;
 import com.synflow.cflow.internal.services.Typer;
 import com.synflow.cflow.services.Evaluator;
 import com.synflow.models.dpn.Actor;
@@ -84,6 +87,9 @@ public class MapperImpl extends CflowSwitch<Entity> implements IMapper {
 	private IResourceScopeCache cache;
 
 	private URI context;
+
+	@Inject
+	private IInstantiator instantiator;
 
 	private final Map<NamedEntity, Entity> localCache = new HashMap<>();
 
@@ -247,6 +253,13 @@ public class MapperImpl extends CflowSwitch<Entity> implements IMapper {
 	}
 
 	@Override
+	public Iterable<Entity> getMappings(NamedEntity entity) {
+		InstModel model = instantiator.getInstModel(entity);
+		InstInfo info = model.getInfo(entity);
+		return info.getMappings(entity);
+	}
+
+	@Override
 	public Port getPort(final Variable port) {
 		return cache.get(Pair.of(MapperImpl.class.getName(), port), port.eResource(),
 				new Provider<Port>() {
@@ -285,8 +298,8 @@ public class MapperImpl extends CflowSwitch<Entity> implements IMapper {
 
 		INode node = NodeModelUtils.getNode(ref);
 		final String link = NodeModelUtils.getTokenText(node);
-		return cache.get(Tuples.create(MapperImpl.class.getName(), inst, link),
-				ref.eResource(), new Provider<Port>() {
+		return cache.get(Tuples.create(MapperImpl.class.getName(), inst, link), ref.eResource(),
+				new Provider<Port>() {
 					@Override
 					public Port get() {
 						// reference to a port from an instance
@@ -363,6 +376,18 @@ public class MapperImpl extends CflowSwitch<Entity> implements IMapper {
 		if (cfUri.isPlatformPlugin()) {
 			builtins.add(resource);
 		}
+	}
+
+	@Override
+	public void restoreMapping() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void setMapping(Entity entity) {
+		// TODO Auto-generated method stub
+
 	}
 
 	/**

@@ -16,7 +16,10 @@ import org.eclipse.xtext.generator.IFileSystemAccess;
 import org.eclipse.xtext.generator.IGenerator;
 
 import com.google.inject.Inject;
+import com.synflow.cflow.cflow.Instantiable;
 import com.synflow.cflow.internal.compiler.IModuleCompiler;
+import com.synflow.cflow.internal.instantiation.v2.IInstantiator;
+import com.synflow.models.dpn.Entity;
 
 /**
  * This class defines a generator for C~ source/header files.
@@ -26,7 +29,10 @@ import com.synflow.cflow.internal.compiler.IModuleCompiler;
 public class CflowGenerator implements IGenerator {
 
 	@Inject
-	private IModuleCompiler transformer;
+	private IModuleCompiler compiler;
+
+	@Inject
+	private IInstantiator instantiator;
 
 	@Override
 	public void doGenerate(Resource resource, IFileSystemAccess fsa) {
@@ -38,9 +44,18 @@ public class CflowGenerator implements IGenerator {
 		EObject object = resource.getContents().get(0);
 
 		// set file system and then transform entity to IR
-		transformer.setFileSystemAccess(fsa);
-		transformer.doSwitch(object);
-		transformer.serializeBuiltins();
+		compiler.setFileSystemAccess(fsa);
+		compiler.doSwitch(object);
+		compiler.serializeBuiltins();
+
+		if (object instanceof Instantiable) {
+			Instantiable instantiable = (Instantiable) object;
+			instantiator.instantiate(instantiable);
+
+			for (Entity entity : instantiator.getEntities()) {
+				compiler.serialize(entity);
+			}
+		}
 
 		// if (ResourcesPlugin.getPlugin() != null) {
 		// IFile cfFile = EcoreHelper.getFile(resource);
