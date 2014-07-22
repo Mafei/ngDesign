@@ -33,13 +33,13 @@ import com.synflow.cflow.cflow.Task;
 import com.synflow.cflow.cflow.Variable;
 import com.synflow.cflow.internal.ErrorMarker;
 import com.synflow.cflow.internal.instantiation.IMapper;
+import com.synflow.cflow.internal.instantiation.v2.InstInfo;
 import com.synflow.cflow.internal.scheduler.CycleDetector;
 import com.synflow.cflow.internal.services.Typer;
 import com.synflow.cflow.internal.validation.NetworkChecker;
 import com.synflow.cflow.internal.validation.TypeChecker;
 import com.synflow.models.dpn.Actor;
 import com.synflow.models.dpn.DPN;
-import com.synflow.models.dpn.Entity;
 
 /**
  * This class defines a validator for C~ source files.
@@ -142,9 +142,11 @@ public class CflowJavaValidator extends AbstractCflowJavaValidator {
 
 		for (NamedEntity cxEntity : module.getEntities()) {
 			if (cxEntity instanceof Instantiable) {
-				for (Entity entity : mapper.getMappings(cxEntity)) {
-					mapper.setMapping(entity);
+				for (InstInfo info : mapper.getMappings(cxEntity)) {
+					mapper.setMapping(info);
+
 					new TypeChecker(this, typer).doSwitch(cxEntity);
+
 					mapper.restoreMapping();
 				}
 			}

@@ -11,7 +11,6 @@
 package com.synflow.cflow.internal.instantiation.v2;
 
 import com.google.inject.ImplementedBy;
-import com.synflow.cflow.cflow.Instantiable;
 import com.synflow.cflow.cflow.NamedEntity;
 import com.synflow.models.dpn.Entity;
 
@@ -31,8 +30,6 @@ public interface IInstantiator {
 	 */
 	Iterable<Entity> getEntities();
 
-	InstModel getInstModel(NamedEntity entity);
-
-	void instantiate(Instantiable entity);
+	Iterable<InstInfo> getMappings(NamedEntity entity);
 
 }

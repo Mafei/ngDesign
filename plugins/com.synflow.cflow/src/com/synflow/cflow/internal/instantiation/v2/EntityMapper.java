@@ -1,21 +1,9 @@
-/*******************************************************************************
- * Copyright (c) 2014 Synflow SAS.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *    Matthieu Wipliez - initial API and implementation and/or initial documentation
- *******************************************************************************/
 package com.synflow.cflow.internal.instantiation.v2;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -25,11 +13,11 @@ import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.scoping.IScope;
 import org.eclipse.xtext.scoping.IScopeProvider;
-import org.eclipse.xtext.util.IResourceScopeCache;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import com.google.gson.JsonObject;
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 import com.synflow.cflow.UriComputer;
 import com.synflow.cflow.cflow.Bundle;
 import com.synflow.cflow.cflow.CflowPackage.Literals;
@@ -42,30 +30,26 @@ import com.synflow.cflow.cflow.Pair;
 import com.synflow.cflow.cflow.Task;
 import com.synflow.cflow.cflow.util.CflowSwitch;
 import com.synflow.cflow.internal.instantiation.properties.PropertiesSupport;
+import com.synflow.cflow.internal.scheduler.node.Node;
 import com.synflow.models.dpn.Actor;
 import com.synflow.models.dpn.DPN;
 import com.synflow.models.dpn.DpnFactory;
 import com.synflow.models.dpn.Entity;
 import com.synflow.models.dpn.Unit;
 
-/**
- * This class converts a Cx entity to an IR entity.
- * 
- * @author Matthieu Wipliez
- *
- */
 public class EntityMapper extends CflowSwitch<Entity> {
 
 	@Inject
 	private IQualifiedNameConverter converter;
 
-	private Map<Entity, NamedEntity> map;
+	Multimap<NamedEntity, Node> mapCxToNodes;
+
+	private Map<Entity, NamedEntity> mapIrToCx;
+
+	private Map<URI, Node> mapIrUriToNode;
 
 	@Inject
 	private IQualifiedNameProvider qualifiedNameProvider;
-
-	@Inject
-	private IResourceScopeCache cache;
 
 	@Inject
 	private IScopeProvider scopeProvider;
@@ -74,7 +58,9 @@ public class EntityMapper extends CflowSwitch<Entity> {
 	private SkeletonMaker skeletonMaker;
 
 	public EntityMapper() {
-		map = new HashMap<>();
+		mapCxToNodes = HashMultimap.create();
+		mapIrToCx = new HashMap<>();
+		mapIrUriToNode = new HashMap<>();
 	}
 
 	@Override
@@ -104,9 +90,9 @@ public class EntityMapper extends CflowSwitch<Entity> {
 		Entity entity = doSwitch(cxEntity);
 		entity.setName(name);
 		resource.getContents().add(entity);
-		map.put(entity, cxEntity);
+		mapIrToCx.put(entity, cxEntity);
 
-		skeletonMaker.createSkeleton(map, entity);
+		skeletonMaker.createSkeleton(mapIrToCx, entity);
 		return entity;
 	}
 
@@ -174,39 +160,58 @@ public class EntityMapper extends CflowSwitch<Entity> {
 		}
 
 		// get URI of .ir file
-		Resource cxResource = cxEntity.eResource();
-		URI cxUri = cxResource.getURI();
+		URI cxUri = cxEntity.eResource().getURI();
 		URI uriInst = EcoreUtil.getURI(inst);
 		String name = getEntityName(inst, cxEntity);
 		URI uri = UriComputer.INSTANCE.computeUri(uriInst, cxUri, name);
 
+		return getOrCreateEntity(cxEntity, name, uri);
+	}
+
+	/**
+	 * Attempts to find the entity that corresponds to the given entity.
+	 * 
+	 * @param cxEntity
+	 *            a Cx entity
+	 * @return an entity
+	 */
+	public Entity getOrCreateEntity(NamedEntity cxEntity) {
+		// get URI of .ir file
+		URI cxUri = cxEntity.eResource().getURI();
+		String name = getName(cxEntity);
+		URI uri = UriComputer.INSTANCE.computeUri(null, cxUri, name);
+
+		return getOrCreateEntity(cxEntity, name, uri);
+	}
+
+	private Entity getOrCreateEntity(NamedEntity cxEntity, String name, URI uri) {
+		Node node = mapIrUriToNode.get(uri);
+		if (node != null) {
+			InstInfo info = (InstInfo) node.getContent();
+			return info.getEntity();
+		}
+
 		// get or create IR resource
-		ResourceSet set = cxResource.getResourceSet();
+		ResourceSet set = cxEntity.eResource().getResourceSet();
 		Resource resource = set.getResource(uri, false);
 		if (resource == null) {
 			resource = set.createResource(uri);
-			try {
-				resource.load(null);
-
-				// resource is up-to-date, returns existing entity
-				EObject contents = resource.getContents().get(0);
-				return (Entity) contents;
-			} catch (IOException e) {
-
-			}
 		}
-		
-		cache.get(null, null, new Provider<Entity>() {
-			@Override
-			public Entity get() {
-				return null;
-			}
-		});
 
-		// resource is stale, will replace its contents
+		// add entity to resource
+		Entity entity = doSwitch(cxEntity);
+		entity.setName(name);
+
 		resource.getContents().clear();
+		resource.getContents().add(entity);
 
-		return createEntity(resource, cxEntity, name);
+		// adds to map
+		mapIrToCx.put(entity, cxEntity);
+		node = new Node();
+		mapIrUriToNode.put(uri, node);
+
+		skeletonMaker.createSkeleton(mapIrToCx, entity);
+		return entity;
 	}
 
 }
