@@ -14,12 +14,11 @@
    </configIni>
 
    <launcherArgs>
-      <programArgs>-product com.synflow.ngDesign.product --launcher.defaultAction openFile --launcher.XXMaxPermSize 256m
-      </programArgs>
-      <vmArgs>-Dosgi.requiredJavaVersion=1.7 -Xms40m -Xmx512m
-      </vmArgs>
-      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
-      </vmArgsMac>
+      <programArgs>-product com.synflow.ngDesign.product --launcher.defaultAction openFile</programArgs>
+      <programArgsWin>--launcher.XXMaxPermSize 256M</programArgsWin>
+      <vmArgs>-Dosgi.requiredJavaVersion=1.7 -Xms40m -Xmx512m</vmArgs>
+      <vmArgsLin>-XX:MaxPermSize=256m</vmArgsLin>
+      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts -XX:MaxPermSize=256m</vmArgsMac>
    </launcherArgs>
 
    <windowImages i16="icons/ngDesign16.png" i32="icons/ngDesign32.png" i48="icons/ngDesign48.png" i64="icons/ngDesign64.png" i128="icons/ngDesign128.png" i256="icons/ngDesign256.png"/>
@@ -40,6 +39,10 @@
 
 
    <vm>
+     <linux include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</linux>
+     <macos include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</macos>
+     <solaris include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</solaris>
+     <windows include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</windows>
    </vm>
 
    <license>
