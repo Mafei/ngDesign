@@ -77,23 +77,20 @@ Java and all Java-based trademarks are trademarks of Oracle Corporation in the U
          version="0.0.0"/>
 
    <requires>
-      <import feature="com.synflow.ngDesign.ide" version="0.10.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.platform" version="4.2.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.jgit" version="2.0.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.egit" version="2.0.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.emf" version="2.8.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.graphiti.feature" version="0.9.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.gef" version="3.8.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.draw2d" version="3.8.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.jdt" version="3.9.1" match="greaterOrEqual"/>
-      <import feature="org.eclipse.xtext.ui" version="2.5.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.platform"/>
+      <import feature="org.eclipse.emf"/>
+      <import feature="org.eclipse.gef"/>
+      <import feature="org.eclipse.jdt"/>
+      <import feature="org.eclipse.egit"/>
+      <import feature="org.eclipse.jgit"/>
+      <import feature="org.eclipse.xtext.ui"/>
+      <import feature="com.synflow.ngDesign.ide"/>
    </requires>
 
    <plugin
          id="com.synflow.ngDesign"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
 </feature>
