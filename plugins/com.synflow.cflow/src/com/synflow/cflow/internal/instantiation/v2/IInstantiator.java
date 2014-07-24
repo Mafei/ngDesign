@@ -10,6 +10,9 @@
  *******************************************************************************/
 package com.synflow.cflow.internal.instantiation.v2;
 
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
+
 import com.google.inject.ImplementedBy;
 import com.synflow.cflow.cflow.NamedEntity;
 import com.synflow.models.dpn.Entity;
@@ -30,6 +33,12 @@ public interface IInstantiator {
 	 */
 	Iterable<Entity> getEntities();
 
-	Iterable<InstInfo> getMappings(NamedEntity entity);
+	Iterable<Entity> getEntities(NamedEntity cxEntity);
+
+	<T extends EObject, U extends EObject> U getMapping(T cxObj);
+
+	void setEntity(Entity entity);
+
+	void update(Resource resource);
 
 }

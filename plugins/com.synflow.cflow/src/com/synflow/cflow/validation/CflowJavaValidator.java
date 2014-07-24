@@ -16,11 +16,11 @@ import static com.synflow.cflow.CflowConstants.NAME_SETUP;
 import static com.synflow.cflow.CflowConstants.NAME_SETUP_DEPRECATED;
 import static com.synflow.cflow.validation.IssueCodes.ERR_MAIN_FUNCTION_BAD_TYPE;
 import static com.synflow.core.IProperties.PROP_CLOCKS;
+import static org.eclipse.xtext.validation.CheckType.NORMAL;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
 import org.eclipse.xtext.validation.Check;
-import org.eclipse.xtext.validation.CheckType;
 
 import com.google.inject.Inject;
 import com.synflow.cflow.CflowUtil;
@@ -33,13 +33,14 @@ import com.synflow.cflow.cflow.Task;
 import com.synflow.cflow.cflow.Variable;
 import com.synflow.cflow.internal.ErrorMarker;
 import com.synflow.cflow.internal.instantiation.IMapper;
-import com.synflow.cflow.internal.instantiation.v2.InstInfo;
+import com.synflow.cflow.internal.instantiation.v2.IInstantiator;
 import com.synflow.cflow.internal.scheduler.CycleDetector;
 import com.synflow.cflow.internal.services.Typer;
 import com.synflow.cflow.internal.validation.NetworkChecker;
 import com.synflow.cflow.internal.validation.TypeChecker;
 import com.synflow.models.dpn.Actor;
 import com.synflow.models.dpn.DPN;
+import com.synflow.models.dpn.Entity;
 
 /**
  * This class defines a validator for C~ source files.
@@ -50,12 +51,16 @@ import com.synflow.models.dpn.DPN;
 public class CflowJavaValidator extends AbstractCflowJavaValidator {
 
 	@Inject
+	private IInstantiator instantiator;
+
+	@Inject
 	private IMapper mapper;
 
 	@Inject
 	private Typer typer;
 
-	@Check
+	// TODO remove NORMAL when everything works again
+	@Check(NORMAL)
 	public void checkModule(Module module) {
 		EList<Diagnostic> errors = module.eResource().getErrors();
 		if (!errors.isEmpty()) {
@@ -63,12 +68,16 @@ public class CflowJavaValidator extends AbstractCflowJavaValidator {
 			return;
 		}
 
-		NetworkChecker networkChecker = new NetworkChecker(this, mapper);
+		// TODO add check to update only when necessary
+		// if (!instantiator.isUpToDate()) {
+		// instantiator.update(module.eResource());
+		// }
 
-		for (NamedEntity cfEntity : module.getEntities()) {
+		NetworkChecker networkChecker = new NetworkChecker(this, mapper);
+		for (NamedEntity cxEntity : module.getEntities()) {
 			try {
-				if (cfEntity instanceof Network) {
-					Network network = (Network) cfEntity;
+				if (cxEntity instanceof Network) {
+					Network network = (Network) cxEntity;
 
 					// step 1: instantiate
 					// translates and checks properties
@@ -79,18 +88,25 @@ public class CflowJavaValidator extends AbstractCflowJavaValidator {
 					// must occur after instantiation
 					networkChecker.checkDPN(network, dpn);
 				} else {
-					mapper.getEntity(cfEntity);
+					mapper.getEntity(cxEntity);
 				}
 			} finally {
-				if (cfEntity instanceof Instantiable) {
-					printErrors((Instantiable) cfEntity);
+				if (cxEntity instanceof Instantiable) {
+					printErrors((Instantiable) cxEntity);
 				}
 			}
 		}
 
-		// TODO type checking for each configuration of each generic task
-		for (NamedEntity entity : module.getEntities()) {
-			new TypeChecker(this, typer).doSwitch(entity);
+		// for each entity of the module
+		for (NamedEntity cxEntity : module.getEntities()) {
+			// for each specialized version of that entity
+			for (Entity entity : instantiator.getEntities(cxEntity)) {
+				instantiator.setEntity(entity);
+
+				new TypeChecker(this, typer).doSwitch(cxEntity);
+
+				instantiator.setEntity(null);
+			}
 		}
 	}
 
@@ -132,27 +148,6 @@ public class CflowJavaValidator extends AbstractCflowJavaValidator {
 		}
 	}
 
-	@Check(CheckType.NORMAL)
-	public void testInstantiation(Module module) {
-		EList<Diagnostic> errors = module.eResource().getErrors();
-		if (!errors.isEmpty()) {
-			// skip validation as long as the module has syntax errors or link errors
-			return;
-		}
-
-		for (NamedEntity cxEntity : module.getEntities()) {
-			if (cxEntity instanceof Instantiable) {
-				for (InstInfo info : mapper.getMappings(cxEntity)) {
-					mapper.setMapping(info);
-
-					new TypeChecker(this, typer).doSwitch(cxEntity);
-
-					mapper.restoreMapping();
-				}
-			}
-		}
-	}
-
 	/**
 	 * Validates the given task.
 	 * 
@@ -182,4 +177,5 @@ public class CflowJavaValidator extends AbstractCflowJavaValidator {
 			}
 		}
 	}
+
 }

@@ -20,7 +20,6 @@ import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.util.IResourceScopeCache;
 import org.eclipse.xtext.util.Tuples;
-import org.eclipse.xtext.xbase.lib.Pair;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -37,7 +36,6 @@ import com.synflow.cflow.cflow.util.CflowSwitch;
 import com.synflow.cflow.internal.CopyOf;
 import com.synflow.cflow.internal.instantiation.properties.PropertiesSupport;
 import com.synflow.cflow.internal.instantiation.v2.IInstantiator;
-import com.synflow.cflow.internal.instantiation.v2.InstInfo;
 import com.synflow.models.dpn.DPN;
 import com.synflow.models.dpn.DpnFactory;
 import com.synflow.models.dpn.Entity;
@@ -161,35 +159,17 @@ public class MapperImpl extends CflowSwitch<Entity> implements IMapper {
 
 	@Override
 	public Entity getEntity(final NamedEntity entity) {
-		return cache.get(Pair.of(MapperImpl.class.getName(), entity), entity.eResource(),
-				new Provider<Entity>() {
-					@Override
-					public Entity get() {
-						return doSwitch(entity);
-					}
-				});
+		return instantiator.getMapping(entity);
 	}
 
 	@Override
 	public Instance getInstance(final Inst inst) {
-		return cache.get(Pair.of(MapperImpl.class.getName(), inst), inst.eResource(),
-				new Provider<Instance>() {
-					@Override
-					public Instance get() {
-						return createInstance(inst);
-					}
-				});
-	}
-
-	@Override
-	public Iterable<InstInfo> getMappings(NamedEntity entity) {
-		return instantiator.getMappings(entity);
+		return instantiator.getMapping(inst);
 	}
 
 	@Override
 	public Port getPort(final Variable port) {
-		Object key = Pair.of(MapperImpl.class.getName(), port);
-		return cache.get(key, port.eResource(), null);
+		return instantiator.getMapping(port);
 	}
 
 	@Override
@@ -218,28 +198,12 @@ public class MapperImpl extends CflowSwitch<Entity> implements IMapper {
 
 	@Override
 	public Procedure getProcedure(Variable function) {
-		Resource irResource = null;
-		Object key = Tuples.create(MapperImpl.class.getName(), irResource, function);
-		return cache.get(key, function.eResource(), null);
+		return instantiator.getMapping(function);
 	}
 
 	@Override
 	public Var getVar(Variable variable) {
-		Resource irResource = null;
-		Object key = Tuples.create(MapperImpl.class.getName(), irResource, variable);
-		return cache.get(key, variable.eResource(), null);
-	}
-
-	@Override
-	public void restoreMapping() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setMapping(InstInfo info) {
-		// TODO Auto-generated method stub
-
+		return instantiator.getMapping(variable);
 	}
 
 }

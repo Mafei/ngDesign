@@ -17,7 +17,6 @@ import com.synflow.cflow.cflow.Inst;
 import com.synflow.cflow.cflow.NamedEntity;
 import com.synflow.cflow.cflow.VarRef;
 import com.synflow.cflow.cflow.Variable;
-import com.synflow.cflow.internal.instantiation.v2.InstInfo;
 import com.synflow.models.dpn.Entity;
 import com.synflow.models.dpn.Instance;
 import com.synflow.models.dpn.Port;
@@ -62,8 +61,6 @@ public interface IMapper {
 	 */
 	Instance getInstance(Inst inst);
 
-	Iterable<InstInfo> getMappings(NamedEntity entity);
-
 	/**
 	 * Returns the IR port associated with the given variable.
 	 * 
@@ -87,9 +84,5 @@ public interface IMapper {
 	Procedure getProcedure(Variable function);
 
 	Var getVar(Variable variable);
-
-	void restoreMapping();
-
-	void setMapping(InstInfo info);
 
 }

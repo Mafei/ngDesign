@@ -11,7 +11,9 @@
 package com.synflow.cflow.internal.instantiation.v2;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -20,12 +22,12 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.resource.IReferenceDescription;
 import org.eclipse.xtext.resource.IResourceDescription;
-import org.eclipse.xtext.resource.impl.ResourceDescriptionsBasedContainer;
+import org.eclipse.xtext.resource.IResourceDescriptions;
 import org.eclipse.xtext.scoping.IGlobalScopeProvider;
 import org.eclipse.xtext.scoping.IScope;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Multimap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.synflow.cflow.cflow.CflowPackage.Literals;
@@ -46,21 +48,32 @@ public class InstantiatorImpl implements IInstantiator {
 
 	private List<Entity> entities;
 
+	private Entity entity;
+
 	@Inject
 	private EntityMapper entityMapper;
 
 	@Inject
 	private IGlobalScopeProvider globalScopeProvider;
 
+	private Map<Entity, Map<EObject, EObject>> mapCxToIr;
+
+	private Multimap<NamedEntity, Entity> mapEntities;
+
 	@Inject
-	private ResourceDescriptionsBasedContainer resourceDescriptions;
+	private IResourceDescriptions resourceDescriptions;
 
 	public InstantiatorImpl() {
 		entities = new ArrayList<>();
+		mapCxToIr = new HashMap<>();
+		mapEntities = LinkedHashMultimap.create();
 	}
 
-	private NamedEntity findTopFrom(NamedEntity entity) {
-		Resource resource = entity.eResource();
+	private NamedEntity findTopFrom(Resource resource) {
+		for (IResourceDescription resDesc : resourceDescriptions.getAllResourceDescriptions()) {
+
+		}
+
 		IScope scope = globalScopeProvider.getScope(resource, Literals.INST__ENTITY, null);
 		for (IEObjectDescription objDesc : scope.getAllElements()) {
 			EObject proxy = objDesc.getEObjectOrProxy();
@@ -81,6 +94,7 @@ public class InstantiatorImpl implements IInstantiator {
 		return null;
 	}
 
+	@Override
 	public Iterable<Entity> getEntities() {
 		List<Entity> result = entities;
 		entities = new ArrayList<>();
@@ -88,29 +102,39 @@ public class InstantiatorImpl implements IInstantiator {
 	}
 
 	@Override
-	public Iterable<InstInfo> getMappings(NamedEntity entity) {
-		Iterable<Node> nodes = getNodes(entity);
-		return Iterables.transform(nodes, new Function<Node, InstInfo>() {
-			@Override
-			public InstInfo apply(Node node) {
-				return (InstInfo) node.getContent();
-			}
-		});
+	public Iterable<Entity> getEntities(NamedEntity cxEntity) {
+		return mapEntities.get(cxEntity);
 	}
 
-	private Iterable<Node> getNodes(NamedEntity entity) {
-		if (!entityMapper.mapCxToNodes.containsKey(entity)) {
-			NamedEntity top = findTopFrom(entity);
-			if (!entityMapper.mapCxToNodes.containsKey(top)) {
-				instantiateFromTop(entity);
-			}
+	@Override
+	@SuppressWarnings("unchecked")
+	public <T extends EObject, U extends EObject> U getMapping(T cxObj) {
+		return (U) mapCxToIr.get(entity).get(cxObj);
+	}
+
+	private void instantiateFrom(Inst inst, Node parent) {
+		EntityInfo info = entityMapper.getEntityInfo(inst);
+		Entity entity = info.loadEntity();
+		if (entity == null) {
+			entity = entityMapper.createEntity(info);
+			mapEntities.put(info.getCxEntity(), entity);
 		}
-		return entityMapper.mapCxToNodes.get(entity);
+
+		if (inst.getEntity() instanceof Network) {
+			// Network network = (Network) inst.getEntity();
+			// for (Inst inst : network.getInstances()) {
+			// instantiateFrom(inst, node);
+			// }
+		}
 	}
 
 	private void instantiateFrom(NamedEntity cxEntity, Node parent) {
-		Entity entity = entityMapper.getOrCreateEntity(cxEntity);
-		InstInfo info = new InstInfo(entity);
+		EntityInfo info = entityMapper.getEntityInfo(cxEntity);
+		Entity entity = info.loadEntity();
+		if (entity == null) {
+			entity = entityMapper.createEntity(info);
+			mapEntities.put(info.getCxEntity(), entity);
+		}
 
 		Node node = new Node(parent, info);
 		if (cxEntity instanceof Network) {
@@ -121,21 +145,19 @@ public class InstantiatorImpl implements IInstantiator {
 		}
 	}
 
-	private void instantiateFrom(Inst inst, Node parent) {
-		Entity entity = entityMapper.getOrCreateEntity(inst);
-		InstInfo info = new InstInfo(entity);
-
-		// Node node = new Node(parent, info);
-		if (inst.getEntity() instanceof Network) {
-			// Network network = (Network) inst.getEntity();
-			// for (Inst inst : network.getInstances()) {
-			// instantiateFrom(inst, node);
-			// }
-		}
-	}
-
 	private void instantiateFromTop(NamedEntity entity) {
 		instantiateFrom(entity, null);
+	}
+
+	@Override
+	public void setEntity(Entity entity) {
+		this.entity = entity;
+	}
+
+	@Override
+	public void update(Resource resource) {
+		NamedEntity top = findTopFrom(resource);
+		instantiateFromTop(top);
 	}
 
 }
