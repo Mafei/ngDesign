@@ -11,7 +11,7 @@
 package com.synflow.cflow.internal.instantiation.v2;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 
 import com.google.inject.ImplementedBy;
 import com.synflow.cflow.cflow.NamedEntity;
@@ -37,8 +37,10 @@ public interface IInstantiator {
 
 	<T extends EObject, U extends EObject> U getMapping(T cxObj);
 
-	void setEntity(Entity entity);
+	<T extends EObject, U extends EObject> void putMapping(T cxObj, U irObj);
 
-	void update(Resource resource);
+	Entity setEntity(Entity entity);
+
+	void update(ResourceSet resourceSet);
 
 }

@@ -14,14 +14,9 @@ import static com.synflow.cflow.internal.TransformerUtil.getStartLine;
 import static com.synflow.models.ir.IrFactory.eINSTANCE;
 import static com.synflow.models.util.SwitchUtil.DONE;
 
-import java.util.Map;
-
 import org.eclipse.xtext.EcoreUtil2;
-import org.eclipse.xtext.util.IResourceScopeCache;
-import org.eclipse.xtext.xbase.lib.Pair;
 
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 import com.synflow.cflow.CflowUtil;
 import com.synflow.cflow.cflow.Bundle;
 import com.synflow.cflow.cflow.Instantiable;
@@ -30,7 +25,6 @@ import com.synflow.cflow.cflow.NamedEntity;
 import com.synflow.cflow.cflow.Network;
 import com.synflow.cflow.cflow.Task;
 import com.synflow.cflow.cflow.Variable;
-import com.synflow.cflow.internal.instantiation.MapperImpl;
 import com.synflow.cflow.internal.services.Typer;
 import com.synflow.cflow.services.Evaluator;
 import com.synflow.models.dpn.Actor;
@@ -56,17 +50,17 @@ import com.synflow.models.util.Void;
  */
 public class SkeletonMaker extends DpnSwitch<Void> {
 
-	private IResourceScopeCache cache;
+	private NamedEntity cxEntity;
 
-	private Map<Entity, NamedEntity> map;
+	@Inject
+	private IInstantiator instantiator;
 
 	@Inject
 	private Typer typer;
 
 	@Override
 	public Void caseActor(Actor actor) {
-		Task task = (Task) map.get(actor);
-		setFileAndLine(actor, task);
+		Task task = (Task) cxEntity;
 		try {
 			setValues();
 			translateStateVars(actor, task);
@@ -79,7 +73,7 @@ public class SkeletonMaker extends DpnSwitch<Void> {
 
 	@Override
 	public Void caseDPN(DPN dpn) {
-		Network network = (Network) map.get(dpn);
+		Network network = (Network) cxEntity;
 		setFileAndLine(dpn, network);
 		try {
 			setValues();
@@ -93,7 +87,7 @@ public class SkeletonMaker extends DpnSwitch<Void> {
 
 	@Override
 	public Void caseUnit(Unit unit) {
-		Bundle bundle = (Bundle) map.get(unit);
+		Bundle bundle = (Bundle) cxEntity;
 		setFileAndLine(unit, bundle);
 		try {
 			setValues();
@@ -104,52 +98,9 @@ public class SkeletonMaker extends DpnSwitch<Void> {
 		return DONE;
 	}
 
-	public void createSkeleton(Map<Entity, NamedEntity> map, Entity entity) {
-		this.map = map;
-		try {
-			doSwitch(entity);
-		} finally {
-			this.map = null;
-		}
-	}
-
-	public Port getPort(final Entity entity, final Variable port) {
-		return cache.get(Pair.of(MapperImpl.class.getName(), port), port.eResource(),
-				new Provider<Port>() {
-					@Override
-					public Port get() {
-						InterfaceType ifType = CflowUtil.getInterface(port);
-						Type type = typer.doSwitch(port);
-						String name = port.getName();
-
-						Port dpnPort = DpnFactory.eINSTANCE.createPort(type, name, ifType);
-						if (CflowUtil.isInput(port)) {
-							entity.getInputs().add(dpnPort);
-						} else {
-							entity.getOutputs().add(dpnPort);
-						}
-						return dpnPort;
-					}
-				});
-	}
-
-	/**
-	 * Returns an IR mapping (Procedure or Var) for the given C~ variable.
-	 * 
-	 * @param variable
-	 *            C~ variable
-	 * @param type
-	 *            class type to return
-	 * @return
-	 */
-	private <T> T getVariable(final Entity entity, final Variable variable, final Class<T> type) {
-		return cache.get(Pair.of(MapperImpl.class.getName(), variable), variable.eResource(),
-				new Provider<T>() {
-					@Override
-					public T get() {
-						return transformVariable(entity, variable, type);
-					}
-				});
+	public void createSkeleton(NamedEntity cxEntity, Entity entity) {
+		this.cxEntity = cxEntity;
+		doSwitch(entity);
 	}
 
 	private void restoreValues() {
@@ -181,13 +132,28 @@ public class SkeletonMaker extends DpnSwitch<Void> {
 
 	}
 
+	public void transformPort(final Entity entity, final Variable port) {
+		InterfaceType ifType = CflowUtil.getInterface(port);
+		Type type = typer.doSwitch(port);
+		String name = port.getName();
+
+		Port dpnPort = DpnFactory.eINSTANCE.createPort(type, name, ifType);
+		if (CflowUtil.isInput(port)) {
+			entity.getInputs().add(dpnPort);
+		} else {
+			entity.getOutputs().add(dpnPort);
+		}
+
+		instantiator.putMapping(port, dpnPort);
+	}
+
 	/**
 	 * Translates the given C~ variable into an IR Procedure or Var.
 	 * 
 	 * @param variable
 	 * @return
 	 */
-	private <T> T transformVariable(Entity entity, Variable variable, Class<T> cls) {
+	private void transformVariable(Entity entity, Variable variable) {
 		int lineNumber = getStartLine(variable);
 		Type type = typer.doSwitch(variable);
 		String name = variable.getName();
@@ -195,7 +161,7 @@ public class SkeletonMaker extends DpnSwitch<Void> {
 		if (CflowUtil.isFunction(variable)) {
 			Procedure procedure = eINSTANCE.createProcedure(name, lineNumber, type);
 			entity.getProcedures().add(procedure);
-			return cls.cast(procedure);
+			instantiator.putMapping(variable, procedure);
 		} else {
 			boolean assignable = !CflowUtil.isConstant(variable);
 
@@ -208,14 +174,14 @@ public class SkeletonMaker extends DpnSwitch<Void> {
 
 			// add to variables list of containing entity
 			entity.getVariables().add(var);
-			return cls.cast(var);
+			instantiator.putMapping(variable, var);
 		}
 	}
 
 	private void translatePorts(Entity entity, Instantiable instantiable) {
 		// transform ports
 		for (Variable variable : CflowUtil.getPorts(instantiable.getPortDecls())) {
-			getPort(entity, variable);
+			transformPort(entity, variable);
 		}
 	}
 
@@ -223,11 +189,7 @@ public class SkeletonMaker extends DpnSwitch<Void> {
 		// transform constants
 		for (Variable variable : CflowUtil.getStateVars(cxEntity.getDecls())) {
 			if (CflowUtil.isConstant(variable)) {
-				if (CflowUtil.isFunction(variable)) {
-					getVariable(entity, variable, Procedure.class);
-				} else {
-					getVariable(entity, variable, Var.class);
-				}
+				transformVariable(entity, variable);
 			}
 		}
 	}

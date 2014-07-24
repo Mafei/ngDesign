@@ -36,6 +36,9 @@ public class EntityMapper extends CflowSwitch<Entity> {
 	private IQualifiedNameConverter converter;
 
 	@Inject
+	private IInstantiator instantiator;
+
+	@Inject
 	private IQualifiedNameProvider qualifiedNameProvider;
 
 	@Inject
@@ -69,14 +72,15 @@ public class EntityMapper extends CflowSwitch<Entity> {
 	public Entity createEntity(EntityInfo info) {
 		// add entity to resource
 		Entity entity = doSwitch(info.getCxEntity());
+		Entity oldEntity = instantiator.setEntity(entity);
 		entity.setName(info.getName());
 
 		Resource resource = info.getResource();
 		resource.getContents().clear();
 		resource.getContents().add(entity);
 
-		// TODO replace null by something meaningful
-		skeletonMaker.createSkeleton(null, entity);
+		skeletonMaker.createSkeleton(info.getCxEntity(), entity);
+		instantiator.setEntity(oldEntity);
 		return entity;
 	}
 

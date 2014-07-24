@@ -19,7 +19,7 @@ import java.util.Set;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.resource.IReferenceDescription;
@@ -100,7 +100,7 @@ public class InstantiatorImpl implements IInstantiator {
 		return instance;
 	}
 
-	private Iterable<Instantiable> findTopFrom(Resource resource) {
+	private Iterable<Instantiable> findTopFrom(ResourceSet resourceSet) {
 		Set<URI> topUris = Sets.newLinkedHashSet();
 
 		// collect all instantiable entities
@@ -129,7 +129,7 @@ public class InstantiatorImpl implements IInstantiator {
 			for (IEObjectDescription objDesc : resDesc.getExportedObjectsByType(type)) {
 				if (uri.equals(objDesc.getEObjectURI())) {
 					EObject proxy = objDesc.getEObjectOrProxy();
-					EObject resolved = EcoreUtil.resolve(proxy, resource);
+					EObject resolved = EcoreUtil.resolve(proxy, resourceSet);
 					instantiables.add((Instantiable) resolved);
 				}
 			}
@@ -165,15 +165,17 @@ public class InstantiatorImpl implements IInstantiator {
 		}
 
 		if (cxEntity instanceof Network) {
+			Entity oldEntity = setEntity(entity);
 			Network network = (Network) cxEntity;
 			DPN dpn = (DPN) entity;
 			for (Inst inst : network.getInstances()) {
 				Entity subEntity = instantiate(inst);
 				Instance instance = createInstance(dpn, inst, subEntity);
-				mapCxToIr.get(dpn).put(inst, instance);
+				putMapping(inst, instance);
 			}
 
 			connect(network, dpn);
+			setEntity(oldEntity);
 		}
 
 		return entity;
@@ -190,13 +192,25 @@ public class InstantiatorImpl implements IInstantiator {
 	}
 
 	@Override
-	public void setEntity(Entity entity) {
-		this.entity = entity;
+	public <T extends EObject, U extends EObject> void putMapping(T cxObj, U irObj) {
+		Map<EObject, EObject> map = mapCxToIr.get(entity);
+		if (map == null) {
+			map = new HashMap<>();
+			mapCxToIr.put(entity, map);
+		}
+		map.put(cxObj, irObj);
 	}
 
 	@Override
-	public void update(Resource resource) {
-		for (Instantiable instantiable : findTopFrom(resource)) {
+	public Entity setEntity(Entity entity) {
+		Entity oldEntity = this.entity;
+		this.entity = entity;
+		return oldEntity;
+	}
+
+	@Override
+	public void update(ResourceSet resourceSet) {
+		for (Instantiable instantiable : findTopFrom(resourceSet)) {
 			instantiateFromTop(instantiable);
 		}
 	}
