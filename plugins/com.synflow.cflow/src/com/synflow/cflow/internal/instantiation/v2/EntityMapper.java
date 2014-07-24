@@ -1,7 +1,5 @@
 package com.synflow.cflow.internal.instantiation.v2;
 
-import java.util.Map;
-
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;

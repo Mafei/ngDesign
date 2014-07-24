@@ -70,7 +70,7 @@ public class CflowJavaValidator extends AbstractCflowJavaValidator {
 
 		// TODO add check to update only when necessary
 		// if (!instantiator.isUpToDate()) {
-		// instantiator.update(module.eResource());
+		instantiator.update(module.eResource());
 		// }
 
 		NetworkChecker networkChecker = new NetworkChecker(this, mapper);

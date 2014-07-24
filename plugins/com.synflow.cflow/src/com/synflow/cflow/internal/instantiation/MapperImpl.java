@@ -26,18 +26,14 @@ import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.synflow.cflow.cflow.Connect;
 import com.synflow.cflow.cflow.Inst;
-import com.synflow.cflow.cflow.Instantiable;
 import com.synflow.cflow.cflow.NamedEntity;
 import com.synflow.cflow.cflow.Network;
-import com.synflow.cflow.cflow.Task;
 import com.synflow.cflow.cflow.VarRef;
 import com.synflow.cflow.cflow.Variable;
 import com.synflow.cflow.cflow.util.CflowSwitch;
 import com.synflow.cflow.internal.CopyOf;
-import com.synflow.cflow.internal.instantiation.properties.PropertiesSupport;
 import com.synflow.cflow.internal.instantiation.v2.IInstantiator;
 import com.synflow.models.dpn.DPN;
-import com.synflow.models.dpn.DpnFactory;
 import com.synflow.models.dpn.Entity;
 import com.synflow.models.dpn.Instance;
 import com.synflow.models.dpn.Port;
@@ -76,20 +72,6 @@ public class MapperImpl extends CflowSwitch<Entity> implements IMapper {
 		builtins = new ArrayList<>();
 	}
 
-	@Override
-	public Entity caseNetwork(Network network) {
-		DPN dpn = DpnFactory.eINSTANCE.createDPN();
-		dpn.init();
-
-		for (Inst inst : network.getInstances()) {
-			getInstance(inst);
-		}
-
-		connect(network, dpn);
-
-		return dpn;
-	}
-
 	/**
 	 * Creates a new connection maker and connects the given network. Visits inner tasks first, and
 	 * then connect statements.
@@ -113,41 +95,6 @@ public class MapperImpl extends CflowSwitch<Entity> implements IMapper {
 			// restore old maker
 			maker = oldMaker;
 		}
-	}
-
-	/**
-	 * Creates an instance from the given Inst object.
-	 * 
-	 * @param inst
-	 *            a C~ instance
-	 * @return an IR instance
-	 */
-	private Instance createInstance(Inst inst) {
-		Network network = (Network) inst.eContainer();
-
-		// create instance and adds to DPN
-		final Instance instance = DpnFactory.eINSTANCE.createInstance();
-		instance.setName(inst.getName());
-		final DPN dpn = (DPN) getEntity(network);
-		dpn.add(instance);
-
-		// get Entity from inst
-		final Task task = inst.getTask();
-		final Instantiable instantiable = task == null ? inst.getEntity() : task;
-
-		Entity entity = getEntity(instantiable);
-		instance.setEntity(entity);
-
-		// set properties. For anonymous tasks, use the task's properties for the instance
-		PropertiesSupport support;
-		if (task == null) {
-			support = new PropertiesSupport(inst);
-		} else {
-			support = new PropertiesSupport(task);
-		}
-		support.setProperties(instance);
-
-		return instance;
 	}
 
 	@Override

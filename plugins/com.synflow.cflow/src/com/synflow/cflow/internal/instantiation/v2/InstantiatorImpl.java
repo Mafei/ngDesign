@@ -14,8 +14,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -23,19 +25,22 @@ import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.resource.IReferenceDescription;
 import org.eclipse.xtext.resource.IResourceDescription;
 import org.eclipse.xtext.resource.IResourceDescriptions;
-import org.eclipse.xtext.scoping.IGlobalScopeProvider;
-import org.eclipse.xtext.scoping.IScope;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.synflow.cflow.cflow.CflowPackage.Literals;
 import com.synflow.cflow.cflow.Inst;
+import com.synflow.cflow.cflow.Instantiable;
 import com.synflow.cflow.cflow.NamedEntity;
 import com.synflow.cflow.cflow.Network;
-import com.synflow.cflow.internal.scheduler.node.Node;
+import com.synflow.cflow.internal.instantiation.properties.PropertiesSupport;
+import com.synflow.models.dpn.DPN;
+import com.synflow.models.dpn.DpnFactory;
 import com.synflow.models.dpn.Entity;
+import com.synflow.models.dpn.Instance;
 
 /**
  * This class defines the default implementation of the instantiator.
@@ -53,9 +58,6 @@ public class InstantiatorImpl implements IInstantiator {
 	@Inject
 	private EntityMapper entityMapper;
 
-	@Inject
-	private IGlobalScopeProvider globalScopeProvider;
-
 	private Map<Entity, Map<EObject, EObject>> mapCxToIr;
 
 	private Multimap<NamedEntity, Entity> mapEntities;
@@ -69,29 +71,70 @@ public class InstantiatorImpl implements IInstantiator {
 		mapEntities = LinkedHashMultimap.create();
 	}
 
-	private NamedEntity findTopFrom(Resource resource) {
-		for (IResourceDescription resDesc : resourceDescriptions.getAllResourceDescriptions()) {
+	private void connect(Network network, DPN dpn) {
+		// TODO Auto-generated method stub
 
+	}
+
+	/**
+	 * Creates an instance from the given Inst object.
+	 * 
+	 * @param inst
+	 *            a C~ instance
+	 * @return an IR instance
+	 */
+	private Instance createInstance(DPN dpn, Inst inst, Entity entity) {
+		// create instance and adds to DPN
+		final Instance instance = DpnFactory.eINSTANCE.createInstance(inst.getName(), entity);
+		dpn.add(instance);
+
+		// set properties. For anonymous tasks, use the task's properties for the instance
+		PropertiesSupport support;
+		if (inst.getTask() == null) {
+			support = new PropertiesSupport(inst);
+		} else {
+			support = new PropertiesSupport(inst.getTask());
+		}
+		support.setProperties(instance);
+
+		return instance;
+	}
+
+	private Iterable<Instantiable> findTopFrom(Resource resource) {
+		Set<URI> topUris = Sets.newLinkedHashSet();
+
+		// collect all instantiable entities
+		EClass type = Literals.INSTANTIABLE;
+		for (IEObjectDescription objDesc : resourceDescriptions.getExportedObjectsByType(type)) {
+			topUris.add(objDesc.getEObjectURI());
 		}
 
-		IScope scope = globalScopeProvider.getScope(resource, Literals.INST__ENTITY, null);
-		for (IEObjectDescription objDesc : scope.getAllElements()) {
-			EObject proxy = objDesc.getEObjectOrProxy();
-			EObject eObject = EcoreUtil.resolve(proxy, resource);
-			EcoreUtil.resolveAll(eObject);
-
-			if (objDesc.getEClass() == Literals.NETWORK) {
-				URI uri = objDesc.getEObjectURI().trimFragment();
-				IResourceDescription resDesc = resourceDescriptions.getResourceDescription(uri);
-				for (IReferenceDescription refDesc : resDesc.getReferenceDescriptions()) {
-					URI target = refDesc.getTargetEObjectUri();
+		// remove all entities that are instantiated
+		type = Literals.NETWORK;
+		for (IResourceDescription resDesc : resourceDescriptions.getAllResourceDescriptions()) {
+			for (IReferenceDescription refDesc : resDesc.getReferenceDescriptions()) {
+				if (refDesc.getEReference() == Literals.INST__ENTITY) {
+					URI uriInstantiable = refDesc.getTargetEObjectUri();
+					topUris.remove(uriInstantiable);
 				}
-
-				System.out.println(eObject);
 			}
 		}
 
-		return null;
+		// loads objects from topUris
+		List<Instantiable> instantiables = new ArrayList<>(topUris.size());
+		for (URI uri : topUris) {
+			URI uriRes = uri.trimFragment();
+			IResourceDescription resDesc = resourceDescriptions.getResourceDescription(uriRes);
+			type = Literals.INSTANTIABLE;
+			for (IEObjectDescription objDesc : resDesc.getExportedObjectsByType(type)) {
+				if (uri.equals(objDesc.getEObjectURI())) {
+					EObject proxy = objDesc.getEObjectOrProxy();
+					EObject resolved = EcoreUtil.resolve(proxy, resource);
+					instantiables.add((Instantiable) resolved);
+				}
+			}
+		}
+		return instantiables;
 	}
 
 	@Override
@@ -112,41 +155,38 @@ public class InstantiatorImpl implements IInstantiator {
 		return (U) mapCxToIr.get(entity).get(cxObj);
 	}
 
-	private void instantiateFrom(Inst inst, Node parent) {
-		EntityInfo info = entityMapper.getEntityInfo(inst);
+	private Entity instantiate(EntityInfo info) {
+		NamedEntity cxEntity = info.getCxEntity();
 		Entity entity = info.loadEntity();
 		if (entity == null) {
 			entity = entityMapper.createEntity(info);
-			mapEntities.put(info.getCxEntity(), entity);
+			entities.add(entity);
+			mapEntities.put(cxEntity, entity);
 		}
 
-		if (inst.getEntity() instanceof Network) {
-			// Network network = (Network) inst.getEntity();
-			// for (Inst inst : network.getInstances()) {
-			// instantiateFrom(inst, node);
-			// }
-		}
-	}
-
-	private void instantiateFrom(NamedEntity cxEntity, Node parent) {
-		EntityInfo info = entityMapper.getEntityInfo(cxEntity);
-		Entity entity = info.loadEntity();
-		if (entity == null) {
-			entity = entityMapper.createEntity(info);
-			mapEntities.put(info.getCxEntity(), entity);
-		}
-
-		Node node = new Node(parent, info);
 		if (cxEntity instanceof Network) {
 			Network network = (Network) cxEntity;
+			DPN dpn = (DPN) entity;
 			for (Inst inst : network.getInstances()) {
-				instantiateFrom(inst, node);
+				Entity subEntity = instantiate(inst);
+				Instance instance = createInstance(dpn, inst, subEntity);
+				mapCxToIr.get(dpn).put(inst, instance);
 			}
+
+			connect(network, dpn);
 		}
+
+		return entity;
 	}
 
-	private void instantiateFromTop(NamedEntity entity) {
-		instantiateFrom(entity, null);
+	private Entity instantiate(Inst inst) {
+		EntityInfo info = entityMapper.getEntityInfo(inst);
+		return instantiate(info);
+	}
+
+	private void instantiateFromTop(Instantiable instantiable) {
+		EntityInfo info = entityMapper.getEntityInfo(instantiable);
+		instantiate(info);
 	}
 
 	@Override
@@ -156,8 +196,9 @@ public class InstantiatorImpl implements IInstantiator {
 
 	@Override
 	public void update(Resource resource) {
-		NamedEntity top = findTopFrom(resource);
-		instantiateFromTop(top);
+		for (Instantiable instantiable : findTopFrom(resource)) {
+			instantiateFromTop(instantiable);
+		}
 	}
 
 }
