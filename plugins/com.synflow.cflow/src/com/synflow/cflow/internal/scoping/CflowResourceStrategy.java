@@ -26,6 +26,7 @@ import com.google.common.collect.ImmutableMap;
 import com.synflow.cflow.CflowUtil;
 import com.synflow.cflow.cflow.CExpression;
 import com.synflow.cflow.cflow.CType;
+import com.synflow.cflow.cflow.Inst;
 import com.synflow.cflow.cflow.Task;
 import com.synflow.cflow.cflow.Typedef;
 import com.synflow.cflow.cflow.Variable;
@@ -58,6 +59,8 @@ public class CflowResourceStrategy extends DefaultResourceDescriptionStrategy {
 		} else if (eObject instanceof Typedef) {
 			Typedef typedef = (Typedef) eObject;
 			createTypedef(typedef, acceptor);
+		} else if (eObject instanceof Inst) {
+			return false;
 		} else {
 			return super.createEObjectDescriptions(eObject, acceptor);
 		}
