@@ -91,7 +91,7 @@ public class EntityMapper extends CflowSwitch<Entity> {
 	 *            a Cx instance
 	 * @return info about the IR entity
 	 */
-	public EntityInfo getEntityInfo(Inst inst) {
+	public EntityInfo getEntityInfo(Inst inst, InstantiationContext ctx) {
 		Instantiable cxEntity;
 		if (inst.getTask() == null) {
 			cxEntity = inst.getEntity();
@@ -102,7 +102,7 @@ public class EntityMapper extends CflowSwitch<Entity> {
 		// get URI of .ir file
 		URI cxUri = cxEntity.eResource().getURI();
 		URI uriInst = EcoreUtil.getURI(inst);
-		String name = getEntityName(inst, cxEntity);
+		String name = getEntityName(inst, cxEntity, ctx.getName());
 		URI uri = UriComputer.INSTANCE.computeUri(uriInst, cxUri, name);
 
 		return new EntityInfo(cxEntity, name, uri);
@@ -134,7 +134,7 @@ public class EntityMapper extends CflowSwitch<Entity> {
 	 *            instantiated entity
 	 * @return a name
 	 */
-	private String getEntityName(Inst inst, Instantiable cxEntity) {
+	private String getEntityName(Inst inst, Instantiable cxEntity, String instName) {
 		String name = getName(cxEntity);
 
 		Obj obj = inst.getArguments();
@@ -149,8 +149,7 @@ public class EntityMapper extends CflowSwitch<Entity> {
 			IEObjectDescription objDesc = scope.getSingleElement(qName);
 			if (objDesc != null) {
 				// properties configure at least one variable, returns specialized name
-				// TODO
-				return name;
+				return instName;
 			}
 		}
 

@@ -155,7 +155,7 @@ public class InstantiatorImpl implements IInstantiator {
 		return (U) mapCxToIr.get(entity).get(cxObj);
 	}
 
-	private Entity instantiate(EntityInfo info) {
+	private Entity instantiate(EntityInfo info, InstantiationContext ctx) {
 		NamedEntity cxEntity = info.getCxEntity();
 		Entity entity = info.loadEntity();
 		if (entity == null) {
@@ -166,29 +166,25 @@ public class InstantiatorImpl implements IInstantiator {
 
 		if (cxEntity instanceof Network) {
 			Entity oldEntity = setEntity(entity);
-			Network network = (Network) cxEntity;
-			DPN dpn = (DPN) entity;
-			for (Inst inst : network.getInstances()) {
-				Entity subEntity = instantiate(inst);
-				Instance instance = createInstance(dpn, inst, subEntity);
-				putMapping(inst, instance);
-			}
-
-			connect(network, dpn);
+			instantiate((Network) cxEntity, ctx);
 			setEntity(oldEntity);
 		}
 
 		return entity;
 	}
 
-	private Entity instantiate(Inst inst) {
-		EntityInfo info = entityMapper.getEntityInfo(inst);
-		return instantiate(info);
-	}
+	private void instantiate(Network network, InstantiationContext ctx) {
+		DPN dpn = (DPN) entity;
+		for (Inst inst : network.getInstances()) {
+			InstantiationContext subCtx = new InstantiationContext(ctx, inst.getName());
+			EntityInfo info = entityMapper.getEntityInfo(inst, subCtx);
+			Entity subEntity = instantiate(info, subCtx);
 
-	private void instantiateFromTop(Instantiable instantiable) {
-		EntityInfo info = entityMapper.getEntityInfo(instantiable);
-		instantiate(info);
+			Instance instance = createInstance(dpn, inst, subEntity);
+			putMapping(inst, instance);
+		}
+
+		connect(network, dpn);
 	}
 
 	@Override
@@ -211,7 +207,8 @@ public class InstantiatorImpl implements IInstantiator {
 	@Override
 	public void update(ResourceSet resourceSet) {
 		for (Instantiable instantiable : findTopFrom(resourceSet)) {
-			instantiateFromTop(instantiable);
+			EntityInfo info = entityMapper.getEntityInfo(instantiable);
+			instantiate(info, new InstantiationContext(instantiable.getName()));
 		}
 	}
 
