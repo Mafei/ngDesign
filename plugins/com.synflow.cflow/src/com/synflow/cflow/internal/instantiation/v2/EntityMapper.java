@@ -1,4 +1,16 @@
+/*******************************************************************************
+ * Copyright (c) 2014 Synflow SAS.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Matthieu Wipliez - initial API and implementation and/or initial documentation
+ *******************************************************************************/
 package com.synflow.cflow.internal.instantiation.v2;
+
+import java.util.Map.Entry;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -14,13 +26,12 @@ import com.google.gson.JsonObject;
 import com.google.inject.Inject;
 import com.synflow.cflow.UriComputer;
 import com.synflow.cflow.cflow.Bundle;
+import com.synflow.cflow.cflow.CExpression;
 import com.synflow.cflow.cflow.CflowPackage.Literals;
 import com.synflow.cflow.cflow.Inst;
 import com.synflow.cflow.cflow.Instantiable;
 import com.synflow.cflow.cflow.NamedEntity;
 import com.synflow.cflow.cflow.Network;
-import com.synflow.cflow.cflow.Obj;
-import com.synflow.cflow.cflow.Pair;
 import com.synflow.cflow.cflow.Task;
 import com.synflow.cflow.cflow.util.CflowSwitch;
 import com.synflow.cflow.internal.instantiation.properties.PropertiesSupport;
@@ -30,6 +41,12 @@ import com.synflow.models.dpn.DpnFactory;
 import com.synflow.models.dpn.Entity;
 import com.synflow.models.dpn.Unit;
 
+/**
+ * This class maps Cx entities to IR URIs.
+ * 
+ * @author Matthieu Wipliez
+ *
+ */
 public class EntityMapper extends CflowSwitch<Entity> {
 
 	@Inject
@@ -79,7 +96,12 @@ public class EntityMapper extends CflowSwitch<Entity> {
 		resource.getContents().clear();
 		resource.getContents().add(entity);
 
+		// TODO set values here (common code with getEntityName)
+
 		skeletonMaker.createSkeleton(info.getCxEntity(), entity);
+
+		// TODO restore values here
+
 		instantiator.setEntity(oldEntity);
 		return entity;
 	}
@@ -102,8 +124,10 @@ public class EntityMapper extends CflowSwitch<Entity> {
 		// get URI of .ir file
 		URI cxUri = cxEntity.eResource().getURI();
 		URI uriInst = EcoreUtil.getURI(inst);
-		String name = getEntityName(inst, cxEntity, ctx.getName());
+		String name = getEntityName(inst, cxEntity, ctx);
 		URI uri = UriComputer.INSTANCE.computeUri(uriInst, cxUri, name);
+
+		// TODO if entity is builtin/external, we must use its non-specialized name
 
 		return new EntityInfo(cxEntity, name, uri);
 	}
@@ -134,22 +158,20 @@ public class EntityMapper extends CflowSwitch<Entity> {
 	 *            instantiated entity
 	 * @return a name
 	 */
-	private String getEntityName(Inst inst, Instantiable cxEntity, String instName) {
+	private String getEntityName(Inst inst, Instantiable cxEntity, InstantiationContext ctx) {
 		String name = getName(cxEntity);
-
-		Obj obj = inst.getArguments();
-		if (obj == null) {
+		if (ctx.getProperties().isEmpty()) {
 			return name;
 		}
 
 		IScope scope = scopeProvider.getScope(cxEntity, Literals.VAR_REF__VARIABLE);
-		for (Pair pair : obj.getMembers()) {
-			String varName = pair.getKey();
+		for (Entry<String, CExpression> entry : ctx.getProperties().entrySet()) {
+			String varName = entry.getKey();
 			QualifiedName qName = converter.toQualifiedName(varName);
 			IEObjectDescription objDesc = scope.getSingleElement(qName);
 			if (objDesc != null) {
 				// properties configure at least one variable, returns specialized name
-				return instName;
+				return ctx.getName();
 			}
 		}
 

@@ -176,7 +176,7 @@ public class InstantiatorImpl implements IInstantiator {
 	private void instantiate(Network network, InstantiationContext ctx) {
 		DPN dpn = (DPN) entity;
 		for (Inst inst : network.getInstances()) {
-			InstantiationContext subCtx = new InstantiationContext(ctx, inst.getName());
+			InstantiationContext subCtx = new InstantiationContext(ctx, inst);
 			EntityInfo info = entityMapper.getEntityInfo(inst, subCtx);
 			Entity subEntity = instantiate(info, subCtx);
 
