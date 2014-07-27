@@ -61,13 +61,8 @@ public class SkeletonMaker extends DpnSwitch<Void> {
 	@Override
 	public Void caseActor(Actor actor) {
 		Task task = (Task) cxEntity;
-		try {
-			setValues();
-			translateStateVars(actor, task);
-			translatePorts(actor, task);
-		} finally {
-			restoreValues();
-		}
+		translateStateVars(actor, task);
+		translatePorts(actor, task);
 		return DONE;
 	}
 
@@ -75,13 +70,8 @@ public class SkeletonMaker extends DpnSwitch<Void> {
 	public Void caseDPN(DPN dpn) {
 		Network network = (Network) cxEntity;
 		setFileAndLine(dpn, network);
-		try {
-			setValues();
-			translateStateVars(dpn, network);
-			translatePorts(dpn, network);
-		} finally {
-			restoreValues();
-		}
+		translateStateVars(dpn, network);
+		translatePorts(dpn, network);
 		return DONE;
 	}
 
@@ -89,23 +79,17 @@ public class SkeletonMaker extends DpnSwitch<Void> {
 	public Void caseUnit(Unit unit) {
 		Bundle bundle = (Bundle) cxEntity;
 		setFileAndLine(unit, bundle);
-		try {
-			setValues();
-			translateStateVars(unit, bundle);
-		} finally {
-			restoreValues();
-		}
+		translateStateVars(unit, bundle);
 		return DONE;
 	}
 
 	public void createSkeleton(NamedEntity cxEntity, Entity entity) {
 		this.cxEntity = cxEntity;
-		doSwitch(entity);
-	}
-
-	private void restoreValues() {
-		// TODO Auto-generated method stub
-
+		try {
+			doSwitch(entity);
+		} finally {
+			this.cxEntity = null;
+		}
 	}
 
 	/**
@@ -125,11 +109,6 @@ public class SkeletonMaker extends DpnSwitch<Void> {
 		// set line number
 		int lineNumber = getStartLine(cxEntity);
 		entity.setLineNumber(lineNumber);
-	}
-
-	private void setValues() {
-		// TODO Auto-generated method stub
-
 	}
 
 	public void transformPort(final Entity entity, final Variable port) {

@@ -98,6 +98,11 @@ public class InstantiationContext {
 		return Joiner.on('_').join(path);
 	}
 
+	/**
+	 * Returns an unmodifiable map of the properties of this instantiation context.
+	 * 
+	 * @return a map
+	 */
 	public Map<String, CExpression> getProperties() {
 		return Collections.unmodifiableMap(properties);
 	}

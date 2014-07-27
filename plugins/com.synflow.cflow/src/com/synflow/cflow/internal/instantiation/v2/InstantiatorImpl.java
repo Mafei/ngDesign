@@ -159,7 +159,7 @@ public class InstantiatorImpl implements IInstantiator {
 		NamedEntity cxEntity = info.getCxEntity();
 		Entity entity = info.loadEntity();
 		if (entity == null) {
-			entity = entityMapper.createEntity(info);
+			entity = entityMapper.createEntity(info, ctx);
 			entities.add(entity);
 			mapEntities.put(cxEntity, entity);
 		}

@@ -10,9 +10,12 @@
  *******************************************************************************/
 package com.synflow.cflow.internal.instantiation.v2;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
@@ -33,6 +36,7 @@ import com.synflow.cflow.cflow.Instantiable;
 import com.synflow.cflow.cflow.NamedEntity;
 import com.synflow.cflow.cflow.Network;
 import com.synflow.cflow.cflow.Task;
+import com.synflow.cflow.cflow.Variable;
 import com.synflow.cflow.cflow.util.CflowSwitch;
 import com.synflow.cflow.internal.instantiation.properties.PropertiesSupport;
 import com.synflow.models.dpn.Actor;
@@ -86,7 +90,7 @@ public class EntityMapper extends CflowSwitch<Entity> {
 		return actor;
 	}
 
-	public Entity createEntity(EntityInfo info) {
+	public Entity createEntity(EntityInfo info, InstantiationContext ctx) {
 		// add entity to resource
 		Entity entity = doSwitch(info.getCxEntity());
 		Entity oldEntity = instantiator.setEntity(entity);
@@ -96,13 +100,18 @@ public class EntityMapper extends CflowSwitch<Entity> {
 		resource.getContents().clear();
 		resource.getContents().add(entity);
 
-		// TODO set values here (common code with getEntityName)
+		// set values on entity
+		Map<Variable, EObject> values = setValues(info.getCxEntity(), ctx);
 
-		skeletonMaker.createSkeleton(info.getCxEntity(), entity);
+		try {
+			skeletonMaker.createSkeleton(info.getCxEntity(), entity);
+		} finally {
+			// restore values
+			restoreValues(values);
 
-		// TODO restore values here
-
-		instantiator.setEntity(oldEntity);
+			// restore current entity in instantiator
+			instantiator.setEntity(oldEntity);
+		}
 		return entity;
 	}
 
@@ -191,6 +200,46 @@ public class EntityMapper extends CflowSwitch<Entity> {
 			return null;
 		}
 		return qualifiedName.toString();
+	}
+
+	/**
+	 * Restore values using the given map.
+	 * 
+	 * @param values
+	 *            a map variable to value
+	 */
+	private void restoreValues(Map<Variable, EObject> values) {
+		for (Entry<Variable, EObject> binding : values.entrySet()) {
+			binding.getKey().setValue(binding.getValue());
+		}
+	}
+
+	/**
+	 * Applies properties' values.
+	 * 
+	 * @param cxEntity
+	 *            Cx entity
+	 * @param ctx
+	 *            instantiation context
+	 */
+	private Map<Variable, EObject> setValues(NamedEntity cxEntity, InstantiationContext ctx) {
+		Map<Variable, EObject> previous = new HashMap<>();
+		IScope scope = scopeProvider.getScope(cxEntity, Literals.VAR_REF__VARIABLE);
+		for (Entry<String, CExpression> entry : ctx.getProperties().entrySet()) {
+			String varName = entry.getKey();
+			QualifiedName qName = converter.toQualifiedName(varName);
+			IEObjectDescription objDesc = scope.getSingleElement(qName);
+			if (objDesc != null) {
+				EObject eObject = objDesc.getEObjectOrProxy();
+				if (eObject instanceof Variable) {
+					Variable variable = (Variable) eObject;
+					previous.put(variable, variable.getValue());
+					variable.setValue(EcoreUtil.copy(entry.getValue()));
+				}
+			}
+		}
+
+		return previous;
 	}
 
 }
