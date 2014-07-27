@@ -38,7 +38,7 @@ import com.synflow.cflow.internal.scheduler.CycleDetector;
 import com.synflow.cflow.internal.services.Typer;
 import com.synflow.cflow.internal.validation.NetworkChecker;
 import com.synflow.cflow.internal.validation.TypeChecker;
-import com.synflow.models.dpn.Actor;
+import com.synflow.core.SynflowCore;
 import com.synflow.models.dpn.DPN;
 import com.synflow.models.dpn.Entity;
 
@@ -74,38 +74,32 @@ public class CflowJavaValidator extends AbstractCflowJavaValidator {
 		// }
 
 		NetworkChecker networkChecker = new NetworkChecker(this, mapper);
-		for (NamedEntity cxEntity : module.getEntities()) {
-			try {
-				if (cxEntity instanceof Network) {
-					Network network = (Network) cxEntity;
-
-					// step 1: instantiate
-					// translates and checks properties
-					// instantiates and checks arguments
-					DPN dpn = (DPN) mapper.getEntity(network);
-
-					// step 2: check connectivity
-					// must occur after instantiation
-					networkChecker.checkDPN(network, dpn);
-				} else {
-					mapper.getEntity(cxEntity);
-				}
-			} finally {
-				if (cxEntity instanceof Instantiable) {
-					printErrors((Instantiable) cxEntity);
-				}
-			}
-		}
 
 		// for each entity of the module
 		for (NamedEntity cxEntity : module.getEntities()) {
 			// for each specialized version of that entity
 			for (Entity entity : instantiator.getEntities(cxEntity)) {
-				instantiator.setEntity(entity);
+				try {
+					instantiator.setEntity(entity);
 
-				new TypeChecker(this, typer).doSwitch(cxEntity);
+					if (entity instanceof DPN) {
+						// check connectivity
+						Network network = (Network) cxEntity;
+						DPN dpn = (DPN) entity;
+						networkChecker.checkDPN(network, dpn);
+					}
 
-				instantiator.setEntity(null);
+					// check types
+					new TypeChecker(this, typer).doSwitch(cxEntity);
+				} catch (Exception e) {
+					SynflowCore.log(e);
+
+					instantiator.setEntity(null);
+
+					if (cxEntity instanceof Instantiable) {
+						printErrors((Instantiable) cxEntity);
+					}
+				}
 			}
 		}
 	}
@@ -135,9 +129,10 @@ public class CflowJavaValidator extends AbstractCflowJavaValidator {
 			error(message, setup, Literals.VARIABLE__NAME, ERR_MAIN_FUNCTION_BAD_TYPE);
 		}
 
-		Actor actor = (Actor) mapper.getEntity(task);
-		if (actor.getProperties().getAsJsonArray(PROP_CLOCKS).size() == 0) {
-			validate(task, setup, loop);
+		for (Entity entity : instantiator.getEntities(task)) {
+			if (entity.getProperties().getAsJsonArray(PROP_CLOCKS).size() == 0) {
+				validate(task, setup, loop);
+			}
 		}
 	}
 
