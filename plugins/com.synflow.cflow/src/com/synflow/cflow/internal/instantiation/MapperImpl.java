@@ -26,7 +26,6 @@ import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.synflow.cflow.cflow.Connect;
 import com.synflow.cflow.cflow.Inst;
-import com.synflow.cflow.cflow.NamedEntity;
 import com.synflow.cflow.cflow.Network;
 import com.synflow.cflow.cflow.VarRef;
 import com.synflow.cflow.cflow.Variable;
@@ -89,7 +88,7 @@ public class MapperImpl extends CflowSwitch<Entity> implements IMapper {
 			new ImplicitPortSwitch(this).doSwitch(network);
 
 			for (Connect connect : network.getConnects()) {
-				maker.makeConnection(connect);
+				maker.makeConnection(dpn, connect);
 			}
 		} finally {
 			// restore old maker
@@ -102,11 +101,6 @@ public class MapperImpl extends CflowSwitch<Entity> implements IMapper {
 		List<Resource> result = builtins;
 		builtins = new ArrayList<>();
 		return result;
-	}
-
-	@Override
-	public Entity getEntity(final NamedEntity entity) {
-		return instantiator.getMapping(entity);
 	}
 
 	@Override

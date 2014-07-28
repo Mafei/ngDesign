@@ -42,6 +42,7 @@ import com.synflow.cflow.internal.compiler.helpers.LoadStoreReplacer;
 import com.synflow.cflow.internal.compiler.helpers.SideEffectRemover;
 import com.synflow.cflow.internal.compiler.helpers.VariablePromoter;
 import com.synflow.cflow.internal.instantiation.IMapper;
+import com.synflow.cflow.internal.instantiation.v2.IInstantiator;
 import com.synflow.cflow.internal.scheduler.CycleScheduler;
 import com.synflow.cflow.internal.scheduler.IfScheduler;
 import com.synflow.cflow.internal.services.Typer;
@@ -68,6 +69,9 @@ public class ModuleCompilerImpl extends CflowSwitch<Void> implements IModuleComp
 	private IFileSystemAccess fsa;
 
 	@Inject
+	private IInstantiator instantiator;
+
+	@Inject
 	private IMapper mapper;
 
 	@Inject
@@ -75,8 +79,12 @@ public class ModuleCompilerImpl extends CflowSwitch<Void> implements IModuleComp
 
 	@Override
 	public Void caseBundle(Bundle bundle) {
-		Entity entity = createEntity(bundle);
-		serialize(entity);
+		for (Entity entity : instantiator.getEntities(bundle)) {
+			Entity oldEntity = instantiator.setEntity(entity);
+			transformBundle(bundle, (Unit) entity);
+			instantiator.setEntity(oldEntity);
+			serialize(entity);
+		}
 		return DONE;
 	}
 
@@ -88,50 +96,35 @@ public class ModuleCompilerImpl extends CflowSwitch<Void> implements IModuleComp
 	@Override
 	public Void caseModule(Module module) {
 		// translate comments for this module
-		new CommentTranslator(mapper).doSwitch(module);
+		new CommentTranslator(instantiator).doSwitch(module);
 
 		return visit(this, module.getEntities());
 	}
 
 	@Override
 	public Void caseNetwork(Network network) {
-		DPN dpn = (DPN) mapper.getEntity(network);
-		for (Inst inst : network.getInstances()) {
-			doSwitch(inst);
-		}
+		for (Entity entity : instantiator.getEntities(network)) {
+			Entity oldEntity = instantiator.setEntity(entity);
+			DPN dpn = (DPN) entity;
+			for (Inst inst : network.getInstances()) {
+				doSwitch(inst);
+			}
 
-		serialize(dpn);
+			instantiator.setEntity(oldEntity);
+			serialize(dpn);
+		}
 		return DONE;
 	}
 
 	@Override
 	public Void caseTask(Task task) {
-		Entity entity = createEntity(task);
-		serialize(entity);
+		for (Entity entity : instantiator.getEntities(task)) {
+			Entity oldEntity = instantiator.setEntity(entity);
+			transformTask(task, (Actor) entity);
+			instantiator.setEntity(oldEntity);
+			serialize(entity);
+		}
 		return DONE;
-	}
-
-	private Entity createEntity(Bundle bundle) {
-		Unit unit = (Unit) mapper.getEntity(bundle);
-		transformDeclarations(unit, bundle.getDecls());
-
-		new ProcedureTransformation(new LoadStoreReplacer()).doSwitch(unit);
-		return unit;
-	}
-
-	private Entity createEntity(Task task) {
-		Actor actor = (Actor) mapper.getEntity(task);
-		transformDeclarations(actor, task.getDecls());
-		transformActor(actor, task);
-
-		new VariablePromoter(actor.getVariables()).visit(actor);
-		new ProcedureTransformation(new LoadStoreReplacer()).doSwitch(actor);
-
-		// apply store once transformation to scheduler and removes side effects
-		new SchedulerTransformation(new StoreOnceTransformation()).doSwitch(actor);
-		new SchedulerTransformation(new SideEffectRemover()).doSwitch(actor);
-
-		return actor;
 	}
 
 	@Override
@@ -168,14 +161,53 @@ public class ModuleCompilerImpl extends CflowSwitch<Void> implements IModuleComp
 	}
 
 	/**
-	 * Transforms the given actor.
+	 * Transforms the given bundle into a unit.
 	 * 
-	 * @param actor
-	 *            the actor to which ports and actions will be added
-	 * @param module
-	 *            a module
+	 * @param bundle
+	 *            Cx bundle
+	 * @param unit
+	 *            IR unit
 	 */
-	private void transformActor(Actor actor, Task task) {
+	private void transformBundle(Bundle bundle, Unit unit) {
+		transformDeclarations(unit, bundle.getDecls());
+		new ProcedureTransformation(new LoadStoreReplacer()).doSwitch(unit);
+	}
+
+	/**
+	 * Transforms the given declarations (variables, procedures) to IR variables and procedures.
+	 * 
+	 * @param procedures
+	 *            a list of IR procedures that will be created
+	 * @param module
+	 *            a list of declarations
+	 */
+	private void transformDeclarations(Entity entity, List<VarDecl> variables) {
+		for (Variable variable : CflowUtil.getStateVars(variables)) {
+			if (CflowUtil.isFunction(variable)) {
+				if (CflowUtil.isConstant(variable)) {
+					// visit constant functions
+					FunctionTransformer transformer = new FunctionTransformer(mapper, typer, entity);
+					transformer.doSwitch(variable);
+				}
+			} else {
+				// visit variables (they are automatically added to the entity by mapper)
+				mapper.getVar(variable);
+			}
+		}
+	}
+
+	/**
+	 * Transforms the given task to an actor. Runs schedulers, transforms actor, beautifies FSM,
+	 * runs several transformations on the code.
+	 * 
+	 * @param task
+	 *            Cx task
+	 * @param actor
+	 *            IR actor
+	 */
+	private void transformTask(Task task, Actor actor) {
+		transformDeclarations(actor, task.getDecls());
+
 		// finds init and run functions
 		Variable setup = null;
 		Variable loop = null;
@@ -196,30 +228,15 @@ public class ModuleCompilerImpl extends CflowSwitch<Void> implements IModuleComp
 
 		// post-process FSM: rename states and actions
 		new FsmBeautifier().visit(actor);
-	}
 
-	/**
-	 * Transforms the given declarations (variables, procedures) to IR variables and procedures.
-	 * 
-	 * @param procedures
-	 *            a list of IR procedures that will be created
-	 * @param module
-	 *            a list of declarations
-	 */
-	private void transformDeclarations(Entity entity, List<VarDecl> variables) {
-		for (Variable variable : CflowUtil.getStateVars(variables)) {
-			if (CflowUtil.isFunction(variable)) {
-				if (CflowUtil.isConstant(variable)) {
-					// visit constant functions
-					FunctionTransformer transformer = new FunctionTransformer(mapper, typer,
-							entity);
-					transformer.doSwitch(variable);
-				}
-			} else {
-				// visit variables (they are automatically added to the entity by mapper)
-				mapper.getVar(variable);
-			}
-		}
+		// promotes local variables used over more than one cycle to state variables
+		// and replaces load/stores of local variables by use/assigns
+		new VariablePromoter(actor.getVariables()).visit(actor);
+		new ProcedureTransformation(new LoadStoreReplacer()).doSwitch(actor);
+
+		// apply store once transformation to scheduler and removes side effects
+		new SchedulerTransformation(new StoreOnceTransformation()).doSwitch(actor);
+		new SchedulerTransformation(new SideEffectRemover()).doSwitch(actor);
 	}
 
 }

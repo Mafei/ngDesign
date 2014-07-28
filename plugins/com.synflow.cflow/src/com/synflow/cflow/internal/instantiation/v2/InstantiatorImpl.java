@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.emf.common.util.URI;
@@ -152,6 +153,8 @@ public class InstantiatorImpl implements IInstantiator {
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T extends EObject, U extends EObject> U getMapping(T cxObj) {
+		Objects.requireNonNull(entity, "must call setEntity before getMapping");
+
 		return (U) mapCxToIr.get(entity).get(cxObj);
 	}
 
@@ -189,6 +192,8 @@ public class InstantiatorImpl implements IInstantiator {
 
 	@Override
 	public <T extends EObject, U extends EObject> void putMapping(T cxObj, U irObj) {
+		Objects.requireNonNull(entity, "must call setEntity before putMapping");
+
 		Map<EObject, EObject> map = mapCxToIr.get(entity);
 		if (map == null) {
 			map = new HashMap<>();

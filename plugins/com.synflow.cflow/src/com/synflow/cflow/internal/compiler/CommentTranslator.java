@@ -44,7 +44,8 @@ import com.synflow.cflow.cflow.Task;
 import com.synflow.cflow.cflow.VarDecl;
 import com.synflow.cflow.cflow.Variable;
 import com.synflow.cflow.cflow.util.CflowSwitch;
-import com.synflow.cflow.internal.instantiation.IMapper;
+import com.synflow.cflow.internal.instantiation.v2.IInstantiator;
+import com.synflow.models.dpn.Entity;
 import com.synflow.models.util.Void;
 
 /**
@@ -127,10 +128,10 @@ public class CommentTranslator extends CflowSwitch<Void> {
 
 	private JsonArray copyright;
 
-	private IMapper mapper;
+	private IInstantiator instantiator;
 
-	public CommentTranslator(IMapper mapper) {
-		this.mapper = mapper;
+	public CommentTranslator(IInstantiator instantiator) {
+		this.instantiator = instantiator;
 	}
 
 	@Override
@@ -232,26 +233,29 @@ public class CommentTranslator extends CflowSwitch<Void> {
 	/**
 	 * Sets copyright and javadoc for the given entity.
 	 * 
-	 * @param keyword
-	 *            keyword starting the declaration of the given entity
-	 * @param entity
+	 * @param cxEntity
+	 *            Cx entity
+	 * @param decls
+	 *            state variables
 	 */
-	private void setJavadoc(NamedEntity entity, EList<VarDecl> decls) {
-		JsonObject properties = mapper.getEntity(entity).getProperties();
-		if (copyright != null) {
-			properties.add(PROP_COPYRIGHT, copyright);
-		}
+	private void setJavadoc(NamedEntity cxEntity, EList<VarDecl> decls) {
+		for (Entity entity : instantiator.getEntities(cxEntity)) {
+			JsonObject properties = entity.getProperties();
+			if (copyright != null) {
+				properties.add(PROP_COPYRIGHT, copyright);
+			}
 
-		ICompositeNode node = NodeModelUtils.getNode(entity);
-		JsonArray lines = getCommentLines(node);
-		if (lines.size() > 0) {
-			properties.add(PROP_JAVADOC, lines);
-		}
+			ICompositeNode node = NodeModelUtils.getNode(cxEntity);
+			JsonArray lines = getCommentLines(node);
+			if (lines.size() > 0) {
+				properties.add(PROP_JAVADOC, lines);
+			}
 
-		if (decls != null) {
-			comments = new JsonObject();
-			visit(this, decls);
-			properties.add(PROP_COMMENTS, comments);
+			if (decls != null) {
+				comments = new JsonObject();
+				visit(this, decls);
+				properties.add(PROP_COMMENTS, comments);
+			}
 		}
 	}
 

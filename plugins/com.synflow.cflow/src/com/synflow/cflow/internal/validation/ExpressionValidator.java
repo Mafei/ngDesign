@@ -40,11 +40,15 @@ import com.synflow.cflow.cflow.ExpressionVariable;
 import com.synflow.cflow.cflow.StatementAssign;
 import com.synflow.cflow.cflow.StatementLoop;
 import com.synflow.cflow.cflow.StatementVariable;
+import com.synflow.cflow.cflow.Task;
 import com.synflow.cflow.cflow.VarRef;
 import com.synflow.cflow.cflow.Variable;
 import com.synflow.cflow.internal.instantiation.IMapper;
+import com.synflow.cflow.internal.instantiation.v2.IInstantiator;
 import com.synflow.cflow.internal.services.BoolCflowSwitch;
 import com.synflow.cflow.internal.services.Typer;
+import com.synflow.core.SynflowCore;
+import com.synflow.models.dpn.Entity;
 import com.synflow.models.dpn.InterfaceType;
 import com.synflow.models.dpn.Port;
 import com.synflow.models.ir.Type;
@@ -79,6 +83,9 @@ public class ExpressionValidator extends AbstractDeclarativeValidator {
 
 	@Inject
 	private IMapper mapper;
+
+	@Inject
+	private IInstantiator instantiator;
 
 	@Inject
 	private Typer typer;
@@ -118,18 +125,28 @@ public class ExpressionValidator extends AbstractDeclarativeValidator {
 	public void checkMultipleReads(CExpression expr) {
 		// Checks that there are at most one read per port in the expression. Otherwise indicate an
 		// error.
-		Multiset<Port> portsRead = LinkedHashMultiset.create();
-		Multiset<Port> portsAvailable = LinkedHashMultiset.create();
-		computePortSets(portsAvailable, portsRead, expr);
+		Task task = EcoreUtil2.getContainerOfType(expr, Task.class);
+		for (Entity entity : instantiator.getEntities(task)) {
+			Entity oldEntity = instantiator.setEntity(entity);
+			try {
+				Multiset<Port> portsRead = LinkedHashMultiset.create();
+				Multiset<Port> portsAvailable = LinkedHashMultiset.create();
+				computePortSets(portsAvailable, portsRead, expr);
 
-		boolean hasMultipleReads = false;
-		for (Entry<Port> entry : portsRead.entrySet()) {
-			hasMultipleReads |= entry.getCount() > 1;
-		}
+				boolean hasMultipleReads = false;
+				for (Entry<Port> entry : portsRead.entrySet()) {
+					hasMultipleReads |= entry.getCount() > 1;
+				}
 
-		if (hasMultipleReads) {
-			error("Port error: cannot have more than one read per port in expression", expr, null,
-					ERR_MULTIPLE_READS);
+				if (hasMultipleReads) {
+					error("Port error: cannot have more than one read per port in expression",
+							expr, null, ERR_MULTIPLE_READS);
+				}
+			} catch (Exception e) {
+				SynflowCore.log(e);
+
+				instantiator.setEntity(oldEntity);
+			}
 		}
 	}
 

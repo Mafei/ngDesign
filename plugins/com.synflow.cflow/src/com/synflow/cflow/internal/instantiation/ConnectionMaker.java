@@ -248,9 +248,7 @@ public class ConnectionMaker {
 		}
 	}
 
-	void makeConnection(Connect connect) {
-		Network network = (Network) connect.eContainer();
-		DPN dpn = (DPN) mapper.getEntity(network);
+	void makeConnection(DPN dpn, Connect connect) {
 		Instance instance = null;
 		String name;
 

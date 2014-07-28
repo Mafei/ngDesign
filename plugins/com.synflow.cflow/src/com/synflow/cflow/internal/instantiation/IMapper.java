@@ -14,10 +14,8 @@ import org.eclipse.emf.ecore.resource.Resource;
 
 import com.google.inject.ImplementedBy;
 import com.synflow.cflow.cflow.Inst;
-import com.synflow.cflow.cflow.NamedEntity;
 import com.synflow.cflow.cflow.VarRef;
 import com.synflow.cflow.cflow.Variable;
-import com.synflow.models.dpn.Entity;
 import com.synflow.models.dpn.Instance;
 import com.synflow.models.dpn.Port;
 import com.synflow.models.ir.Procedure;
@@ -39,18 +37,6 @@ public interface IMapper {
 	 * @return an iterable over resources
 	 */
 	Iterable<Resource> getBuiltins();
-
-	/**
-	 * Returns the IR entity associated with the given named entity. This also translates properties
-	 * and (if the entity is a network) connects it (and does so recursively for all entities
-	 * instantiated). The mapping between the C~ model and the IR instantiated model is cached, so
-	 * in practice this method returns very fast most of the time, except when resources are dirty.
-	 * 
-	 * @param entity
-	 *            a C~ entity
-	 * @return an IR entity
-	 */
-	Entity getEntity(NamedEntity entity);
 
 	/**
 	 * Returns the IR instance associated with the given instance.
