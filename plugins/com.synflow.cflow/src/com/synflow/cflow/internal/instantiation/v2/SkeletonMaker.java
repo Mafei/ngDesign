@@ -165,9 +165,9 @@ public class SkeletonMaker extends DpnSwitch<Void> {
 	}
 
 	private void translateStateVars(Entity entity, NamedEntity cxEntity) {
-		// transform constants
+		// transform variables and constant functions
 		for (Variable variable : CflowUtil.getStateVars(cxEntity.getDecls())) {
-			if (CflowUtil.isConstant(variable)) {
+			if (CflowUtil.isConstant(variable) || !CflowUtil.isFunction(variable)) {
 				transformVariable(entity, variable);
 			}
 		}
