@@ -10,6 +10,7 @@
  *******************************************************************************/
 package com.synflow.cflow.internal.instantiation.v2;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -52,6 +53,10 @@ import com.synflow.models.dpn.Unit;
  *
  */
 public class EntityMapper extends CflowSwitch<Entity> {
+
+	enum Options {
+		DRY_RUN
+	}
 
 	@Inject
 	private IQualifiedNameConverter converter;
@@ -130,10 +135,18 @@ public class EntityMapper extends CflowSwitch<Entity> {
 			cxEntity = inst.getTask();
 		}
 
+		// compute specialized name
+		String name;
+		Map<Variable, EObject> values = getVariablesMap(cxEntity, ctx);
+		if (values.isEmpty()) {
+			name = getName(cxEntity);
+		} else {
+			name = ctx.getName();
+		}
+
 		// get URI of .ir file
 		URI cxUri = cxEntity.eResource().getURI();
 		URI uriInst = EcoreUtil.getURI(inst);
-		String name = getEntityName(inst, cxEntity, ctx);
 		URI uri = UriComputer.INSTANCE.computeUri(uriInst, cxUri, name);
 
 		// TODO if entity is builtin/external, we must use its non-specialized name
@@ -158,36 +171,6 @@ public class EntityMapper extends CflowSwitch<Entity> {
 	}
 
 	/**
-	 * Returns either the entity name, or a specialized name, depending on the context (properties
-	 * given to the instance).
-	 * 
-	 * @param inst
-	 *            instance
-	 * @param cxEntity
-	 *            instantiated entity
-	 * @return a name
-	 */
-	private String getEntityName(Inst inst, Instantiable cxEntity, InstantiationContext ctx) {
-		String name = getName(cxEntity);
-		if (ctx.getProperties().isEmpty()) {
-			return name;
-		}
-
-		IScope scope = scopeProvider.getScope(cxEntity, Literals.VAR_REF__VARIABLE);
-		for (Entry<String, CExpression> entry : ctx.getProperties().entrySet()) {
-			String varName = entry.getKey();
-			QualifiedName qName = converter.toQualifiedName(varName);
-			IEObjectDescription objDesc = scope.getSingleElement(qName);
-			if (objDesc != null) {
-				// properties configure at least one variable, returns specialized name
-				return ctx.getName();
-			}
-		}
-
-		return name;
-	}
-
-	/**
 	 * Returns the qualified name of the given entity.
 	 * 
 	 * @param entity
@@ -203,6 +186,20 @@ public class EntityMapper extends CflowSwitch<Entity> {
 	}
 
 	/**
+	 * Returns a map of variable - value association based on the given Cx entity's variables and
+	 * the instantiation context. Equivalent to <code>visitProperties(cxEntity, ctx, false)</code>.
+	 * 
+	 * @param cxEntity
+	 *            Cx entity
+	 * @param ctx
+	 *            instantiation context
+	 * @return a map
+	 */
+	private Map<Variable, EObject> getVariablesMap(NamedEntity cxEntity, InstantiationContext ctx) {
+		return visitProperties(cxEntity, ctx, false);
+	}
+
+	/**
 	 * Restore values using the given map.
 	 * 
 	 * @param values
@@ -215,15 +212,39 @@ public class EntityMapper extends CflowSwitch<Entity> {
 	}
 
 	/**
-	 * Applies properties' values.
+	 * Sets the values of affected variables in the given Cx entity to the values given by the
+	 * instantiation context. Equivalent to <code>visitProperties(cxEntity, ctx, true)</code>.
 	 * 
 	 * @param cxEntity
 	 *            Cx entity
 	 * @param ctx
 	 *            instantiation context
+	 * @return a map of variable - value association
 	 */
 	private Map<Variable, EObject> setValues(NamedEntity cxEntity, InstantiationContext ctx) {
+		return visitProperties(cxEntity, ctx, true);
+	}
+
+	/**
+	 * Returns a map of variable - value association based on the given Cx entity's variables and
+	 * the instantiation context. The <code>set</code> parameter controls whether the value of
+	 * variables are updated to the value given in the context or not.
+	 * 
+	 * @param cxEntity
+	 *            Cx entity
+	 * @param ctx
+	 *            instantiation context
+	 * @param set
+	 *            if true, update the value of affected variables
+	 * @return a map
+	 */
+	private Map<Variable, EObject> visitProperties(NamedEntity cxEntity, InstantiationContext ctx,
+			boolean set) {
 		Map<Variable, EObject> previous = new HashMap<>();
+		if (ctx.getProperties().isEmpty()) {
+			return Collections.emptyMap();
+		}
+
 		IScope scope = scopeProvider.getScope(cxEntity, Literals.VAR_REF__VARIABLE);
 		for (Entry<String, CExpression> entry : ctx.getProperties().entrySet()) {
 			String varName = entry.getKey();
@@ -234,7 +255,9 @@ public class EntityMapper extends CflowSwitch<Entity> {
 				if (eObject instanceof Variable) {
 					Variable variable = (Variable) eObject;
 					previous.put(variable, variable.getValue());
-					variable.setValue(EcoreUtil.copy(entry.getValue()));
+					if (set) {
+						variable.setValue(EcoreUtil.copy(entry.getValue()));
+					}
 				}
 			}
 		}
