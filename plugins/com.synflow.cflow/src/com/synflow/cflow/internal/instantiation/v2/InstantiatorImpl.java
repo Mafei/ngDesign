@@ -26,6 +26,7 @@ import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.resource.IReferenceDescription;
 import org.eclipse.xtext.resource.IResourceDescription;
 import org.eclipse.xtext.resource.IResourceDescriptions;
+import org.eclipse.xtext.resource.impl.ResourceDescriptionsProvider;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
@@ -64,7 +65,7 @@ public class InstantiatorImpl implements IInstantiator {
 	private Multimap<NamedEntity, Entity> mapEntities;
 
 	@Inject
-	private IResourceDescriptions resourceDescriptions;
+	private ResourceDescriptionsProvider provider;
 
 	public InstantiatorImpl() {
 		entities = new ArrayList<>();
@@ -103,6 +104,8 @@ public class InstantiatorImpl implements IInstantiator {
 
 	private Iterable<Instantiable> findTopFrom(ResourceSet resourceSet) {
 		Set<URI> topUris = Sets.newLinkedHashSet();
+
+		IResourceDescriptions resourceDescriptions = provider.getResourceDescriptions(resourceSet);
 
 		// collect all instantiable entities
 		EClass type = Literals.INSTANTIABLE;
