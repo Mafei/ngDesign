@@ -19,6 +19,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.naming.QualifiedName;
@@ -28,17 +29,20 @@ import org.eclipse.xtext.scoping.IScopeProvider;
 
 import com.google.gson.JsonObject;
 import com.google.inject.Inject;
+import com.synflow.cflow.CflowUtil;
 import com.synflow.cflow.UriComputer;
 import com.synflow.cflow.cflow.Bundle;
 import com.synflow.cflow.cflow.CExpression;
 import com.synflow.cflow.cflow.CflowPackage.Literals;
 import com.synflow.cflow.cflow.Inst;
 import com.synflow.cflow.cflow.Instantiable;
+import com.synflow.cflow.cflow.Module;
 import com.synflow.cflow.cflow.NamedEntity;
 import com.synflow.cflow.cflow.Network;
 import com.synflow.cflow.cflow.Task;
 import com.synflow.cflow.cflow.Variable;
 import com.synflow.cflow.cflow.util.CflowSwitch;
+import com.synflow.cflow.internal.TransformerUtil;
 import com.synflow.cflow.internal.instantiation.properties.PropertiesSupport;
 import com.synflow.models.dpn.Actor;
 import com.synflow.models.dpn.DPN;
@@ -99,8 +103,20 @@ public class EntityMapper extends CflowSwitch<Entity> {
 		// add entity to resource
 		Entity entity = doSwitch(info.getCxEntity());
 		Entity oldEntity = instantiator.setEntity(entity);
+
+		// set name
 		entity.setName(info.getName());
 
+		// set file name
+		Module module = EcoreUtil2.getContainerOfType(info.getCxEntity(), Module.class);
+		String fileName = CflowUtil.getFileName(module);
+		entity.setFileName(fileName);
+
+		// set line number
+		int lineNumber = TransformerUtil.getStartLine(info.getCxEntity());
+		entity.setLineNumber(lineNumber);
+
+		// add to resource
 		Resource resource = info.getResource();
 		resource.getContents().clear();
 		resource.getContents().add(entity);
