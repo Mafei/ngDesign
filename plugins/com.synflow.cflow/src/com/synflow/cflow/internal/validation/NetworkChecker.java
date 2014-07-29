@@ -99,7 +99,7 @@ public class NetworkChecker extends Checker {
 					error("Clock domain: illegal crossing from '" + srcInst.getName() + "."
 							+ source.getPort().getName() + "' " + srcClkName + " to '"
 							+ tgtInst.getName() + "." + target.getPort().getName() + "' "
-							+ tgtClkName, network, Literals.NAMED_ENTITY__NAME, INSIGNIFICANT_INDEX);
+							+ tgtClkName, network, Literals.CX_ENTITY__NAME, INSIGNIFICANT_INDEX);
 				}
 			}
 		}

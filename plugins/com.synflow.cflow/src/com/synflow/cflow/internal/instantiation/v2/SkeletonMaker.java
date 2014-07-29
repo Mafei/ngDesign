@@ -19,9 +19,9 @@ import org.eclipse.xtext.EcoreUtil2;
 import com.google.inject.Inject;
 import com.synflow.cflow.CflowUtil;
 import com.synflow.cflow.cflow.Bundle;
+import com.synflow.cflow.cflow.CxEntity;
 import com.synflow.cflow.cflow.Instantiable;
 import com.synflow.cflow.cflow.Module;
-import com.synflow.cflow.cflow.NamedEntity;
 import com.synflow.cflow.cflow.Network;
 import com.synflow.cflow.cflow.Task;
 import com.synflow.cflow.cflow.Variable;
@@ -50,7 +50,7 @@ import com.synflow.models.util.Void;
  */
 public class SkeletonMaker extends DpnSwitch<Void> {
 
-	private NamedEntity cxEntity;
+	private CxEntity cxEntity;
 
 	@Inject
 	private IInstantiator instantiator;
@@ -83,7 +83,7 @@ public class SkeletonMaker extends DpnSwitch<Void> {
 		return DONE;
 	}
 
-	public void createSkeleton(NamedEntity cxEntity, Entity entity) {
+	public void createSkeleton(CxEntity cxEntity, Entity entity) {
 		this.cxEntity = cxEntity;
 		try {
 			doSwitch(entity);
@@ -100,7 +100,7 @@ public class SkeletonMaker extends DpnSwitch<Void> {
 	 * @param cxEntity
 	 *            Cx entity
 	 */
-	private void setFileAndLine(Entity entity, NamedEntity cxEntity) {
+	private void setFileAndLine(Entity entity, CxEntity cxEntity) {
 		// set file name
 		Module module = EcoreUtil2.getContainerOfType(cxEntity, Module.class);
 		String fileName = CflowUtil.getFileName(module);
@@ -164,7 +164,7 @@ public class SkeletonMaker extends DpnSwitch<Void> {
 		}
 	}
 
-	private void translateStateVars(Entity entity, NamedEntity cxEntity) {
+	private void translateStateVars(Entity entity, CxEntity cxEntity) {
 		// transform variables and constant functions
 		for (Variable variable : CflowUtil.getStateVars(cxEntity.getDecls())) {
 			if (CflowUtil.isConstant(variable) || !CflowUtil.isFunction(variable)) {

@@ -34,9 +34,9 @@ import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.synflow.cflow.cflow.CflowPackage.Literals;
+import com.synflow.cflow.cflow.CxEntity;
 import com.synflow.cflow.cflow.Inst;
 import com.synflow.cflow.cflow.Instantiable;
-import com.synflow.cflow.cflow.NamedEntity;
 import com.synflow.cflow.cflow.Network;
 import com.synflow.cflow.internal.instantiation.properties.PropertiesSupport;
 import com.synflow.models.dpn.DPN;
@@ -63,7 +63,7 @@ public class InstantiatorImpl implements IInstantiator {
 
 	private Map<Entity, Map<EObject, EObject>> mapCxToIr;
 
-	private Multimap<NamedEntity, Entity> mapEntities;
+	private Multimap<CxEntity, Entity> mapEntities;
 
 	@Inject
 	private ResourceDescriptionsProvider provider;
@@ -143,7 +143,7 @@ public class InstantiatorImpl implements IInstantiator {
 	}
 
 	@Override
-	public void forEachMapping(NamedEntity cxEntity, Executable<Entity> executable) {
+	public void forEachMapping(CxEntity cxEntity, Executable<Entity> executable) {
 		for (Entity entity : getEntities(cxEntity)) {
 			Entity oldEntity = setEntity(entity);
 			try {
@@ -163,7 +163,7 @@ public class InstantiatorImpl implements IInstantiator {
 	}
 
 	@Override
-	public Iterable<Entity> getEntities(NamedEntity cxEntity) {
+	public Iterable<Entity> getEntities(CxEntity cxEntity) {
 		return mapEntities.get(cxEntity);
 	}
 
@@ -176,7 +176,7 @@ public class InstantiatorImpl implements IInstantiator {
 	}
 
 	private Entity instantiate(EntityInfo info, InstantiationContext ctx) {
-		NamedEntity cxEntity = info.getCxEntity();
+		CxEntity cxEntity = info.getCxEntity();
 		Entity entity = info.loadEntity();
 		if (entity == null) {
 			entity = entityMapper.doSwitch(info.getCxEntity());

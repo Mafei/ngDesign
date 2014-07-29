@@ -25,10 +25,10 @@ import org.eclipse.xtext.scoping.impl.ImportedNamespaceAwareLocalScopeProvider;
 
 import com.google.common.collect.Lists;
 import com.synflow.cflow.cflow.CflowPackage.Literals;
+import com.synflow.cflow.cflow.CxEntity;
 import com.synflow.cflow.cflow.Import;
 import com.synflow.cflow.cflow.Imported;
 import com.synflow.cflow.cflow.Module;
-import com.synflow.cflow.cflow.NamedEntity;
 
 /**
  * This class defines a simple namespace aware scope provider for Java-like imports in C~.
@@ -108,8 +108,8 @@ public class CflowImportedNamespaceScopeProvider extends ImportedNamespaceAwareL
 		if (context instanceof Module) {
 			Module module = (Module) context;
 			return getImportNormalizers(module.getImports(), ignoreCase);
-		} else if (context instanceof NamedEntity) {
-			NamedEntity entity = (NamedEntity) context;
+		} else if (context instanceof CxEntity) {
+			CxEntity entity = (CxEntity) context;
 			return getImportNormalizers(entity.getImports(), ignoreCase);
 		} else {
 			return Collections.emptyList();

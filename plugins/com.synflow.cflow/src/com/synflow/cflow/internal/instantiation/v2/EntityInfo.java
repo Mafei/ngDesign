@@ -16,7 +16,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 
-import com.synflow.cflow.cflow.NamedEntity;
+import com.synflow.cflow.cflow.CxEntity;
 import com.synflow.models.dpn.Entity;
 
 /**
@@ -28,19 +28,19 @@ import com.synflow.models.dpn.Entity;
  */
 public class EntityInfo {
 
-	private NamedEntity cxEntity;
+	private CxEntity cxEntity;
 
 	private String name;
 
 	private URI uri;
 
-	public EntityInfo(NamedEntity cxEntity, String name, URI uri) {
+	public EntityInfo(CxEntity cxEntity, String name, URI uri) {
 		this.cxEntity = cxEntity;
 		this.name = name;
 		this.uri = uri;
 	}
 
-	public NamedEntity getCxEntity() {
+	public CxEntity getCxEntity() {
 		return cxEntity;
 	}
 

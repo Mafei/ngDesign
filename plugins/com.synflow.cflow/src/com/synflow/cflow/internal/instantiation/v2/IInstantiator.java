@@ -14,7 +14,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 
 import com.google.inject.ImplementedBy;
-import com.synflow.cflow.cflow.NamedEntity;
+import com.synflow.cflow.cflow.CxEntity;
 import com.synflow.models.dpn.Entity;
 import com.synflow.models.util.Executable;
 
@@ -36,7 +36,7 @@ public interface IInstantiator {
 	 * @param executable
 	 *            an executable
 	 */
-	void forEachMapping(NamedEntity cxEntity, Executable<Entity> executable);
+	void forEachMapping(CxEntity cxEntity, Executable<Entity> executable);
 
 	/**
 	 * Returns the entities that have been instantiated.
@@ -45,7 +45,7 @@ public interface IInstantiator {
 	 */
 	Iterable<Entity> getEntities();
 
-	Iterable<Entity> getEntities(NamedEntity cxEntity);
+	Iterable<Entity> getEntities(CxEntity cxEntity);
 
 	<T extends EObject, U extends EObject> U getMapping(T cxObj);
 

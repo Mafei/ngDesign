@@ -19,7 +19,7 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 
-import com.synflow.cflow.cflow.NamedEntity;
+import com.synflow.cflow.cflow.CxEntity;
 
 /**
  * This class defines a simple sorter for our Project Explorer view.
@@ -78,8 +78,8 @@ public class CflowComparator extends ViewerComparator {
 	private String getElementName(Object element) {
 		if (element instanceof IJavaElement) {
 			return ((IJavaElement) element).getElementName();
-		} else if (element instanceof NamedEntity) {
-			return ((NamedEntity) element).getName();
+		} else if (element instanceof CxEntity) {
+			return ((CxEntity) element).getName();
 		} else {
 			return element.toString();
 		}

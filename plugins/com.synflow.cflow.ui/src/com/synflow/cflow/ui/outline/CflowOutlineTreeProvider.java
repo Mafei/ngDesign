@@ -32,12 +32,12 @@ import com.synflow.cflow.CflowUtil;
 import com.synflow.cflow.cflow.CType;
 import com.synflow.cflow.cflow.CflowPackage.Literals;
 import com.synflow.cflow.cflow.Connect;
+import com.synflow.cflow.cflow.CxEntity;
 import com.synflow.cflow.cflow.Import;
 import com.synflow.cflow.cflow.Imported;
 import com.synflow.cflow.cflow.Inst;
 import com.synflow.cflow.cflow.Module;
 import com.synflow.cflow.cflow.MultiPortDecl;
-import com.synflow.cflow.cflow.NamedEntity;
 import com.synflow.cflow.cflow.Obj;
 import com.synflow.cflow.cflow.PortDef;
 import com.synflow.cflow.cflow.SinglePortDecl;
@@ -75,10 +75,21 @@ public class CflowOutlineTreeProvider extends DefaultOutlineTreeProvider {
 		}
 
 		// create node
-		for (NamedEntity entity : module.getEntities()) {
+		for (CxEntity entity : module.getEntities()) {
 			EObjectNode node = createEObjectNode(parentNode, entity);
 			createNode(node, entity);
 		}
+	}
+
+	protected void _createNode(EObjectNode parent, CxEntity entity) {
+		// entity imports
+		if (!entity.getImports().isEmpty()) {
+			Image image = imageHelper.getImage("impc_obj.gif");
+			createEStructuralFeatureNode(parent, entity, Literals.CX_ENTITY__IMPORTS, image,
+					"imports", false);
+		}
+
+		createChildren(parent, entity);
 	}
 
 	protected void _createNode(EObjectNode parent, Import import_) {
@@ -96,17 +107,6 @@ public class CflowOutlineTreeProvider extends DefaultOutlineTreeProvider {
 		for (SinglePortDecl portDecl : portDecls.getDecls()) {
 			createNode(parent, portDecl);
 		}
-	}
-
-	protected void _createNode(EObjectNode parent, NamedEntity entity) {
-		// entity imports
-		if (!entity.getImports().isEmpty()) {
-			Image image = imageHelper.getImage("impc_obj.gif");
-			createEStructuralFeatureNode(parent, entity, Literals.NAMED_ENTITY__IMPORTS, image,
-					"imports", false);
-		}
-
-		createChildren(parent, entity);
 	}
 
 	protected void _createNode(EObjectNode parent, Obj object) {
@@ -127,7 +127,7 @@ public class CflowOutlineTreeProvider extends DefaultOutlineTreeProvider {
 
 	protected void _createNode(EStructuralFeatureNode parent, Import import_) {
 		for (Imported imported : import_.getImported()) {
-			NamedEntity type = imported.getType();
+			CxEntity type = imported.getType();
 			if (type != null) {
 				Object text = textDispatcher.invoke(imported);
 				Image image = imageDispatcher.invoke(imported);

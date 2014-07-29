@@ -25,9 +25,9 @@ import org.eclipse.xtext.validation.Check;
 import com.google.inject.Inject;
 import com.synflow.cflow.CflowUtil;
 import com.synflow.cflow.cflow.CflowPackage.Literals;
+import com.synflow.cflow.cflow.CxEntity;
 import com.synflow.cflow.cflow.Instantiable;
 import com.synflow.cflow.cflow.Module;
-import com.synflow.cflow.cflow.NamedEntity;
 import com.synflow.cflow.cflow.Network;
 import com.synflow.cflow.cflow.Task;
 import com.synflow.cflow.cflow.Variable;
@@ -76,7 +76,7 @@ public class CflowJavaValidator extends AbstractCflowJavaValidator {
 		final NetworkChecker networkChecker = new NetworkChecker(this, mapper);
 
 		// for each entity of the module
-		for (final NamedEntity cxEntity : module.getEntities()) {
+		for (final CxEntity cxEntity : module.getEntities()) {
 			instantiator.forEachMapping(cxEntity, new Executable<Entity>() {
 				@Override
 				public void exec(Entity entity) {

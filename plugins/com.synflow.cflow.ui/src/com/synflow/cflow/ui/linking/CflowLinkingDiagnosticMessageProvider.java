@@ -15,7 +15,7 @@ import org.eclipse.xtext.diagnostics.DiagnosticMessage;
 import org.eclipse.xtext.diagnostics.Severity;
 import org.eclipse.xtext.linking.impl.LinkingDiagnosticMessageProvider;
 
-import com.synflow.cflow.cflow.NamedEntity;
+import com.synflow.cflow.cflow.CxEntity;
 import com.synflow.cflow.cflow.VarRef;
 
 /**
@@ -30,7 +30,7 @@ public class CflowLinkingDiagnosticMessageProvider extends LinkingDiagnosticMess
 	public DiagnosticMessage getUnresolvedProxyMessage(final ILinkingDiagnosticContext context) {
 		EObject element = context.getContext();
 		String link = context.getLinkText();
-		if (element instanceof NamedEntity) {
+		if (element instanceof CxEntity) {
 			return new DiagnosticMessage(link + " cannot be imported", Severity.ERROR, null);
 		} else if (element instanceof VarRef) {
 			return new DiagnosticMessage(link + " cannot be resolved", Severity.ERROR, null);

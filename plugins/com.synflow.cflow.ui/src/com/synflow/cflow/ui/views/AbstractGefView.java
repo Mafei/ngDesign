@@ -50,8 +50,8 @@ import org.eclipse.xtext.ui.editor.model.IXtextModelListener;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 
 import com.google.inject.Inject;
+import com.synflow.cflow.cflow.CxEntity;
 import com.synflow.cflow.cflow.Module;
-import com.synflow.cflow.cflow.NamedEntity;
 import com.synflow.cflow.ui.internal.views.graph.DirtyMarqueeTool;
 import com.synflow.core.util.CoreUtil;
 import com.synflow.models.dpn.Entity;
@@ -154,7 +154,7 @@ public abstract class AbstractGefView extends ViewPart implements IPartListener,
 		ILeafNode leafNode = NodeModelUtils.findLeafNodeAtOffset(rootNode, offset);
 
 		EObject eObject = NodeModelUtils.findActualSemanticObjectFor(leafNode);
-		NamedEntity entity = EcoreUtil2.getContainerOfType(eObject, NamedEntity.class);
+		CxEntity entity = EcoreUtil2.getContainerOfType(eObject, CxEntity.class);
 		if (entity != null) {
 			return nameProvider.getFullyQualifiedName(entity).toString();
 		}

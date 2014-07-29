@@ -32,9 +32,9 @@ import com.google.gson.JsonPrimitive;
 import com.synflow.cflow.cflow.Block;
 import com.synflow.cflow.cflow.Branch;
 import com.synflow.cflow.cflow.Bundle;
+import com.synflow.cflow.cflow.CxEntity;
 import com.synflow.cflow.cflow.Inst;
 import com.synflow.cflow.cflow.Module;
-import com.synflow.cflow.cflow.NamedEntity;
 import com.synflow.cflow.cflow.Network;
 import com.synflow.cflow.cflow.Statement;
 import com.synflow.cflow.cflow.StatementIf;
@@ -238,7 +238,7 @@ public class CommentTranslator extends CflowSwitch<Void> {
 	 * @param decls
 	 *            state variables
 	 */
-	private void setJavadoc(NamedEntity cxEntity, EList<VarDecl> decls) {
+	private void setJavadoc(CxEntity cxEntity, EList<VarDecl> decls) {
 		for (Entity entity : instantiator.getEntities(cxEntity)) {
 			JsonObject properties = entity.getProperties();
 			if (copyright != null) {

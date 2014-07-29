@@ -47,8 +47,8 @@ import com.google.inject.Provider;
 import com.synflow.cflow.CflowInjectorProvider;
 import com.synflow.cflow.CflowStandaloneSetup;
 import com.synflow.cflow.UriComputer;
+import com.synflow.cflow.cflow.CxEntity;
 import com.synflow.cflow.cflow.Module;
-import com.synflow.cflow.cflow.NamedEntity;
 import com.synflow.cflow.validation.CflowJavaValidator;
 import com.synflow.core.SynflowCore;
 import com.synflow.models.dpn.Actor;
@@ -231,9 +231,9 @@ public abstract class AbstractCflowTest extends AbstractXtextTests {
 		// clears loaded resources to force reloading them from disk
 		resourceSet.getResources().clear();
 
-		return Iterables.transform(module.getEntities(), new Function<NamedEntity, Entity>() {
+		return Iterables.transform(module.getEntities(), new Function<CxEntity, Entity>() {
 			@Override
-			public Entity apply(NamedEntity input) {
+			public Entity apply(CxEntity input) {
 				return getEntity(module.getPackage() + "." + input.getName());
 			}
 		});

@@ -21,13 +21,13 @@ generate cflow "http://www.synflow.com/cflow/Cflow"
 Module:
 	'package' package = QualifiedName ';'
 	(imports += Import)*
-	(entities += NamedEntity)*
+	(entities += CxEntity)*
 ;
 
 Import: 'import' imported += Imported (',' imported += Imported)* ';'
 ;
 
-Imported: type=[NamedEntity|QualifiedName] (wildcard ?= '.' '*')?;
+Imported: type=[CxEntity|QualifiedName] (wildcard ?= '.' '*')?;
 
 QualifiedName:
 	ValidID (=> '.' ValidID)*
@@ -36,7 +36,7 @@ QualifiedName:
 ValidID:
 	ID;
 
-NamedEntity: Bundle | Instantiable;
+CxEntity: Bundle | Instantiable;
 
 ///////////////////////////////////////////////////////////////////////////////
 // task and network level

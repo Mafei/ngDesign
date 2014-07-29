@@ -35,9 +35,9 @@ import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculato
 
 import com.synflow.cflow.CflowUtil;
 import com.synflow.cflow.cflow.CflowPackage.Literals;
+import com.synflow.cflow.cflow.CxEntity;
 import com.synflow.cflow.cflow.Inst;
 import com.synflow.cflow.cflow.Module;
-import com.synflow.cflow.cflow.NamedEntity;
 import com.synflow.cflow.cflow.Network;
 import com.synflow.cflow.cflow.Task;
 import com.synflow.cflow.cflow.TypeRef;
@@ -62,17 +62,17 @@ public class CflowSemanticHighlightingCalculator implements ISemanticHighlightin
 		}
 
 		@Override
-		public Void caseInst(Inst inst) {
-			return visit(this, inst.getTask());
-		}
-
-		@Override
-		public Void caseNamedEntity(NamedEntity entity) {
+		public Void caseCxEntity(CxEntity entity) {
 			for (Typedef typeDef : entity.getTypes()) {
 				addPosition(acceptor, TYPE_ID, typeDef, Literals.TYPEDEF__NAME);
 			}
 
 			return DONE;
+		}
+
+		@Override
+		public Void caseInst(Inst inst) {
+			return visit(this, inst.getTask());
 		}
 
 		@Override

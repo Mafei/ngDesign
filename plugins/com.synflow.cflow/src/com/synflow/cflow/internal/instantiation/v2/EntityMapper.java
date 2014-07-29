@@ -34,10 +34,10 @@ import com.synflow.cflow.UriComputer;
 import com.synflow.cflow.cflow.Bundle;
 import com.synflow.cflow.cflow.CExpression;
 import com.synflow.cflow.cflow.CflowPackage.Literals;
+import com.synflow.cflow.cflow.CxEntity;
 import com.synflow.cflow.cflow.Inst;
 import com.synflow.cflow.cflow.Instantiable;
 import com.synflow.cflow.cflow.Module;
-import com.synflow.cflow.cflow.NamedEntity;
 import com.synflow.cflow.cflow.Network;
 import com.synflow.cflow.cflow.Task;
 import com.synflow.cflow.cflow.Variable;
@@ -144,6 +144,22 @@ public class EntityMapper extends CflowSwitch<Entity> {
 	 *            a Cx instance
 	 * @return info about the IR entity
 	 */
+	public EntityInfo getEntityInfo(CxEntity cxEntity) {
+		// get URI of .ir file
+		URI cxUri = cxEntity.eResource().getURI();
+		String name = getName(cxEntity);
+		URI uri = UriComputer.INSTANCE.computeUri(null, cxUri, name);
+
+		return new EntityInfo(cxEntity, name, uri);
+	}
+
+	/**
+	 * Returns info for the IR entity instantiated by the given instance.
+	 * 
+	 * @param inst
+	 *            a Cx instance
+	 * @return info about the IR entity
+	 */
 	public EntityInfo getEntityInfo(Inst inst, InstantiationContext ctx) {
 		Instantiable cxEntity;
 		if (inst.getTask() == null) {
@@ -172,29 +188,13 @@ public class EntityMapper extends CflowSwitch<Entity> {
 	}
 
 	/**
-	 * Returns info for the IR entity instantiated by the given instance.
-	 * 
-	 * @param inst
-	 *            a Cx instance
-	 * @return info about the IR entity
-	 */
-	public EntityInfo getEntityInfo(NamedEntity cxEntity) {
-		// get URI of .ir file
-		URI cxUri = cxEntity.eResource().getURI();
-		String name = getName(cxEntity);
-		URI uri = UriComputer.INSTANCE.computeUri(null, cxUri, name);
-
-		return new EntityInfo(cxEntity, name, uri);
-	}
-
-	/**
 	 * Returns the qualified name of the given entity.
 	 * 
 	 * @param entity
 	 *            Cx entity
 	 * @return a name
 	 */
-	private String getName(NamedEntity entity) {
+	private String getName(CxEntity entity) {
 		QualifiedName qualifiedName = qualifiedNameProvider.getFullyQualifiedName(entity);
 		if (qualifiedName == null) {
 			return null;
@@ -212,7 +212,7 @@ public class EntityMapper extends CflowSwitch<Entity> {
 	 *            instantiation context
 	 * @return a map
 	 */
-	private Map<Variable, EObject> getVariablesMap(NamedEntity cxEntity, InstantiationContext ctx) {
+	private Map<Variable, EObject> getVariablesMap(CxEntity cxEntity, InstantiationContext ctx) {
 		return visitProperties(cxEntity, ctx, false);
 	}
 
@@ -238,7 +238,7 @@ public class EntityMapper extends CflowSwitch<Entity> {
 	 *            instantiation context
 	 * @return a map of variable - value association
 	 */
-	private Map<Variable, EObject> setValues(NamedEntity cxEntity, InstantiationContext ctx) {
+	private Map<Variable, EObject> setValues(CxEntity cxEntity, InstantiationContext ctx) {
 		return visitProperties(cxEntity, ctx, true);
 	}
 
@@ -255,7 +255,7 @@ public class EntityMapper extends CflowSwitch<Entity> {
 	 *            if true, update the value of affected variables
 	 * @return a map
 	 */
-	private Map<Variable, EObject> visitProperties(NamedEntity cxEntity, InstantiationContext ctx,
+	private Map<Variable, EObject> visitProperties(CxEntity cxEntity, InstantiationContext ctx,
 			boolean set) {
 		Map<Variable, EObject> previous = new HashMap<>();
 		if (ctx.getProperties().isEmpty()) {
