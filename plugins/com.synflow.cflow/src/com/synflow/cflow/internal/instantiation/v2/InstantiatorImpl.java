@@ -43,6 +43,7 @@ import com.synflow.models.dpn.DPN;
 import com.synflow.models.dpn.DpnFactory;
 import com.synflow.models.dpn.Entity;
 import com.synflow.models.dpn.Instance;
+import com.synflow.models.util.Executable;
 
 /**
  * This class defines the default implementation of the instantiator.
@@ -142,6 +143,19 @@ public class InstantiatorImpl implements IInstantiator {
 	}
 
 	@Override
+	public void forEachMapping(NamedEntity cxEntity, Executable<Entity> executable) {
+		for (Entity entity : getEntities(cxEntity)) {
+			Entity oldEntity = setEntity(entity);
+			try {
+				executable.exec(entity);
+			} finally {
+				setEntity(oldEntity);
+			}
+		}
+
+	}
+
+	@Override
 	public Iterable<Entity> getEntities() {
 		List<Entity> result = entities;
 		entities = new ArrayList<>();
@@ -165,7 +179,13 @@ public class InstantiatorImpl implements IInstantiator {
 		NamedEntity cxEntity = info.getCxEntity();
 		Entity entity = info.loadEntity();
 		if (entity == null) {
-			entity = entityMapper.createEntity(info, ctx);
+			entity = entityMapper.doSwitch(info.getCxEntity());
+			Entity oldEntity = setEntity(entity);
+			try {
+				entityMapper.configureEntity(entity, info, ctx);
+			} finally {
+				setEntity(oldEntity);
+			}
 			entities.add(entity);
 			mapEntities.put(cxEntity, entity);
 		}
@@ -205,8 +225,7 @@ public class InstantiatorImpl implements IInstantiator {
 		map.put(cxObj, irObj);
 	}
 
-	@Override
-	public Entity setEntity(Entity entity) {
+	private Entity setEntity(Entity entity) {
 		Entity oldEntity = this.entity;
 		this.entity = entity;
 		return oldEntity;

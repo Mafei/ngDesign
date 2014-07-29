@@ -66,9 +66,6 @@ public class EntityMapper extends CflowSwitch<Entity> {
 	private IQualifiedNameConverter converter;
 
 	@Inject
-	private IInstantiator instantiator;
-
-	@Inject
 	private IQualifiedNameProvider qualifiedNameProvider;
 
 	@Inject
@@ -99,11 +96,19 @@ public class EntityMapper extends CflowSwitch<Entity> {
 		return actor;
 	}
 
-	public Entity createEntity(EntityInfo info, InstantiationContext ctx) {
-		// add entity to resource
-		Entity entity = doSwitch(info.getCxEntity());
-		Entity oldEntity = instantiator.setEntity(entity);
-
+	/**
+	 * Configures the given IR entity from the Cx entity info and the instantiation context. Sets
+	 * basic properties (name, file name, line number) and translates skeleton (state variables,
+	 * ports...)
+	 * 
+	 * @param entity
+	 *            IR entity
+	 * @param info
+	 *            Cx entity info
+	 * @param ctx
+	 *            instantiation context
+	 */
+	public void configureEntity(Entity entity, EntityInfo info, InstantiationContext ctx) {
 		// set name
 		entity.setName(info.getName());
 
@@ -129,11 +134,7 @@ public class EntityMapper extends CflowSwitch<Entity> {
 		} finally {
 			// restore values
 			restoreValues(values);
-
-			// restore current entity in instantiator
-			instantiator.setEntity(oldEntity);
 		}
-		return entity;
 	}
 
 	/**

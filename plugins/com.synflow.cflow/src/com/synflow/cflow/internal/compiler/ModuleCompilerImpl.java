@@ -55,6 +55,7 @@ import com.synflow.models.dpn.DPN;
 import com.synflow.models.dpn.Entity;
 import com.synflow.models.dpn.Unit;
 import com.synflow.models.ir.util.IrUtil;
+import com.synflow.models.util.Executable;
 import com.synflow.models.util.Void;
 
 /**
@@ -78,13 +79,14 @@ public class ModuleCompilerImpl extends CflowSwitch<Void> implements IModuleComp
 	private Typer typer;
 
 	@Override
-	public Void caseBundle(Bundle bundle) {
-		for (Entity entity : instantiator.getEntities(bundle)) {
-			Entity oldEntity = instantiator.setEntity(entity);
-			transformBundle(bundle, (Unit) entity);
-			instantiator.setEntity(oldEntity);
-			serialize(entity);
-		}
+	public Void caseBundle(final Bundle bundle) {
+		instantiator.forEachMapping(bundle, new Executable<Entity>() {
+			@Override
+			public void exec(Entity entity) {
+				transformBundle(bundle, (Unit) entity);
+				serialize(entity);
+			}
+		});
 		return DONE;
 	}
 
@@ -102,28 +104,30 @@ public class ModuleCompilerImpl extends CflowSwitch<Void> implements IModuleComp
 	}
 
 	@Override
-	public Void caseNetwork(Network network) {
-		for (Entity entity : instantiator.getEntities(network)) {
-			Entity oldEntity = instantiator.setEntity(entity);
-			DPN dpn = (DPN) entity;
-			for (Inst inst : network.getInstances()) {
-				doSwitch(inst);
-			}
+	public Void caseNetwork(final Network network) {
+		instantiator.forEachMapping(network, new Executable<Entity>() {
+			@Override
+			public void exec(Entity entity) {
+				DPN dpn = (DPN) entity;
+				for (Inst inst : network.getInstances()) {
+					doSwitch(inst);
+				}
 
-			instantiator.setEntity(oldEntity);
-			serialize(dpn);
-		}
+				serialize(dpn);
+			}
+		});
 		return DONE;
 	}
 
 	@Override
-	public Void caseTask(Task task) {
-		for (Entity entity : instantiator.getEntities(task)) {
-			Entity oldEntity = instantiator.setEntity(entity);
-			transformTask(task, (Actor) entity);
-			instantiator.setEntity(oldEntity);
-			serialize(entity);
-		}
+	public Void caseTask(final Task task) {
+		instantiator.forEachMapping(task, new Executable<Entity>() {
+			@Override
+			public void exec(Entity entity) {
+				transformTask(task, (Actor) entity);
+				serialize(entity);
+			}
+		});
 		return DONE;
 	}
 

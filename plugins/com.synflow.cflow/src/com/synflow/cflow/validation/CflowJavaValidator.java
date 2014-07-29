@@ -38,9 +38,9 @@ import com.synflow.cflow.internal.scheduler.CycleDetector;
 import com.synflow.cflow.internal.services.Typer;
 import com.synflow.cflow.internal.validation.NetworkChecker;
 import com.synflow.cflow.internal.validation.TypeChecker;
-import com.synflow.core.SynflowCore;
 import com.synflow.models.dpn.DPN;
 import com.synflow.models.dpn.Entity;
+import com.synflow.models.util.Executable;
 
 /**
  * This class defines a validator for C~ source files.
@@ -73,15 +73,13 @@ public class CflowJavaValidator extends AbstractCflowJavaValidator {
 		instantiator.update(module.eResource().getResourceSet());
 		// }
 
-		NetworkChecker networkChecker = new NetworkChecker(this, mapper);
+		final NetworkChecker networkChecker = new NetworkChecker(this, mapper);
 
 		// for each entity of the module
-		for (NamedEntity cxEntity : module.getEntities()) {
-			// for each specialized version of that entity
-			for (Entity entity : instantiator.getEntities(cxEntity)) {
-				try {
-					instantiator.setEntity(entity);
-
+		for (final NamedEntity cxEntity : module.getEntities()) {
+			instantiator.forEachMapping(cxEntity, new Executable<Entity>() {
+				@Override
+				public void exec(Entity entity) {
 					if (entity instanceof DPN) {
 						// check connectivity
 						Network network = (Network) cxEntity;
@@ -90,17 +88,13 @@ public class CflowJavaValidator extends AbstractCflowJavaValidator {
 					}
 
 					// check types
-					new TypeChecker(this, typer).doSwitch(cxEntity);
-				} catch (Exception e) {
-					SynflowCore.log(e);
-
-					instantiator.setEntity(null);
+					new TypeChecker(CflowJavaValidator.this, typer).doSwitch(cxEntity);
 
 					if (cxEntity instanceof Instantiable) {
 						printErrors((Instantiable) cxEntity);
 					}
 				}
-			}
+			});
 		}
 	}
 
@@ -151,7 +145,7 @@ public class CflowJavaValidator extends AbstractCflowJavaValidator {
 	 * @param scope
 	 *            scope of functions
 	 */
-	public void validate(Task task, Variable setup, Variable run) {
+	public void validate(Task task, Variable setup, final Variable run) {
 		for (Variable variable : CflowUtil.getStateVars(task.getDecls())) {
 			if (!CflowUtil.isFunction(variable) && !CflowUtil.isConstant(variable)) {
 				String message = "A combinational task cannot declare state variables";
@@ -166,10 +160,15 @@ public class CflowJavaValidator extends AbstractCflowJavaValidator {
 		}
 
 		if (run != null) {
-			if (new CycleDetector(mapper).hasCycleBreaks(run)) {
-				String message = "A combinational task must not have cycle breaks";
-				error(message, run, null, -1);
-			}
+			instantiator.forEachMapping(task, new Executable<Entity>() {
+				@Override
+				public void exec(Entity entity) {
+					if (new CycleDetector(mapper).hasCycleBreaks(run)) {
+						String message = "A combinational task must not have cycle breaks";
+						error(message, run, null, -1);
+					}
+				}
+			});
 		}
 	}
 

@@ -16,6 +16,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import com.google.inject.ImplementedBy;
 import com.synflow.cflow.cflow.NamedEntity;
 import com.synflow.models.dpn.Entity;
+import com.synflow.models.util.Executable;
 
 /**
  * This interface defines an instantiator.
@@ -25,6 +26,17 @@ import com.synflow.models.dpn.Entity;
  */
 @ImplementedBy(InstantiatorImpl.class)
 public interface IInstantiator {
+
+	/**
+	 * For each IR entity associated to the given Cx entity, calls the executable. setEntity is
+	 * called before and after the runnable to set the current entity.
+	 * 
+	 * @param cxEntity
+	 *            Cx entity
+	 * @param executable
+	 *            an executable
+	 */
+	void forEachMapping(NamedEntity cxEntity, Executable<Entity> executable);
 
 	/**
 	 * Returns the entities that have been instantiated.
@@ -38,8 +50,6 @@ public interface IInstantiator {
 	<T extends EObject, U extends EObject> U getMapping(T cxObj);
 
 	<T extends EObject, U extends EObject> void putMapping(T cxObj, U irObj);
-
-	Entity setEntity(Entity entity);
 
 	void update(ResourceSet resourceSet);
 

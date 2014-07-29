@@ -47,11 +47,11 @@ import com.synflow.cflow.internal.instantiation.IMapper;
 import com.synflow.cflow.internal.instantiation.v2.IInstantiator;
 import com.synflow.cflow.internal.services.BoolCflowSwitch;
 import com.synflow.cflow.internal.services.Typer;
-import com.synflow.core.SynflowCore;
 import com.synflow.models.dpn.Entity;
 import com.synflow.models.dpn.InterfaceType;
 import com.synflow.models.dpn.Port;
 import com.synflow.models.ir.Type;
+import com.synflow.models.util.Executable;
 
 /**
  * This class defines a validator for C~ expressions.
@@ -122,13 +122,13 @@ public class ExpressionValidator extends AbstractDeclarativeValidator {
 	}
 
 	@Check
-	public void checkMultipleReads(CExpression expr) {
+	public void checkMultipleReads(final CExpression expr) {
 		// Checks that there are at most one read per port in the expression. Otherwise indicate an
 		// error.
 		Task task = EcoreUtil2.getContainerOfType(expr, Task.class);
-		for (Entity entity : instantiator.getEntities(task)) {
-			Entity oldEntity = instantiator.setEntity(entity);
-			try {
+		instantiator.forEachMapping(task, new Executable<Entity>() {
+			@Override
+			public void exec(Entity entity) {
 				Multiset<Port> portsRead = LinkedHashMultiset.create();
 				Multiset<Port> portsAvailable = LinkedHashMultiset.create();
 				computePortSets(portsAvailable, portsRead, expr);
@@ -142,12 +142,8 @@ public class ExpressionValidator extends AbstractDeclarativeValidator {
 					error("Port error: cannot have more than one read per port in expression",
 							expr, null, ERR_MULTIPLE_READS);
 				}
-			} catch (Exception e) {
-				SynflowCore.log(e);
-
-				instantiator.setEntity(oldEntity);
 			}
-		}
+		});
 	}
 
 	@Check
