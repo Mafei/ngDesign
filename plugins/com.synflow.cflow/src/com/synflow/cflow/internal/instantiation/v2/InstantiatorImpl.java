@@ -22,21 +22,23 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.resource.IReferenceDescription;
 import org.eclipse.xtext.resource.IResourceDescription;
 import org.eclipse.xtext.resource.IResourceDescriptions;
 import org.eclipse.xtext.resource.impl.ResourceDescriptionsProvider;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.synflow.cflow.cflow.Bundle;
 import com.synflow.cflow.cflow.CflowPackage.Literals;
 import com.synflow.cflow.cflow.CxEntity;
 import com.synflow.cflow.cflow.Inst;
-import com.synflow.cflow.cflow.Instantiable;
 import com.synflow.cflow.cflow.Network;
 import com.synflow.cflow.internal.instantiation.properties.PropertiesSupport;
 import com.synflow.models.dpn.DPN;
@@ -103,19 +105,18 @@ public class InstantiatorImpl implements IInstantiator {
 		return instance;
 	}
 
-	private Iterable<Instantiable> findTopFrom(ResourceSet resourceSet) {
+	private Iterable<CxEntity> findTopFrom(ResourceSet resourceSet) {
 		Set<URI> topUris = Sets.newLinkedHashSet();
 
 		IResourceDescriptions resourceDescriptions = provider.getResourceDescriptions(resourceSet);
 
-		// collect all instantiable entities
-		EClass type = Literals.INSTANTIABLE;
+		// collect all entities (bundles and instantiable entities)
+		EClass type = Literals.CX_ENTITY;
 		for (IEObjectDescription objDesc : resourceDescriptions.getExportedObjectsByType(type)) {
 			topUris.add(objDesc.getEObjectURI());
 		}
 
 		// remove all entities that are instantiated
-		type = Literals.NETWORK;
 		for (IResourceDescription resDesc : resourceDescriptions.getAllResourceDescriptions()) {
 			for (IReferenceDescription refDesc : resDesc.getReferenceDescriptions()) {
 				if (refDesc.getEReference() == Literals.INST__ENTITY) {
@@ -126,20 +127,20 @@ public class InstantiatorImpl implements IInstantiator {
 		}
 
 		// loads objects from topUris
-		List<Instantiable> instantiables = new ArrayList<>(topUris.size());
+		List<CxEntity> entities = new ArrayList<>(topUris.size());
 		for (URI uri : topUris) {
 			URI uriRes = uri.trimFragment();
 			IResourceDescription resDesc = resourceDescriptions.getResourceDescription(uriRes);
-			type = Literals.INSTANTIABLE;
+			type = Literals.CX_ENTITY;
 			for (IEObjectDescription objDesc : resDesc.getExportedObjectsByType(type)) {
 				if (uri.equals(objDesc.getEObjectURI())) {
 					EObject proxy = objDesc.getEObjectOrProxy();
 					EObject resolved = EcoreUtil.resolve(proxy, resourceSet);
-					instantiables.add((Instantiable) resolved);
+					entities.add((CxEntity) resolved);
 				}
 			}
 		}
-		return instantiables;
+		return entities;
 	}
 
 	@Override
@@ -172,7 +173,17 @@ public class InstantiatorImpl implements IInstantiator {
 	public <T extends EObject, U extends EObject> U getMapping(T cxObj) {
 		Objects.requireNonNull(entity, "must call setEntity before getMapping");
 
-		return (U) mapCxToIr.get(entity).get(cxObj);
+		U irObj = (U) mapCxToIr.get(entity).get(cxObj);
+		if (irObj == null) {
+			CxEntity cxEntity = EcoreUtil2.getContainerOfType(cxObj, CxEntity.class);
+			if (cxEntity instanceof Bundle) {
+				Entity entity = Iterables.getFirst(mapEntities.get(cxEntity), null);
+				if (entity != null) {
+					irObj = (U) mapCxToIr.get(entity).get(cxObj);
+				}
+			}
+		}
+		return irObj;
 	}
 
 	private Entity instantiate(EntityInfo info, InstantiationContext ctx) {
@@ -233,9 +244,9 @@ public class InstantiatorImpl implements IInstantiator {
 
 	@Override
 	public void update(ResourceSet resourceSet) {
-		for (Instantiable instantiable : findTopFrom(resourceSet)) {
-			EntityInfo info = entityMapper.getEntityInfo(instantiable);
-			instantiate(info, new InstantiationContext(instantiable.getName()));
+		for (CxEntity cxEntity : findTopFrom(resourceSet)) {
+			EntityInfo info = entityMapper.getEntityInfo(cxEntity);
+			instantiate(info, new InstantiationContext(cxEntity.getName()));
 		}
 	}
 
