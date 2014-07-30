@@ -15,7 +15,9 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 
 import com.google.inject.ImplementedBy;
 import com.synflow.cflow.cflow.CxEntity;
+import com.synflow.cflow.cflow.VarRef;
 import com.synflow.models.dpn.Entity;
+import com.synflow.models.dpn.Port;
 import com.synflow.models.util.Executable;
 
 /**
@@ -45,9 +47,23 @@ public interface IInstantiator {
 	 */
 	Iterable<Entity> getEntities();
 
-	Iterable<Entity> getEntities(CxEntity cxEntity);
-
+	/**
+	 * Returns the IR object that corresponds to the given Cx object.
+	 * 
+	 * @param cxObj
+	 *            a Cx object (entity, variable, port...)
+	 * @return the IR mapping
+	 */
 	<T extends EObject, U extends EObject> U getMapping(T cxObj);
+
+	/**
+	 * Returns the IR port that corresponds to the given reference.
+	 * 
+	 * @param ref
+	 *            a reference to a Cx port
+	 * @return an IR port
+	 */
+	Port getPort(VarRef ref);
 
 	<T extends EObject, U extends EObject> void putMapping(T cxObj, U irObj);
 

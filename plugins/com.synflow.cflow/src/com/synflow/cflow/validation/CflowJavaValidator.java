@@ -99,35 +99,39 @@ public class CflowJavaValidator extends AbstractCflowJavaValidator {
 	}
 
 	@Check
-	public void checkTask(Task task) {
-		Variable loop = CflowUtil.getFunction(task, NAME_LOOP);
-		if (loop == null) {
-			loop = CflowUtil.getFunction(task, NAME_LOOP_DEPRECATED);
-			if (loop == null) {
+	public void checkTask(final Task task) {
+		Variable function = CflowUtil.getFunction(task, NAME_LOOP);
+		if (function == null) {
+			function = CflowUtil.getFunction(task, NAME_LOOP_DEPRECATED);
+			if (function == null) {
 				return;
 			}
 		}
 
+		final Variable loop = function;
 		if (!CflowUtil.isVoid(loop)) {
 			String message = "The 'loop' function must have type void";
 			error(message, loop, Literals.VARIABLE__NAME, ERR_MAIN_FUNCTION_BAD_TYPE);
 		}
 
-		Variable setup = CflowUtil.getFunction(task, NAME_SETUP);
-		if (setup == null) {
-			setup = CflowUtil.getFunction(task, NAME_SETUP_DEPRECATED);
+		function = CflowUtil.getFunction(task, NAME_SETUP);
+		if (function == null) {
+			function = CflowUtil.getFunction(task, NAME_SETUP_DEPRECATED);
 		}
 
+		final Variable setup = function;
 		if (setup != null && !CflowUtil.isVoid(setup)) {
 			String message = "The 'setup' function must have type void";
 			error(message, setup, Literals.VARIABLE__NAME, ERR_MAIN_FUNCTION_BAD_TYPE);
 		}
 
-		for (Entity entity : instantiator.getEntities(task)) {
-			if (entity.getProperties().getAsJsonArray(PROP_CLOCKS).size() == 0) {
-				validate(task, setup, loop);
+		instantiator.forEachMapping(task, new Executable<Entity>() {
+			public void exec(Entity entity) {
+				if (entity.getProperties().getAsJsonArray(PROP_CLOCKS).size() == 0) {
+					validate(task, setup, loop);
+				}
 			}
-		}
+		});
 	}
 
 	private void printErrors(Instantiable entity) {

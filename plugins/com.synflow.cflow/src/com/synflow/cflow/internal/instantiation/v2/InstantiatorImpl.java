@@ -11,6 +11,7 @@
 package com.synflow.cflow.internal.instantiation.v2;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,11 +41,13 @@ import com.synflow.cflow.cflow.CflowPackage.Literals;
 import com.synflow.cflow.cflow.CxEntity;
 import com.synflow.cflow.cflow.Inst;
 import com.synflow.cflow.cflow.Network;
+import com.synflow.cflow.cflow.VarRef;
 import com.synflow.cflow.internal.instantiation.properties.PropertiesSupport;
 import com.synflow.models.dpn.DPN;
 import com.synflow.models.dpn.DpnFactory;
 import com.synflow.models.dpn.Entity;
 import com.synflow.models.dpn.Instance;
+import com.synflow.models.dpn.Port;
 import com.synflow.models.util.Executable;
 
 /**
@@ -105,6 +108,16 @@ public class InstantiatorImpl implements IInstantiator {
 		return instance;
 	}
 
+	/**
+	 * Finds all CxEntity objects that are at the top of the hierarchy. Computed as the set of URIs
+	 * of all entities, minus the set of URIs of entities that are instantiated. Currently the
+	 * collection this method returns includes bundles.
+	 * 
+	 * @param resourceSet
+	 *            a resource set from which we obtain an IResourceDescriptions object and that we
+	 *            use for solving proxies
+	 * @return an iterable over CxEntity
+	 */
 	private Iterable<CxEntity> findTopFrom(ResourceSet resourceSet) {
 		Set<URI> topUris = Sets.newLinkedHashSet();
 
@@ -145,7 +158,8 @@ public class InstantiatorImpl implements IInstantiator {
 
 	@Override
 	public void forEachMapping(CxEntity cxEntity, Executable<Entity> executable) {
-		for (Entity entity : getEntities(cxEntity)) {
+		Collection<Entity> entities = mapEntities.get(cxEntity);
+		for (Entity entity : entities) {
 			Entity oldEntity = setEntity(entity);
 			try {
 				executable.exec(entity);
@@ -161,11 +175,6 @@ public class InstantiatorImpl implements IInstantiator {
 		List<Entity> result = entities;
 		entities = new ArrayList<>();
 		return result;
-	}
-
-	@Override
-	public Iterable<Entity> getEntities(CxEntity cxEntity) {
-		return mapEntities.get(cxEntity);
 	}
 
 	@Override
@@ -186,6 +195,21 @@ public class InstantiatorImpl implements IInstantiator {
 		return irObj;
 	}
 
+	@Override
+	public Port getPort(VarRef ref) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * Instantiates a Cx entity based on the given info and instantiation context.
+	 * 
+	 * @param info
+	 *            entity info (URI of IR, name, reference to original Cx entity)
+	 * @param ctx
+	 *            instantiation context (hierarchical path, inherited properties)
+	 * @return a specialized IR entity
+	 */
 	private Entity instantiate(EntityInfo info, InstantiationContext ctx) {
 		CxEntity cxEntity = info.getCxEntity();
 		Entity entity = info.loadEntity();
@@ -210,6 +234,14 @@ public class InstantiatorImpl implements IInstantiator {
 		return entity;
 	}
 
+	/**
+	 * Instantiates the given network and its instances recursively, and connects the network.
+	 * 
+	 * @param network
+	 *            the network
+	 * @param ctx
+	 *            instantiation context (hierarchical path, inherited properties)
+	 */
 	private void instantiate(Network network, InstantiationContext ctx) {
 		DPN dpn = (DPN) entity;
 		for (Inst inst : network.getInstances()) {
@@ -236,6 +268,13 @@ public class InstantiatorImpl implements IInstantiator {
 		map.put(cxObj, irObj);
 	}
 
+	/**
+	 * Sets the current entity.
+	 * 
+	 * @param entity
+	 *            an entity
+	 * @return the entity that was previously the current entity (may be <code>null</code>)
+	 */
 	private Entity setEntity(Entity entity) {
 		Entity oldEntity = this.entity;
 		this.entity = entity;

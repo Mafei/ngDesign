@@ -46,6 +46,7 @@ import com.synflow.cflow.cflow.Variable;
 import com.synflow.cflow.cflow.util.CflowSwitch;
 import com.synflow.cflow.internal.instantiation.v2.IInstantiator;
 import com.synflow.models.dpn.Entity;
+import com.synflow.models.util.Executable;
 import com.synflow.models.util.Void;
 
 /**
@@ -238,25 +239,28 @@ public class CommentTranslator extends CflowSwitch<Void> {
 	 * @param decls
 	 *            state variables
 	 */
-	private void setJavadoc(CxEntity cxEntity, EList<VarDecl> decls) {
-		for (Entity entity : instantiator.getEntities(cxEntity)) {
-			JsonObject properties = entity.getProperties();
-			if (copyright != null) {
-				properties.add(PROP_COPYRIGHT, copyright);
-			}
+	private void setJavadoc(final CxEntity cxEntity, final EList<VarDecl> decls) {
+		instantiator.forEachMapping(cxEntity, new Executable<Entity>() {
+			@Override
+			public void exec(Entity entity) {
+				JsonObject properties = entity.getProperties();
+				if (copyright != null) {
+					properties.add(PROP_COPYRIGHT, copyright);
+				}
 
-			ICompositeNode node = NodeModelUtils.getNode(cxEntity);
-			JsonArray lines = getCommentLines(node);
-			if (lines.size() > 0) {
-				properties.add(PROP_JAVADOC, lines);
-			}
+				ICompositeNode node = NodeModelUtils.getNode(cxEntity);
+				JsonArray lines = getCommentLines(node);
+				if (lines.size() > 0) {
+					properties.add(PROP_JAVADOC, lines);
+				}
 
-			if (decls != null) {
-				comments = new JsonObject();
-				visit(this, decls);
-				properties.add(PROP_COMMENTS, comments);
+				if (decls != null) {
+					comments = new JsonObject();
+					visit(CommentTranslator.this, decls);
+					properties.add(PROP_COMMENTS, comments);
+				}
 			}
-		}
+		});
 	}
 
 	private void translateCopyright(Module module) {
