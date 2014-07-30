@@ -35,13 +35,17 @@ import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.synflow.cflow.cflow.Bundle;
 import com.synflow.cflow.cflow.CflowPackage.Literals;
+import com.synflow.cflow.cflow.Connect;
 import com.synflow.cflow.cflow.CxEntity;
 import com.synflow.cflow.cflow.Inst;
 import com.synflow.cflow.cflow.Network;
 import com.synflow.cflow.cflow.VarRef;
+import com.synflow.cflow.cflow.Variable;
+import com.synflow.cflow.internal.CopyOf;
 import com.synflow.cflow.internal.instantiation.properties.PropertiesSupport;
 import com.synflow.models.dpn.DPN;
 import com.synflow.models.dpn.DpnFactory;
@@ -58,6 +62,9 @@ import com.synflow.models.util.Executable;
  */
 @Singleton
 public class InstantiatorImpl implements IInstantiator {
+
+	@Inject
+	private Provider<ConnectionMaker> connectionMakerProvider;
 
 	private List<Entity> entities;
 
@@ -79,9 +86,27 @@ public class InstantiatorImpl implements IInstantiator {
 		mapEntities = LinkedHashMultimap.create();
 	}
 
+	/**
+	 * Creates a new connection maker and connects the given network. Visits inner tasks first, and
+	 * then connect statements.
+	 * 
+	 * @param network
+	 * @param dpn
+	 */
 	private void connect(Network network, DPN dpn) {
-		// TODO Auto-generated method stub
+		ConnectionMaker maker = connectionMakerProvider.get();
+		maker.initialize(dpn);
 
+		// solves references to implicit ports
+		ImplicitPortSwitch visitor = new ImplicitPortSwitch(this, maker);
+		for (Inst inst : network.getInstances()) {
+			Instance instance = getMapping(inst);
+			visitor.visitInst(inst, instance);
+		}
+
+		for (Connect connect : network.getConnects()) {
+			maker.makeConnection(dpn, connect);
+		}
 	}
 
 	/**
@@ -179,14 +204,19 @@ public class InstantiatorImpl implements IInstantiator {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T extends EObject, U extends EObject> U getMapping(T cxObj) {
-		Objects.requireNonNull(entity, "must call setEntity before getMapping");
+	public <T extends EObject, U extends EObject> U getMapping(Entity entity, T cxObj) {
+		Objects.requireNonNull(entity, "entity must not be null in getMapping");
 
-		U irObj = (U) mapCxToIr.get(entity).get(cxObj);
+		Map<EObject, EObject> map = mapCxToIr.get(entity);
+		if (map == null) {
+			return null;
+		}
+
+		U irObj = (U) map.get(cxObj);
 		if (irObj == null) {
 			CxEntity cxEntity = EcoreUtil2.getContainerOfType(cxObj, CxEntity.class);
 			if (cxEntity instanceof Bundle) {
-				Entity entity = Iterables.getFirst(mapEntities.get(cxEntity), null);
+				entity = Iterables.getFirst(mapEntities.get(cxEntity), null);
 				if (entity != null) {
 					irObj = (U) mapCxToIr.get(entity).get(cxObj);
 				}
@@ -196,9 +226,23 @@ public class InstantiatorImpl implements IInstantiator {
 	}
 
 	@Override
-	public Port getPort(VarRef ref) {
-		// TODO Auto-generated method stub
-		return null;
+	public <T extends EObject, U extends EObject> U getMapping(T cxObj) {
+		return getMapping(entity, cxObj);
+	}
+
+	@Override
+	public Port getPort(VarRef refOrCopyOfRef) {
+		final VarRef ref = CopyOf.getOriginal(refOrCopyOfRef);
+
+		Variable port = ref.getVariable();
+		final Inst inst = EcoreUtil2.getContainerOfType(ref, Inst.class);
+		if (inst == null || EcoreUtil.isAncestor(inst, port)) {
+			// if the reference is contained in a named task
+			// or it is contained in an anonymous task and refers to one of its own ports
+			return getMapping(port);
+		}
+
+		return getMapping(ref);
 	}
 
 	/**
@@ -257,8 +301,8 @@ public class InstantiatorImpl implements IInstantiator {
 	}
 
 	@Override
-	public <T extends EObject, U extends EObject> void putMapping(T cxObj, U irObj) {
-		Objects.requireNonNull(entity, "must call setEntity before putMapping");
+	public <T extends EObject, U extends EObject> void putMapping(Entity entity, T cxObj, U irObj) {
+		Objects.requireNonNull(entity, "entity must not be null in putMapping");
 
 		Map<EObject, EObject> map = mapCxToIr.get(entity);
 		if (map == null) {
@@ -268,6 +312,11 @@ public class InstantiatorImpl implements IInstantiator {
 		map.put(cxObj, irObj);
 	}
 
+	@Override
+	public <T extends EObject, U extends EObject> void putMapping(T cxObj, U irObj) {
+		putMapping(entity, cxObj, irObj);
+	}
+
 	/**
 	 * Sets the current entity.
 	 * 
@@ -275,7 +324,7 @@ public class InstantiatorImpl implements IInstantiator {
 	 *            an entity
 	 * @return the entity that was previously the current entity (may be <code>null</code>)
 	 */
-	private Entity setEntity(Entity entity) {
+	Entity setEntity(Entity entity) {
 		Entity oldEntity = this.entity;
 		this.entity = entity;
 		return oldEntity;

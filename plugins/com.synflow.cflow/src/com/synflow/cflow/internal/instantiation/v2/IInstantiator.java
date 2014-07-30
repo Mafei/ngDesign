@@ -30,8 +30,9 @@ import com.synflow.models.util.Executable;
 public interface IInstantiator {
 
 	/**
-	 * For each IR entity associated to the given Cx entity, calls the executable. setEntity is
-	 * called before and after the runnable to set the current entity.
+	 * For each IR entity associated to the given Cx entity, calls the executable. The instantiator
+	 * sets the current entity to the entity given to the executable's exec method before calling
+	 * it.
 	 * 
 	 * @param cxEntity
 	 *            Cx entity
@@ -48,7 +49,19 @@ public interface IInstantiator {
 	Iterable<Entity> getEntities();
 
 	/**
-	 * Returns the IR object that corresponds to the given Cx object.
+	 * Returns the IR object that corresponds to the given Cx object in the given entity.
+	 * 
+	 * @param entity
+	 *            the entity to use to find the mapping
+	 * @param cxObj
+	 *            a Cx object (entity, variable, port...)
+	 * @return the IR mapping
+	 */
+	<T extends EObject, U extends EObject> U getMapping(Entity entity, T cxObj);
+
+	/**
+	 * Returns the IR object that corresponds to the given Cx object in the current entity (set by
+	 * {@link #forEachMapping(CxEntity, Executable)}).
 	 * 
 	 * @param cxObj
 	 *            a Cx object (entity, variable, port...)
@@ -65,6 +78,26 @@ public interface IInstantiator {
 	 */
 	Port getPort(VarRef ref);
 
+	/**
+	 * Adds a mapping from the given Cx object to the given IR object in the given entity.
+	 * 
+	 * @param entity
+	 *            an IR entity
+	 * @param cxObj
+	 *            a Cx object (entity, variable, port...)
+	 * @param irObj
+	 *            the IR object that corresponds to <code>cxObj</code> in the given entity
+	 */
+	<T extends EObject, U extends EObject> void putMapping(Entity entity, T cxObj, U irObj);
+
+	/**
+	 * Adds a mapping from the given Cx object to the given IR object in the current entity.
+	 * 
+	 * @param cxObj
+	 *            a Cx object (entity, variable, port...)
+	 * @param irObj
+	 *            the IR object that corresponds to <code>cxObj</code> in the current entity
+	 */
 	<T extends EObject, U extends EObject> void putMapping(T cxObj, U irObj);
 
 	void update(ResourceSet resourceSet);

@@ -8,7 +8,7 @@
  * Contributors:
  *    Matthieu Wipliez - initial API and implementation and/or initial documentation
  *******************************************************************************/
-package com.synflow.cflow.internal.instantiation;
+package com.synflow.cflow.internal.instantiation.v2;
 
 import static com.synflow.cflow.CflowConstants.TYPE_READS;
 
@@ -37,6 +37,7 @@ import com.synflow.cflow.cflow.Inst;
 import com.synflow.cflow.cflow.Network;
 import com.synflow.cflow.cflow.VarRef;
 import com.synflow.cflow.internal.ErrorMarker;
+import com.synflow.cflow.internal.instantiation.IMapper;
 import com.synflow.models.dpn.Connection;
 import com.synflow.models.dpn.DPN;
 import com.synflow.models.dpn.DpnFactory;
@@ -156,21 +157,21 @@ public class ConnectionMaker {
 	 * 
 	 * @param link
 	 *            link
-	 * @param thisInst
+	 * @param instance
 	 *            an instance
+	 * @param otherPort
+	 *            IR port
 	 * @param ref
 	 *            reference to the port
 	 * @return a new IR port
 	 */
-	Port getConnectedPort(String link, Inst thisInst, VarRef ref) {
+	Port getConnectedPort(String link, Instance instance, Port otherPort, VarRef ref) {
 		QualifiedName name = converter.toQualifiedName(link);
 		int size = name.getSegmentCount();
 		boolean isSimpleName = size == 1;
 
 		// create connection
-		Instance instance = mapper.getInstance(thisInst);
 		DPN dpn = instance.getDPN();
-		Port otherPort = mapper.getPort(ref.getVariable());
 		boolean isInput = IrUtil.isInput(otherPort);
 
 		// compute otherEndPoint and portName
@@ -220,7 +221,7 @@ public class ConnectionMaker {
 	 *            a port reference
 	 * @return an instance
 	 */
-	private Instance getInstance(VarRef ref) {
+	Instance getInstance(VarRef ref) {
 		String link = NodeModelUtils.getTokenText(NodeModelUtils.getNode(ref));
 		QualifiedName name = converter.toQualifiedName(link);
 		if (name.getSegmentCount() == 1) {
@@ -240,7 +241,7 @@ public class ConnectionMaker {
 	 * @param dpn
 	 *            a DPN
 	 */
-	void initialize(DPN dpn) {
+	public void initialize(DPN dpn) {
 		portMap.putAll(dpn, dpn.getOutputs());
 
 		for (Instance instance : dpn.getInstances()) {
@@ -248,7 +249,7 @@ public class ConnectionMaker {
 		}
 	}
 
-	void makeConnection(DPN dpn, Connect connect) {
+	public void makeConnection(DPN dpn, Connect connect) {
 		Instance instance = null;
 		String name;
 

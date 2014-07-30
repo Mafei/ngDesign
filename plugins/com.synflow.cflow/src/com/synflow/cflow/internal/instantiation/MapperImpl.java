@@ -14,25 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.xtext.EcoreUtil2;
-import org.eclipse.xtext.nodemodel.INode;
-import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
-import org.eclipse.xtext.util.IResourceScopeCache;
-import org.eclipse.xtext.util.Tuples;
 
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 import com.google.inject.Singleton;
-import com.synflow.cflow.cflow.Connect;
 import com.synflow.cflow.cflow.Inst;
-import com.synflow.cflow.cflow.Network;
 import com.synflow.cflow.cflow.VarRef;
 import com.synflow.cflow.cflow.Variable;
 import com.synflow.cflow.cflow.util.CflowSwitch;
-import com.synflow.cflow.internal.CopyOf;
 import com.synflow.cflow.internal.instantiation.v2.IInstantiator;
-import com.synflow.models.dpn.DPN;
 import com.synflow.models.dpn.Entity;
 import com.synflow.models.dpn.Instance;
 import com.synflow.models.dpn.Port;
@@ -51,49 +40,10 @@ public class MapperImpl extends CflowSwitch<Entity> implements IMapper {
 	private List<Resource> builtins;
 
 	@Inject
-	private IResourceScopeCache cache;
-
-	@Inject
 	private IInstantiator instantiator;
-
-	/**
-	 * the current connection maker.
-	 */
-	private ConnectionMaker maker;
-
-	/**
-	 * Provides new instances of connection maker.
-	 */
-	@Inject
-	private Provider<ConnectionMaker> provider;
 
 	public MapperImpl() {
 		builtins = new ArrayList<>();
-	}
-
-	/**
-	 * Creates a new connection maker and connects the given network. Visits inner tasks first, and
-	 * then connect statements.
-	 * 
-	 * @param network
-	 * @param dpn
-	 */
-	private void connect(Network network, DPN dpn) {
-		ConnectionMaker oldMaker = maker;
-		maker = provider.get();
-		maker.initialize(dpn);
-
-		try {
-			// solves references to implicit ports
-			new ImplicitPortSwitch(this).doSwitch(network);
-
-			for (Connect connect : network.getConnects()) {
-				maker.makeConnection(dpn, connect);
-			}
-		} finally {
-			// restore old maker
-			maker = oldMaker;
-		}
 	}
 
 	@Override
@@ -115,26 +65,7 @@ public class MapperImpl extends CflowSwitch<Entity> implements IMapper {
 
 	@Override
 	public Port getPort(VarRef refOrCopyOfRef) {
-		final VarRef ref = CopyOf.getOriginal(refOrCopyOfRef);
-
-		Variable port = ref.getVariable();
-		final Inst inst = EcoreUtil2.getContainerOfType(ref, Inst.class);
-		if (inst == null || EcoreUtil.isAncestor(inst, port)) {
-			// if the reference is contained in a named task
-			// or it is contained in an anonymous task and refers to one of its own ports
-			return getPort(port);
-		}
-
-		INode node = NodeModelUtils.getNode(ref);
-		final String link = NodeModelUtils.getTokenText(node);
-		return cache.get(Tuples.create(MapperImpl.class.getName(), inst, link), ref.eResource(),
-				new Provider<Port>() {
-					@Override
-					public Port get() {
-						// reference to a port from an instance
-						return maker.getConnectedPort(link, inst, ref);
-					}
-				});
+		return instantiator.getPort(refOrCopyOfRef);
 	}
 
 	@Override

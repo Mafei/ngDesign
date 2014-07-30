@@ -8,18 +8,25 @@
  * Contributors:
  *    Matthieu Wipliez - initial API and implementation and/or initial documentation
  *******************************************************************************/
-package com.synflow.cflow.internal.instantiation;
+package com.synflow.cflow.internal.instantiation.v2;
 
 import static com.synflow.cflow.CflowConstants.PROP_AVAILABLE;
 import static com.synflow.cflow.CflowConstants.PROP_READ;
 import static com.synflow.models.util.SwitchUtil.DONE;
 import static com.synflow.models.util.SwitchUtil.visit;
 
+import org.eclipse.xtext.nodemodel.INode;
+import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
+
 import com.synflow.cflow.cflow.ExpressionVariable;
+import com.synflow.cflow.cflow.Inst;
 import com.synflow.cflow.cflow.StatementWrite;
 import com.synflow.cflow.cflow.Task;
 import com.synflow.cflow.cflow.VarRef;
+import com.synflow.cflow.cflow.Variable;
 import com.synflow.cflow.internal.services.VoidCflowSwitch;
+import com.synflow.models.dpn.Instance;
+import com.synflow.models.dpn.Port;
 import com.synflow.models.util.Void;
 
 /**
@@ -30,10 +37,15 @@ import com.synflow.models.util.Void;
  */
 public class ImplicitPortSwitch extends VoidCflowSwitch {
 
-	private IMapper mapper;
+	private Instance instance;
 
-	public ImplicitPortSwitch(IMapper mapper) {
-		this.mapper = mapper;
+	private InstantiatorImpl instantiator;
+
+	private ConnectionMaker maker;
+
+	public ImplicitPortSwitch(InstantiatorImpl instantiator, ConnectionMaker maker) {
+		this.instantiator = instantiator;
+		this.maker = maker;
 	}
 
 	@Override
@@ -41,7 +53,7 @@ public class ImplicitPortSwitch extends VoidCflowSwitch {
 		VarRef ref = expr.getSource();
 		String property = expr.getProperty();
 		if (PROP_READ.equals(property) || PROP_AVAILABLE.equals(property)) {
-			mapper.getPort(ref);
+			visitPort(ref);
 		}
 
 		return super.caseExpressionVariable(expr);
@@ -52,8 +64,7 @@ public class ImplicitPortSwitch extends VoidCflowSwitch {
 		// visit value first
 		super.caseStatementWrite(stmt);
 
-		// visit port
-		mapper.getPort(stmt.getPort());
+		visitPort(stmt.getPort());
 		return DONE;
 	}
 
@@ -61,6 +72,27 @@ public class ImplicitPortSwitch extends VoidCflowSwitch {
 	public Void caseTask(Task task) {
 		// must implement caseTask because it is not in VoidCflowSwitch
 		return visit(this, task.getDecls());
+	}
+
+	public void visitInst(Inst inst, Instance instance) {
+		this.instance = instance;
+		visit(this, inst.getTask());
+	}
+
+	private void visitPort(VarRef ref) {
+		Port port = instantiator.getMapping(instance.getEntity(), ref);
+		if (port == null) {
+			INode node = NodeModelUtils.getNode(ref);
+			final String link = NodeModelUtils.getTokenText(node);
+
+			// reference to a port from an instance
+			Variable cxPort = ref.getVariable();
+			Instance otherInst = maker.getInstance(ref);
+			Port otherPort = instantiator.getMapping(otherInst.getEntity(), cxPort);
+
+			port = maker.getConnectedPort(link, instance, otherPort, ref);
+			instantiator.putMapping(instance.getEntity(), ref, port);
+		}
 	}
 
 }
