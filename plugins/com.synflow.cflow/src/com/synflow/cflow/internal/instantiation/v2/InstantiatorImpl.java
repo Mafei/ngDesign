@@ -44,7 +44,6 @@ import com.synflow.cflow.cflow.CxEntity;
 import com.synflow.cflow.cflow.Inst;
 import com.synflow.cflow.cflow.Network;
 import com.synflow.cflow.cflow.VarRef;
-import com.synflow.cflow.cflow.Variable;
 import com.synflow.cflow.internal.CopyOf;
 import com.synflow.cflow.internal.instantiation.properties.PropertiesSupport;
 import com.synflow.models.dpn.DPN;
@@ -234,15 +233,13 @@ public class InstantiatorImpl implements IInstantiator {
 	public Port getPort(VarRef refOrCopyOfRef) {
 		final VarRef ref = CopyOf.getOriginal(refOrCopyOfRef);
 
-		Variable port = ref.getVariable();
-		final Inst inst = EcoreUtil2.getContainerOfType(ref, Inst.class);
-		if (inst == null || EcoreUtil.isAncestor(inst, port)) {
-			// if the reference is contained in a named task
-			// or it is contained in an anonymous task and refers to one of its own ports
-			return getMapping(port);
+		// first try port in named task/network
+		Port port = getMapping(ref.getVariable());
+		if (port == null) {
+			// otherwise get mapping of reference (anonymous task)
+			port = getMapping(ref);
 		}
-
-		return getMapping(ref);
+		return port;
 	}
 
 	/**

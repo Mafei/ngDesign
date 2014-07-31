@@ -165,41 +165,35 @@ public class ConnectionMaker {
 	 *            reference to the port
 	 * @return a new IR port
 	 */
-	Port getConnectedPort(String link, Instance instance, Port otherPort, VarRef ref) {
-		QualifiedName name = converter.toQualifiedName(link);
-		int size = name.getSegmentCount();
-		boolean isSimpleName = size == 1;
+	Port getConnectedPort(String link, Instance instance, Endpoint otherEndPoint) {
+		boolean isDpnPort = !otherEndPoint.hasInstance();
 
 		// create connection
 		DPN dpn = instance.getDPN();
+		Port otherPort = otherEndPoint.getPort();
 		boolean isInput = IrUtil.isInput(otherPort);
 
 		// compute otherEndPoint and portName
-		Endpoint otherEndPoint;
 		Port thisPort = IrUtil.copy(otherPort);
-		if (isSimpleName) {
+		if (isDpnPort) {
 			// this port is defined in this instance or containing netwok
-			otherEndPoint = new Endpoint(dpn, otherPort);
-			String portName = ((Entity) otherPort.eContainer()).getSimpleName() + "_"
-					+ otherPort.getName();
+			String portName = dpn.getSimpleName() + "_" + otherPort.getName();
 			thisPort.setName(portName);
 		} else {
 			// this port is defined by another instance
-			Instance otherInst = getInstance(ref);
-			otherEndPoint = new Endpoint(otherInst, otherPort);
-			String portName = name.toString("_");
+			String portName = otherEndPoint.getInstance().getName() + "_" + otherPort.getName();
 			thisPort.setName(portName);
 
 			// if this is an input port, remove it from the port map
 			if (isInput) {
-				portMap.remove(otherInst, otherPort);
+				portMap.remove(otherEndPoint.getInstance(), otherPort);
 			}
 		}
 
 		// create connection, add port to entity
 		Connection conn;
 		Endpoint thisEndPoint = new Endpoint(instance, thisPort);
-		if (!(isSimpleName ^ isInput)) { // both 0 or both 1
+		if (!(isDpnPort ^ isInput)) { // both 0 or both 1
 			instance.getEntity().getInputs().add(thisPort);
 			conn = DpnFactory.eINSTANCE.createConnection(otherEndPoint, thisEndPoint);
 		} else {
@@ -232,7 +226,8 @@ public class ConnectionMaker {
 		QualifiedName qualifiedLinkName = converter.toQualifiedName(name.getFirstSegment());
 		IEObjectDescription eObjectDescription = scope.getSingleElement(qualifiedLinkName);
 
-		return mapper.getInstance((Inst) eObjectDescription.getEObjectOrProxy());
+		Inst inst = (Inst) eObjectDescription.getEObjectOrProxy();
+		return mapper.getInstance(inst);
 	}
 
 	/**

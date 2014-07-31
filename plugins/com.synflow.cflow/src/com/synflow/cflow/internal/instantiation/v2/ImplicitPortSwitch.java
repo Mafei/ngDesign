@@ -25,6 +25,8 @@ import com.synflow.cflow.cflow.Task;
 import com.synflow.cflow.cflow.VarRef;
 import com.synflow.cflow.cflow.Variable;
 import com.synflow.cflow.internal.services.VoidCflowSwitch;
+import com.synflow.models.dpn.DPN;
+import com.synflow.models.dpn.Endpoint;
 import com.synflow.models.dpn.Instance;
 import com.synflow.models.dpn.Port;
 import com.synflow.models.util.Void;
@@ -74,25 +76,50 @@ public class ImplicitPortSwitch extends VoidCflowSwitch {
 		return visit(this, task.getDecls());
 	}
 
+	/**
+	 * Returns the endpoint associated with the port associated with the given reference.
+	 * 
+	 * @param ref
+	 *            reference to a port in another instance or in the containing network
+	 * @return an endpoint
+	 */
+	private Endpoint getEndpoint(VarRef ref) {
+		Variable cxPort = ref.getVariable();
+		Instance otherInst = maker.getInstance(ref);
+		if (otherInst == null) {
+			DPN dpn = instance.getDPN();
+			Port otherPort = instantiator.getMapping(dpn, cxPort);
+			return new Endpoint(dpn, otherPort);
+		} else {
+			Port otherPort = instantiator.getMapping(otherInst.getEntity(), cxPort);
+			return new Endpoint(otherInst, otherPort);
+		}
+	}
+
 	public void visitInst(Inst inst, Instance instance) {
 		this.instance = instance;
 		visit(this, inst.getTask());
 	}
 
 	private void visitPort(VarRef ref) {
-		Port port = instantiator.getMapping(instance.getEntity(), ref);
+		Variable cxPort = ref.getVariable();
+		Port port = instantiator.getMapping(instance.getEntity(), cxPort);
 		if (port == null) {
+			// reference is to another instance's port
 			INode node = NodeModelUtils.getNode(ref);
 			final String link = NodeModelUtils.getTokenText(node);
 
-			// reference to a port from an instance
-			Variable cxPort = ref.getVariable();
-			Instance otherInst = maker.getInstance(ref);
-			Port otherPort = instantiator.getMapping(otherInst.getEntity(), cxPort);
-
-			port = maker.getConnectedPort(link, instance, otherPort, ref);
-			instantiator.putMapping(instance.getEntity(), ref, port);
+			Endpoint otherEndpoint = getEndpoint(ref);
+			Port otherPort = otherEndpoint.getPort();
+			port = instantiator.getMapping(instance.getEntity(), otherPort);
+			if (port == null) {
+				// we add a port to this entity and connect it to the other instance
+				port = maker.getConnectedPort(link, instance, otherEndpoint);
+				instantiator.putMapping(instance.getEntity(), otherPort, port);
+			}
 		}
+
+		instantiator.putMapping(instance.getEntity(), ref, port);
 	}
 
 }
