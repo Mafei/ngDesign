@@ -88,7 +88,7 @@ public class CflowJavaValidator extends AbstractCflowJavaValidator {
 					}
 
 					// check types
-					new TypeChecker(CflowJavaValidator.this, typer).doSwitch(cxEntity);
+					new TypeChecker(CflowJavaValidator.this, instantiator, typer).doSwitch(cxEntity);
 
 					if (cxEntity instanceof Instantiable) {
 						printErrors((Instantiable) cxEntity);

@@ -38,6 +38,7 @@ import com.synflow.cflow.cflow.ExpressionCast;
 import com.synflow.cflow.cflow.ExpressionIf;
 import com.synflow.cflow.cflow.ExpressionUnary;
 import com.synflow.cflow.cflow.ExpressionVariable;
+import com.synflow.cflow.cflow.Network;
 import com.synflow.cflow.cflow.StatementAssign;
 import com.synflow.cflow.cflow.StatementLoop;
 import com.synflow.cflow.cflow.StatementPrint;
@@ -49,9 +50,11 @@ import com.synflow.cflow.cflow.VarDecl;
 import com.synflow.cflow.cflow.VarRef;
 import com.synflow.cflow.cflow.Variable;
 import com.synflow.cflow.internal.AstUtil;
+import com.synflow.cflow.internal.instantiation.v2.IInstantiator;
 import com.synflow.cflow.internal.services.Typer;
 import com.synflow.cflow.services.CflowPrinter;
 import com.synflow.cflow.services.Evaluator;
+import com.synflow.models.dpn.Entity;
 import com.synflow.models.ir.IrFactory;
 import com.synflow.models.ir.OpBinary;
 import com.synflow.models.ir.OpUnary;
@@ -61,6 +64,7 @@ import com.synflow.models.ir.TypeBool;
 import com.synflow.models.ir.util.TypePrinter;
 import com.synflow.models.ir.util.TypeUtil;
 import com.synflow.models.ir.util.ValueUtil;
+import com.synflow.models.util.Executable;
 import com.synflow.models.util.Void;
 
 /**
@@ -72,10 +76,13 @@ import com.synflow.models.util.Void;
  */
 public class TypeChecker extends Checker {
 
+	private final IInstantiator instantiator;
+
 	private final Typer typer;
 
-	public TypeChecker(ValidationMessageAcceptor acceptor, Typer typer) {
+	public TypeChecker(ValidationMessageAcceptor acceptor, IInstantiator instantiator, Typer typer) {
 		super(acceptor);
+		this.instantiator = instantiator;
 		this.typer = typer;
 	}
 
@@ -203,6 +210,11 @@ public class TypeChecker extends Checker {
 	}
 
 	@Override
+	public Void caseNetwork(Network network) {
+		return visit(this, network.getInstances());
+	}
+
+	@Override
 	public Void caseStatementAssign(StatementAssign stmt) {
 		if (stmt.getValue() == null) {
 			// increment or decrement, check the variable has been initialized before
@@ -322,8 +334,14 @@ public class TypeChecker extends Checker {
 	}
 
 	@Override
-	public Void caseTask(Task task) {
-		return visit(this, CflowUtil.getFunctions(task.getDecls()));
+	public Void caseTask(final Task task) {
+		instantiator.forEachMapping(task, new Executable<Entity>() {
+			@Override
+			public void exec(Entity entity) {
+				visit(TypeChecker.this, CflowUtil.getFunctions(task.getDecls()));
+			}
+		});
+		return DONE;
 	}
 
 	private void checkArrayAccess(EObject source, Type type, EList<CExpression> indexes) {
