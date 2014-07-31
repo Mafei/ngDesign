@@ -73,7 +73,7 @@ public class CflowJavaValidator extends AbstractCflowJavaValidator {
 		instantiator.update(module.eResource().getResourceSet());
 		// }
 
-		final NetworkChecker networkChecker = new NetworkChecker(this, mapper);
+		final NetworkChecker networkChecker = new NetworkChecker(this, instantiator);
 
 		// for each entity of the module
 		for (final CxEntity cxEntity : module.getEntities()) {
