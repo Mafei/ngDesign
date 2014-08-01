@@ -10,6 +10,7 @@
  *******************************************************************************/
 package com.synflow.core.util;
 
+import static com.synflow.core.IProperties.IMPL_BUILTIN;
 import static com.synflow.core.IProperties.IMPL_EXTERNAL;
 import static com.synflow.core.IProperties.PROP_DEPENDENCIES;
 import static com.synflow.core.IProperties.PROP_FILE;
@@ -18,7 +19,6 @@ import static com.synflow.core.IProperties.PROP_TYPE;
 import static com.synflow.core.ISynflowConstants.FILE_EXT_IR;
 import static com.synflow.core.ISynflowConstants.FOLDER_IR;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -32,11 +32,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
@@ -59,49 +54,6 @@ import com.synflow.models.ir.util.IrUtil;
  * 
  */
 public class CoreUtil {
-
-	/**
-	 * Returns the file with the given attributes in the given project, and if no such file is
-	 * found, look into its dependencies.
-	 * 
-	 * @param project
-	 *            a project
-	 * @param folder
-	 *            folder in which to look for
-	 * @param className
-	 *            class name of the file this method will look for
-	 * @param fileExt
-	 *            file extension
-	 * @return an {@link IFile}
-	 */
-	private static IFile findFile(IProject project, String folder, String className, String fileExt) {
-		// list of projects, starting with this project
-		Collection<IProject> projects = getBuildPath(project);
-
-		// go through list of projects
-		IFile file = null;
-		for (IProject prj : projects) {
-			file = getFile(prj, folder, className, fileExt);
-			if (file.exists()) {
-				return file;
-			}
-		}
-
-		return file;
-	}
-
-	/**
-	 * Finds the .ir file in the given project (or its required projects) with the given class name.
-	 * 
-	 * @param project
-	 *            a project
-	 * @param className
-	 *            class name of the .ir file this method will look for
-	 * @return an {@link IFile}
-	 */
-	public static IFile findIrFile(IProject project, String className) {
-		return findFile(project, FOLDER_IR, className, FILE_EXT_IR);
-	}
 
 	/**
 	 * Returns the list of projects that are in the build path of this project (includes this
@@ -189,8 +141,8 @@ public class CoreUtil {
 					}
 				});
 
-		if (implementation != null && IMPL_EXTERNAL.equals(implementation.get(PROP_TYPE))) {
-			// external implementation
+		if (isExternal(entity)) {
+			// implementation external: expecting a "file" property
 			String file = implementation.get(PROP_FILE).getAsString();
 			return Iterables.concat(deps, Arrays.asList(file));
 		}
@@ -260,61 +212,28 @@ public class CoreUtil {
 		return new org.eclipse.core.runtime.Path(path).toString();
 	}
 
+	/**
+	 * Returns <code>true</code> if the given entity has an implementation whose type is builtin.
+	 * 
+	 * @param entity
+	 *            an entity
+	 * @return a boolean
+	 */
+	public static boolean isBuiltin(Entity entity) {
+		JsonObject implementation = getImplementation(entity);
+		return implementation != null && IMPL_BUILTIN.equals(implementation.get(PROP_TYPE));
+	}
+
+	/**
+	 * Returns <code>true</code> if the given entity has an implementation whose type is external.
+	 * 
+	 * @param entity
+	 *            an entity
+	 * @return a boolean
+	 */
 	public static boolean isExternal(Entity entity) {
 		JsonObject implementation = getImplementation(entity);
 		return implementation != null && IMPL_EXTERNAL.equals(implementation.get(PROP_TYPE));
-	}
-
-	/**
-	 * Loads the entity with the given class name, using the base entity's resource to resolve URI.
-	 * 
-	 * @param base
-	 *            a base entity
-	 * @param className
-	 *            class name of the entity to load
-	 * @return an entity
-	 */
-	public static Entity loadEntity(Entity base, String className) {
-		Resource resource = base.eResource();
-		URI uri = resource.getURI();
-
-		int count = base.getName().split("\\.").length;
-		URI derivedUri = uri.trimSegments(count).appendSegments(className.split("\\."));
-		URI entityUri = derivedUri.appendFileExtension(FILE_EXT_IR).appendFragment("/");
-
-		return (Entity) resource.getResourceSet().getEObject(entityUri, true);
-	}
-
-	/**
-	 * Serializes the EObject in the given file.
-	 * 
-	 * @param set
-	 *            resource set
-	 * @param file
-	 *            an IFile
-	 * @param eObject
-	 *            EMF object to serialize
-	 * @return the EMF resource in which the object was added
-	 */
-	public static Resource serialize(ResourceSet set, IFile file, EObject eObject) {
-		// computes URI
-		String pathName = file.getFullPath().toString();
-		URI uri = URI.createPlatformResourceURI(pathName, true);
-
-		// serializes the EMF object
-		Resource resource = set.createResource(uri);
-		resource.getContents().add(eObject);
-		try {
-			resource.save(null);
-		} catch (IOException e) {
-		}
-
-		// register resource in resource map
-		if (set instanceof ResourceSetImpl) {
-			((ResourceSetImpl) set).getURIResourceMap().put(uri, resource);
-		}
-
-		return resource;
 	}
 
 }
