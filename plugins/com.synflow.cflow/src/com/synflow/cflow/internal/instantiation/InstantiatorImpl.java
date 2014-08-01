@@ -134,11 +134,12 @@ public class InstantiatorImpl implements IInstantiator {
 	}
 
 	private void execute(Entity entity, Executable<Entity> executable) {
-		Entity oldEntity = setEntity(entity);
+		Entity oldEntity = this.entity;
+		this.entity = entity;
 		try {
 			executable.exec(entity);
 		} finally {
-			setEntity(oldEntity);
+			this.entity = oldEntity;
 		}
 	}
 
@@ -321,19 +322,6 @@ public class InstantiatorImpl implements IInstantiator {
 	@Override
 	public <T extends EObject, U extends EObject> void putMapping(T cxObj, U irObj) {
 		putMapping(entity, cxObj, irObj);
-	}
-
-	/**
-	 * Sets the current entity.
-	 * 
-	 * @param entity
-	 *            an entity
-	 * @return the entity that was previously the current entity (may be <code>null</code>)
-	 */
-	Entity setEntity(Entity entity) {
-		Entity oldEntity = this.entity;
-		this.entity = entity;
-		return oldEntity;
 	}
 
 	@Override
