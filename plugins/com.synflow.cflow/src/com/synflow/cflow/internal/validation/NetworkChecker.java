@@ -28,7 +28,7 @@ import com.synflow.cflow.cflow.Instantiable;
 import com.synflow.cflow.cflow.Network;
 import com.synflow.cflow.cflow.Variable;
 import com.synflow.cflow.internal.instantiation.ClockDomainComputer;
-import com.synflow.cflow.internal.instantiation.v2.IInstantiator;
+import com.synflow.cflow.internal.instantiation.IInstantiator;
 import com.synflow.models.dpn.Connection;
 import com.synflow.models.dpn.DPN;
 import com.synflow.models.dpn.Endpoint;

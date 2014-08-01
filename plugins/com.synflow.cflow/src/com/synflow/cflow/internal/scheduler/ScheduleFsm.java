@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.ImmutableSet;
-import com.synflow.cflow.internal.instantiation.IMapper;
+import com.synflow.cflow.internal.instantiation.IInstantiator;
 import com.synflow.cflow.internal.scheduler.node.Node;
 import com.synflow.models.dpn.Action;
 import com.synflow.models.dpn.Actor;
@@ -39,8 +39,8 @@ public class ScheduleFsm extends Schedule {
 	/**
 	 * Creates a new empty schedule that will use the given actor.
 	 */
-	public ScheduleFsm(IMapper mapper, Actor actor) {
-		super(mapper);
+	public ScheduleFsm(IInstantiator instantiator, Actor actor) {
+		super(instantiator);
 		this.actor = actor;
 
 		setNode(new Node());

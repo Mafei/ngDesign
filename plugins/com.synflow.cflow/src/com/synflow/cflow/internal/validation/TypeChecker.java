@@ -50,7 +50,7 @@ import com.synflow.cflow.cflow.VarDecl;
 import com.synflow.cflow.cflow.VarRef;
 import com.synflow.cflow.cflow.Variable;
 import com.synflow.cflow.internal.AstUtil;
-import com.synflow.cflow.internal.instantiation.v2.IInstantiator;
+import com.synflow.cflow.internal.instantiation.IInstantiator;
 import com.synflow.cflow.internal.services.Typer;
 import com.synflow.cflow.services.CflowPrinter;
 import com.synflow.cflow.services.Evaluator;

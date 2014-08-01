@@ -25,7 +25,7 @@ import com.synflow.cflow.cflow.CExpression;
 import com.synflow.cflow.cflow.Enter;
 import com.synflow.cflow.cflow.Leave;
 import com.synflow.cflow.cflow.StatementIf;
-import com.synflow.cflow.internal.instantiation.IMapper;
+import com.synflow.cflow.internal.instantiation.IInstantiator;
 import com.synflow.cflow.internal.scheduler.path.Path;
 import com.synflow.models.dpn.Actor;
 import com.synflow.models.dpn.DpnFactory;
@@ -47,8 +47,8 @@ public class IfDeveloper extends AbstractCycleScheduler {
 
 	private Path path;
 
-	public IfDeveloper(IMapper mapper, Actor actor) {
-		super(mapper, actor);
+	public IfDeveloper(IInstantiator instantiator, Actor actor) {
+		super(instantiator, actor);
 	}
 
 	@Override

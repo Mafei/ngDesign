@@ -8,7 +8,7 @@
  * Contributors:
  *    Matthieu Wipliez - initial API and implementation and/or initial documentation
  *******************************************************************************/
-package com.synflow.cflow.internal.instantiation.v2;
+package com.synflow.cflow.internal.instantiation;
 
 import static com.synflow.cflow.CflowConstants.TYPE_READS;
 
@@ -37,7 +37,6 @@ import com.synflow.cflow.cflow.Inst;
 import com.synflow.cflow.cflow.Network;
 import com.synflow.cflow.cflow.VarRef;
 import com.synflow.cflow.internal.ErrorMarker;
-import com.synflow.cflow.internal.instantiation.IMapper;
 import com.synflow.models.dpn.Connection;
 import com.synflow.models.dpn.DPN;
 import com.synflow.models.dpn.DpnFactory;
@@ -62,7 +61,7 @@ public class ConnectionMaker {
 	private IQualifiedNameConverter converter;
 
 	@Inject
-	private IMapper mapper;
+	private IInstantiator instantiator;
 
 	/**
 	 * A map whose keys are Instance or DPN, and whose values are ports that can be written to
@@ -108,7 +107,8 @@ public class ConnectionMaker {
 	private void checkPortAssociation(Connect connect, Instance instance, int index, VarRef ref,
 			Port targetPort) {
 		// get port types
-		Type srcType = mapper.getPort(ref.getVariable()).getType();
+		Port port = instantiator.getMapping(ref.getVariable());
+		Type srcType = port.getType();
 		Type tgtType = targetPort.getType();
 
 		// check assign
@@ -117,7 +117,7 @@ public class ConnectionMaker {
 		checkAssign(srcName, srcType, tgtType, connect, Literals.CONNECT__PORTS, index);
 
 		// check ports have the same interface type
-		Port sourcePort = mapper.getPort(ref);
+		Port sourcePort = instantiator.getPort(ref);
 		if (sourcePort.getInterface() != targetPort.getInterface()) {
 			addError(new ErrorMarker("Port mismatch: incompatible interface type between "
 					+ srcName + " and '" + targetPort.getName() + "'", connect,
@@ -227,7 +227,7 @@ public class ConnectionMaker {
 		IEObjectDescription eObjectDescription = scope.getSingleElement(qualifiedLinkName);
 
 		Inst inst = (Inst) eObjectDescription.getEObjectOrProxy();
-		return mapper.getInstance(inst);
+		return instantiator.getMapping(inst);
 	}
 
 	/**
@@ -257,7 +257,7 @@ public class ConnectionMaker {
 				ports = dpn.getInputs();
 			}
 		} else {
-			instance = mapper.getInstance(connect.getInstance());
+			instance = instantiator.getMapping(connect.getInstance());
 			name = instance.getName();
 			Entity entity = instance.getEntity();
 			if (TYPE_READS.equals(connect.getType())) {
@@ -284,7 +284,7 @@ public class ConnectionMaker {
 				break;
 			}
 
-			Port sourcePort = mapper.getPort(ref.getVariable());
+			Port sourcePort = instantiator.getMapping(ref.getVariable());
 
 			// removes sourcePort from portMap
 			// this is done for any combination of this/instance and reads/writes

@@ -8,7 +8,7 @@
  * Contributors:
  *    Matthieu Wipliez - initial API and implementation and/or initial documentation
  *******************************************************************************/
-package com.synflow.cflow.internal.instantiation.v2;
+package com.synflow.cflow.internal.instantiation;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;

@@ -32,8 +32,7 @@ import com.synflow.cflow.cflow.Network;
 import com.synflow.cflow.cflow.Task;
 import com.synflow.cflow.cflow.Variable;
 import com.synflow.cflow.internal.ErrorMarker;
-import com.synflow.cflow.internal.instantiation.IMapper;
-import com.synflow.cflow.internal.instantiation.v2.IInstantiator;
+import com.synflow.cflow.internal.instantiation.IInstantiator;
 import com.synflow.cflow.internal.scheduler.CycleDetector;
 import com.synflow.cflow.internal.services.Typer;
 import com.synflow.cflow.internal.validation.NetworkChecker;
@@ -52,9 +51,6 @@ public class CflowJavaValidator extends AbstractCflowJavaValidator {
 
 	@Inject
 	private IInstantiator instantiator;
-
-	@Inject
-	private IMapper mapper;
 
 	@Inject
 	private Typer typer;
@@ -167,7 +163,7 @@ public class CflowJavaValidator extends AbstractCflowJavaValidator {
 			instantiator.forEachMapping(task, new Executable<Entity>() {
 				@Override
 				public void exec(Entity entity) {
-					if (new CycleDetector(mapper).hasCycleBreaks(run)) {
+					if (new CycleDetector(instantiator).hasCycleBreaks(run)) {
 						String message = "A combinational task must not have cycle breaks";
 						error(message, run, null, -1);
 					}

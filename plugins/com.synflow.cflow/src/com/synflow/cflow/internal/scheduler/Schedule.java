@@ -18,7 +18,7 @@ import com.synflow.cflow.cflow.Branch;
 import com.synflow.cflow.cflow.CExpression;
 import com.synflow.cflow.cflow.StatementWrite;
 import com.synflow.cflow.cflow.VarRef;
-import com.synflow.cflow.internal.instantiation.IMapper;
+import com.synflow.cflow.internal.instantiation.IInstantiator;
 import com.synflow.cflow.internal.scheduler.node.Node;
 import com.synflow.models.dpn.Action;
 import com.synflow.models.dpn.DpnFactory;
@@ -35,7 +35,7 @@ import com.synflow.models.util.Void;
  */
 public class Schedule {
 
-	private final IMapper mapper;
+	private final IInstantiator instantiator;
 
 	private ICycleListener listener;
 
@@ -43,8 +43,8 @@ public class Schedule {
 
 	private boolean usePeek;
 
-	public Schedule(IMapper mapper) {
-		this.mapper = mapper;
+	public Schedule(IInstantiator instantiator) {
+		this.instantiator = instantiator;
 		node = new Node(DpnFactory.eINSTANCE.createActionEmpty());
 	}
 
@@ -55,7 +55,7 @@ public class Schedule {
 	 *            an existing schedule
 	 */
 	public Schedule(Schedule schedule) {
-		this(schedule.mapper);
+		this(schedule.instantiator);
 		DpnFactory.eINSTANCE.addPatterns(getAction(), schedule.getAction());
 		this.listener = schedule.listener;
 	}
@@ -128,7 +128,7 @@ public class Schedule {
 	 *            reference to an input port
 	 */
 	public void read(VarRef ref) {
-		Port port = mapper.getPort(ref);
+		Port port = instantiator.getPort(ref);
 		if (hasBeenRead(port)) {
 			startNewCycle();
 		}
@@ -209,7 +209,7 @@ public class Schedule {
 	 */
 	public void write(Switch<Void> voidSwitch, StatementWrite stmt) {
 		// first check for existing writes
-		Port port = mapper.getPort(stmt.getPort());
+		Port port = instantiator.getPort(stmt.getPort());
 		if (hasBeenWritten(port)) {
 			startNewCycle();
 		}

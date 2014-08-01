@@ -44,7 +44,7 @@ import com.synflow.cflow.cflow.Task;
 import com.synflow.cflow.cflow.VarDecl;
 import com.synflow.cflow.cflow.Variable;
 import com.synflow.cflow.cflow.util.CflowSwitch;
-import com.synflow.cflow.internal.instantiation.v2.IInstantiator;
+import com.synflow.cflow.internal.instantiation.IInstantiator;
 import com.synflow.models.dpn.Entity;
 import com.synflow.models.util.Executable;
 import com.synflow.models.util.Void;

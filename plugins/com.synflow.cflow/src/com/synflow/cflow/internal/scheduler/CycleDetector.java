@@ -27,7 +27,7 @@ import com.synflow.cflow.cflow.StatementLoop;
 import com.synflow.cflow.cflow.StatementWrite;
 import com.synflow.cflow.cflow.VarRef;
 import com.synflow.cflow.cflow.Variable;
-import com.synflow.cflow.internal.instantiation.IMapper;
+import com.synflow.cflow.internal.instantiation.IInstantiator;
 import com.synflow.cflow.internal.scheduler.node.Node;
 import com.synflow.cflow.internal.services.VoidCflowSwitch;
 import com.synflow.models.util.Void;
@@ -45,8 +45,8 @@ public class CycleDetector extends VoidCflowSwitch implements ICycleListener {
 	/**
 	 * Creates a new cycle detector with a new schedule.
 	 */
-	public CycleDetector(IMapper mapper) {
-		schedule = new Schedule(mapper);
+	public CycleDetector(IInstantiator instantiator) {
+		schedule = new Schedule(instantiator);
 	}
 
 	/**

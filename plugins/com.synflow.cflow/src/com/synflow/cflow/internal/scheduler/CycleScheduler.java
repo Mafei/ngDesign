@@ -24,7 +24,7 @@ import com.synflow.cflow.cflow.Branch;
 import com.synflow.cflow.cflow.CExpression;
 import com.synflow.cflow.cflow.StatementIf;
 import com.synflow.cflow.cflow.Variable;
-import com.synflow.cflow.internal.instantiation.IMapper;
+import com.synflow.cflow.internal.instantiation.IInstantiator;
 import com.synflow.cflow.internal.scheduler.node.Node;
 import com.synflow.models.dpn.Actor;
 import com.synflow.models.dpn.FSM;
@@ -47,13 +47,13 @@ public final class CycleScheduler extends AbstractCycleScheduler {
 	/**
 	 * Creates a new cycle scheduler that will schedule cycles in the given actor.
 	 * 
-	 * @param mapper
-	 *            mapper
+	 * @param instantiator
+	 *            instantiator
 	 * @param actor
 	 *            an actor
 	 */
-	public CycleScheduler(IMapper mapper, Actor actor) {
-		super(mapper, actor);
+	public CycleScheduler(IInstantiator instantiator, Actor actor) {
+		super(instantiator, actor);
 	}
 
 	@Override

@@ -22,8 +22,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.generator.IFileSystemAccess;
 
 import com.google.inject.Inject;
@@ -41,8 +39,7 @@ import com.synflow.cflow.internal.compiler.helpers.FsmBeautifier;
 import com.synflow.cflow.internal.compiler.helpers.LoadStoreReplacer;
 import com.synflow.cflow.internal.compiler.helpers.SideEffectRemover;
 import com.synflow.cflow.internal.compiler.helpers.VariablePromoter;
-import com.synflow.cflow.internal.instantiation.IMapper;
-import com.synflow.cflow.internal.instantiation.v2.IInstantiator;
+import com.synflow.cflow.internal.instantiation.IInstantiator;
 import com.synflow.cflow.internal.scheduler.CycleScheduler;
 import com.synflow.cflow.internal.scheduler.IfScheduler;
 import com.synflow.cflow.internal.services.Typer;
@@ -71,9 +68,6 @@ public class ModuleCompilerImpl extends CflowSwitch<Void> implements IModuleComp
 
 	@Inject
 	private IInstantiator instantiator;
-
-	@Inject
-	private IMapper mapper;
 
 	@Inject
 	private Typer typer;
@@ -151,12 +145,13 @@ public class ModuleCompilerImpl extends CflowSwitch<Void> implements IModuleComp
 
 	@Override
 	public void serializeBuiltins() {
-		for (Resource resource : mapper.getBuiltins()) {
-			EObject contents = resource.getContents().get(0);
-			if (contents instanceof Entity) {
-				serialize((Entity) contents);
-			}
-		}
+		// TODO handle builtins
+		// for (Resource resource : instantiator.getBuiltins()) {
+		// EObject contents = resource.getContents().get(0);
+		// if (contents instanceof Entity) {
+		// serialize((Entity) contents);
+		// }
+		// }
 	}
 
 	@Override
@@ -190,12 +185,13 @@ public class ModuleCompilerImpl extends CflowSwitch<Void> implements IModuleComp
 			if (CflowUtil.isFunction(variable)) {
 				if (CflowUtil.isConstant(variable)) {
 					// visit constant functions
-					FunctionTransformer transformer = new FunctionTransformer(mapper, typer, entity);
+					FunctionTransformer transformer = new FunctionTransformer(instantiator, typer,
+							entity);
 					transformer.doSwitch(variable);
 				}
 			} else {
 				// visit variables (they are automatically added to the entity by mapper)
-				mapper.getVar(variable);
+				instantiator.getMapping(variable);
 			}
 		}
 	}
@@ -225,10 +221,10 @@ public class ModuleCompilerImpl extends CflowSwitch<Void> implements IModuleComp
 		}
 
 		// schedules cycles, if statements, and transforms actor
-		CycleScheduler scheduler = new CycleScheduler(mapper, actor);
+		CycleScheduler scheduler = new CycleScheduler(instantiator, actor);
 		scheduler.schedule(setup, loop);
-		new IfScheduler(mapper, actor).visit();
-		new ActorTransformer(mapper, typer, actor).visit();
+		new IfScheduler(instantiator, actor).visit();
+		new ActorTransformer(instantiator, typer, actor).visit();
 
 		// post-process FSM: rename states and actions
 		new FsmBeautifier().visit(actor);

@@ -8,7 +8,7 @@
  * Contributors:
  *    Matthieu Wipliez - initial API and implementation and/or initial documentation
  *******************************************************************************/
-package com.synflow.cflow.internal.instantiation.v2;
+package com.synflow.cflow.internal.instantiation;
 
 import static com.synflow.cflow.CflowConstants.PROP_AVAILABLE;
 import static com.synflow.cflow.CflowConstants.PROP_READ;

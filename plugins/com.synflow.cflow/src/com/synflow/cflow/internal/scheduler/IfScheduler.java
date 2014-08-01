@@ -15,7 +15,7 @@ import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
 
-import com.synflow.cflow.internal.instantiation.IMapper;
+import com.synflow.cflow.internal.instantiation.IInstantiator;
 import com.synflow.cflow.internal.scheduler.node.Node;
 import com.synflow.cflow.internal.scheduler.path.Path;
 import com.synflow.cflow.internal.scheduler.path.PathIterable;
@@ -34,10 +34,10 @@ public class IfScheduler {
 
 	private final Actor actor;
 
-	private final IMapper mapper;
+	private final IInstantiator instantiator;
 
-	public IfScheduler(IMapper mapper, Actor actor) {
-		this.mapper = mapper;
+	public IfScheduler(IInstantiator instantiator, Actor actor) {
+		this.instantiator = instantiator;
 		this.actor = actor;
 	}
 
@@ -60,7 +60,7 @@ public class IfScheduler {
 		}
 
 		List<Transition> transitions = new ArrayList<>();
-		IfDeveloper developer = new IfDeveloper(mapper, actor);
+		IfDeveloper developer = new IfDeveloper(instantiator, actor);
 		for (Path path : new PathIterable(node)) {
 			// System.out.println(path);
 			transitions.add(developer.visit(transition, path));

@@ -43,8 +43,7 @@ import com.synflow.cflow.cflow.StatementVariable;
 import com.synflow.cflow.cflow.Task;
 import com.synflow.cflow.cflow.VarRef;
 import com.synflow.cflow.cflow.Variable;
-import com.synflow.cflow.internal.instantiation.IMapper;
-import com.synflow.cflow.internal.instantiation.v2.IInstantiator;
+import com.synflow.cflow.internal.instantiation.IInstantiator;
 import com.synflow.cflow.internal.services.BoolCflowSwitch;
 import com.synflow.cflow.internal.services.Typer;
 import com.synflow.models.dpn.Entity;
@@ -80,9 +79,6 @@ public class ExpressionValidator extends AbstractDeclarativeValidator {
 		}
 
 	}
-
-	@Inject
-	private IMapper mapper;
 
 	@Inject
 	private IInstantiator instantiator;
@@ -218,7 +214,7 @@ public class ExpressionValidator extends AbstractDeclarativeValidator {
 			VarRef ref = expr.getSource();
 			Variable variable = ref.getVariable();
 			if (CflowUtil.isPort(variable)) {
-				Port port = mapper.getPort(ref);
+				Port port = instantiator.getPort(ref);
 				String prop = expr.getProperty();
 				if (PROP_AVAILABLE.equals(prop)) {
 					available.add(port);
