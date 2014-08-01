@@ -10,14 +10,11 @@
  *******************************************************************************/
 package com.synflow.cflow.internal.instantiation;
 
-import java.io.IOException;
-
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 
 import com.synflow.cflow.cflow.CxEntity;
-import com.synflow.models.dpn.Entity;
 
 /**
  * This class holds information about a Cx entity, its specialized name and URI of the corresponding
@@ -28,16 +25,27 @@ import com.synflow.models.dpn.Entity;
  */
 public class EntityInfo {
 
-	private CxEntity cxEntity;
+	private final CxEntity cxEntity;
 
-	private String name;
+	private final String name;
 
-	private URI uri;
+	private final URI uri;
 
 	public EntityInfo(CxEntity cxEntity, String name, URI uri) {
 		this.cxEntity = cxEntity;
 		this.name = name;
 		this.uri = uri;
+	}
+
+	/**
+	 * Creates a resource with the URI given to the constructor.
+	 * 
+	 * @return a resource
+	 */
+	public Resource createResource() {
+		ResourceSet set = cxEntity.eResource().getResourceSet();
+		Resource resource = set.createResource(uri);
+		return resource;
 	}
 
 	public CxEntity getCxEntity() {
@@ -46,26 +54,6 @@ public class EntityInfo {
 
 	public String getName() {
 		return name;
-	}
-
-	public Resource getResource() {
-		// get or create IR resource
-		ResourceSet set = cxEntity.eResource().getResourceSet();
-		Resource resource = set.getResource(uri, false);
-		if (resource == null) {
-			resource = set.createResource(uri);
-		}
-		return resource;
-	}
-
-	public Entity loadEntity() {
-		Resource resource = getResource();
-		try {
-			resource.load(null);
-		} catch (IOException e) {
-			return null;
-		}
-		return (Entity) resource.getContents().get(0);
 	}
 
 }

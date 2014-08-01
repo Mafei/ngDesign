@@ -17,7 +17,6 @@ import java.util.Map.Entry;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
@@ -122,9 +121,7 @@ public class EntityMapper extends CflowSwitch<Entity> {
 		entity.setLineNumber(lineNumber);
 
 		// add to resource
-		Resource resource = info.getResource();
-		resource.getContents().clear();
-		resource.getContents().add(entity);
+		info.createResource().getContents().add(entity);
 
 		// set values on entity
 		Map<Variable, EObject> values = setValues(info.getCxEntity(), ctx);
