@@ -46,6 +46,7 @@ import com.synflow.cflow.cflow.Network;
 import com.synflow.cflow.cflow.VarRef;
 import com.synflow.cflow.internal.CopyOf;
 import com.synflow.cflow.internal.instantiation.properties.PropertiesSupport;
+import com.synflow.core.util.CoreUtil;
 import com.synflow.models.dpn.DPN;
 import com.synflow.models.dpn.DpnFactory;
 import com.synflow.models.dpn.Entity;
@@ -62,10 +63,10 @@ import com.synflow.models.util.Executable;
 @Singleton
 public class InstantiatorImpl implements IInstantiator {
 
+	private List<Entity> builtins;
+
 	@Inject
 	private Provider<ConnectionMaker> connectionMakerProvider;
-
-	private List<Entity> entities;
 
 	private Entity entity;
 
@@ -80,7 +81,7 @@ public class InstantiatorImpl implements IInstantiator {
 	private ResourceDescriptionsProvider provider;
 
 	public InstantiatorImpl() {
-		entities = new ArrayList<>();
+		builtins = new ArrayList<>();
 		mapCxToIr = new HashMap<>();
 		mapEntities = LinkedHashMultimap.create();
 	}
@@ -195,9 +196,9 @@ public class InstantiatorImpl implements IInstantiator {
 	}
 
 	@Override
-	public Iterable<Entity> getEntities() {
-		List<Entity> result = entities;
-		entities = new ArrayList<>();
+	public Iterable<Entity> getBuiltins() {
+		List<Entity> result = builtins;
+		builtins = new ArrayList<>();
 		return result;
 	}
 
@@ -262,7 +263,10 @@ public class InstantiatorImpl implements IInstantiator {
 			} finally {
 				setEntity(oldEntity);
 			}
-			entities.add(entity);
+
+			if (CoreUtil.isBuiltin(entity)) {
+				builtins.add(entity);
+			}
 			mapEntities.put(cxEntity, entity);
 		}
 

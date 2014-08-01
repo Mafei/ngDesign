@@ -42,11 +42,12 @@ public interface IInstantiator {
 	void forEachMapping(CxEntity cxEntity, Executable<Entity> executable);
 
 	/**
-	 * Returns the entities that have been instantiated.
+	 * Returns the built-in entities that have been instantiated, and clears the internal copy
+	 * maintained by this instantiator.
 	 * 
 	 * @return an iterable over entities
 	 */
-	Iterable<Entity> getEntities();
+	Iterable<Entity> getBuiltins();
 
 	/**
 	 * Returns the IR object that corresponds to the given Cx object in the given entity.

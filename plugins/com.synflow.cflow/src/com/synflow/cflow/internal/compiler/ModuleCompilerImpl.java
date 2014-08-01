@@ -145,13 +145,9 @@ public class ModuleCompilerImpl extends CflowSwitch<Void> implements IModuleComp
 
 	@Override
 	public void serializeBuiltins() {
-		// TODO handle builtins
-		// for (Resource resource : instantiator.getBuiltins()) {
-		// EObject contents = resource.getContents().get(0);
-		// if (contents instanceof Entity) {
-		// serialize((Entity) contents);
-		// }
-		// }
+		for (Entity entity : instantiator.getBuiltins()) {
+			serialize(entity);
+		}
 	}
 
 	@Override
