@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.xtext.generator.AbstractFileSystemAccess;
 import org.eclipse.xtext.generator.IFileSystemAccess;
 
 import com.google.inject.Inject;
@@ -43,7 +45,6 @@ import com.synflow.cflow.internal.instantiation.IInstantiator;
 import com.synflow.cflow.internal.scheduler.CycleScheduler;
 import com.synflow.cflow.internal.scheduler.IfScheduler;
 import com.synflow.cflow.internal.services.Typer;
-import com.synflow.core.ISynflowConstants;
 import com.synflow.core.transformations.ProcedureTransformation;
 import com.synflow.core.transformations.SchedulerTransformation;
 import com.synflow.core.transformations.impl.StoreOnceTransformation;
@@ -51,7 +52,6 @@ import com.synflow.models.dpn.Actor;
 import com.synflow.models.dpn.DPN;
 import com.synflow.models.dpn.Entity;
 import com.synflow.models.dpn.Unit;
-import com.synflow.models.ir.util.IrUtil;
 import com.synflow.models.util.Executable;
 import com.synflow.models.util.Void;
 
@@ -127,9 +127,6 @@ public class ModuleCompilerImpl extends CflowSwitch<Void> implements IModuleComp
 
 	@Override
 	public void serialize(Entity entity) {
-		// create resource
-		String name = entity.getName();
-
 		// serializes to byte array (never throws exception)
 		OutputStream os = new ByteArrayOutputStream();
 		try {
@@ -138,9 +135,11 @@ public class ModuleCompilerImpl extends CflowSwitch<Void> implements IModuleComp
 			// byte array output stream never throws exception
 		}
 
-		// writes IR
-		String file = IrUtil.getFile(name) + "." + ISynflowConstants.FILE_EXT_IR;
-		fsa.generateFile(file, os.toString());
+		// serialize to relative file name (obtained by deresolving URI against base URI)
+		URI base = ((AbstractFileSystemAccess) fsa).getURI("");
+		URI uri = entity.eResource().getURI();
+		String fileName = uri.deresolve(base).toString();
+		fsa.generateFile(fileName, os.toString());
 	}
 
 	@Override
