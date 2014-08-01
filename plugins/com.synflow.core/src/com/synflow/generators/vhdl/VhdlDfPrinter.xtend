@@ -107,7 +107,7 @@ class VhdlDfPrinter extends DpnSwitch<CharSequence> {
 	def printPortType(Port port) {
 		if (port.type.int) {
 			val typeInt = port.type as TypeInt
-			'''std_logic_vector («typeInt.size - 1» downto 0)'''
+			'''std_logic_vector(«typeInt.size - 1» downto 0)'''
 		} else {
 			'''std_logic'''
 		}
@@ -145,7 +145,7 @@ class VhdlDfPrinter extends DpnSwitch<CharSequence> {
 
 		'''
 		-------------------------------------------------------------------------------
-		-- Title      : Generated from «actor.name» by Synflow Studio
+		-- Title      : Generated from «actor.name» by Synflow ngDesign
 		-- Project    : «new Path(actor.fileName).segment(0)»
 		--
 		-- File       : «actor.simpleName».vhd
@@ -235,12 +235,13 @@ class VhdlDfPrinter extends DpnSwitch<CharSequence> {
 
 		'''
 		-------------------------------------------------------------------------------
-		-- Title      : Generated from «network.name» by Synflow Studio
+		-- Title      : Generated from «network.name» by Synflow ngDesign
 		-- Project    : «project»
-		-------------------------------------------------------------------------------
+		--
 		-- File       : «network.simpleName».vhd
 		-- Author     : «System.getProperty("user.name")»
 		-- Standard   : VHDL'93
+		--
 		-------------------------------------------------------------------------------
 		-- Copyright (c) «Calendar.instance.get(Calendar.YEAR)»
 		-------------------------------------------------------------------------------
@@ -255,7 +256,7 @@ class VhdlDfPrinter extends DpnSwitch<CharSequence> {
 		  port (
 		                                          -- Clock signal«IF clocks.size > 1»s«ENDIF»
 		  «FOR clock: clocks»
-		  «clock»    : in  std_logic;
+		  «clock.asString»    : in  std_logic;
 		  «ENDFOR»
 
 		  reset_n  : in  std_logic«FOR port : ports»;
@@ -293,12 +294,13 @@ class VhdlDfPrinter extends DpnSwitch<CharSequence> {
 	override caseUnit(Unit unit)
 		'''
 		-------------------------------------------------------------------------------
-		-- Title      : Generated from «unit.name» by Synflow Studio
+		-- Title      : Generated from «unit.name» by Synflow ngDesign
 		-- Project    : «new Path(unit.fileName).segment(0)»
-		-------------------------------------------------------------------------------
+		--
 		-- File       : «unit.simpleName».vhd
 		-- Author     : «System.getProperty("user.name")»
 		-- Standard   : VHDL'93
+		--
 		-------------------------------------------------------------------------------
 		-- Copyright (c) «Calendar.instance.get(Calendar.YEAR)»
 		-------------------------------------------------------------------------------
@@ -416,7 +418,7 @@ class VhdlDfPrinter extends DpnSwitch<CharSequence> {
 			val outgoing = network.getOutgoing(endpoint)
 			if (isSignalNeeded(outgoing)) {
 				val signal = getSignal(namer, endpoint)
-				signals.add('''signal «signal»«printPortType(port)»;''')
+				signals.add('''signal «signal» : «printPortType(port)»;''')
 				if (port.sync) {
 					signals.add('''signal «signal»_send : std_logic;''')
 				}
