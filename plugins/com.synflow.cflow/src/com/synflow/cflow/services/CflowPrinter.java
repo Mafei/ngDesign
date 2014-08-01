@@ -170,7 +170,10 @@ public class CflowPrinter extends CflowSwitch<Void> {
 	public Void caseTypeGen(TypeGen type) {
 		builder.append(type.getSpec());
 		builder.append('<');
-		doSwitch(type.getSize());
+		CExpression size = type.getSize();
+		if (size != null) {
+			doSwitch(size);
+		}
 		builder.append('>');
 		return DONE;
 	}

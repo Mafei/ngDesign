@@ -14,6 +14,7 @@ import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider;
 
 import com.synflow.cflow.CflowUtil;
 import com.synflow.cflow.cflow.Bundle;
+import com.synflow.cflow.cflow.CExpression;
 import com.synflow.cflow.cflow.Import;
 import com.synflow.cflow.cflow.Imported;
 import com.synflow.cflow.cflow.Inst;
@@ -88,11 +89,17 @@ public class CflowLabelProvider extends DefaultEObjectLabelProvider {
 	}
 
 	public String text(TypeGen type) {
-		int size = Evaluator.getIntValue(type.getSize());
-		if (size != -1) {
-			return type.getSpec() + size;
+		CExpression size = type.getSize();
+		if (size == null) {
+			return type.getSpec() + "<?>";
+		} else {
+			int evaluatedSize = Evaluator.getIntValue(size);
+			if (evaluatedSize == -1) {
+				return type.getSpec() + "<" + new CflowPrinter().toString(size) + ">";
+			} else {
+				return type.getSpec() + evaluatedSize;
+			}
 		}
-		return type.getSpec() + "<" + new CflowPrinter().toString(type.getSize()) + ">";
 	}
 
 	public String text(TypeRef type) {
