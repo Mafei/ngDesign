@@ -43,6 +43,7 @@ import com.synflow.cflow.cflow.Variable;
 import com.synflow.cflow.cflow.util.CflowSwitch;
 import com.synflow.cflow.internal.TransformerUtil;
 import com.synflow.cflow.internal.instantiation.properties.PropertiesSupport;
+import com.synflow.core.util.CoreUtil;
 import com.synflow.models.dpn.Actor;
 import com.synflow.models.dpn.DPN;
 import com.synflow.models.dpn.DpnFactory;
@@ -109,7 +110,11 @@ public class EntityMapper extends CflowSwitch<Entity> {
 	 */
 	public void configureEntity(Entity entity, EntityInfo info, InstantiationContext ctx) {
 		// set name
-		entity.setName(info.getName());
+		if (CoreUtil.isBuiltin(entity)) {
+			entity.setName(getName(info.getCxEntity()));
+		} else {
+			entity.setName(info.getName());
+		}
 
 		// set file name
 		Module module = EcoreUtil2.getContainerOfType(info.getCxEntity(), Module.class);
@@ -121,7 +126,7 @@ public class EntityMapper extends CflowSwitch<Entity> {
 		entity.setLineNumber(lineNumber);
 
 		// add to resource
-		info.createResource().getContents().add(entity);
+		info.createResource(entity);
 
 		// set values on entity
 		Map<Variable, EObject> values = setValues(info.getCxEntity(), ctx);
@@ -178,8 +183,6 @@ public class EntityMapper extends CflowSwitch<Entity> {
 		URI cxUri = cxEntity.eResource().getURI();
 		URI uriInst = EcoreUtil.getURI(inst);
 		URI uri = UriComputer.INSTANCE.computeUri(uriInst, cxUri, name);
-
-		// TODO if entity is builtin/external, we must use its non-specialized name
 
 		return new EntityInfo(cxEntity, name, uri);
 	}
