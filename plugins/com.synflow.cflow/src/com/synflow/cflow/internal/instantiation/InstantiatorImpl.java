@@ -133,6 +133,15 @@ public class InstantiatorImpl implements IInstantiator {
 		return instance;
 	}
 
+	private void execute(Entity entity, Executable<Entity> executable) {
+		Entity oldEntity = setEntity(entity);
+		try {
+			executable.exec(entity);
+		} finally {
+			setEntity(oldEntity);
+		}
+	}
+
 	/**
 	 * Finds all CxEntity objects that are at the top of the hierarchy. Computed as the set of URIs
 	 * of all entities, minus the set of URIs of entities that are instantiated. Currently the
@@ -185,14 +194,8 @@ public class InstantiatorImpl implements IInstantiator {
 	public void forEachMapping(CxEntity cxEntity, Executable<Entity> executable) {
 		Collection<Entity> entities = mapEntities.get(cxEntity);
 		for (Entity entity : entities) {
-			Entity oldEntity = setEntity(entity);
-			try {
-				executable.exec(entity);
-			} finally {
-				setEntity(oldEntity);
-			}
+			execute(entity, executable);
 		}
-
 	}
 
 	@Override
@@ -252,28 +255,30 @@ public class InstantiatorImpl implements IInstantiator {
 	 *            instantiation context (hierarchical path, inherited properties)
 	 * @return a specialized IR entity
 	 */
-	private Entity instantiate(EntityInfo info, InstantiationContext ctx) {
-		CxEntity cxEntity = info.getCxEntity();
-		Entity entity = info.loadEntity();
-		if (entity == null) {
-			entity = entityMapper.doSwitch(info.getCxEntity());
-			Entity oldEntity = setEntity(entity);
-			try {
+	private Entity instantiate(final EntityInfo info, final InstantiationContext ctx) {
+		final CxEntity cxEntity = info.getCxEntity();
+		Entity entity = entityMapper.doSwitch(info.getCxEntity());
+		execute(entity, new Executable<Entity>() {
+			@Override
+			public void exec(Entity entity) {
 				entityMapper.configureEntity(entity, info, ctx);
-			} finally {
-				setEntity(oldEntity);
 			}
+		});
 
-			if (CoreUtil.isBuiltin(entity)) {
-				builtins.add(entity);
-			}
-			mapEntities.put(cxEntity, entity);
+		// add mapping, optionally add to builtins
+		mapEntities.put(cxEntity, entity);
+		if (CoreUtil.isBuiltin(entity)) {
+			builtins.add(entity);
 		}
 
+		// instantiate network
 		if (cxEntity instanceof Network) {
-			Entity oldEntity = setEntity(entity);
-			instantiate((Network) cxEntity, ctx);
-			setEntity(oldEntity);
+			execute(entity, new Executable<Entity>() {
+				@Override
+				public void exec(Entity entity) {
+					instantiate((Network) cxEntity, ctx);
+				}
+			});
 		}
 
 		return entity;
@@ -333,6 +338,9 @@ public class InstantiatorImpl implements IInstantiator {
 
 	@Override
 	public void update(ResourceSet resourceSet) {
+		mapCxToIr = new HashMap<>();
+		mapEntities = LinkedHashMultimap.create();
+
 		for (CxEntity cxEntity : findTopFrom(resourceSet)) {
 			EntityInfo info = entityMapper.getEntityInfo(cxEntity);
 			instantiate(info, new InstantiationContext(cxEntity.getName()));
