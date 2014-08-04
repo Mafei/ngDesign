@@ -19,6 +19,7 @@ import org.eclipse.xtext.formatting.IWhitespaceInformationProvider;
 import org.eclipse.xtext.generator.IGenerator;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.resource.IDefaultResourceDescriptionStrategy;
+import org.eclipse.xtext.resource.IResourceDescription;
 import org.eclipse.xtext.scoping.IGlobalScopeProvider;
 import org.eclipse.xtext.scoping.IScopeProvider;
 
@@ -30,6 +31,7 @@ import com.synflow.cflow.generator.CflowGenerator;
 import com.synflow.cflow.internal.scoping.CflowGlobalScopeProvider;
 import com.synflow.cflow.internal.scoping.CflowImportedNamespaceScopeProvider;
 import com.synflow.cflow.internal.scoping.CflowResourceStrategy;
+import com.synflow.cflow.internal.scoping.CxResourceDescriptionManager;
 import com.synflow.cflow.services.CflowQualifiedNameProvider;
 
 /**
@@ -55,6 +57,10 @@ public class CflowRuntimeModule extends AbstractCflowRuntimeModule {
 	@Override
 	public Class<? extends IQualifiedNameProvider> bindIQualifiedNameProvider() {
 		return CflowQualifiedNameProvider.class;
+	}
+
+	public Class<? extends IResourceDescription.Manager> bindIResourceDescription$Manager() {
+		return CxResourceDescriptionManager.class;
 	}
 
 	public Class<? extends IStratumBreakpointSupport> bindIStratumBreakpointSupport() {
