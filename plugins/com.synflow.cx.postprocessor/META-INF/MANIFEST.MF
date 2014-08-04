@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Postprocessor
-Bundle-SymbolicName: com.synflow.cflow.postprocessor;singleton:=true
+Bundle-SymbolicName: com.synflow.cx.postprocessor;singleton:=true
 Bundle-Vendor: Synflow SAS
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

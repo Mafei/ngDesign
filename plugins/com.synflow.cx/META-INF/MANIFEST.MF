@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: C~ Language Support
 Bundle-Vendor: Synflow SAS
 Bundle-Version: 0.11.0.qualifier
-Bundle-SymbolicName: com.synflow.cflow;singleton:=true
+Bundle-SymbolicName: com.synflow.cx;singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.xtext;bundle-version="2.6.0";visibility:=reexport,
  org.eclipse.xtext.generator;bundle-version="2.6.0";resolution:=optional,
@@ -15,7 +15,7 @@ Require-Bundle: org.eclipse.xtext;bundle-version="2.6.0";visibility:=reexport,
  com.synflow.core;bundle-version="0.11.0";visibility:=reexport,
  org.antlr.runtime,
  com.google.gson;bundle-version="2.1.0",
- com.synflow.cflow.postprocessor;bundle-version="0.11.0";resolution:=optional
+ com.synflow.cx.postprocessor;bundle-version="0.11.0";resolution:=optional
 Import-Package: org.apache.commons.logging,
  org.apache.log4j,
  org.eclipse.xtext.xbase.lib

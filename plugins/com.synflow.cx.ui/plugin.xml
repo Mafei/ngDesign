@@ -317,7 +317,7 @@
             point="org.eclipse.ui.ide.markerResolution">
         <markerResolutionGenerator
             class="com.synflow.cflow.ui.CflowExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
-            markerType="com.synflow.cflow.ui.cflow.check.fast">
+            markerType="com.synflow.cx.ui.cflow.check.fast">
             <attribute
                 name="FIXABLE_KEY"
                 value="true">
@@ -325,7 +325,7 @@
         </markerResolutionGenerator>
         <markerResolutionGenerator
             class="com.synflow.cflow.ui.CflowExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
-            markerType="com.synflow.cflow.ui.cflow.check.normal">
+            markerType="com.synflow.cx.ui.cflow.check.normal">
             <attribute
                 name="FIXABLE_KEY"
                 value="true">
@@ -333,7 +333,7 @@
         </markerResolutionGenerator>
         <markerResolutionGenerator
             class="com.synflow.cflow.ui.CflowExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
-            markerType="com.synflow.cflow.ui.cflow.check.expensive">
+            markerType="com.synflow.cx.ui.cflow.check.expensive">
             <attribute
                 name="FIXABLE_KEY"
                 value="true">
@@ -396,7 +396,7 @@
   <extension
         point="org.eclipse.ui.editors.annotationTypes">
      <type
-           markerType="com.synflow.cflow.cycleIndicator"
+           markerType="com.synflow.cx.cycleIndicator"
            name="com.synflow.cflow.ui.cycleIndicator">
      </type>
   </extension>
