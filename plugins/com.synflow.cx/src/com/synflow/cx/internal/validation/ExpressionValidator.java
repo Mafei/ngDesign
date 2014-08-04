@@ -123,6 +123,10 @@ public class ExpressionValidator extends AbstractDeclarativeValidator {
 		// Checks that there are at most one read per port in the expression. Otherwise indicate an
 		// error.
 		Task task = EcoreUtil2.getContainerOfType(expr, Task.class);
+		if (task == null) {
+			return;
+		}
+
 		instantiator.forEachMapping(task, new Executable<Entity>() {
 			@Override
 			public void exec(Entity entity) {
