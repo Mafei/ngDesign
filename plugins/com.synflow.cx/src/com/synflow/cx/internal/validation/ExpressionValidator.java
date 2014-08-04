@@ -18,6 +18,7 @@ import static com.synflow.cx.validation.IssueCodes.ERR_MULTIPLE_READS;
 import static com.synflow.cx.validation.IssueCodes.ERR_NO_SIDE_EFFECTS;
 import static com.synflow.cx.validation.IssueCodes.ERR_TYPE_MISMATCH;
 import static com.synflow.models.util.SwitchUtil.check;
+import static org.eclipse.xtext.validation.CheckType.NORMAL;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +36,7 @@ import com.google.inject.Inject;
 import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.Branch;
 import com.synflow.cx.cx.CExpression;
+import com.synflow.cx.cx.CxPackage.Literals;
 import com.synflow.cx.cx.ExpressionVariable;
 import com.synflow.cx.cx.StatementAssign;
 import com.synflow.cx.cx.StatementLoop;
@@ -42,7 +44,6 @@ import com.synflow.cx.cx.StatementVariable;
 import com.synflow.cx.cx.Task;
 import com.synflow.cx.cx.VarRef;
 import com.synflow.cx.cx.Variable;
-import com.synflow.cx.cx.CxPackage.Literals;
 import com.synflow.cx.internal.instantiation.IInstantiator;
 import com.synflow.cx.internal.services.BoolCxSwitch;
 import com.synflow.cx.internal.services.Typer;
@@ -117,7 +118,7 @@ public class ExpressionValidator extends AbstractDeclarativeValidator {
 		}
 	}
 
-	@Check
+	@Check(NORMAL)
 	public void checkMultipleReads(final CExpression expr) {
 		// Checks that there are at most one read per port in the expression. Otherwise indicate an
 		// error.
