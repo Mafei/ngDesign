@@ -69,7 +69,7 @@ import com.synflow.models.util.EcoreHelper;
  * @author Matthieu Wipliez
  * 
  */
-public class CflowContentProvider implements IPipelinedTreeContentProvider2,
+public class CxContentProvider implements IPipelinedTreeContentProvider2,
 		IResourceChangeListener, ITreeContentProvider {
 
 	private static class RefreshComputerVisitor implements IResourceDeltaVisitor {

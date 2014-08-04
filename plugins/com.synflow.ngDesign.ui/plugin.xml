@@ -333,7 +333,7 @@
  <extension
        point="org.eclipse.ltk.core.refactoring.renameParticipants">
     <renameParticipant
-          class="com.synflow.ngDesign.ui.internal.refactoring.CflowRenameParticipant"
+          class="com.synflow.ngDesign.ui.internal.refactoring.CxRenameParticipant"
           id="com.synflow.ngDesign.ui.renameParticipantCf"
           name="Rename Cx task">
        <enablement>
@@ -355,7 +355,7 @@
  <extension
        point="org.eclipse.ltk.core.refactoring.moveParticipants">
     <moveParticipant
-          class="com.synflow.ngDesign.ui.internal.refactoring.CflowMoveParticipant"
+          class="com.synflow.ngDesign.ui.internal.refactoring.CxMoveParticipant"
           id="com.synflow.ngDesign.ui.moveParticipantCf"
           name="Move Cx task">
        <enablement>
@@ -386,7 +386,7 @@
        point="org.eclipse.ui.navigator.navigatorContent">
     <navigatorContent
           activeByDefault="true"
-          contentProvider="com.synflow.ngDesign.ui.internal.navigator.CflowContentProvider"
+          contentProvider="com.synflow.ngDesign.ui.internal.navigator.CxContentProvider"
           icon="icons/package.gif"
           id="com.synflow.ngDesign.ui.navigatorContent"
           labelProvider="com.synflow.cx.ui.CxExecutableExtensionFactory:com.synflow.cx.ui.labeling.CxNavigatorLabelProvider"
@@ -550,7 +550,7 @@
  <extension
        point="org.eclipse.ui.decorators">
     <decorator
-          class="com.synflow.ngDesign.ui.internal.navigator.CflowLabelDecorator"
+          class="com.synflow.ngDesign.ui.internal.navigator.CxLabelDecorator"
           id="com.synflow.cx.ui.decorator"
           label="Cx decorator"
           lightweight="true"

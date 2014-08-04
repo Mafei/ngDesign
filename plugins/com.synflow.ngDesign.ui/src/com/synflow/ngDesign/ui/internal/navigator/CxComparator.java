@@ -27,7 +27,7 @@ import com.synflow.cx.cx.CxEntity;
  * @author Matthieu Wipliez
  * 
  */
-public class CflowComparator extends ViewerComparator {
+public class CxComparator extends ViewerComparator {
 
 	private static final int OTHERS = 51;
 

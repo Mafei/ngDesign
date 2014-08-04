@@ -22,14 +22,14 @@ import org.eclipse.jface.viewers.ViewerSorter;
  */
 public class ProjectExplorerSorter extends ViewerSorter {
 
-	private final CflowComparator fComparator;
+	private final CxComparator fComparator;
 
 	/**
 	 * Constructor.
 	 */
 	public ProjectExplorerSorter() {
 		super(null); // delay initialization of collator
-		fComparator = new CflowComparator();
+		fComparator = new CxComparator();
 	}
 
 	@Override

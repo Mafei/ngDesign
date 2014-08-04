@@ -10,15 +10,19 @@
  *******************************************************************************/
 package com.synflow.ngDesign.ui.internal.refactoring;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
-import org.eclipse.ltk.core.refactoring.participants.MoveArguments;
-import org.eclipse.ltk.core.refactoring.participants.MoveParticipant;
+import org.eclipse.ltk.core.refactoring.participants.RenameArguments;
+import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
+
+import com.synflow.core.SynflowCore;
 
 /**
  * This class defines a RenameParticipant for Cx tasks.
@@ -26,19 +30,17 @@ import org.eclipse.ltk.core.refactoring.participants.MoveParticipant;
  * @author Matthieu Wipliez
  * 
  */
-public class CflowMoveParticipant extends MoveParticipant {
+public class CxRenameParticipant extends RenameParticipant {
 
 	@Override
 	public RefactoringStatus checkConditions(IProgressMonitor pm, CheckConditionsContext context)
 			throws OperationCanceledException {
-		MoveArguments args = getArguments();
-		Object target = args.getDestination();
-		if (!(target instanceof IContainer)) {
-			String msg = "Target must be a valid folder or project";
-			return RefactoringStatus.createFatalErrorStatus(msg);
-		}
-
-		return new RefactoringStatus();
+		// check name
+		RenameArguments args = getArguments();
+		String newName = args.getNewName();
+		IPath path = new Path(newName).removeFileExtension();
+		IStatus status = SynflowCore.validateIdentifier(path.lastSegment());
+		return RefactoringStatus.create(status);
 	}
 
 	@Override
@@ -49,7 +51,7 @@ public class CflowMoveParticipant extends MoveParticipant {
 
 	@Override
 	public String getName() {
-		return "Cx move participant";
+		return "Cx rename participant";
 	}
 
 	@Override

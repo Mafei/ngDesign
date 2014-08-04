@@ -32,7 +32,7 @@ import com.synflow.models.util.EcoreHelper;
  * @author Matthieu Wipliez
  * 
  */
-public class CflowLabelDecorator implements ILightweightLabelDecorator {
+public class CxLabelDecorator implements ILightweightLabelDecorator {
 
 	@Override
 	public void addListener(ILabelProviderListener listener) {
