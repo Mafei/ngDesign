@@ -12,7 +12,7 @@
     <relativePath>../../releng/com.synflow.ngDesign.releng</relativePath>
   </parent>
 
-  <artifactId>com.synflow.cflow.postprocessor</artifactId>
+  <artifactId>com.synflow.cx.postprocessor</artifactId>
   <packaging>eclipse-plugin</packaging>
 
 </project>

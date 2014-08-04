@@ -18,10 +18,10 @@
     <module>../../features/com.synflow.ngDesign.feature</module>
     <module>../../features/com.synflow.ngDesign.ide</module>
     <module>../../fragments/com.synflow.libraries</module>
-    <module>../../plugins/com.synflow.cflow</module>
-    <module>../../plugins/com.synflow.cflow.postprocessor</module>
-    <module>../../plugins/com.synflow.cflow.ui</module>
     <module>../../plugins/com.synflow.core</module>
+    <module>../../plugins/com.synflow.cx</module>
+    <module>../../plugins/com.synflow.cx.postprocessor</module>
+    <module>../../plugins/com.synflow.cx.ui</module>
     <module>../../plugins/com.synflow.models</module>
     <module>../../plugins/com.synflow.ngDesign</module>
     <module>../../plugins/com.synflow.ngDesign.ui</module>

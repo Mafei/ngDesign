@@ -12,7 +12,7 @@
     <relativePath>../../releng/com.synflow.ngDesign.releng</relativePath>
   </parent>
 
-  <artifactId>com.synflow.cflow</artifactId>
+  <artifactId>com.synflow.cx</artifactId>
   <packaging>eclipse-plugin</packaging>
 
   <build>
@@ -35,7 +35,7 @@
           <includePluginDependencies>true</includePluginDependencies>
           <mainClass>org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher</mainClass>
           <arguments>
-            <argument>file://${project.basedir}/src/com/synflow/cflow/GenerateCflow.mwe2</argument>
+            <argument>file://${project.basedir}/src/com/synflow/cx/GenerateCx.mwe2</argument>
             <argument>-p</argument>
             <argument>runtimeProject=/${project.basedir}</argument>
           </arguments>
@@ -43,7 +43,7 @@
         <dependencies>
           <dependency>
             <groupId>com.synflow</groupId>
-            <artifactId>com.synflow.cflow.postprocessor</artifactId>
+            <artifactId>com.synflow.cx.postprocessor</artifactId>
             <version><!-- ${studio-version} -->0.11.0.qualifier</version>
           </dependency>
           <dependency>
