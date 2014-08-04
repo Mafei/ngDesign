@@ -15,8 +15,7 @@ import org.junit.Test;
 import com.synflow.models.dpn.Entity;
 
 /**
- * This abstract class defines the whole "pass" test suite. It must be extended by concrete classes
- * that need only implement the {@link #checkCflowFile(String, boolean)} method.
+ * This abstract class defines the whole "pass" test suite. It must be extended by concrete classes.
  * 
  * @author Matthieu Wipliez
  */

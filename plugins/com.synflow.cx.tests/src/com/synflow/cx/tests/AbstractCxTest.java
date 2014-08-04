@@ -69,7 +69,7 @@ import com.synflow.models.ir.util.IrUtil;
 @RunWith(XtextRunner.class)
 public abstract class AbstractCxTest extends AbstractXtextTests {
 
-	private static final String CFLOW_PLUGIN_ID = "com.synflow.cx";
+	private static final String CX_PLUGIN_ID = "com.synflow.cx";
 
 	private static int failed, total;
 
@@ -94,7 +94,7 @@ public abstract class AbstractCxTest extends AbstractXtextTests {
 		ignore(DpnPackage.eINSTANCE);
 
 		// maps plugin URIs to absolute file URIs
-		map(CFLOW_PLUGIN_ID, "../" + CFLOW_PLUGIN_ID);
+		map(CX_PLUGIN_ID, "../" + CX_PLUGIN_ID);
 		map(SynflowCore.PLUGIN_ID, "../../fragments/com.synflow.libraries");
 	}
 

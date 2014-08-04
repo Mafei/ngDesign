@@ -22,7 +22,7 @@ import com.synflow.models.ir.TypeVoid;
 import com.synflow.models.util.Void;
 
 /**
- * This class defines a type printer for Cflow-like types.
+ * This class defines a type printer for Cx-like types.
  * 
  * @author Matthieu Wipliez
  * 
