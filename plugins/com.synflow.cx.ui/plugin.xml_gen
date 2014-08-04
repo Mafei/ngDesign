@@ -6,48 +6,48 @@
     <extension
             point="org.eclipse.ui.editors">
         <editor
-            class="com.synflow.cflow.ui.CflowExecutableExtensionFactory:org.eclipse.xtext.ui.editor.XtextEditor"
+            class="com.synflow.cx.ui.CxExecutableExtensionFactory:org.eclipse.xtext.ui.editor.XtextEditor"
             contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
             default="true"
-            extensions="cf"
-            id="com.synflow.cflow.Cflow"
-            name="Cflow Editor">
+            extensions="cx,cf"
+            id="com.synflow.cx.Cx"
+            name="Cx Editor">
         </editor>
     </extension>
     <extension
         point="org.eclipse.ui.handlers">
         <handler
-            class="com.synflow.cflow.ui.CflowExecutableExtensionFactory:org.eclipse.xtext.ui.editor.hyperlinking.OpenDeclarationHandler"
+            class="com.synflow.cx.ui.CxExecutableExtensionFactory:org.eclipse.xtext.ui.editor.hyperlinking.OpenDeclarationHandler"
             commandId="org.eclipse.xtext.ui.editor.hyperlinking.OpenDeclaration">
             <activeWhen>
                 <reference
-                    definitionId="com.synflow.cflow.Cflow.Editor.opened">
+                    definitionId="com.synflow.cx.Cx.Editor.opened">
                 </reference>
             </activeWhen>
         </handler>
         <handler
-            class="com.synflow.cflow.ui.CflowExecutableExtensionFactory:org.eclipse.xtext.ui.editor.handler.ValidateActionHandler"
-            commandId="com.synflow.cflow.Cflow.validate">
+            class="com.synflow.cx.ui.CxExecutableExtensionFactory:org.eclipse.xtext.ui.editor.handler.ValidateActionHandler"
+            commandId="com.synflow.cx.Cx.validate">
          <activeWhen>
             <reference
-                    definitionId="com.synflow.cflow.Cflow.Editor.opened">
+                    definitionId="com.synflow.cx.Cx.Editor.opened">
             </reference>
          </activeWhen>
       	</handler>
       	<!-- copy qualified name -->
         <handler
-            class="com.synflow.cflow.ui.CflowExecutableExtensionFactory:org.eclipse.xtext.ui.editor.copyqualifiedname.EditorCopyQualifiedNameHandler"
+            class="com.synflow.cx.ui.CxExecutableExtensionFactory:org.eclipse.xtext.ui.editor.copyqualifiedname.EditorCopyQualifiedNameHandler"
             commandId="org.eclipse.xtext.ui.editor.copyqualifiedname.EditorCopyQualifiedName">
             <activeWhen>
-				<reference definitionId="com.synflow.cflow.Cflow.Editor.opened" />
+				<reference definitionId="com.synflow.cx.Cx.Editor.opened" />
             </activeWhen>
         </handler>
         <handler
-            class="com.synflow.cflow.ui.CflowExecutableExtensionFactory:org.eclipse.xtext.ui.editor.copyqualifiedname.OutlineCopyQualifiedNameHandler"
+            class="com.synflow.cx.ui.CxExecutableExtensionFactory:org.eclipse.xtext.ui.editor.copyqualifiedname.OutlineCopyQualifiedNameHandler"
             commandId="org.eclipse.xtext.ui.editor.copyqualifiedname.OutlineCopyQualifiedName">
             <activeWhen>
             	<and>
-            		<reference definitionId="com.synflow.cflow.Cflow.XtextEditor.opened" />
+            		<reference definitionId="com.synflow.cx.Cx.XtextEditor.opened" />
 	                <iterate>
 						<adapt type="org.eclipse.xtext.ui.editor.outline.IOutlineNode" />
 					</iterate>
@@ -56,22 +56,22 @@
         </handler>
     </extension>
     <extension point="org.eclipse.core.expressions.definitions">
-        <definition id="com.synflow.cflow.Cflow.Editor.opened">
+        <definition id="com.synflow.cx.Cx.Editor.opened">
             <and>
                 <reference definitionId="isActiveEditorAnInstanceOfXtextEditor"/>
                 <with variable="activeEditor">
                     <test property="org.eclipse.xtext.ui.editor.XtextEditor.languageName" 
-                        value="com.synflow.cflow.Cflow" 
+                        value="com.synflow.cx.Cx" 
                         forcePluginActivation="true"/>
                 </with>        
             </and>
         </definition>
-        <definition id="com.synflow.cflow.Cflow.XtextEditor.opened">
+        <definition id="com.synflow.cx.Cx.XtextEditor.opened">
             <and>
                 <reference definitionId="isXtextEditorActive"/>
                 <with variable="activeEditor">
                     <test property="org.eclipse.xtext.ui.editor.XtextEditor.languageName" 
-                        value="com.synflow.cflow.Cflow" 
+                        value="com.synflow.cx.Cx" 
                         forcePluginActivation="true"/>
                 </with>        
             </and>
@@ -80,33 +80,33 @@
     <extension
             point="org.eclipse.ui.preferencePages">
         <page
-            class="com.synflow.cflow.ui.CflowExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
-            id="com.synflow.cflow.Cflow"
-            name="Cflow">
-            <keywordReference id="com.synflow.cflow.ui.keyword_Cflow"/>
+            class="com.synflow.cx.ui.CxExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
+            id="com.synflow.cx.Cx"
+            name="Cx">
+            <keywordReference id="com.synflow.cx.ui.keyword_Cx"/>
         </page>
         <page
-            category="com.synflow.cflow.Cflow"
-            class="com.synflow.cflow.ui.CflowExecutableExtensionFactory:org.eclipse.xtext.ui.editor.syntaxcoloring.SyntaxColoringPreferencePage"
-            id="com.synflow.cflow.Cflow.coloring"
+            category="com.synflow.cx.Cx"
+            class="com.synflow.cx.ui.CxExecutableExtensionFactory:org.eclipse.xtext.ui.editor.syntaxcoloring.SyntaxColoringPreferencePage"
+            id="com.synflow.cx.Cx.coloring"
             name="Syntax Coloring">
-            <keywordReference id="com.synflow.cflow.ui.keyword_Cflow"/>
+            <keywordReference id="com.synflow.cx.ui.keyword_Cx"/>
         </page>
         <page
-            category="com.synflow.cflow.Cflow"
-            class="com.synflow.cflow.ui.CflowExecutableExtensionFactory:org.eclipse.xtext.ui.editor.templates.XtextTemplatePreferencePage"
-            id="com.synflow.cflow.Cflow.templates"
+            category="com.synflow.cx.Cx"
+            class="com.synflow.cx.ui.CxExecutableExtensionFactory:org.eclipse.xtext.ui.editor.templates.XtextTemplatePreferencePage"
+            id="com.synflow.cx.Cx.templates"
             name="Templates">
-            <keywordReference id="com.synflow.cflow.ui.keyword_Cflow"/>
+            <keywordReference id="com.synflow.cx.ui.keyword_Cx"/>
         </page>
     </extension>
     <extension
             point="org.eclipse.ui.propertyPages">
         <page
-            class="com.synflow.cflow.ui.CflowExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
-            id="com.synflow.cflow.Cflow"
-            name="Cflow">
-            <keywordReference id="com.synflow.cflow.ui.keyword_Cflow"/>
+            class="com.synflow.cx.ui.CxExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
+            id="com.synflow.cx.Cx"
+            name="Cx">
+            <keywordReference id="com.synflow.cx.ui.keyword_Cx"/>
             <enabledWhen>
 	            <adapt type="org.eclipse.core.resources.IProject"/>
 			</enabledWhen>
@@ -116,14 +116,14 @@
     <extension
         point="org.eclipse.ui.keywords">
         <keyword
-            id="com.synflow.cflow.ui.keyword_Cflow"
-            label="Cflow"/>
+            id="com.synflow.cx.ui.keyword_Cx"
+            label="Cx"/>
     </extension>
     <extension
          point="org.eclipse.ui.commands">
       <command
             description="Trigger expensive validation"
-            id="com.synflow.cflow.Cflow.validate"
+            id="com.synflow.cx.Cx.validate"
             name="Validate">
       </command>
       <!-- copy qualified name -->
@@ -144,12 +144,12 @@
         <menuContribution
             locationURI="popup:#TextEditorContext?after=group.edit">
              <command
-                 commandId="com.synflow.cflow.Cflow.validate"
+                 commandId="com.synflow.cx.Cx.validate"
                  style="push"
                  tooltip="Trigger expensive validation">
             <visibleWhen checkEnabled="false">
                 <reference
-                    definitionId="com.synflow.cflow.Cflow.Editor.opened">
+                    definitionId="com.synflow.cx.Cx.Editor.opened">
                 </reference>
             </visibleWhen>
          </command>  
@@ -159,7 +159,7 @@
          	<command commandId="org.eclipse.xtext.ui.editor.copyqualifiedname.EditorCopyQualifiedName" 
          		style="push" tooltip="Copy Qualified Name">
             	<visibleWhen checkEnabled="false">
-                	<reference definitionId="com.synflow.cflow.Cflow.Editor.opened" />
+                	<reference definitionId="com.synflow.cx.Cx.Editor.opened" />
             	</visibleWhen>
          	</command>  
          </menuContribution>
@@ -167,7 +167,7 @@
          	<command commandId="org.eclipse.xtext.ui.editor.copyqualifiedname.EditorCopyQualifiedName"
             	style="push" tooltip="Copy Qualified Name">
             	<visibleWhen checkEnabled="false">
-                	<reference definitionId="com.synflow.cflow.Cflow.Editor.opened" />
+                	<reference definitionId="com.synflow.cx.Cx.Editor.opened" />
             	</visibleWhen>
          	</command>  
          </menuContribution>
@@ -176,7 +176,7 @@
 				style="push" tooltip="Copy Qualified Name">
          		<visibleWhen checkEnabled="false">
 	            	<and>
-	            		<reference definitionId="com.synflow.cflow.Cflow.XtextEditor.opened" />
+	            		<reference definitionId="com.synflow.cx.Cx.XtextEditor.opened" />
 						<iterate>
 							<adapt type="org.eclipse.xtext.ui.editor.outline.IOutlineNode" />
 						</iterate>
@@ -189,7 +189,7 @@
 		<menuContribution locationURI="popup:#TextEditorContext?endof=group.find">
 			<command commandId="org.eclipse.xtext.ui.editor.FindReferences">
 				<visibleWhen checkEnabled="false">
-                	<reference definitionId="com.synflow.cflow.Cflow.Editor.opened">
+                	<reference definitionId="com.synflow.cx.Cx.Editor.opened">
                 	</reference>
             	</visibleWhen>
 			</command>
@@ -197,11 +197,11 @@
 	</extension>
 	<extension point="org.eclipse.ui.handlers">
 	    <handler
-            class="com.synflow.cflow.ui.CflowExecutableExtensionFactory:org.eclipse.xtext.ui.editor.findrefs.FindReferencesHandler"
+            class="com.synflow.cx.ui.CxExecutableExtensionFactory:org.eclipse.xtext.ui.editor.findrefs.FindReferencesHandler"
             commandId="org.eclipse.xtext.ui.editor.FindReferences">
             <activeWhen>
                 <reference
-                    definitionId="com.synflow.cflow.Cflow.Editor.opened">
+                    definitionId="com.synflow.cx.Cx.Editor.opened">
                 </reference>
             </activeWhen>
         </handler>
@@ -212,36 +212,50 @@
 	<extension
 		point="org.eclipse.emf.ecore.extension_parser">
 		<parser
-			class="com.synflow.cflow.ui.CflowExecutableExtensionFactory:org.eclipse.xtext.resource.IResourceFactory"
+			class="com.synflow.cx.ui.CxExecutableExtensionFactory:org.eclipse.xtext.resource.IResourceFactory"
+			type="cx">
+		</parser>
+	</extension>
+	<extension point="org.eclipse.xtext.extension_resourceServiceProvider">
+        <resourceServiceProvider
+            class="com.synflow.cx.ui.CxExecutableExtensionFactory:org.eclipse.xtext.ui.resource.IResourceUIServiceProvider"
+            uriExtension="cx">
+        </resourceServiceProvider>
+    </extension>
+
+	<extension
+		point="org.eclipse.emf.ecore.extension_parser">
+		<parser
+			class="com.synflow.cx.ui.CxExecutableExtensionFactory:org.eclipse.xtext.resource.IResourceFactory"
 			type="cf">
 		</parser>
 	</extension>
 	<extension point="org.eclipse.xtext.extension_resourceServiceProvider">
         <resourceServiceProvider
-            class="com.synflow.cflow.ui.CflowExecutableExtensionFactory:org.eclipse.xtext.ui.resource.IResourceUIServiceProvider"
+            class="com.synflow.cx.ui.CxExecutableExtensionFactory:org.eclipse.xtext.ui.resource.IResourceUIServiceProvider"
             uriExtension="cf">
         </resourceServiceProvider>
     </extension>
 
 
-    <!-- marker definitions for com.synflow.cflow.Cflow -->
+    <!-- marker definitions for com.synflow.cx.Cx -->
     <extension
-            id="cflow.check.fast"
-            name="Cflow Problem"
+            id="cx.check.fast"
+            name="Cx Problem"
             point="org.eclipse.core.resources.markers">
         <super type="org.eclipse.xtext.ui.check.fast"/>
         <persistent value="true"/>
     </extension>
     <extension
-            id="cflow.check.normal"
-            name="Cflow Problem"
+            id="cx.check.normal"
+            name="Cx Problem"
             point="org.eclipse.core.resources.markers">
         <super type="org.eclipse.xtext.ui.check.normal"/>
         <persistent value="true"/>
     </extension>
     <extension
-            id="cflow.check.expensive"
-            name="Cflow Problem"
+            id="cx.check.expensive"
+            name="Cx Problem"
             point="org.eclipse.core.resources.markers">
         <super type="org.eclipse.xtext.ui.check.expensive"/>
         <persistent value="true"/>
@@ -250,29 +264,29 @@
    <extension
          point="org.eclipse.xtext.builder.participant">
       <participant
-            class="com.synflow.cflow.ui.CflowExecutableExtensionFactory:org.eclipse.xtext.builder.IXtextBuilderParticipant"
-            fileExtensions="cf"
+            class="com.synflow.cx.ui.CxExecutableExtensionFactory:org.eclipse.xtext.builder.IXtextBuilderParticipant"
+            fileExtensions="cx,cf"
             >
       </participant>
    </extension>
    <extension
             point="org.eclipse.ui.preferencePages">
         <page
-            category="com.synflow.cflow.Cflow"
-            class="com.synflow.cflow.ui.CflowExecutableExtensionFactory:org.eclipse.xtext.builder.preferences.BuilderPreferencePage"
-            id="com.synflow.cflow.Cflow.compiler.preferencePage"
+            category="com.synflow.cx.Cx"
+            class="com.synflow.cx.ui.CxExecutableExtensionFactory:org.eclipse.xtext.builder.preferences.BuilderPreferencePage"
+            id="com.synflow.cx.Cx.compiler.preferencePage"
             name="Compiler">
-            <keywordReference id="com.synflow.cflow.ui.keyword_Cflow"/>
+            <keywordReference id="com.synflow.cx.ui.keyword_Cx"/>
         </page>
     </extension>
     <extension
             point="org.eclipse.ui.propertyPages">
         <page
-            category="com.synflow.cflow.Cflow"
-            class="com.synflow.cflow.ui.CflowExecutableExtensionFactory:org.eclipse.xtext.builder.preferences.BuilderPreferencePage"
-            id="com.synflow.cflow.Cflow.compiler.propertyPage"
+            category="com.synflow.cx.Cx"
+            class="com.synflow.cx.ui.CxExecutableExtensionFactory:org.eclipse.xtext.builder.preferences.BuilderPreferencePage"
+            id="com.synflow.cx.Cx.compiler.propertyPage"
             name="Compiler">
-            <keywordReference id="com.synflow.cflow.ui.keyword_Cflow"/>
+            <keywordReference id="com.synflow.cx.ui.keyword_Cx"/>
             <enabledWhen>
 	            <adapt type="org.eclipse.core.resources.IProject"/>
 			</enabledWhen>
@@ -284,11 +298,11 @@
 	<extension
 		point="org.eclipse.ui.handlers">
 		<handler 
-			class="com.synflow.cflow.ui.CflowExecutableExtensionFactory:org.eclipse.xtext.ui.editor.outline.quickoutline.ShowQuickOutlineActionHandler"
+			class="com.synflow.cx.ui.CxExecutableExtensionFactory:org.eclipse.xtext.ui.editor.outline.quickoutline.ShowQuickOutlineActionHandler"
 			commandId="org.eclipse.xtext.ui.editor.outline.QuickOutline">
 			<activeWhen>
 				<reference
-					definitionId="com.synflow.cflow.Cflow.Editor.opened">
+					definitionId="com.synflow.cx.Cx.Editor.opened">
 				</reference>
 			</activeWhen>
 		</handler>
@@ -308,33 +322,33 @@
 				style="push"
 				tooltip="Open Quick Outline">
 				<visibleWhen checkEnabled="false">
-					<reference definitionId="com.synflow.cflow.Cflow.Editor.opened"/>
+					<reference definitionId="com.synflow.cx.Cx.Editor.opened"/>
 				</visibleWhen>
 			</command>
 		</menuContribution>
 	</extension>
-    <!-- quickfix marker resolution generator for com.synflow.cflow.Cflow -->
+    <!-- quickfix marker resolution generator for com.synflow.cx.Cx -->
     <extension
             point="org.eclipse.ui.ide.markerResolution">
         <markerResolutionGenerator
-            class="com.synflow.cflow.ui.CflowExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
-            markerType="com.synflow.cflow.ui.cflow.check.fast">
+            class="com.synflow.cx.ui.CxExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
+            markerType="com.synflow.cx.ui.cx.check.fast">
             <attribute
                 name="FIXABLE_KEY"
                 value="true">
             </attribute>
         </markerResolutionGenerator>
         <markerResolutionGenerator
-            class="com.synflow.cflow.ui.CflowExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
-            markerType="com.synflow.cflow.ui.cflow.check.normal">
+            class="com.synflow.cx.ui.CxExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
+            markerType="com.synflow.cx.ui.cx.check.normal">
             <attribute
                 name="FIXABLE_KEY"
                 value="true">
             </attribute>
         </markerResolutionGenerator>
         <markerResolutionGenerator
-            class="com.synflow.cflow.ui.CflowExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
-            markerType="com.synflow.cflow.ui.cflow.check.expensive">
+            class="com.synflow.cx.ui.CxExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
+            markerType="com.synflow.cx.ui.cx.check.expensive">
             <attribute
                 name="FIXABLE_KEY"
                 value="true">
@@ -344,11 +358,11 @@
    	<!-- Rename Refactoring -->
 	<extension point="org.eclipse.ui.handlers">
 		<handler 
-			class="com.synflow.cflow.ui.CflowExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.DefaultRenameElementHandler"
+			class="com.synflow.cx.ui.CxExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.DefaultRenameElementHandler"
 			commandId="org.eclipse.xtext.ui.refactoring.RenameElement">
 			<activeWhen>
 				<reference
-					definitionId="com.synflow.cflow.Cflow.Editor.opened">
+					definitionId="com.synflow.cx.Cx.Editor.opened">
 				</reference>
 			</activeWhen>
 		</handler>
@@ -360,7 +374,7 @@
                style="push">
             <visibleWhen checkEnabled="false">
                <reference
-                     definitionId="com.synflow.cflow.Cflow.Editor.opened">
+                     definitionId="com.synflow.cx.Cx.Editor.opened">
                </reference>
             </visibleWhen>
          </command>
@@ -368,30 +382,30 @@
    </extension>
    <extension point="org.eclipse.ui.preferencePages">
 	    <page
-	        category="com.synflow.cflow.Cflow"
-	        class="com.synflow.cflow.ui.CflowExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.RefactoringPreferencePage"
-	        id="com.synflow.cflow.Cflow.refactoring"
+	        category="com.synflow.cx.Cx"
+	        class="com.synflow.cx.ui.CxExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.RefactoringPreferencePage"
+	        id="com.synflow.cx.Cx.refactoring"
 	        name="Refactoring">
-	        <keywordReference id="com.synflow.cflow.ui.keyword_Cflow"/>
+	        <keywordReference id="com.synflow.cx.ui.keyword_Cx"/>
 	    </page>
 	</extension>
 
   <extension point="org.eclipse.compare.contentViewers">
-    <viewer id="com.synflow.cflow.Cflow.compare.contentViewers"
-            class="com.synflow.cflow.ui.CflowExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
-            extensions="cf">
+    <viewer id="com.synflow.cx.Cx.compare.contentViewers"
+            class="com.synflow.cx.ui.CxExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
+            extensions="cx,cf">
     </viewer>
   </extension>
   <extension point="org.eclipse.compare.contentMergeViewers">
-    <viewer id="com.synflow.cflow.Cflow.compare.contentMergeViewers"
-            class="com.synflow.cflow.ui.CflowExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
-            extensions="cf" label="Cflow Compare">
+    <viewer id="com.synflow.cx.Cx.compare.contentMergeViewers"
+            class="com.synflow.cx.ui.CxExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
+            extensions="cx,cf" label="Cx Compare">
      </viewer>
   </extension>
   <extension point="org.eclipse.ui.editors.documentProviders">
-    <provider id="com.synflow.cflow.Cflow.editors.documentProviders"
-            class="com.synflow.cflow.ui.CflowExecutableExtensionFactory:org.eclipse.xtext.ui.editor.model.XtextDocumentProvider"
-            extensions="cf">
+    <provider id="com.synflow.cx.Cx.editors.documentProviders"
+            class="com.synflow.cx.ui.CxExecutableExtensionFactory:org.eclipse.xtext.ui.editor.model.XtextDocumentProvider"
+            extensions="cx,cf">
     </provider>
   </extension>
 
