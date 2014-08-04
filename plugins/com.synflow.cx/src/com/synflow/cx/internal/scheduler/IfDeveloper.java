@@ -19,7 +19,7 @@ import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
 
-import com.synflow.cx.CflowUtil;
+import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.Branch;
 import com.synflow.cx.cx.CExpression;
 import com.synflow.cx.cx.Enter;
@@ -75,7 +75,7 @@ public class IfDeveloper extends AbstractCycleScheduler {
 
 	@Override
 	public Void caseStatementIf(StatementIf stmt) {
-		if (CflowUtil.isIfSimple(stmt)) {
+		if (CxUtil.isIfSimple(stmt)) {
 			return DONE;
 		}
 

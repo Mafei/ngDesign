@@ -14,7 +14,7 @@ import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.resource.IResourceDescription;
 import org.eclipse.xtext.resource.impl.DefaultResourceDescriptionDelta;
 
-import com.synflow.cx.cx.CflowPackage.Literals;
+import com.synflow.cx.cx.CxPackage.Literals;
 
 /**
  * This class extends the default resource description delta with Cx-specific behavior.

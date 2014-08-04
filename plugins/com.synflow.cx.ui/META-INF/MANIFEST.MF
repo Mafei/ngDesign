@@ -31,6 +31,6 @@ Export-Package: com.synflow.cx.ui,
  com.synflow.cx.ui.views,
  com.synflow.cx.ui.wizards
 Import-Package: org.apache.log4j
-Bundle-Activator: com.synflow.cx.ui.internal.CflowActivator
+Bundle-Activator: com.synflow.cx.ui.internal.CxActivator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy

@@ -30,7 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.synflow.cx.CflowUtil;
+import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.CExpression;
 import com.synflow.cx.cx.Variable;
 import com.synflow.cx.internal.instantiation.IInstantiator;
@@ -149,7 +149,7 @@ public class IrBuilder {
 		int lineNumber = getStartLine(variable);
 		Type type = typer.getType(variable);
 		String name = variable.getName();
-		boolean assignable = !CflowUtil.isConstant(variable);
+		boolean assignable = !CxUtil.isConstant(variable);
 
 		// create local variable with the given name
 		Var var = eINSTANCE.createVar(lineNumber, type, name, assignable);
@@ -165,7 +165,7 @@ public class IrBuilder {
 	 * @return the IR variable that corresponds to the given variable
 	 */
 	final Var getMapping(Variable variable) {
-		if (!CflowUtil.isGlobal(variable)) {
+		if (!CxUtil.isGlobal(variable)) {
 			return localMap.get(variable);
 		}
 

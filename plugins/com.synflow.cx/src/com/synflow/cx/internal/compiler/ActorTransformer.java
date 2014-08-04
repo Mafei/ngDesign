@@ -10,7 +10,7 @@
  *******************************************************************************/
 package com.synflow.cx.internal.compiler;
 
-import static com.synflow.cx.CflowConstants.PROP_AVAILABLE;
+import static com.synflow.cx.CxConstants.PROP_AVAILABLE;
 import static com.synflow.cx.internal.TransformerUtil.getStartLine;
 import static com.synflow.models.ir.IrFactory.eINSTANCE;
 
@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
 
-import com.synflow.cx.CflowUtil;
+import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.CExpression;
 import com.synflow.cx.cx.Enter;
 import com.synflow.cx.cx.ExpressionVariable;
@@ -95,7 +95,7 @@ public class ActorTransformer extends FunctionTransformer {
 	public Expression caseExpressionVariable(ExpressionVariable expression) {
 		VarRef ref = expression.getSource();
 		Variable variable = ref.getVariable();
-		if (CflowUtil.isPort(variable)) {
+		if (CxUtil.isPort(variable)) {
 			String prop = expression.getProperty();
 			if (PROP_AVAILABLE.equals(prop)) {
 				// available has no meaning as an expression, so we return null

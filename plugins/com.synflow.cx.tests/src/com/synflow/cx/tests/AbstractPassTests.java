@@ -20,7 +20,7 @@ import com.synflow.models.dpn.Entity;
  * 
  * @author Matthieu Wipliez
  */
-public abstract class AbstractPassTests extends AbstractCflowTest {
+public abstract class AbstractPassTests extends AbstractCxTest {
 
 	@Test
 	public void app_external() throws Exception {

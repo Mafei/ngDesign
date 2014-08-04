@@ -44,7 +44,7 @@ import com.synflow.cx.cx.CxEntity;
 import com.synflow.cx.cx.Inst;
 import com.synflow.cx.cx.Network;
 import com.synflow.cx.cx.VarRef;
-import com.synflow.cx.cx.CflowPackage.Literals;
+import com.synflow.cx.cx.CxPackage.Literals;
 import com.synflow.cx.internal.CopyOf;
 import com.synflow.cx.internal.instantiation.properties.PropertiesSupport;
 import com.synflow.models.dpn.DPN;

@@ -10,10 +10,10 @@
  *******************************************************************************/
 package com.synflow.cx.internal.services;
 
-import static com.synflow.cx.CflowConstants.PROP_AVAILABLE;
-import static com.synflow.cx.CflowConstants.PROP_READ;
+import static com.synflow.cx.CxConstants.PROP_AVAILABLE;
+import static com.synflow.cx.CxConstants.PROP_READ;
 
-import com.synflow.cx.CflowUtil;
+import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.ExpressionVariable;
 import com.synflow.cx.cx.StatementFence;
 import com.synflow.cx.cx.StatementIdle;
@@ -28,7 +28,7 @@ import com.synflow.cx.cx.Variable;
  * @author Matthieu Wipliez
  * 
  */
-public class ScheduleModifierSwitch extends BoolCflowSwitch {
+public class ScheduleModifierSwitch extends BoolCxSwitch {
 
 	@Override
 	public Boolean caseExpressionVariable(ExpressionVariable expr) {
@@ -38,7 +38,7 @@ public class ScheduleModifierSwitch extends BoolCflowSwitch {
 		}
 
 		Variable variable = expr.getSource().getVariable();
-		if (CflowUtil.isFunctionNotConstant(variable)) {
+		if (CxUtil.isFunctionNotConstant(variable)) {
 			// if function has side-effect, we visit it
 			if (doSwitch(variable)) {
 				return true;

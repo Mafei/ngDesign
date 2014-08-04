@@ -10,7 +10,7 @@
  *******************************************************************************/
 package com.synflow.cx.internal.services;
 
-import com.synflow.cx.CflowUtil;
+import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.CExpression;
 import com.synflow.cx.cx.ExpressionBinary;
 import com.synflow.cx.cx.ExpressionVariable;
@@ -40,7 +40,7 @@ public class LoopSwitch extends ScheduleModifierSwitch {
 				if (init instanceof StatementAssign) {
 					StatementAssign assign = (StatementAssign) init;
 					Variable variable = assign.getTarget().getSource().getVariable();
-					if (CflowUtil.isLocal(variable)) {
+					if (CxUtil.isLocal(variable)) {
 						Object value = Evaluator.getValue(assign.getValue());
 						if (value != null) {
 							return checkBounds(variable, value, stmt.getCondition());

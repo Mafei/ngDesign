@@ -10,8 +10,8 @@
  *******************************************************************************/
 package com.synflow.cx.internal.validation;
 
-import static com.synflow.cx.CflowConstants.PROP_AVAILABLE;
-import static com.synflow.cx.CflowConstants.PROP_READ;
+import static com.synflow.cx.CxConstants.PROP_AVAILABLE;
+import static com.synflow.cx.CxConstants.PROP_READ;
 import static com.synflow.cx.validation.IssueCodes.ERR_AVAILABLE;
 import static com.synflow.cx.validation.IssueCodes.ERR_LOCAL_NOT_INITIALIZED;
 import static com.synflow.cx.validation.IssueCodes.ERR_MULTIPLE_READS;
@@ -32,7 +32,7 @@ import com.google.common.collect.LinkedHashMultiset;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Multiset.Entry;
 import com.google.inject.Inject;
-import com.synflow.cx.CflowUtil;
+import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.Branch;
 import com.synflow.cx.cx.CExpression;
 import com.synflow.cx.cx.ExpressionVariable;
@@ -42,9 +42,9 @@ import com.synflow.cx.cx.StatementVariable;
 import com.synflow.cx.cx.Task;
 import com.synflow.cx.cx.VarRef;
 import com.synflow.cx.cx.Variable;
-import com.synflow.cx.cx.CflowPackage.Literals;
+import com.synflow.cx.cx.CxPackage.Literals;
 import com.synflow.cx.internal.instantiation.IInstantiator;
-import com.synflow.cx.internal.services.BoolCflowSwitch;
+import com.synflow.cx.internal.services.BoolCxSwitch;
 import com.synflow.cx.internal.services.Typer;
 import com.synflow.models.dpn.Entity;
 import com.synflow.models.dpn.InterfaceType;
@@ -66,12 +66,12 @@ public class ExpressionValidator extends AbstractDeclarativeValidator {
 	 * @author Matthieu Wipliez
 	 * 
 	 */
-	private static class ConstantCallSwitch extends BoolCflowSwitch {
+	private static class ConstantCallSwitch extends BoolCxSwitch {
 
 		@Override
 		public Boolean caseExpressionVariable(ExpressionVariable expr) {
 			Variable variable = expr.getSource().getVariable();
-			if (CflowUtil.isFunctionNotConstant(variable)) {
+			if (CxUtil.isFunctionNotConstant(variable)) {
 				return true;
 			}
 
@@ -106,7 +106,7 @@ public class ExpressionValidator extends AbstractDeclarativeValidator {
 	@Check
 	public void checkLocalVariableUse(ExpressionVariable expr) {
 		Variable variable = expr.getSource().getVariable();
-		if (!CflowUtil.isLocal(variable)) {
+		if (!CxUtil.isLocal(variable)) {
 			return;
 		}
 
@@ -145,7 +145,7 @@ public class ExpressionValidator extends AbstractDeclarativeValidator {
 	@Check
 	public void checkPort(ExpressionVariable expr) {
 		Variable variable = expr.getSource().getVariable();
-		if (CflowUtil.isPort(variable) && CflowUtil.isInput(variable)) {
+		if (CxUtil.isPort(variable) && CxUtil.isInput(variable)) {
 			// checks that the given reference to a port variable has the proper semantics.
 			checkPortExpression(expr);
 		}
@@ -161,15 +161,15 @@ public class ExpressionValidator extends AbstractDeclarativeValidator {
 		String prop = expr.getProperty();
 		if (PROP_AVAILABLE.equals(prop)) {
 			Variable variable = expr.getSource().getVariable();
-			if (CflowUtil.isPort(variable)) {
-				InterfaceType iface = CflowUtil.getInterface(variable);
+			if (CxUtil.isPort(variable)) {
+				InterfaceType iface = CxUtil.getInterface(variable);
 				if (!iface.isSync()) {
 					error("Port error: '" + PROP_AVAILABLE + "' can only be used on 'sync' ports",
 							expr, null, ERR_AVAILABLE);
 				}
 			}
 
-			EObject cter = CflowUtil.getTarget(expr);
+			EObject cter = CxUtil.getTarget(expr);
 			if (!(cter instanceof Branch || cter instanceof StatementLoop)) {
 				error("Port error: '" + PROP_AVAILABLE
 						+ "' can only be used in the condition of if/for/while statements", expr,
@@ -213,7 +213,7 @@ public class ExpressionValidator extends AbstractDeclarativeValidator {
 		for (ExpressionVariable expr : exprs) {
 			VarRef ref = expr.getSource();
 			Variable variable = ref.getVariable();
-			if (CflowUtil.isPort(variable)) {
+			if (CxUtil.isPort(variable)) {
 				Port port = instantiator.getPort(ref);
 				String prop = expr.getProperty();
 				if (PROP_AVAILABLE.equals(prop)) {
@@ -228,7 +228,7 @@ public class ExpressionValidator extends AbstractDeclarativeValidator {
 	@Override
 	protected List<EPackage> getEPackages() {
 		List<EPackage> result = new ArrayList<EPackage>();
-		result.add(com.synflow.cx.cx.CflowPackage.eINSTANCE);
+		result.add(com.synflow.cx.cx.CxPackage.eINSTANCE);
 		return result;
 	}
 
@@ -240,7 +240,7 @@ public class ExpressionValidator extends AbstractDeclarativeValidator {
 		// MUST NOT USE variable.setDefined EVER BECAUSE IT WILL CLEAR THE INSTANTIATOR'S CACHE
 		// don't use setInitialized(value != null)
 		// because once a value has been defined, it must not be un-defined
-		if (CflowUtil.isLocal(variable) && stmt.getValue() != null) {
+		if (CxUtil.isLocal(variable) && stmt.getValue() != null) {
 			setInitialized(variable);
 		}
 	}

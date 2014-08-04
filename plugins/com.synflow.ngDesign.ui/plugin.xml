@@ -389,7 +389,7 @@
           contentProvider="com.synflow.ngDesign.ui.internal.navigator.CflowContentProvider"
           icon="icons/package.gif"
           id="com.synflow.ngDesign.ui.navigatorContent"
-          labelProvider="com.synflow.cx.ui.CflowExecutableExtensionFactory:com.synflow.cx.ui.labeling.CflowNavigatorLabelProvider"
+          labelProvider="com.synflow.cx.ui.CxExecutableExtensionFactory:com.synflow.cx.ui.labeling.CxNavigatorLabelProvider"
           name="Synflow Navigator"
           priority="high">
        <triggerPoints>

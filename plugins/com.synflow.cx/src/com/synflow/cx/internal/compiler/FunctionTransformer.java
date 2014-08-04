@@ -49,7 +49,7 @@ import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
 
-import com.synflow.cx.CflowUtil;
+import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.Block;
 import com.synflow.cx.cx.Branch;
 import com.synflow.cx.cx.CExpression;
@@ -72,7 +72,7 @@ import com.synflow.cx.cx.StatementPrint;
 import com.synflow.cx.cx.StatementReturn;
 import com.synflow.cx.cx.StatementVariable;
 import com.synflow.cx.cx.Variable;
-import com.synflow.cx.cx.util.CflowSwitch;
+import com.synflow.cx.cx.util.CxSwitch;
 import com.synflow.cx.internal.AstUtil;
 import com.synflow.cx.internal.instantiation.IInstantiator;
 import com.synflow.cx.internal.services.Typer;
@@ -100,7 +100,7 @@ import com.synflow.models.ir.util.IrUtil;
  * @author Matthieu Wipliez
  * @see IrBuilder
  */
-public class FunctionTransformer extends CflowSwitch<EObject> implements Transformer {
+public class FunctionTransformer extends CxSwitch<EObject> implements Transformer {
 
 	protected final IrBuilder builder;
 
@@ -256,7 +256,7 @@ public class FunctionTransformer extends CflowSwitch<EObject> implements Transfo
 	@Override
 	public Expression caseExpressionVariable(ExpressionVariable expression) {
 		Variable variable = expression.getSource().getVariable();
-		if (CflowUtil.isFunction(variable)) {
+		if (CxUtil.isFunction(variable)) {
 			return translateCall(expression);
 		}
 
@@ -432,7 +432,7 @@ public class FunctionTransformer extends CflowSwitch<EObject> implements Transfo
 
 	@Override
 	public EObject caseVariable(Variable variable) {
-		if (CflowUtil.isFunction(variable)) {
+		if (CxUtil.isFunction(variable)) {
 			// set current procedure
 			builder.setProcedure(variable);
 

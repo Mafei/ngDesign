@@ -33,7 +33,7 @@ import com.synflow.models.dpn.Unit;
  * @author Nicolas Siret
  * 
  */
-@InjectWith(CflowInjectorProviderVhdl.class)
+@InjectWith(CxInjectorProviderVhdl.class)
 public class VhdlPassTests extends HdlPassTests {
 
 	@Test

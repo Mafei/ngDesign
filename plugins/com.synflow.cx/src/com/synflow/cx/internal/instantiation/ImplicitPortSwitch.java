@@ -10,8 +10,8 @@
  *******************************************************************************/
 package com.synflow.cx.internal.instantiation;
 
-import static com.synflow.cx.CflowConstants.PROP_AVAILABLE;
-import static com.synflow.cx.CflowConstants.PROP_READ;
+import static com.synflow.cx.CxConstants.PROP_AVAILABLE;
+import static com.synflow.cx.CxConstants.PROP_READ;
 import static com.synflow.models.util.SwitchUtil.DONE;
 import static com.synflow.models.util.SwitchUtil.visit;
 
@@ -24,7 +24,7 @@ import com.synflow.cx.cx.StatementWrite;
 import com.synflow.cx.cx.Task;
 import com.synflow.cx.cx.VarRef;
 import com.synflow.cx.cx.Variable;
-import com.synflow.cx.internal.services.VoidCflowSwitch;
+import com.synflow.cx.internal.services.VoidCxSwitch;
 import com.synflow.models.dpn.DPN;
 import com.synflow.models.dpn.Endpoint;
 import com.synflow.models.dpn.Instance;
@@ -37,7 +37,7 @@ import com.synflow.models.util.Void;
  * @author Matthieu Wipliez
  * 
  */
-public class ImplicitPortSwitch extends VoidCflowSwitch {
+public class ImplicitPortSwitch extends VoidCxSwitch {
 
 	private Instance instance;
 
@@ -72,7 +72,7 @@ public class ImplicitPortSwitch extends VoidCflowSwitch {
 
 	@Override
 	public Void caseTask(Task task) {
-		// must implement caseTask because it is not in VoidCflowSwitch
+		// must implement caseTask because it is not in VoidCxSwitch
 		return visit(this, task.getDecls());
 	}
 

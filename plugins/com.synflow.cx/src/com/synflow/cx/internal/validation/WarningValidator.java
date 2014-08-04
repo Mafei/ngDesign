@@ -10,10 +10,10 @@
  *******************************************************************************/
 package com.synflow.cx.internal.validation;
 
-import static com.synflow.cx.CflowConstants.NAME_LOOP;
-import static com.synflow.cx.CflowConstants.NAME_LOOP_DEPRECATED;
-import static com.synflow.cx.CflowConstants.NAME_SETUP;
-import static com.synflow.cx.CflowConstants.NAME_SETUP_DEPRECATED;
+import static com.synflow.cx.CxConstants.NAME_LOOP;
+import static com.synflow.cx.CxConstants.NAME_LOOP_DEPRECATED;
+import static com.synflow.cx.CxConstants.NAME_SETUP;
+import static com.synflow.cx.CxConstants.NAME_SETUP_DEPRECATED;
 import static org.eclipse.xtext.EcoreUtil2.getContainerOfType;
 
 import java.util.ArrayList;
@@ -28,14 +28,14 @@ import org.eclipse.emf.ecore.util.EcoreUtil.UsageCrossReferencer;
 import org.eclipse.xtext.validation.AbstractDeclarativeValidator;
 import org.eclipse.xtext.validation.Check;
 
-import com.synflow.cx.CflowUtil;
+import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.ExpressionVariable;
 import com.synflow.cx.cx.Instantiable;
 import com.synflow.cx.cx.StatementAssign;
 import com.synflow.cx.cx.StatementVariable;
 import com.synflow.cx.cx.VarRef;
 import com.synflow.cx.cx.Variable;
-import com.synflow.cx.cx.CflowPackage.Literals;
+import com.synflow.cx.cx.CxPackage.Literals;
 
 /**
  * This class defines a validator that produces warnings.
@@ -74,7 +74,7 @@ public class WarningValidator extends AbstractDeclarativeValidator {
 
 	@Check
 	public void checkUnusedVariable(Variable variable) {
-		if (CflowUtil.isPort(variable)) {
+		if (CxUtil.isPort(variable)) {
 			// do not check ports
 			return;
 		}
@@ -85,7 +85,7 @@ public class WarningValidator extends AbstractDeclarativeValidator {
 			return;
 		}
 
-		if (CflowUtil.isFunction(variable)) {
+		if (CxUtil.isFunction(variable)) {
 			checkFunction(variable);
 		} else {
 			checkVariable(variable);
@@ -129,7 +129,7 @@ public class WarningValidator extends AbstractDeclarativeValidator {
 			warning("The variable " + variable.getName() + " is never read", variable,
 					Literals.VARIABLE__NAME, INSIGNIFICANT_INDEX);
 		} else if (!isWritten) {
-			if (CflowUtil.isConstant(variable)) {
+			if (CxUtil.isConstant(variable)) {
 				// it can never be written
 				return;
 			}
@@ -147,7 +147,7 @@ public class WarningValidator extends AbstractDeclarativeValidator {
 	@Override
 	protected List<EPackage> getEPackages() {
 		List<EPackage> result = new ArrayList<EPackage>();
-		result.add(com.synflow.cx.cx.CflowPackage.eINSTANCE);
+		result.add(com.synflow.cx.cx.CxPackage.eINSTANCE);
 		return result;
 	}
 

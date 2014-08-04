@@ -10,7 +10,7 @@
  *******************************************************************************/
 package com.synflow.cx.internal;
 
-import static com.synflow.cx.cx.CflowFactory.eINSTANCE;
+import static com.synflow.cx.cx.CxFactory.eINSTANCE;
 import static org.eclipse.emf.ecore.util.EcoreUtil.resolveAll;
 
 import java.math.BigInteger;
@@ -22,11 +22,11 @@ import java.util.Map.Entry;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier;
 
-import com.synflow.cx.CflowUtil;
+import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.Branch;
 import com.synflow.cx.cx.CExpression;
 import com.synflow.cx.cx.CType;
-import com.synflow.cx.cx.CflowFactory;
+import com.synflow.cx.cx.CxFactory;
 import com.synflow.cx.cx.ExpressionBinary;
 import com.synflow.cx.cx.ExpressionBoolean;
 import com.synflow.cx.cx.ExpressionCast;
@@ -133,7 +133,7 @@ public class AstUtil {
 
 		// add cast
 		ExpressionCast cast = eINSTANCE.createExpressionCast();
-		CType type = IrUtil.copy(CflowUtil.getType(variable));
+		CType type = IrUtil.copy(CxUtil.getType(variable));
 		cast.setType(type);
 		cast.setExpression(exprBin);
 		return cast;
@@ -147,8 +147,8 @@ public class AstUtil {
 	 * @return an expression variable
 	 */
 	public static CExpression expr(Variable variable) {
-		ExpressionVariable expr = CflowFactory.eINSTANCE.createExpressionVariable();
-		VarRef ref = CflowFactory.eINSTANCE.createVarRef();
+		ExpressionVariable expr = CxFactory.eINSTANCE.createExpressionVariable();
+		VarRef ref = CxFactory.eINSTANCE.createVarRef();
 		ref.setVariable(variable);
 		expr.setSource(ref);
 		return expr;

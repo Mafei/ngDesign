@@ -10,14 +10,14 @@
  *******************************************************************************/
 package com.synflow.cx.internal.scheduler;
 
-import static com.synflow.cx.CflowConstants.PROP_AVAILABLE;
-import static com.synflow.cx.CflowConstants.PROP_READ;
+import static com.synflow.cx.CxConstants.PROP_AVAILABLE;
+import static com.synflow.cx.CxConstants.PROP_READ;
 import static com.synflow.models.util.SwitchUtil.DONE;
 import static com.synflow.models.util.SwitchUtil.visit;
 
 import org.eclipse.emf.ecore.EObject;
 
-import com.synflow.cx.CflowUtil;
+import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.Branch;
 import com.synflow.cx.cx.ExpressionVariable;
 import com.synflow.cx.cx.StatementFence;
@@ -29,7 +29,7 @@ import com.synflow.cx.cx.VarRef;
 import com.synflow.cx.cx.Variable;
 import com.synflow.cx.internal.instantiation.IInstantiator;
 import com.synflow.cx.internal.scheduler.node.Node;
-import com.synflow.cx.internal.services.VoidCflowSwitch;
+import com.synflow.cx.internal.services.VoidCxSwitch;
 import com.synflow.models.util.Void;
 
 /**
@@ -38,7 +38,7 @@ import com.synflow.models.util.Void;
  * @author Matthieu Wipliez
  * 
  */
-public class CycleDetector extends VoidCflowSwitch implements ICycleListener {
+public class CycleDetector extends VoidCxSwitch implements ICycleListener {
 
 	private final Schedule schedule;
 
@@ -70,7 +70,7 @@ public class CycleDetector extends VoidCflowSwitch implements ICycleListener {
 
 		Variable variable = ref.getVariable();
 		super.caseExpressionVariable(expr);
-		if (CflowUtil.isFunctionNotConstant(variable)) {
+		if (CxUtil.isFunctionNotConstant(variable)) {
 			// if variable is a function with side-effect, we visit it
 			doSwitch(variable);
 		}
@@ -105,7 +105,7 @@ public class CycleDetector extends VoidCflowSwitch implements ICycleListener {
 
 	@Override
 	public Void caseStatementLoop(StatementLoop stmt) {
-		if (CflowUtil.isLoopSimple(stmt)) {
+		if (CxUtil.isLoopSimple(stmt)) {
 			return DONE;
 		}
 

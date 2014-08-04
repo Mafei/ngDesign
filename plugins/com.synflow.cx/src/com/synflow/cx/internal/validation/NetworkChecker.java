@@ -11,8 +11,8 @@
 package com.synflow.cx.internal.validation;
 
 import static com.synflow.core.IProperties.PROP_CLOCKS;
-import static com.synflow.cx.CflowConstants.DIR_IN;
-import static com.synflow.cx.CflowConstants.DIR_OUT;
+import static com.synflow.cx.CxConstants.DIR_IN;
+import static com.synflow.cx.CxConstants.DIR_OUT;
 import static org.eclipse.xtext.validation.ValidationMessageAcceptor.INSIGNIFICANT_INDEX;
 
 import org.eclipse.emf.ecore.EObject;
@@ -21,12 +21,12 @@ import org.eclipse.xtext.validation.ValidationMessageAcceptor;
 
 import com.google.common.base.Objects;
 import com.google.gson.JsonArray;
-import com.synflow.cx.CflowUtil;
+import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.Inst;
 import com.synflow.cx.cx.Instantiable;
 import com.synflow.cx.cx.Network;
 import com.synflow.cx.cx.Variable;
-import com.synflow.cx.cx.CflowPackage.Literals;
+import com.synflow.cx.cx.CxPackage.Literals;
 import com.synflow.cx.internal.instantiation.ClockDomainComputer;
 import com.synflow.cx.internal.instantiation.IInstantiator;
 import com.synflow.models.dpn.Connection;
@@ -114,7 +114,7 @@ public class NetworkChecker extends Checker {
 	 *            DPN
 	 */
 	private void checkConnectivity(Network network, DPN dpn) {
-		for (Variable variable : CflowUtil.getPorts(network.getPortDecls(), DIR_OUT)) {
+		for (Variable variable : CxUtil.getPorts(network.getPortDecls(), DIR_OUT)) {
 			Port port = instantiator.getMapping(dpn, variable);
 			int num = dpn.getNumIncoming(port);
 			if (num == 0) {
@@ -134,7 +134,7 @@ public class NetworkChecker extends Checker {
 				entity = inst.getTask();
 			}
 
-			for (Variable variable : CflowUtil.getPorts(entity.getPortDecls(), DIR_IN)) {
+			for (Variable variable : CxUtil.getPorts(entity.getPortDecls(), DIR_IN)) {
 				Port port = instantiator.getMapping(instance.getEntity(), variable);
 				int num = dpn.getNumIncoming(instance, port);
 

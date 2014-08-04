@@ -28,7 +28,7 @@ import com.synflow.cx.cx.Null;
 import com.synflow.cx.cx.Obj;
 import com.synflow.cx.cx.Pair;
 import com.synflow.cx.cx.Primitive;
-import com.synflow.cx.cx.util.CflowSwitch;
+import com.synflow.cx.cx.util.CxSwitch;
 import com.synflow.cx.internal.ErrorMarker;
 
 /**
@@ -37,7 +37,7 @@ import com.synflow.cx.internal.ErrorMarker;
  * @author Matthieu Wipliez
  * 
  */
-public class JsonMaker extends CflowSwitch<JsonElement> {
+public class JsonMaker extends CxSwitch<JsonElement> {
 
 	private Map<JsonElement, ErrorMarker> mapping;
 

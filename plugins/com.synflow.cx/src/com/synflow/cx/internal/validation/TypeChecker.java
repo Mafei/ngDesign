@@ -29,7 +29,7 @@ import org.eclipse.xtext.validation.ValidationMessageAcceptor;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
-import com.synflow.cx.CflowUtil;
+import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.Branch;
 import com.synflow.cx.cx.CExpression;
 import com.synflow.cx.cx.ExpressionBinary;
@@ -48,11 +48,11 @@ import com.synflow.cx.cx.Task;
 import com.synflow.cx.cx.VarDecl;
 import com.synflow.cx.cx.VarRef;
 import com.synflow.cx.cx.Variable;
-import com.synflow.cx.cx.CflowPackage.Literals;
+import com.synflow.cx.cx.CxPackage.Literals;
 import com.synflow.cx.internal.AstUtil;
 import com.synflow.cx.internal.instantiation.IInstantiator;
 import com.synflow.cx.internal.services.Typer;
-import com.synflow.cx.services.CflowPrinter;
+import com.synflow.cx.services.CxPrinter;
 import com.synflow.cx.services.Evaluator;
 import com.synflow.models.dpn.Entity;
 import com.synflow.models.ir.IrFactory;
@@ -196,7 +196,7 @@ public class TypeChecker extends Checker {
 		doSwitch(expression.getSource());
 
 		Variable variable = expression.getSource().getVariable();
-		if (CflowUtil.isFunction(variable)) {
+		if (CxUtil.isFunction(variable)) {
 			checkParameters(variable, expression);
 		} else {
 			if (!expression.getParameters().isEmpty()) {
@@ -228,7 +228,7 @@ public class TypeChecker extends Checker {
 		Variable variable = ref.getVariable();
 
 		// if this is an assignment, check target is constant
-		if (CflowUtil.isConstant(variable) && stmt.getOp() != null) {
+		if (CxUtil.isConstant(variable) && stmt.getOp() != null) {
 			error("The constant '" + variable.getName() + "' cannot be assigned.", stmt,
 					Literals.STATEMENT_ASSIGN__TARGET, ERR_CANNOT_ASSIGN_CONST);
 			return DONE;
@@ -338,7 +338,7 @@ public class TypeChecker extends Checker {
 		instantiator.forEachMapping(task, new Executable<Entity>() {
 			@Override
 			public void exec(Entity entity) {
-				visit(TypeChecker.this, CflowUtil.getFunctions(task.getDecls()));
+				visit(TypeChecker.this, CxUtil.getFunctions(task.getDecls()));
 			}
 		});
 		return DONE;
@@ -476,7 +476,7 @@ public class TypeChecker extends Checker {
 			}
 		});
 
-		error("The method " + new CflowPrinter().toString(function)
+		error("The method " + new CxPrinter().toString(function)
 				+ " is not applicable for the arguments (" + Joiner.on(", ").join(typeStr) + ")",
 				call, null, ERR_TYPE_MISMATCH);
 	}

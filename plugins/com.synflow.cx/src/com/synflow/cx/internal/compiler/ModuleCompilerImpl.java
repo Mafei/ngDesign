@@ -10,10 +10,10 @@
  *******************************************************************************/
 package com.synflow.cx.internal.compiler;
 
-import static com.synflow.cx.CflowConstants.NAME_LOOP;
-import static com.synflow.cx.CflowConstants.NAME_LOOP_DEPRECATED;
-import static com.synflow.cx.CflowConstants.NAME_SETUP;
-import static com.synflow.cx.CflowConstants.NAME_SETUP_DEPRECATED;
+import static com.synflow.cx.CxConstants.NAME_LOOP;
+import static com.synflow.cx.CxConstants.NAME_LOOP_DEPRECATED;
+import static com.synflow.cx.CxConstants.NAME_SETUP;
+import static com.synflow.cx.CxConstants.NAME_SETUP_DEPRECATED;
 import static com.synflow.models.util.SwitchUtil.DONE;
 import static com.synflow.models.util.SwitchUtil.visit;
 
@@ -31,7 +31,7 @@ import com.google.inject.Singleton;
 import com.synflow.core.transformations.ProcedureTransformation;
 import com.synflow.core.transformations.SchedulerTransformation;
 import com.synflow.core.transformations.impl.StoreOnceTransformation;
-import com.synflow.cx.CflowUtil;
+import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.Bundle;
 import com.synflow.cx.cx.Inst;
 import com.synflow.cx.cx.Module;
@@ -39,7 +39,7 @@ import com.synflow.cx.cx.Network;
 import com.synflow.cx.cx.Task;
 import com.synflow.cx.cx.VarDecl;
 import com.synflow.cx.cx.Variable;
-import com.synflow.cx.cx.util.CflowSwitch;
+import com.synflow.cx.cx.util.CxSwitch;
 import com.synflow.cx.internal.compiler.helpers.FsmBeautifier;
 import com.synflow.cx.internal.compiler.helpers.LoadStoreReplacer;
 import com.synflow.cx.internal.compiler.helpers.SideEffectRemover;
@@ -62,7 +62,7 @@ import com.synflow.models.util.Void;
  * 
  */
 @Singleton
-public class ModuleCompilerImpl extends CflowSwitch<Void> implements IModuleCompiler {
+public class ModuleCompilerImpl extends CxSwitch<Void> implements IModuleCompiler {
 
 	private IFileSystemAccess fsa;
 
@@ -176,9 +176,9 @@ public class ModuleCompilerImpl extends CflowSwitch<Void> implements IModuleComp
 	 *            a list of declarations
 	 */
 	private void transformDeclarations(Entity entity, List<VarDecl> variables) {
-		for (Variable variable : CflowUtil.getStateVars(variables)) {
-			if (CflowUtil.isFunction(variable)) {
-				if (CflowUtil.isConstant(variable)) {
+		for (Variable variable : CxUtil.getStateVars(variables)) {
+			if (CxUtil.isFunction(variable)) {
+				if (CxUtil.isConstant(variable)) {
 					// visit constant functions
 					FunctionTransformer transformer = new FunctionTransformer(instantiator, typer,
 							entity);
@@ -206,7 +206,7 @@ public class ModuleCompilerImpl extends CflowSwitch<Void> implements IModuleComp
 		// finds init and run functions
 		Variable setup = null;
 		Variable loop = null;
-		for (Variable function : CflowUtil.getFunctions(task.getDecls())) {
+		for (Variable function : CxUtil.getFunctions(task.getDecls())) {
 			String name = function.getName();
 			if (NAME_SETUP.equals(name) || NAME_SETUP_DEPRECATED.equals(name)) {
 				setup = function;

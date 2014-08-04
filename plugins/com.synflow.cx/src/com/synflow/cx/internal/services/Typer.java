@@ -38,8 +38,8 @@
  */
 package com.synflow.cx.internal.services;
 
-import static com.synflow.cx.CflowConstants.PROP_AVAILABLE;
-import static com.synflow.cx.CflowConstants.PROP_READ;
+import static com.synflow.cx.CxConstants.PROP_AVAILABLE;
+import static com.synflow.cx.CxConstants.PROP_READ;
 
 import java.math.BigInteger;
 import java.util.Iterator;
@@ -48,7 +48,7 @@ import java.util.List;
 import org.eclipse.emf.ecore.EObject;
 
 import com.google.inject.Inject;
-import com.synflow.cx.CflowUtil;
+import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.CExpression;
 import com.synflow.cx.cx.CType;
 import com.synflow.cx.cx.ExpressionBinary;
@@ -69,7 +69,7 @@ import com.synflow.cx.cx.ValueExpr;
 import com.synflow.cx.cx.ValueList;
 import com.synflow.cx.cx.VarRef;
 import com.synflow.cx.cx.Variable;
-import com.synflow.cx.cx.util.CflowSwitch;
+import com.synflow.cx.cx.util.CxSwitch;
 import com.synflow.cx.internal.instantiation.IInstantiator;
 import com.synflow.cx.services.Evaluator;
 import com.synflow.models.dpn.Port;
@@ -89,7 +89,7 @@ import com.synflow.models.ir.util.ValueUtil;
  * @author Matthieu Wipliez
  * 
  */
-public class Typer extends CflowSwitch<Type> {
+public class Typer extends CxSwitch<Type> {
 
 	/**
 	 * Returns an array containing the dimensions of the given type. Returns an empty array if
@@ -169,7 +169,7 @@ public class Typer extends CflowSwitch<Type> {
 		Type type = doSwitch(ref);
 
 		String prop = expression.getProperty();
-		boolean isPort = CflowUtil.isPort(ref.getVariable());
+		boolean isPort = CxUtil.isPort(ref.getVariable());
 		if (PROP_AVAILABLE.equals(prop)) {
 			return isPort ? IrFactory.eINSTANCE.createTypeBool() : null;
 		} else if (PROP_READ.equals(prop)) {
@@ -278,11 +278,11 @@ public class Typer extends CflowSwitch<Type> {
 
 	@Override
 	public Type caseVariable(Variable variable) {
-		if (CflowUtil.isFunction(variable) && CflowUtil.isVoid(variable)) {
+		if (CxUtil.isFunction(variable) && CxUtil.isVoid(variable)) {
 			return IrFactory.eINSTANCE.createTypeVoid();
 		}
 
-		CType varType = CflowUtil.getType(variable);
+		CType varType = CxUtil.getType(variable);
 
 		Type type = doSwitch(varType);
 		List<CExpression> dimensions = variable.getDimensions();
@@ -307,7 +307,7 @@ public class Typer extends CflowSwitch<Type> {
 	@Override
 	public Type caseVarRef(VarRef ref) {
 		Variable variable = ref.getVariable();
-		if (CflowUtil.isPort(variable)) {
+		if (CxUtil.isPort(variable)) {
 			Port port = instantiator.getPort(ref);
 			return port.getType();
 		}

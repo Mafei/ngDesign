@@ -43,7 +43,7 @@ import java.math.BigInteger;
 
 import org.eclipse.emf.ecore.EObject;
 
-import com.synflow.cx.CflowUtil;
+import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.CExpression;
 import com.synflow.cx.cx.ExpressionBinary;
 import com.synflow.cx.cx.ExpressionBoolean;
@@ -57,7 +57,7 @@ import com.synflow.cx.cx.Value;
 import com.synflow.cx.cx.ValueExpr;
 import com.synflow.cx.cx.ValueList;
 import com.synflow.cx.cx.Variable;
-import com.synflow.cx.cx.util.CflowSwitch;
+import com.synflow.cx.cx.util.CxSwitch;
 import com.synflow.models.OrccRuntimeException;
 import com.synflow.models.ir.OpBinary;
 import com.synflow.models.ir.OpUnary;
@@ -69,7 +69,7 @@ import com.synflow.models.ir.util.ValueUtil;
  * @author Matthieu Wipliez
  * 
  */
-public class Evaluator extends CflowSwitch<Object> {
+public class Evaluator extends CxSwitch<Object> {
 
 	/**
 	 * Returns the integer value associated with the given object using its URI. Returns -1 if the
@@ -173,7 +173,7 @@ public class Evaluator extends CflowSwitch<Object> {
 	public Object caseExpressionVariable(ExpressionVariable expression) {
 		Variable variable = expression.getSource().getVariable();
 		Object value;
-		if (CflowUtil.isConstant(variable)) {
+		if (CxUtil.isConstant(variable)) {
 			// only returns the value for constants
 			// no cross-variable initializations
 			value = getValue(variable.getValue());

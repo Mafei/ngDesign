@@ -11,8 +11,8 @@
 package com.synflow.cx.internal.scheduler;
 
 import static com.google.common.collect.Iterables.concat;
-import static com.synflow.cx.CflowConstants.PROP_AVAILABLE;
-import static com.synflow.cx.CflowConstants.PROP_READ;
+import static com.synflow.cx.CxConstants.PROP_AVAILABLE;
+import static com.synflow.cx.CxConstants.PROP_READ;
 import static com.synflow.cx.internal.AstUtil.not;
 import static com.synflow.models.util.SwitchUtil.DONE;
 import static com.synflow.models.util.SwitchUtil.visit;
@@ -26,9 +26,9 @@ import org.eclipse.emf.ecore.EObject;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
-import com.synflow.cx.CflowUtil;
+import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.CExpression;
-import com.synflow.cx.cx.CflowFactory;
+import com.synflow.cx.cx.CxFactory;
 import com.synflow.cx.cx.Enter;
 import com.synflow.cx.cx.ExpressionVariable;
 import com.synflow.cx.cx.Leave;
@@ -46,7 +46,7 @@ import com.synflow.cx.cx.VarRef;
 import com.synflow.cx.cx.Variable;
 import com.synflow.cx.internal.TransformerUtil;
 import com.synflow.cx.internal.instantiation.IInstantiator;
-import com.synflow.cx.internal.services.VoidCflowSwitch;
+import com.synflow.cx.internal.services.VoidCxSwitch;
 import com.synflow.cx.services.Evaluator;
 import com.synflow.models.dpn.Actor;
 import com.synflow.models.dpn.State;
@@ -60,7 +60,7 @@ import com.synflow.models.util.Void;
  * @author Matthieu Wipliez
  * 
  */
-public abstract class AbstractCycleScheduler extends VoidCflowSwitch {
+public abstract class AbstractCycleScheduler extends VoidCxSwitch {
 
 	private Deque<String> callChain = new ArrayDeque<>();
 
@@ -101,7 +101,7 @@ public abstract class AbstractCycleScheduler extends VoidCflowSwitch {
 		// we call 'associate' with a enter object before the call
 		// (and later with a leave, see below)
 		// this gives us additional flexibility and safety, especially to avoid double visiting
-		Enter enter = CflowFactory.eINSTANCE.createEnter();
+		Enter enter = CxFactory.eINSTANCE.createEnter();
 		enter.setFunction(ref);
 		enter.setLineNumber(TransformerUtil.getStartLine(ref));
 		enter.getParameters().addAll(parameters);
@@ -114,7 +114,7 @@ public abstract class AbstractCycleScheduler extends VoidCflowSwitch {
 		popName();
 
 		// and now we call associate with a leave object after the call
-		associate(CflowFactory.eINSTANCE.createLeave());
+		associate(CxFactory.eINSTANCE.createLeave());
 
 		return DONE;
 	}
@@ -123,7 +123,7 @@ public abstract class AbstractCycleScheduler extends VoidCflowSwitch {
 	public Void caseExpressionVariable(ExpressionVariable expr) {
 		VarRef ref = expr.getSource();
 		Variable variable = ref.getVariable();
-		if (CflowUtil.isFunctionNotConstant(variable)) {
+		if (CxUtil.isFunctionNotConstant(variable)) {
 			return call(ref, expr.getParameters());
 		} else {
 			String property = expr.getProperty();
@@ -146,7 +146,7 @@ public abstract class AbstractCycleScheduler extends VoidCflowSwitch {
 		super.caseStatementAssign(stmt);
 
 		Variable variable = stmt.getTarget().getSource().getVariable();
-		if (!CflowUtil.isFunctionNotConstant(variable)) {
+		if (!CxUtil.isFunctionNotConstant(variable)) {
 			// if variable is a function with side effects, 'associate' has already been called by
 			// caseExpressionVariable, so we must not associate this statement again
 			associate(stmt);
@@ -203,7 +203,7 @@ public abstract class AbstractCycleScheduler extends VoidCflowSwitch {
 
 	@Override
 	public Void caseStatementLoop(StatementLoop stmt) {
-		if (CflowUtil.isLoopSimple(stmt)) {
+		if (CxUtil.isLoopSimple(stmt)) {
 			// record this statement
 			associate(stmt);
 			return DONE;
@@ -266,7 +266,7 @@ public abstract class AbstractCycleScheduler extends VoidCflowSwitch {
 
 	@Override
 	public Void caseVariable(Variable variable) {
-		if (CflowUtil.isFunction(variable)) {
+		if (CxUtil.isFunction(variable)) {
 			visit(this, variable.getBody());
 
 			// must not associate the function with the current transition

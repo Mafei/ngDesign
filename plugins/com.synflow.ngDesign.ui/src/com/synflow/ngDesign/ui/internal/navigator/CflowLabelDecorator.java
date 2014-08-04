@@ -23,7 +23,7 @@ import org.eclipse.xtext.resource.XtextResourceSet;
 import com.google.common.collect.Iterables;
 import com.synflow.cx.cx.Module;
 import com.synflow.cx.cx.Network;
-import com.synflow.cx.ui.internal.CflowActivator;
+import com.synflow.cx.ui.internal.CxActivator;
 import com.synflow.models.util.EcoreHelper;
 
 /**
@@ -49,7 +49,7 @@ public class CflowLabelDecorator implements ILightweightLabelDecorator {
 					Iterable<Network> networks = Iterables.filter(module.getEntities(),
 							Network.class);
 					if (!Iterables.isEmpty(networks)) {
-						ImageDescriptor descriptor = CflowActivator.imageDescriptorFromPlugin(
+						ImageDescriptor descriptor = CxActivator.imageDescriptorFromPlugin(
 								"com.synflow.cx.ui", "icons/overlay_network.png");
 						decoration.addOverlay(descriptor);
 					}

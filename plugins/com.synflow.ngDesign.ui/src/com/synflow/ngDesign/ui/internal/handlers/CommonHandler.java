@@ -21,7 +21,7 @@ import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import com.synflow.core.SynflowCore;
 import com.synflow.core.util.CoreUtil;
 import com.synflow.cx.cx.Instantiable;
-import com.synflow.cx.ui.CflowExecutableExtensionFactory;
+import com.synflow.cx.ui.CxExecutableExtensionFactory;
 import com.synflow.models.dpn.Entity;
 import com.synflow.models.util.EcoreHelper;
 
@@ -70,7 +70,7 @@ public abstract class CommonHandler extends AbstractHandler {
 			Instantiable instantiable = (Instantiable) elt;
 			IFile file = EcoreHelper.getFile(instantiable);
 
-			CflowExecutableExtensionFactory factory = new CflowExecutableExtensionFactory();
+			CxExecutableExtensionFactory factory = new CxExecutableExtensionFactory();
 			try {
 				factory.setInitializationData(null, null, IQualifiedNameProvider.class.getName());
 				Object obj = factory.create();

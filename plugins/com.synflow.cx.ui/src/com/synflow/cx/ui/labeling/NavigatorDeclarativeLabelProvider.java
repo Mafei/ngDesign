@@ -26,7 +26,7 @@ import com.synflow.core.SynflowCore;
 import com.synflow.core.SynflowNature;
 
 /**
- * This class defines a declarative label provider that extends {@link CflowLabelProvider} with
+ * This class defines a declarative label provider that extends {@link CxLabelProvider} with
  * images for projects, C~ files, Java source folders and packages, and text for resources and Java
  * elements.
  * 
@@ -36,7 +36,7 @@ import com.synflow.core.SynflowNature;
 public class NavigatorDeclarativeLabelProvider extends DeclarativeLabelProvider {
 
 	@Inject
-	public NavigatorDeclarativeLabelProvider(CflowLabelProvider delegate) {
+	public NavigatorDeclarativeLabelProvider(CxLabelProvider delegate) {
 		super(delegate);
 	}
 

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package com.synflow.cx.internal.instantiation;
 
-import static com.synflow.cx.CflowConstants.TYPE_READS;
+import static com.synflow.cx.CxConstants.TYPE_READS;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,12 +30,12 @@ import org.eclipse.xtext.scoping.IScopeProvider;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.inject.Inject;
-import com.synflow.cx.cx.CflowPackage;
+import com.synflow.cx.cx.CxPackage;
 import com.synflow.cx.cx.Connect;
 import com.synflow.cx.cx.Inst;
 import com.synflow.cx.cx.Network;
 import com.synflow.cx.cx.VarRef;
-import com.synflow.cx.cx.CflowPackage.Literals;
+import com.synflow.cx.cx.CxPackage.Literals;
 import com.synflow.cx.internal.ErrorMarker;
 import com.synflow.models.dpn.Connection;
 import com.synflow.models.dpn.DPN;
@@ -222,7 +222,7 @@ public class ConnectionMaker {
 			return null;
 		}
 
-		IScope scope = scopeProvider.getScope(ref, CflowPackage.Literals.CONNECT__INSTANCE);
+		IScope scope = scopeProvider.getScope(ref, CxPackage.Literals.CONNECT__INSTANCE);
 		QualifiedName qualifiedLinkName = converter.toQualifiedName(name.getFirstSegment());
 		IEObjectDescription eObjectDescription = scope.getSingleElement(qualifiedLinkName);
 

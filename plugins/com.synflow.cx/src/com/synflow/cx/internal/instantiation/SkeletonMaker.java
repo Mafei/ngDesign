@@ -17,7 +17,7 @@ import static com.synflow.models.util.SwitchUtil.DONE;
 import org.eclipse.xtext.EcoreUtil2;
 
 import com.google.inject.Inject;
-import com.synflow.cx.CflowUtil;
+import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.Bundle;
 import com.synflow.cx.cx.CxEntity;
 import com.synflow.cx.cx.Instantiable;
@@ -103,7 +103,7 @@ public class SkeletonMaker extends DpnSwitch<Void> {
 	private void setFileAndLine(Entity entity, CxEntity cxEntity) {
 		// set file name
 		Module module = EcoreUtil2.getContainerOfType(cxEntity, Module.class);
-		String fileName = CflowUtil.getFileName(module);
+		String fileName = CxUtil.getFileName(module);
 		entity.setFileName(fileName);
 
 		// set line number
@@ -112,12 +112,12 @@ public class SkeletonMaker extends DpnSwitch<Void> {
 	}
 
 	public void transformPort(final Entity entity, final Variable port) {
-		InterfaceType ifType = CflowUtil.getInterface(port);
+		InterfaceType ifType = CxUtil.getInterface(port);
 		Type type = typer.doSwitch(port);
 		String name = port.getName();
 
 		Port dpnPort = DpnFactory.eINSTANCE.createPort(type, name, ifType);
-		if (CflowUtil.isInput(port)) {
+		if (CxUtil.isInput(port)) {
 			entity.getInputs().add(dpnPort);
 		} else {
 			entity.getOutputs().add(dpnPort);
@@ -137,12 +137,12 @@ public class SkeletonMaker extends DpnSwitch<Void> {
 		Type type = typer.doSwitch(variable);
 		String name = variable.getName();
 
-		if (CflowUtil.isFunction(variable)) {
+		if (CxUtil.isFunction(variable)) {
 			Procedure procedure = eINSTANCE.createProcedure(name, lineNumber, type);
 			entity.getProcedures().add(procedure);
 			instantiator.putMapping(variable, procedure);
 		} else {
-			boolean assignable = !CflowUtil.isConstant(variable);
+			boolean assignable = !CxUtil.isConstant(variable);
 
 			// retrieve initial value (may be null)
 			Object value = Evaluator.getValue(variable.getValue());
@@ -159,15 +159,15 @@ public class SkeletonMaker extends DpnSwitch<Void> {
 
 	private void translatePorts(Entity entity, Instantiable instantiable) {
 		// transform ports
-		for (Variable variable : CflowUtil.getPorts(instantiable.getPortDecls())) {
+		for (Variable variable : CxUtil.getPorts(instantiable.getPortDecls())) {
 			transformPort(entity, variable);
 		}
 	}
 
 	private void translateStateVars(Entity entity, CxEntity cxEntity) {
 		// transform variables and constant functions
-		for (Variable variable : CflowUtil.getStateVars(cxEntity.getDecls())) {
-			if (CflowUtil.isConstant(variable) || !CflowUtil.isFunction(variable)) {
+		for (Variable variable : CxUtil.getStateVars(cxEntity.getDecls())) {
+			if (CxUtil.isConstant(variable) || !CxUtil.isFunction(variable)) {
 				transformVariable(entity, variable);
 			}
 		}

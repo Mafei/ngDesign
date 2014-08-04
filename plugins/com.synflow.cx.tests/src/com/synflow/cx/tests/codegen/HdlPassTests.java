@@ -30,7 +30,7 @@ import org.junit.Assert;
 
 import com.google.gson.JsonObject;
 import com.synflow.core.util.CoreUtil;
-import com.synflow.cx.CflowInjectorProvider;
+import com.synflow.cx.CxInjectorProvider;
 import com.synflow.models.dpn.DPN;
 import com.synflow.models.dpn.Entity;
 import com.synflow.models.dpn.Instance;
@@ -43,7 +43,7 @@ import com.synflow.models.ir.util.IrUtil;
  * @author Nicolas Siret
  * 
  */
-@InjectWith(CflowInjectorProvider.class)
+@InjectWith(CxInjectorProvider.class)
 public abstract class HdlPassTests extends CodegenPassTests {
 
 	private List<String> files = Arrays.asList();

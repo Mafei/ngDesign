@@ -33,7 +33,7 @@ import org.eclipse.xtext.validation.Check;
 
 import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
-import com.synflow.cx.CflowUtil;
+import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.Block;
 import com.synflow.cx.cx.CExpression;
 import com.synflow.cx.cx.ExpressionVariable;
@@ -50,8 +50,8 @@ import com.synflow.cx.cx.TypeDecl;
 import com.synflow.cx.cx.TypeGen;
 import com.synflow.cx.cx.Value;
 import com.synflow.cx.cx.Variable;
-import com.synflow.cx.cx.CflowPackage.Literals;
-import com.synflow.cx.internal.services.BoolCflowSwitch;
+import com.synflow.cx.cx.CxPackage.Literals;
+import com.synflow.cx.internal.services.BoolCxSwitch;
 import com.synflow.cx.internal.services.Typer;
 import com.synflow.cx.services.Evaluator;
 import com.synflow.models.ir.Type;
@@ -72,12 +72,12 @@ public class StructuralValidator extends AbstractDeclarativeValidator {
 	 * @author Matthieu Wipliez
 	 * 
 	 */
-	private static class ValueVisitor extends BoolCflowSwitch {
+	private static class ValueVisitor extends BoolCxSwitch {
 
 		@Override
 		public Boolean caseExpressionVariable(ExpressionVariable expr) {
 			Variable variable = expr.getSource().getVariable();
-			if (!CflowUtil.isConstant(variable)) {
+			if (!CxUtil.isConstant(variable)) {
 				// any reference to a port and non-constant function
 				return true;
 			}
@@ -98,7 +98,7 @@ public class StructuralValidator extends AbstractDeclarativeValidator {
 
 	@Check
 	public void checkArrayMultiDimPowerOfTwo(Variable variable) {
-		if (CflowUtil.isPort(variable)) {
+		if (CxUtil.isPort(variable)) {
 			return;
 		}
 
@@ -171,15 +171,15 @@ public class StructuralValidator extends AbstractDeclarativeValidator {
 
 	@Check
 	public void checkFunction(Variable variable) {
-		if (CflowUtil.isFunction(variable)) {
+		if (CxUtil.isFunction(variable)) {
 			// functions declared as constant must not have side effects
-			if (CflowUtil.isConstant(variable) && CflowUtil.hasSideEffects(variable)) {
+			if (CxUtil.isConstant(variable) && CxUtil.hasSideEffects(variable)) {
 				error("Constant function '" + variable.getName() + "' cannot have side effects",
 						variable, Literals.VARIABLE__NAME, ERR_SIDE_EFFECTS_FUNCTION);
 			}
 
 			// functions declared as constant must not have side effects
-			if (!CflowUtil.isConstant(variable) && !CflowUtil.isVoid(variable)) {
+			if (!CxUtil.isConstant(variable) && !CxUtil.isVoid(variable)) {
 				error("Function '" + variable.getName()
 						+ "' returns a result and must be declared const", variable,
 						Literals.VARIABLE__NAME, ERR_SIDE_EFFECTS_FUNCTION);
@@ -214,7 +214,7 @@ public class StructuralValidator extends AbstractDeclarativeValidator {
 	@Check
 	public void checkStateVariable(Variable variable) {
 		// this is only for global variables (not local, not functions)
-		if (!CflowUtil.isGlobal(variable) || CflowUtil.isFunction(variable)) {
+		if (!CxUtil.isGlobal(variable) || CxUtil.isFunction(variable)) {
 			return;
 		}
 
@@ -256,7 +256,7 @@ public class StructuralValidator extends AbstractDeclarativeValidator {
 			}
 
 			// a variable declared as "const" must have an initial value
-			if (CflowUtil.isConstant(variable)) {
+			if (CxUtil.isConstant(variable)) {
 				error("The variable " + variable.getName() + " must have "
 						+ "an initial value because it is declared constant", variable, null,
 						ERR_VAR_DECL);
@@ -299,7 +299,7 @@ public class StructuralValidator extends AbstractDeclarativeValidator {
 	@Override
 	protected List<EPackage> getEPackages() {
 		List<EPackage> result = new ArrayList<EPackage>();
-		result.add(com.synflow.cx.cx.CflowPackage.eINSTANCE);
+		result.add(com.synflow.cx.cx.CxPackage.eINSTANCE);
 		return result;
 	}
 

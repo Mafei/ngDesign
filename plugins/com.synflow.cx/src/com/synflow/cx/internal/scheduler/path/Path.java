@@ -20,7 +20,7 @@ import com.google.common.collect.Iterables;
 import com.synflow.cx.cx.Branch;
 import com.synflow.cx.cx.CExpression;
 import com.synflow.cx.internal.scheduler.node.Node;
-import com.synflow.cx.services.CflowPrinter;
+import com.synflow.cx.services.CxPrinter;
 
 /**
  * This class defines a code path as an iterable over StatementCond.
@@ -67,7 +67,7 @@ public class Path {
 				if (condition == null) {
 					return "(else)";
 				} else {
-					return new CflowPrinter().toString(condition);
+					return new CxPrinter().toString(condition);
 				}
 			}
 		}));

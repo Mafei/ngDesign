@@ -43,21 +43,21 @@ import com.synflow.cx.cx.StatementLoop;
 import com.synflow.cx.cx.Task;
 import com.synflow.cx.cx.VarDecl;
 import com.synflow.cx.cx.Variable;
-import com.synflow.cx.cx.util.CflowSwitch;
+import com.synflow.cx.cx.util.CxSwitch;
 import com.synflow.cx.internal.instantiation.IInstantiator;
 import com.synflow.models.dpn.Entity;
 import com.synflow.models.util.Executable;
 import com.synflow.models.util.Void;
 
 /**
- * This class defines a comment translator that saves comments in properties. It extends CflowSwitch
- * rather than VoidCflowSwitch because we actually want to have most of the caseStatement* cascade
+ * This class defines a comment translator that saves comments in properties. It extends CxSwitch
+ * rather than VoidCxSwitch because we actually want to have most of the caseStatement* cascade
  * back to the caseStatement method.
  * 
  * @author Matthieu Wipliez
  * 
  */
-public class CommentTranslator extends CflowSwitch<Void> {
+public class CommentTranslator extends CxSwitch<Void> {
 
 	private static final Pattern PATTERN_STAR = Pattern.compile("\\*+");
 

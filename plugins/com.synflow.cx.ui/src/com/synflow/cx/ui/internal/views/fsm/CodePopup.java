@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
-import com.synflow.cx.ui.CflowEditorCreator;
+import com.synflow.cx.ui.CxEditorCreator;
 import com.synflow.models.dpn.Actor;
 import com.synflow.models.dpn.State;
 import com.synflow.models.dpn.Transition;
@@ -47,7 +47,7 @@ public class CodePopup extends PopupDialog {
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		CflowEditorCreator creator = CflowEditorCreator.get();
+		CxEditorCreator creator = CxEditorCreator.get();
 		composite = new Composite(parent, SWT.NONE);
 		creator.createEditor(file, transition, composite);
 		composite.setLayout(new GridLayout());

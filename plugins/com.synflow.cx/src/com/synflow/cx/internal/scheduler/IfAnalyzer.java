@@ -16,11 +16,11 @@ import static com.synflow.models.util.SwitchUtil.visit;
 
 import java.util.List;
 
-import com.synflow.cx.CflowUtil;
+import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.Branch;
 import com.synflow.cx.cx.StatementIf;
 import com.synflow.cx.internal.scheduler.node.Node;
-import com.synflow.cx.internal.services.VoidCflowSwitch;
+import com.synflow.cx.internal.services.VoidCxSwitch;
 import com.synflow.models.util.Void;
 
 /**
@@ -29,7 +29,7 @@ import com.synflow.models.util.Void;
  * @author Matthieu Wipliez
  * 
  */
-public class IfAnalyzer extends VoidCflowSwitch {
+public class IfAnalyzer extends VoidCxSwitch {
 
 	private Node node;
 
@@ -47,7 +47,7 @@ public class IfAnalyzer extends VoidCflowSwitch {
 
 	@Override
 	public Void caseStatementIf(StatementIf stmt) {
-		if (CflowUtil.isIfSimple(stmt)) {
+		if (CxUtil.isIfSimple(stmt)) {
 			return DONE;
 		}
 

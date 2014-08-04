@@ -29,7 +29,7 @@ import org.eclipse.xtext.scoping.IScopeProvider;
 import com.google.gson.JsonObject;
 import com.google.inject.Inject;
 import com.synflow.core.util.CoreUtil;
-import com.synflow.cx.CflowUtil;
+import com.synflow.cx.CxUtil;
 import com.synflow.cx.UriComputer;
 import com.synflow.cx.cx.Bundle;
 import com.synflow.cx.cx.CExpression;
@@ -40,8 +40,8 @@ import com.synflow.cx.cx.Module;
 import com.synflow.cx.cx.Network;
 import com.synflow.cx.cx.Task;
 import com.synflow.cx.cx.Variable;
-import com.synflow.cx.cx.CflowPackage.Literals;
-import com.synflow.cx.cx.util.CflowSwitch;
+import com.synflow.cx.cx.CxPackage.Literals;
+import com.synflow.cx.cx.util.CxSwitch;
 import com.synflow.cx.internal.TransformerUtil;
 import com.synflow.cx.internal.instantiation.properties.PropertiesSupport;
 import com.synflow.models.dpn.Actor;
@@ -56,7 +56,7 @@ import com.synflow.models.dpn.Unit;
  * @author Matthieu Wipliez
  *
  */
-public class EntityMapper extends CflowSwitch<Entity> {
+public class EntityMapper extends CxSwitch<Entity> {
 
 	enum Options {
 		DRY_RUN
@@ -118,7 +118,7 @@ public class EntityMapper extends CflowSwitch<Entity> {
 
 		// set file name
 		Module module = EcoreUtil2.getContainerOfType(info.getCxEntity(), Module.class);
-		String fileName = CflowUtil.getFileName(module);
+		String fileName = CxUtil.getFileName(module);
 		entity.setFileName(fileName);
 
 		// set line number

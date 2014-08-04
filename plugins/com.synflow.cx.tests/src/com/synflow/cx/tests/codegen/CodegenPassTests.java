@@ -24,7 +24,7 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.synflow.core.ICodeGenerator;
 import com.synflow.core.IFileWriter;
-import com.synflow.cx.CflowInjectorProvider;
+import com.synflow.cx.CxInjectorProvider;
 import com.synflow.cx.tests.AbstractPassTests;
 import com.synflow.cx.tests.StreamCopier;
 import com.synflow.models.dpn.DPN;
@@ -38,7 +38,7 @@ import com.synflow.models.dpn.Instance;
  * @author Nicolas Siret
  * 
  */
-@InjectWith(CflowInjectorProvider.class)
+@InjectWith(CxInjectorProvider.class)
 public abstract class CodegenPassTests extends AbstractPassTests {
 
 	@BeforeClass

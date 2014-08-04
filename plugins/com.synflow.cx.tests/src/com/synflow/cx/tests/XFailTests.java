@@ -30,7 +30,7 @@ import org.eclipse.xtext.junit4.validation.AssertableDiagnostics.DiagnosticPredi
 import org.eclipse.xtext.validation.AbstractValidationDiagnostic;
 import org.junit.Test;
 
-import com.synflow.cx.CflowInjectorProvider;
+import com.synflow.cx.CxInjectorProvider;
 import com.synflow.cx.cx.Module;
 import com.synflow.cx.validation.IssueCodes;
 
@@ -40,8 +40,8 @@ import com.synflow.cx.validation.IssueCodes;
  * @author Matthieu Wipliez
  * 
  */
-@InjectWith(CflowInjectorProvider.class)
-public class XFailTests extends AbstractCflowTest {
+@InjectWith(CxInjectorProvider.class)
+public class XFailTests extends AbstractCxTest {
 
 	/**
 	 * Asserts that the validator produces at least one predicate that matches the given error code

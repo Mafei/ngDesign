@@ -17,7 +17,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.xtext.validation.ValidationMessageAcceptor;
 
-import com.synflow.cx.internal.services.VoidCflowSwitch;
+import com.synflow.cx.internal.services.VoidCxSwitch;
 import com.synflow.models.ir.Type;
 import com.synflow.models.ir.util.TypePrinter;
 import com.synflow.models.ir.util.TypeUtil;
@@ -29,7 +29,7 @@ import com.synflow.models.ir.util.TypeUtil;
  * @author Matthieu Wipliez
  * 
  */
-public abstract class Checker extends VoidCflowSwitch {
+public abstract class Checker extends VoidCxSwitch {
 
 	protected ValidationMessageAcceptor acceptor;
 
