@@ -77,14 +77,14 @@ Java and all Java-based trademarks are trademarks of Oracle Corporation in the U
          version="0.0.0"/>
 
    <requires>
-      <import feature="org.eclipse.platform"/>
-      <import feature="org.eclipse.emf"/>
-      <import feature="org.eclipse.gef"/>
-      <import feature="org.eclipse.jdt"/>
-      <import feature="org.eclipse.egit"/>
-      <import feature="org.eclipse.jgit"/>
-      <import feature="org.eclipse.xtext.ui"/>
-      <import feature="com.synflow.ngDesign.ide"/>
+      <import feature="org.eclipse.platform" version="4.4.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.emf" version="2.10.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.gef" version="3.10.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.jdt" version="3.10.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.egit" version="3.3.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.jgit" version="3.3.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.xtext.ui" version="2.6.2" match="greaterOrEqual"/>
+      <import feature="com.synflow.ngDesign.ide" version="0.11.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
