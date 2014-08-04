@@ -173,12 +173,16 @@ public class InstantiatorImpl implements IInstantiator {
 		// we use the registry to get an IResourceDescription because
 		// ResourceDescriptionsProvider may return CopiedResourceDescriptions
 		// which do not have reference descriptions
-		for (Resource resource : resourceSet.getResources()) {
-			URI uri = resource.getURI();
+		for (IResourceDescription resDesc : resourceDescriptions.getAllResourceDescriptions()) {
+			URI uri = resDesc.getURI();
+			Resource resource = resourceSet.getResource(uri, false);
+			if (resource == null) {
+				continue;
+			}
+
 			IResourceServiceProvider provider = registry.getResourceServiceProvider(uri);
 			IResourceDescription.Manager manager = provider.getResourceDescriptionManager();
-
-			IResourceDescription resDesc = manager.getResourceDescription(resource);
+			resDesc = manager.getResourceDescription(resource);
 			for (IReferenceDescription refDesc : resDesc.getReferenceDescriptions()) {
 				if (refDesc.getEReference() == Literals.INST__ENTITY) {
 					URI uriInstantiable = refDesc.getTargetEObjectUri();
