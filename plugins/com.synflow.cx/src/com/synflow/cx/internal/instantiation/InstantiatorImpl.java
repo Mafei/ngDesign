@@ -21,6 +21,7 @@ import java.util.Set;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.EcoreUtil2;
@@ -28,6 +29,7 @@ import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.resource.IReferenceDescription;
 import org.eclipse.xtext.resource.IResourceDescription;
 import org.eclipse.xtext.resource.IResourceDescriptions;
+import org.eclipse.xtext.resource.IResourceServiceProvider;
 import org.eclipse.xtext.resource.impl.ResourceDescriptionsProvider;
 
 import com.google.common.collect.Iterables;
@@ -41,10 +43,10 @@ import com.synflow.core.util.CoreUtil;
 import com.synflow.cx.cx.Bundle;
 import com.synflow.cx.cx.Connect;
 import com.synflow.cx.cx.CxEntity;
+import com.synflow.cx.cx.CxPackage.Literals;
 import com.synflow.cx.cx.Inst;
 import com.synflow.cx.cx.Network;
 import com.synflow.cx.cx.VarRef;
-import com.synflow.cx.cx.CxPackage.Literals;
 import com.synflow.cx.internal.CopyOf;
 import com.synflow.cx.internal.instantiation.properties.PropertiesSupport;
 import com.synflow.models.dpn.DPN;
@@ -79,6 +81,9 @@ public class InstantiatorImpl implements IInstantiator {
 
 	@Inject
 	private ResourceDescriptionsProvider provider;
+
+	@Inject
+	private IResourceServiceProvider.Registry registry;
 
 	public InstantiatorImpl() {
 		builtins = new ArrayList<>();
@@ -165,7 +170,15 @@ public class InstantiatorImpl implements IInstantiator {
 		}
 
 		// remove all entities that are instantiated
-		for (IResourceDescription resDesc : resourceDescriptions.getAllResourceDescriptions()) {
+		// we use the registry to get an IResourceDescription because
+		// ResourceDescriptionsProvider may return CopiedResourceDescriptions
+		// which do not have reference descriptions
+		for (Resource resource : resourceSet.getResources()) {
+			URI uri = resource.getURI();
+			IResourceServiceProvider provider = registry.getResourceServiceProvider(uri);
+			IResourceDescription.Manager manager = provider.getResourceDescriptionManager();
+
+			IResourceDescription resDesc = manager.getResourceDescription(resource);
 			for (IReferenceDescription refDesc : resDesc.getReferenceDescriptions()) {
 				if (refDesc.getEReference() == Literals.INST__ENTITY) {
 					URI uriInstantiable = refDesc.getTargetEObjectUri();
