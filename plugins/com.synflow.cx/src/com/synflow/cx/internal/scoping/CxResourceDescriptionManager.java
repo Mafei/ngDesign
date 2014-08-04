@@ -13,8 +13,8 @@ package com.synflow.cx.internal.scoping;
 import java.util.Collection;
 
 import org.eclipse.xtext.resource.IResourceDescription;
-import org.eclipse.xtext.resource.IResourceDescriptions;
 import org.eclipse.xtext.resource.IResourceDescription.Delta;
+import org.eclipse.xtext.resource.IResourceDescriptions;
 import org.eclipse.xtext.resource.impl.DefaultResourceDescriptionManager;
 
 /**
@@ -25,12 +25,6 @@ import org.eclipse.xtext.resource.impl.DefaultResourceDescriptionManager;
  *
  */
 public class CxResourceDescriptionManager extends DefaultResourceDescriptionManager {
-
-	@Override
-	public Delta createDelta(IResourceDescription oldDescription,
-			IResourceDescription newDescription) {
-		return new CxResourceDescriptionDelta(oldDescription, newDescription);
-	}
 
 	@Override
 	public boolean isAffected(Collection<Delta> deltas, IResourceDescription candidate,

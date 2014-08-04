@@ -19,7 +19,9 @@ import java.util.Iterator;
 import org.eclipse.emf.ecore.EObject;
 
 import com.synflow.cx.CxUtil;
+import com.synflow.cx.cx.Array;
 import com.synflow.cx.cx.CExpression;
+import com.synflow.cx.cx.Element;
 import com.synflow.cx.cx.ExpressionBinary;
 import com.synflow.cx.cx.ExpressionBoolean;
 import com.synflow.cx.cx.ExpressionCast;
@@ -29,6 +31,10 @@ import com.synflow.cx.cx.ExpressionInteger;
 import com.synflow.cx.cx.ExpressionString;
 import com.synflow.cx.cx.ExpressionUnary;
 import com.synflow.cx.cx.ExpressionVariable;
+import com.synflow.cx.cx.Null;
+import com.synflow.cx.cx.Obj;
+import com.synflow.cx.cx.Pair;
+import com.synflow.cx.cx.Primitive;
 import com.synflow.cx.cx.TypeDecl;
 import com.synflow.cx.cx.TypeGen;
 import com.synflow.cx.cx.TypeRef;
@@ -57,6 +63,21 @@ public class CxPrinter extends CxSwitch<Void> {
 
 	public CxPrinter(StringBuilder builder) {
 		this.builder = builder;
+	}
+
+	@Override
+	public Void caseArray(Array array) {
+		builder.append('[');
+		Iterator<Element> it = array.getElements().iterator();
+		if (it.hasNext()) {
+			doSwitch(it.next());
+			while (it.hasNext()) {
+				builder.append(',');
+				doSwitch(it.next());
+			}
+		}
+		builder.append(']');
+		return DONE;
 	}
 
 	@Override
@@ -114,9 +135,9 @@ public class CxPrinter extends CxSwitch<Void> {
 
 	@Override
 	public Void caseExpressionString(ExpressionString expr) {
-		builder.append('\'');
+		builder.append('"');
 		builder.append(expr.getValue());
-		builder.append('\'');
+		builder.append('"');
 		return DONE;
 	}
 
@@ -154,6 +175,43 @@ public class CxPrinter extends CxSwitch<Void> {
 			builder.append(')');
 		}
 
+		return DONE;
+	}
+
+	@Override
+	public Void caseNull(Null null_) {
+		builder.append("null");
+		return DONE;
+	}
+
+	@Override
+	public Void caseObj(Obj obj) {
+		builder.append('{');
+		Iterator<Pair> it = obj.getMembers().iterator();
+		if (it.hasNext()) {
+			doSwitch(it.next());
+			while (it.hasNext()) {
+				builder.append(',');
+				doSwitch(it.next());
+			}
+		}
+		builder.append('}');
+		return DONE;
+	}
+
+	@Override
+	public Void casePair(Pair pair) {
+		builder.append('"');
+		builder.append(pair.getKey());
+		builder.append('"');
+		builder.append(':');
+		doSwitch(pair.getValue());
+		return DONE;
+	}
+
+	@Override
+	public Void casePrimitive(Primitive primitive) {
+		doSwitch(primitive.getValue());
 		return DONE;
 	}
 

@@ -27,6 +27,7 @@ import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.CExpression;
 import com.synflow.cx.cx.CType;
 import com.synflow.cx.cx.Inst;
+import com.synflow.cx.cx.Obj;
 import com.synflow.cx.cx.Task;
 import com.synflow.cx.cx.Typedef;
 import com.synflow.cx.cx.Variable;
@@ -60,13 +61,30 @@ public class CxResourceStrategy extends DefaultResourceDescriptionStrategy {
 			Typedef typedef = (Typedef) eObject;
 			createTypedef(typedef, acceptor);
 		} else if (eObject instanceof Inst) {
-			return false;
+			Inst inst = (Inst) eObject;
+			createInst(inst, acceptor);
 		} else {
 			return super.createEObjectDescriptions(eObject, acceptor);
 		}
 
 		// no need to visit contents of variable or typedef
 		return false;
+	}
+
+	private void createInst(Inst inst, IAcceptor<IEObjectDescription> acceptor) {
+		Map<String, String> userData = null;
+
+		// if inst has arguments, adds it to user data
+		Obj obj = inst.getArguments();
+		if (obj != null) {
+			userData = ImmutableMap.of("properties", new CxPrinter().toString(obj));
+		}
+
+		// create eobject description
+		QualifiedName qualifiedName = getQualifiedNameProvider().getFullyQualifiedName(inst);
+		if (qualifiedName != null) {
+			acceptor.accept(EObjectDescription.create(qualifiedName, inst, userData));
+		}
 	}
 
 	private void createTypedef(Typedef typedef, IAcceptor<IEObjectDescription> acceptor) {
@@ -97,7 +115,7 @@ public class CxResourceStrategy extends DefaultResourceDescriptionStrategy {
 		}
 
 		// add type to user data
-		Map<String, String> userData = new HashMap<>();
+		Map<String, String> userData = new HashMap<>(2);
 		userData.put("type", builder.toString());
 
 		// if variable has value, adds it to user data
