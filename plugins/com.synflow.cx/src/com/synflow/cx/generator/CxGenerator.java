@@ -19,7 +19,7 @@ import com.google.inject.Inject;
 import com.synflow.cx.internal.compiler.IModuleCompiler;
 
 /**
- * This class defines a generator for C~ source/header files.
+ * This class defines a generator for Cx resources.
  * 
  * @author Matthieu Wipliez
  */

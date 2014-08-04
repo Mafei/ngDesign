@@ -35,7 +35,7 @@ import com.synflow.cx.cx.Module;
 import com.synflow.cx.validation.IssueCodes;
 
 /**
- * This class defines C~ tests that are expected to fail.
+ * This class defines Cx tests that are expected to fail.
  * 
  * @author Matthieu Wipliez
  * 

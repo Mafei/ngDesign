@@ -18,7 +18,7 @@ import com.synflow.cx.cx.Module;
 import com.synflow.cx.cx.Task;
 
 /**
- * This class defines a qualified name provider for C~ that computes the qualified name of a module
+ * This class defines a qualified name provider for Cx that computes the qualified name of a module
  * as its simple name (file name without extension).
  * 
  * @author Matthieu Wipliez

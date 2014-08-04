@@ -41,7 +41,7 @@ import com.synflow.cx.cx.util.CxSwitch;
 import com.synflow.models.util.Void;
 
 /**
- * This class defines a simple C~ pretty printer (a lightweight alternative to the whole Xtext
+ * This class defines a simple Cx pretty printer (a lightweight alternative to the whole Xtext
  * serialization thing).
  * 
  * @author Matthieu Wipliez

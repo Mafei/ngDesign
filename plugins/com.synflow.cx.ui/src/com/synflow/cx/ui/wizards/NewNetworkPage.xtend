@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Synflow SAS.
+ * Copyright (c) 2013-2014 Synflow SAS.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,7 @@ package com.synflow.cx.ui.wizards
 import org.eclipse.jface.viewers.IStructuredSelection
 
 /**
- * This class provides a page to create a new C~ network.
+ * This class provides a page to create a new Cx network.
  * 
  * @author Matthieu Wipliez
  */
@@ -34,13 +34,15 @@ class NewNetworkPage extends NewFilePage {
 		network «name» {
 			in u8 a, sync b; out u16 c;
 
-			x = new task {
-			};
+			// instantiate task/network A
+			// x = new A();
 
-			y = new A();
-		}
-
-		task A {
+			// instantiate inner task
+			// y  = new task {
+			// 	void loop() {
+			//		x.result.read();
+			//	}
+			// };
 		}
 		'''
 

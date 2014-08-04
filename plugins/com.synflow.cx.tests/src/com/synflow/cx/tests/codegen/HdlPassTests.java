@@ -37,7 +37,7 @@ import com.synflow.models.dpn.Instance;
 import com.synflow.models.ir.util.IrUtil;
 
 /**
- * This class defines C~ tests that are expected to succeed.
+ * This class defines Cx tests that are expected to succeed.
  * 
  * @author Matthieu Wipliez
  * @author Nicolas Siret

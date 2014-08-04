@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    IBM Corporation - initial API and implementation
- *    Matthieu Wipliez (Synflow SAS) - adapted to C~
+ *    Matthieu Wipliez (Synflow SAS) - adapted to Cx
  *******************************************************************************/
 package com.synflow.ngDesign.ui.internal.navigator;
 
@@ -62,7 +62,7 @@ import com.synflow.cx.cx.Module;
 import com.synflow.models.util.EcoreHelper;
 
 /**
- * This class defines a C~ content provider. Many methods are copied from JDT's
+ * This class defines a Cx content provider. Many methods are copied from JDT's
  * org.eclipse.jdt.internal.ui.navigator.JavaNavigatorContentProvider and are Copyright (c) IBM
  * Corporation and others (see above).
  * 

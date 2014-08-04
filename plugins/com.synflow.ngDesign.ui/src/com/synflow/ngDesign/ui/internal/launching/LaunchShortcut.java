@@ -37,7 +37,7 @@ import com.synflow.core.SynflowCore;
 import com.synflow.models.ir.util.IrUtil;
 
 /**
- * This class defines a launch shortcut for C~ Simulation.
+ * This class defines a launch shortcut for Cx Simulation.
  * 
  * @author Matthieu Wipliez
  * 

@@ -27,7 +27,7 @@ public class TestUtil {
 	 * Returns the tokens associated with the given port.
 	 * 
 	 * @param port
-	 *            a port of a C~ actor
+	 *            a port of a Cx actor
 	 * @param attrName
 	 *            "expected" or "stimulus"
 	 * @return tokens as a list of expressions

@@ -182,10 +182,10 @@ public class LaunchDelegateSimulation extends LaunchConfigurationDelegate {
 	}
 
 	/**
-	 * Returns the Java configuration for the given C~ simulation launch configuration.
+	 * Returns the Java configuration for the given Cx simulation launch configuration.
 	 * 
 	 * @param config
-	 *            launch configuration for a C~ simulation
+	 *            launch configuration for a Cx simulation
 	 * @return a Java launch configuration
 	 * @throws CoreException
 	 */

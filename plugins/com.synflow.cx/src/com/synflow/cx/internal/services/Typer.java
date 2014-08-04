@@ -83,7 +83,7 @@ import com.synflow.models.ir.util.TypeUtil;
 import com.synflow.models.ir.util.ValueUtil;
 
 /**
- * This class defines a typer for C~ AST. Note that types must have been transformed to IR types
+ * This class defines a typer for Cx AST. Note that types must have been transformed to IR types
  * first.
  * 
  * @author Matthieu Wipliez

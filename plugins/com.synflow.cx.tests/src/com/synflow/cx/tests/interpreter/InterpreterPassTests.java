@@ -15,7 +15,7 @@ import com.synflow.models.dpn.Actor;
 import com.synflow.models.dpn.Entity;
 
 /**
- * This class defines C~ tests that are expected to succeed.
+ * This class defines Cx tests that are expected to succeed.
  * 
  * @author Matthieu Wipliez
  * 

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    Sven Efftinge - Initial contribution and API
- *    Matthieu Wipliez - modified to support C~
+ *    Matthieu Wipliez - modified to support Cx
  *******************************************************************************/
 package com.synflow.cx.debug;
 
@@ -21,11 +21,11 @@ import org.eclipse.xtext.resource.XtextResource;
 import com.synflow.cx.cx.Statement;
 
 /**
- * This class implements breakpoint support for C~ based on Xbase's breakpoint
+ * This class implements breakpoint support for Cx based on Xbase's breakpoint
  * support class.
  * 
  * @author Sven Efftinge - Initial contribution and API
- * @author Matthieu Wipliez support for C~
+ * @author Matthieu Wipliez support for Cx
  */
 @SuppressWarnings("restriction")
 public class CxStratumBreakpointSupport implements IStratumBreakpointSupport {

@@ -13,7 +13,7 @@ package com.synflow.cx.ui.wizards
 import org.eclipse.jface.viewers.IStructuredSelection
 
 /**
- * This class provides a page to create a new C~ task.
+ * This class provides a page to create a new Cx task.
  * 
  * @author Matthieu Wipliez
  * @author Nicolas Siret

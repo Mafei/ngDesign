@@ -18,7 +18,7 @@ import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfigurationAcce
 import org.eclipse.xtext.ui.editor.utils.TextStyle;
 
 /**
- * This class extends the default highlighting configuration for C~.
+ * This class extends the default highlighting configuration for Cx.
  * 
  * @author Matthieu Wipliez
  * 

@@ -155,7 +155,7 @@ public class AstUtil {
 	}
 
 	/**
-	 * Returns a new C~ 'true' boolean expression.
+	 * Returns a new Cx 'true' boolean expression.
 	 * 
 	 * @return a boolean expression
 	 */

@@ -56,7 +56,7 @@ import com.synflow.models.util.Executable;
 import com.synflow.models.util.Void;
 
 /**
- * This class transforms a C~ module to IR entities (actors, networks, units).
+ * This class transforms a Cx module to IR entities (actors, networks, units).
  * 
  * @author Matthieu Wipliez
  * 

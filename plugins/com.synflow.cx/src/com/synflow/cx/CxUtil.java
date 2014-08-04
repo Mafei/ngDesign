@@ -50,7 +50,7 @@ import com.synflow.models.dpn.InterfaceType;
 import com.synflow.models.util.Void;
 
 /**
- * This class defines utility functions for analysis of C~.
+ * This class defines utility functions for analysis of Cx.
  * 
  * @author Matthieu Wipliez
  * 

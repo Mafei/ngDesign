@@ -27,7 +27,7 @@ import com.synflow.core.SynflowNature;
 
 /**
  * This class defines a declarative label provider that extends {@link CxLabelProvider} with
- * images for projects, C~ files, Java source folders and packages, and text for resources and Java
+ * images for projects, Cx files, Java source folders and packages, and text for resources and Java
  * elements.
  * 
  * @author Matthieu Wipliez

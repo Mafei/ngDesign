@@ -29,7 +29,7 @@ import com.synflow.models.ir.ExprInt;
 import com.synflow.models.ir.Expression;
 
 /**
- * This class defines utility functions for transformation of C~.
+ * This class defines utility functions for transformation of Cx.
  * 
  * @author Matthieu Wipliez
  * 

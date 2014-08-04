@@ -16,7 +16,7 @@ import com.synflow.cx.cx.CExpression;
 import com.synflow.models.ir.Expression;
 
 /**
- * This interface defines a method for a class that can transform a C~ expression into an IR
+ * This interface defines a method for a class that can transform a Cx expression into an IR
  * expression.
  * 
  * @author Matthieu Wipliez

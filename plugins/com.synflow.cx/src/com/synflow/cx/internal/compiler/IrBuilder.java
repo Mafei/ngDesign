@@ -158,10 +158,10 @@ public class IrBuilder {
 	}
 
 	/**
-	 * Returns the IR variable that corresponds to the given C~ variable.
+	 * Returns the IR variable that corresponds to the given Cx variable.
 	 * 
 	 * @param variable
-	 *            a C~ variable
+	 *            a Cx variable
 	 * @return the IR variable that corresponds to the given variable
 	 */
 	final Var getMapping(Variable variable) {
@@ -177,10 +177,10 @@ public class IrBuilder {
 	}
 
 	/**
-	 * Returns the IR procedure that corresponds to the given C~ function.
+	 * Returns the IR procedure that corresponds to the given Cx function.
 	 * 
 	 * @param function
-	 *            a C~ function
+	 *            a Cx function
 	 * @return the IR procedure that corresponds to the given function
 	 */
 	final Procedure getProcedure(Variable function) {
@@ -385,7 +385,7 @@ public class IrBuilder {
 	 * @param indexes
 	 *            list of IR expressions (may be <code>null</code>)
 	 * @param value
-	 *            C~ value
+	 *            Cx value
 	 */
 	public final void storeExpr(int lineNumber, Var target, List<CExpression> indexes,
 			CExpression value) {

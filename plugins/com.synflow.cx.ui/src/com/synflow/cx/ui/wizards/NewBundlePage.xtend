@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2013 Synflow SAS.
+ * Copyright (c) 2012-2014 Synflow SAS.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,7 @@ package com.synflow.cx.ui.wizards
 import org.eclipse.jface.viewers.IStructuredSelection
 
 /**
- * This class provides a page to create a new C~ bundle.
+ * This class provides a page to create a new Cx bundle.
  * 
  * @author Matthieu Wipliez
  */
@@ -33,10 +33,12 @@ class NewBundlePage extends NewFilePage {
 
 		bundle «entityName» {
 
-			// TODO define your functions and constants here
-
 			/** current year. Switch to u12 in year 2048 */
-			const u11 YEAR = «year»;
+			u11 YEAR = «year»;
+
+			int increment(int x) {
+				return (int) (x + 1);
+			}
 
 		}
 		'''

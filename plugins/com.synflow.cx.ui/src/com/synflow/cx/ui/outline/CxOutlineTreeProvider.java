@@ -46,8 +46,8 @@ import com.synflow.cx.cx.Variable;
 import com.synflow.cx.cx.CxPackage.Literals;
 
 /**
- * This class provides an outline tree for a C~ source/header file. Most methods are declared
- * protected so that JDT does not complain of unused methods.
+ * This class provides an outline tree for a Cx file. Most methods are declared protected so that
+ * JDT does not complain of unused methods.
  * 
  * @author Matthieu Wipliez
  * 

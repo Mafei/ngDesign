@@ -21,7 +21,7 @@ import org.eclipse.ltk.core.refactoring.participants.MoveArguments;
 import org.eclipse.ltk.core.refactoring.participants.MoveParticipant;
 
 /**
- * This class defines a RenameParticipant for C~ tasks.
+ * This class defines a RenameParticipant for Cx tasks.
  * 
  * @author Matthieu Wipliez
  * 
@@ -49,7 +49,7 @@ public class CflowMoveParticipant extends MoveParticipant {
 
 	@Override
 	public String getName() {
-		return "C~ move participant";
+		return "Cx move participant";
 	}
 
 	@Override

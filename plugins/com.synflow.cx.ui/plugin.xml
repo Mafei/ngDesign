@@ -440,10 +440,10 @@
             hasPages="true"
             icon="icons/type_task.png"
             id="com.synflow.cx.ui.wizards.newTask"
-            name="C~ task"
+            name="Cx task"
             project="false">
          <description>
-            Create a new C~ task
+            Create a new Cx task
          </description>
       </wizard>
       <wizard
@@ -452,10 +452,10 @@
             hasPages="true"
             icon="icons/type_network.png"
             id="com.synflow.cx.ui.wizards.newNetwork"
-            name="C~ network"
+            name="Cx network"
             project="false">
          <description>
-            Create a new C~ network
+            Create a new Cx network
          </description>
       </wizard>
       <wizard
@@ -464,10 +464,10 @@
             hasPages="true"
             icon="icons/type_bundle.png"
             id="com.synflow.cx.ui.wizards.newBundle"
-            name="C~ bundle"
+            name="Cx bundle"
             project="false">
          <description>
-            Create a new C~ bundle
+            Create a new Cx bundle
          </description>
       </wizard>
    </extension>

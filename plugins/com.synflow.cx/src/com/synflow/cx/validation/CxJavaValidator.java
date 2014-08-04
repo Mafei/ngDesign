@@ -43,7 +43,7 @@ import com.synflow.models.dpn.Entity;
 import com.synflow.models.util.Executable;
 
 /**
- * This class defines a validator for C~ source files.
+ * This class defines a validator for Cx source files.
  * 
  * @author Matthieu Wipliez
  * 

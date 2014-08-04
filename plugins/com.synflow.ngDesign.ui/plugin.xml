@@ -228,7 +228,7 @@
           class="com.synflow.ngDesign.ui.internal.launching.LaunchShortcut"
           icon="icons/cflow_app.gif"
           id="com.synflow.ngDesign.ui.shortcutSimulation"
-          label="C~ Simulation"
+          label="Cx Simulation"
           modes="run,debug">
        <configurationType
              id="com.synflow.ngDesign.ui.launchConfigurationSimulation"></configurationType>
@@ -289,7 +289,7 @@
           delegate="com.synflow.ngDesign.ui.internal.UiInjectableExtensionFactory:com.synflow.ngDesign.ui.internal.launching.LaunchDelegateSimulation"
           id="com.synflow.ngDesign.ui.launchConfigurationSimulation"
           modes="run,debug"
-          name="C~ Simulation"
+          name="Cx Simulation"
           public="true">
     </launchConfigurationType>
  </extension>
@@ -335,7 +335,7 @@
     <renameParticipant
           class="com.synflow.ngDesign.ui.internal.refactoring.CflowRenameParticipant"
           id="com.synflow.ngDesign.ui.renameParticipantCf"
-          name="Rename C~ task">
+          name="Rename Cx task">
        <enablement>
           <with variable="affectedNatures">
 	        <iterate
@@ -357,7 +357,7 @@
     <moveParticipant
           class="com.synflow.ngDesign.ui.internal.refactoring.CflowMoveParticipant"
           id="com.synflow.ngDesign.ui.moveParticipantCf"
-          name="Move C~ task">
+          name="Move Cx task">
        <enablement>
           <with
                 variable="affectedNatures">
@@ -552,7 +552,7 @@
     <decorator
           class="com.synflow.ngDesign.ui.internal.navigator.CflowLabelDecorator"
           id="com.synflow.cx.ui.decorator"
-          label="C~ decorator"
+          label="Cx decorator"
           lightweight="true"
           state="true">
     </decorator>

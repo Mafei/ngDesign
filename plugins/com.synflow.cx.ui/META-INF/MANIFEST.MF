@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: C~ UI
+Bundle-Name: Cx UI
 Bundle-Vendor: Synflow SAS
 Bundle-Version: 0.11.0.qualifier
 Bundle-SymbolicName: com.synflow.cx.ui;singleton:=true

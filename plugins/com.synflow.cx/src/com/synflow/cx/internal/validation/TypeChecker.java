@@ -68,8 +68,8 @@ import com.synflow.models.util.Executable;
 import com.synflow.models.util.Void;
 
 /**
- * This class defines the type checker for C~ with package-access methods that are only accessed by
- * the C~ java validator class.
+ * This class defines the type checker for Cx with package-access methods that are only accessed by
+ * the Cx java validator class.
  * 
  * @author Matthieu Wipliez
  * 

@@ -113,7 +113,7 @@ public class InstantiatorImpl implements IInstantiator {
 	 * Creates an instance from the given Inst object.
 	 * 
 	 * @param inst
-	 *            a C~ instance
+	 *            a Cx instance
 	 * @return an IR instance
 	 */
 	private Instance createInstance(DPN dpn, Inst inst, Entity entity) {

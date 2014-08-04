@@ -127,7 +127,7 @@ public class SkeletonMaker extends DpnSwitch<Void> {
 	}
 
 	/**
-	 * Translates the given C~ variable into an IR Procedure or Var.
+	 * Translates the given Cx variable into an IR Procedure or Var.
 	 * 
 	 * @param variable
 	 * @return

@@ -53,7 +53,7 @@ import com.synflow.models.ir.Type;
 import com.synflow.models.util.Executable;
 
 /**
- * This class defines a validator for C~ expressions.
+ * This class defines a validator for Cx expressions.
  * 
  * @author Matthieu Wipliez
  * 

@@ -26,7 +26,7 @@ import com.synflow.models.dpn.Transition;
 import com.synflow.models.graph.Edge;
 
 /**
- * This class defines a code popup that shows C~ code.
+ * This class defines a code popup that shows Cx code.
  * 
  * @author Matthieu Wipliez
  * 

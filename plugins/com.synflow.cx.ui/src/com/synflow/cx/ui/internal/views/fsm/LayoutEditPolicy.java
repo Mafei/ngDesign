@@ -30,7 +30,7 @@ import com.synflow.models.dpn.State;
 import com.synflow.models.dpn.Transition;
 
 /**
- * This class defines a layout edit policy that shows a piece of C~ code when
+ * This class defines a layout edit policy that shows a piece of Cx code when
  * hovering.
  * 
  * @author Matthieu Wipliez

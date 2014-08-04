@@ -31,7 +31,7 @@ import com.synflow.cx.cx.Module;
 import com.synflow.cx.cx.CxPackage.Literals;
 
 /**
- * This class defines a simple namespace aware scope provider for Java-like imports in C~.
+ * This class defines a simple namespace aware scope provider for Java-like imports in Cx.
  * 
  * @author Matthieu Wipliez
  * 

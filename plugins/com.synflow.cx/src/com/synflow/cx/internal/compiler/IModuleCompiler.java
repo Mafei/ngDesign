@@ -18,7 +18,7 @@ import com.synflow.models.dpn.Entity;
 import com.synflow.models.util.Void;
 
 /**
- * This class transforms a C~ module to IR entities (actors, networks, units).
+ * This class transforms a Cx module to IR entities (actors, networks, units).
  * 
  * @author Matthieu Wipliez
  * 

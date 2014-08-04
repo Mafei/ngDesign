@@ -95,7 +95,7 @@ import com.synflow.models.ir.Var;
 import com.synflow.models.ir.util.IrUtil;
 
 /**
- * This class transforms C~ statement into IR blocks and instructions.
+ * This class transforms Cx statement into IR blocks and instructions.
  * 
  * @author Matthieu Wipliez
  * @see IrBuilder

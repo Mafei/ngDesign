@@ -25,7 +25,7 @@ import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
 import com.synflow.core.SynflowCore;
 
 /**
- * This class defines a RenameParticipant for C~ tasks.
+ * This class defines a RenameParticipant for Cx tasks.
  * 
  * @author Matthieu Wipliez
  * 
@@ -51,7 +51,7 @@ public class CflowRenameParticipant extends RenameParticipant {
 
 	@Override
 	public String getName() {
-		return "C~ rename participant";
+		return "Cx rename participant";
 	}
 
 	@Override

@@ -22,7 +22,7 @@ import org.eclipse.ui.navigator.ICommonLabelProvider;
 import com.google.inject.Inject;
 
 /**
- * This class defines a label provider for the C~ navigator (Project Explorer). This delegates calls
+ * This class defines a label provider for the Cx navigator (Project Explorer). This delegates calls
  * to the {@link NavigatorDeclarativeLabelProvider}, and decorates images and text with JDT's
  * {@link ProblemsLabelDecorator}.
  * 
