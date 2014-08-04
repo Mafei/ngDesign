@@ -111,7 +111,7 @@ public class SkeletonMaker extends DpnSwitch<Void> {
 		entity.setLineNumber(lineNumber);
 	}
 
-	public void transformPort(final Entity entity, final Variable port) {
+	private void transformPort(final Entity entity, final Variable port) {
 		InterfaceType ifType = CxUtil.getInterface(port);
 		Type type = typer.doSwitch(port);
 		String name = port.getName();

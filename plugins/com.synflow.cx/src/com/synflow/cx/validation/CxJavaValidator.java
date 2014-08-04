@@ -66,9 +66,9 @@ public class CxJavaValidator extends AbstractCxJavaValidator {
 		}
 
 		// TODO add check to update only when necessary
-		// if (!instantiator.isUpToDate()) {
-		instantiator.update(module.eResource().getResourceSet());
-		// }
+		//if (!instantiator.isUpToDate()) {
+			instantiator.update(module.eResource());
+		//}
 
 		final NetworkChecker networkChecker = new NetworkChecker(this, instantiator);
 

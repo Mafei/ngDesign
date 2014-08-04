@@ -29,7 +29,6 @@ import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.resource.IReferenceDescription;
 import org.eclipse.xtext.resource.IResourceDescription;
 import org.eclipse.xtext.resource.IResourceDescriptions;
-import org.eclipse.xtext.resource.IResourceServiceProvider;
 import org.eclipse.xtext.resource.impl.ResourceDescriptionsProvider;
 
 import com.google.common.collect.Iterables;
@@ -75,15 +74,15 @@ public class InstantiatorImpl implements IInstantiator {
 	@Inject
 	private EntityMapper entityMapper;
 
+	@Inject
+	private IResourceDescription.Manager manager;
+
 	private Map<Entity, Map<EObject, EObject>> mapCxToIr;
 
 	private Multimap<CxEntity, Entity> mapEntities;
 
 	@Inject
 	private ResourceDescriptionsProvider provider;
-
-	@Inject
-	private IResourceServiceProvider.Registry registry;
 
 	public InstantiatorImpl() {
 		builtins = new ArrayList<>();
@@ -170,7 +169,7 @@ public class InstantiatorImpl implements IInstantiator {
 		}
 
 		// remove all entities that are instantiated
-		// we use the registry to get an IResourceDescription because
+		// we use the manager to get an IResourceDescription because
 		// ResourceDescriptionsProvider may return CopiedResourceDescriptions
 		// which do not have reference descriptions
 		for (IResourceDescription resDesc : resourceDescriptions.getAllResourceDescriptions()) {
@@ -180,8 +179,6 @@ public class InstantiatorImpl implements IInstantiator {
 				continue;
 			}
 
-			IResourceServiceProvider provider = registry.getResourceServiceProvider(uri);
-			IResourceDescription.Manager manager = provider.getResourceDescriptionManager();
 			resDesc = manager.getResourceDescription(resource);
 			for (IReferenceDescription refDesc : resDesc.getReferenceDescriptions()) {
 				if (refDesc.getEReference() == Literals.INST__ENTITY) {
@@ -210,6 +207,8 @@ public class InstantiatorImpl implements IInstantiator {
 
 	@Override
 	public void forEachMapping(CxEntity cxEntity, Executable<Entity> executable) {
+		Objects.requireNonNull(cxEntity, "cxEntity must not be null in forEachMapping");
+
 		Collection<Entity> entities = mapEntities.get(cxEntity);
 		for (Entity entity : entities) {
 			execute(entity, executable);
@@ -342,11 +341,11 @@ public class InstantiatorImpl implements IInstantiator {
 	}
 
 	@Override
-	public void update(ResourceSet resourceSet) {
+	public void update(Resource resource) {
 		mapCxToIr = new HashMap<>();
 		mapEntities = LinkedHashMultimap.create();
 
-		for (CxEntity cxEntity : findTopFrom(resourceSet)) {
+		for (CxEntity cxEntity : findTopFrom(resource.getResourceSet())) {
 			EntityInfo info = entityMapper.getEntityInfo(cxEntity);
 			instantiate(info, new InstantiationContext(cxEntity.getName()));
 		}

@@ -11,7 +11,7 @@
 package com.synflow.cx.internal.instantiation;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.Resource;
 
 import com.google.inject.ImplementedBy;
 import com.synflow.cx.cx.CxEntity;
@@ -101,6 +101,6 @@ public interface IInstantiator {
 	 */
 	<T extends EObject, U extends EObject> void putMapping(T cxObj, U irObj);
 
-	void update(ResourceSet resourceSet);
+	void update(Resource resource);
 
 }
