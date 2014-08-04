@@ -14,5 +14,5 @@ import xtext;
 
 // delegate to an Xtend2 implementation:
 process(GeneratedMetamodel this) : JAVA
-	com.synflow.cflow.mwe2.CflowPostProcessor.augment(org.eclipse.xtext.GeneratedMetamodel)
+	com.synflow.cflow.mwe2.CxPostProcessor.augment(org.eclipse.xtext.GeneratedMetamodel)
 ;

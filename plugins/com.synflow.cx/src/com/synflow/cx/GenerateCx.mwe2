@@ -8,17 +8,17 @@
  * Contributors:
  *    Matthieu Wipliez - initial API and implementation and/or initial documentation
  *******************************************************************************/
-module com.synflow.cflow.GenerateCflow
+module com.synflow.cx.GenerateCx
 
 import org.eclipse.emf.mwe.utils.*
 import org.eclipse.xtext.generator.*
 import org.eclipse.xtext.ui.generator.*
 
-var fileExtensions = "cf"
-var projectName = "com.synflow.cflow"
+var fileExtensions = "cx,cf"
+var projectName = "com.synflow.cx"
 
 // grammarURI has to be platform:/resource as it is not on the classpath
-var grammarURI = "platform:/resource/${projectName}/src/com/synflow/cflow/Cflow.xtext"
+var grammarURI = "platform:/resource/${projectName}/src/com/synflow/cx/Cx.xtext"
 
 var runtimeProject = "../${projectName}"
 var encoding = "UTF-8"
@@ -79,9 +79,9 @@ Workflow {
 			fragment = validation.JavaValidatorFragment auto-inject {
 				composedCheck = "org.eclipse.xtext.validation.ImportUriValidator"
 				composedCheck = "org.eclipse.xtext.validation.NamesAreUniqueValidator"
-				composedCheck = "com.synflow.cflow.internal.validation.ExpressionValidator"
-				composedCheck = "com.synflow.cflow.internal.validation.StructuralValidator"
-				composedCheck = "com.synflow.cflow.internal.validation.WarningValidator"
+				composedCheck = "com.synflow.cx.internal.validation.ExpressionValidator"
+				composedCheck = "com.synflow.cx.internal.validation.StructuralValidator"
+				composedCheck = "com.synflow.cx.internal.validation.WarningValidator"
 			}
 
 			// scoping and exporting API
