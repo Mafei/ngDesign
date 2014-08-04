@@ -8,7 +8,7 @@
  * Contributors:
  *    Matthieu Wipliez - initial API and implementation and/or initial documentation
  *******************************************************************************/
-package com.synflow.cx.internal.instantiation;
+package com.synflow.cx.internal.validation;
 
 import static com.synflow.core.IProperties.DEFAULT_CLOCK;
 import static com.synflow.core.IProperties.PROP_CLOCKS;
