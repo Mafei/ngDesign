@@ -73,7 +73,7 @@
                   <iterate
                         ifEmpty="false">
                      <instanceof
-                           value="com.synflow.cflow.cflow.Instantiable">
+                           value="com.synflow.cx.cx.Instantiable">
                      </instanceof>
                   </iterate>
                </with>
@@ -389,7 +389,7 @@
           contentProvider="com.synflow.ngDesign.ui.internal.navigator.CflowContentProvider"
           icon="icons/package.gif"
           id="com.synflow.ngDesign.ui.navigatorContent"
-          labelProvider="com.synflow.cflow.ui.CflowExecutableExtensionFactory:com.synflow.cflow.ui.labeling.CflowNavigatorLabelProvider"
+          labelProvider="com.synflow.cx.ui.CflowExecutableExtensionFactory:com.synflow.cx.ui.labeling.CflowNavigatorLabelProvider"
           name="Synflow Navigator"
           priority="high">
        <triggerPoints>
@@ -465,7 +465,7 @@
        </commonWizard>
        <commonWizard
              type="new"
-             wizardId="com.synflow.cflow.ui.wizards.newTask">
+             wizardId="com.synflow.cx.ui.wizards.newTask">
           <enablement>
              <adapt
                    type="org.eclipse.core.resources.IResource">
@@ -477,7 +477,7 @@
        </commonWizard>
        <commonWizard
              type="new"
-             wizardId="com.synflow.cflow.ui.wizards.newBundle">
+             wizardId="com.synflow.cx.ui.wizards.newBundle">
           <enablement>
              <adapt
                    type="org.eclipse.core.resources.IResource">
@@ -489,7 +489,7 @@
        </commonWizard>
        <commonWizard
              type="new"
-             wizardId="com.synflow.cflow.ui.wizards.newNetwork">
+             wizardId="com.synflow.cx.ui.wizards.newNetwork">
           <enablement>
              <adapt
                    type="org.eclipse.core.resources.IResource">
@@ -551,7 +551,7 @@
        point="org.eclipse.ui.decorators">
     <decorator
           class="com.synflow.ngDesign.ui.internal.navigator.CflowLabelDecorator"
-          id="com.synflow.cflow.ui.decorator"
+          id="com.synflow.cx.ui.decorator"
           label="C~ decorator"
           lightweight="true"
           state="true">

@@ -27,8 +27,8 @@ import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 
-import com.synflow.cflow.ui.views.FsmView;
-import com.synflow.cflow.ui.views.GraphView;
+import com.synflow.cx.ui.views.FsmView;
+import com.synflow.cx.ui.views.GraphView;
 import com.synflow.ngDesign.ui.internal.navigator.ProjectExplorer;
 import com.synflow.ngDesign.ui.internal.wizards.NewProjectWizard;
 

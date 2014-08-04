@@ -19,7 +19,7 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 
-import com.synflow.cflow.cflow.CxEntity;
+import com.synflow.cx.cx.CxEntity;
 
 /**
  * This class defines a simple sorter for our Project Explorer view.

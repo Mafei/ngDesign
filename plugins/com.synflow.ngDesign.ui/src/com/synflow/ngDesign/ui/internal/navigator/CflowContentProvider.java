@@ -57,8 +57,8 @@ import org.eclipse.xtext.resource.XtextResourceSet;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
-import com.synflow.cflow.cflow.Module;
 import com.synflow.core.SynflowCore;
+import com.synflow.cx.cx.Module;
 import com.synflow.models.util.EcoreHelper;
 
 /**

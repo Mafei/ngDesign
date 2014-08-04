@@ -18,10 +18,10 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 
-import com.synflow.cflow.cflow.Instantiable;
-import com.synflow.cflow.ui.CflowExecutableExtensionFactory;
 import com.synflow.core.SynflowCore;
 import com.synflow.core.util.CoreUtil;
+import com.synflow.cx.cx.Instantiable;
+import com.synflow.cx.ui.CflowExecutableExtensionFactory;
 import com.synflow.models.dpn.Entity;
 import com.synflow.models.util.EcoreHelper;
 

@@ -6,7 +6,7 @@
   <extension point="org.eclipse.emf.ecore.generated_package">
     <package 
        uri = "http://www.synflow.com/cflow/Cflow" 
-       class = "com.synflow.cflow.cflow.CflowPackage"
+       class = "com.synflow.cx.cx.CflowPackage"
        genModel = "model/generated/Cflow.genmodel" /> 
 	
   </extension>

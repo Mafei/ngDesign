@@ -21,9 +21,9 @@ import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 import org.eclipse.xtext.resource.XtextResourceSet;
 
 import com.google.common.collect.Iterables;
-import com.synflow.cflow.cflow.Module;
-import com.synflow.cflow.cflow.Network;
-import com.synflow.cflow.ui.internal.CflowActivator;
+import com.synflow.cx.cx.Module;
+import com.synflow.cx.cx.Network;
+import com.synflow.cx.ui.internal.CflowActivator;
 import com.synflow.models.util.EcoreHelper;
 
 /**
@@ -50,7 +50,7 @@ public class CflowLabelDecorator implements ILightweightLabelDecorator {
 							Network.class);
 					if (!Iterables.isEmpty(networks)) {
 						ImageDescriptor descriptor = CflowActivator.imageDescriptorFromPlugin(
-								"com.synflow.cflow.ui", "icons/overlay_network.png");
+								"com.synflow.cx.ui", "icons/overlay_network.png");
 						decoration.addOverlay(descriptor);
 					}
 				}
