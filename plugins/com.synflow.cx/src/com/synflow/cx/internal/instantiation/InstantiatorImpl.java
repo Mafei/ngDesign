@@ -66,6 +66,8 @@ public class InstantiatorImpl implements IInstantiator {
 	@Inject
 	private Provider<ConnectionMaker> connectionMakerProvider;
 
+	private InstantiatorData data;
+
 	private Entity entity;
 
 	@Inject
@@ -73,8 +75,6 @@ public class InstantiatorImpl implements IInstantiator {
 
 	@Inject
 	private IResourceDescription.Manager manager;
-
-	private InstantiatorData data;
 
 	@Inject
 	private ResourceDescriptionsProvider provider;
@@ -311,45 +311,43 @@ public class InstantiatorImpl implements IInstantiator {
 	}
 
 	@Override
-	public void update(Resource resource) {
-		Iterable<CxEntity> entities;
+	public void update(Module module) {
 		if (data == null) {
 			data = new InstantiatorData();
-			ResourceSet resourceSet = resource.getResourceSet();
-			entities = findTopFrom(resourceSet);
+			ResourceSet resourceSet = module.eResource().getResourceSet();
+			for (CxEntity cxEntity : findTopFrom(resourceSet)) {
+				EntityInfo info = entityMapper.createEntityInfo(cxEntity);
+				instantiate(info, new InstantiationContext(cxEntity.getName()));
+			}
 		} else {
-			Module module = (Module) resource.getContents().get(0);
-			entities = module.getEntities();
-
-			for (CxEntity cxEntity : entities) {
-				Map<InstantiationContext, Entity> map = data.getContextMapping(cxEntity);
-				for (Entry<InstantiationContext, Entity> entry : map.entrySet()) {
-					InstantiationContext ctx = entry.getKey();
-					InstantiationContext parent = (InstantiationContext) ctx.getParent();
-					ctx.delete();
-
-					Inst inst = ctx.getInst();
-					if (inst == null) {
-						EntityInfo info = entityMapper.createEntityInfo(cxEntity);
-						instantiate(info, ctx);
-					} else {
-						inst.setEntity((Instantiable) cxEntity);
-						Instance instance = ctx.getInstance();
-
-						InstantiationContext newCtx = new InstantiationContext(parent, inst);
-						EntityInfo info = entityMapper.createEntityInfo(inst, newCtx);
-						Entity entity = instantiate(info, newCtx);
-						instance.setEntity(entity);
-					}
+			for (CxEntity cxEntity : module.getEntities()) {
+				if (!data.hasMapping(cxEntity)) {
+					updateEntity(cxEntity);
 				}
 			}
-
-			return;
 		}
+	}
 
-		for (CxEntity cxEntity : entities) {
-			EntityInfo info = entityMapper.createEntityInfo(cxEntity);
-			instantiate(info, new InstantiationContext(cxEntity.getName()));
+	private void updateEntity(CxEntity cxEntity) {
+		Map<InstantiationContext, Entity> map = data.getPreviousMapping(cxEntity);
+		for (Entry<InstantiationContext, Entity> entry : map.entrySet()) {
+			InstantiationContext ctx = entry.getKey();
+			InstantiationContext parent = (InstantiationContext) ctx.getParent();
+			ctx.delete();
+
+			Inst inst = ctx.getInst();
+			if (inst == null) {
+				EntityInfo info = entityMapper.createEntityInfo(cxEntity);
+				instantiate(info, ctx);
+			} else {
+				inst.setEntity((Instantiable) cxEntity);
+				Instance instance = ctx.getInstance();
+
+				InstantiationContext newCtx = new InstantiationContext(parent, inst);
+				EntityInfo info = entityMapper.createEntityInfo(inst, newCtx);
+				Entity entity = instantiate(info, newCtx);
+				instance.setEntity(entity);
+			}
 		}
 	}
 

@@ -25,19 +25,18 @@ import org.eclipse.xtext.validation.Check;
 import com.google.inject.Inject;
 import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.CxEntity;
+import com.synflow.cx.cx.CxPackage.Literals;
 import com.synflow.cx.cx.Instantiable;
 import com.synflow.cx.cx.Module;
 import com.synflow.cx.cx.Network;
 import com.synflow.cx.cx.Task;
 import com.synflow.cx.cx.Variable;
-import com.synflow.cx.cx.CxPackage.Literals;
 import com.synflow.cx.internal.ErrorMarker;
 import com.synflow.cx.internal.instantiation.IInstantiator;
 import com.synflow.cx.internal.scheduler.CycleDetector;
 import com.synflow.cx.internal.services.Typer;
 import com.synflow.cx.internal.validation.NetworkChecker;
 import com.synflow.cx.internal.validation.TypeChecker;
-import com.synflow.cx.validation.AbstractCxJavaValidator;
 import com.synflow.models.dpn.DPN;
 import com.synflow.models.dpn.Entity;
 import com.synflow.models.util.Executable;
@@ -56,7 +55,6 @@ public class CxJavaValidator extends AbstractCxJavaValidator {
 	@Inject
 	private Typer typer;
 
-	// TODO remove NORMAL when everything works again
 	@Check(NORMAL)
 	public void checkModule(Module module) {
 		EList<Diagnostic> errors = module.eResource().getErrors();
@@ -65,14 +63,12 @@ public class CxJavaValidator extends AbstractCxJavaValidator {
 			return;
 		}
 
-		// TODO add check to update only when necessary
-		//if (!instantiator.isUpToDate()) {
-			instantiator.update(module.eResource());
-		//}
-
-		final NetworkChecker networkChecker = new NetworkChecker(this, instantiator);
+		// updates the instantiator to reflect changes in this module
+		// this method only performs an actual update if the instantiator is out of date
+		instantiator.update(module);
 
 		// for each entity of the module
+		final NetworkChecker networkChecker = new NetworkChecker(this, instantiator);
 		for (final CxEntity cxEntity : module.getEntities()) {
 			instantiator.forEachMapping(cxEntity, new Executable<Entity>() {
 				@Override

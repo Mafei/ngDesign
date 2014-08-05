@@ -11,10 +11,10 @@
 package com.synflow.cx.internal.instantiation;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
 
 import com.google.inject.ImplementedBy;
 import com.synflow.cx.cx.CxEntity;
+import com.synflow.cx.cx.Module;
 import com.synflow.cx.cx.VarRef;
 import com.synflow.models.dpn.Entity;
 import com.synflow.models.dpn.Port;
@@ -101,6 +101,13 @@ public interface IInstantiator {
 	 */
 	<T extends EObject, U extends EObject> void putMapping(T cxObj, U irObj);
 
-	void update(Resource resource);
+	/**
+	 * Updates the instantiation tree with entities of the given module. Most of the time this
+	 * method only performs a partial update of the tree.
+	 * 
+	 * @param module
+	 *            a module
+	 */
+	void update(Module module);
 
 }

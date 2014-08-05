@@ -61,14 +61,6 @@ public class InstantiatorData {
 		map.put(ctx, entity);
 	}
 
-	public Map<InstantiationContext, Entity> getContextMapping(CxEntity cxEntity) {
-		Objects.requireNonNull(cxEntity, "cxEntity must not be null in getEntities");
-
-		URI uri = EcoreUtil.getURI(cxEntity);
-		CxEntity candidate = uriMap.get(uri);
-		return mapEntities.get(candidate);
-	}
-
 	public Collection<Entity> getEntities(CxEntity cxEntity) {
 		Objects.requireNonNull(cxEntity, "cxEntity must not be null in getEntities");
 
@@ -99,6 +91,36 @@ public class InstantiatorData {
 			}
 		}
 		return irObj;
+	}
+
+	/**
+	 * Returns the mapping associated with the previous version of the given Cx entity. Looks up
+	 * using the entity's URI.
+	 * 
+	 * @param cxEntity
+	 *            a Cx entity
+	 * @return a map
+	 */
+	public Map<InstantiationContext, Entity> getPreviousMapping(CxEntity cxEntity) {
+		Objects.requireNonNull(cxEntity, "cxEntity must not be null in getPreviousMapping");
+
+		URI uri = EcoreUtil.getURI(cxEntity);
+		CxEntity candidate = uriMap.get(uri);
+		return mapEntities.get(candidate);
+	}
+
+	/**
+	 * Returns <code>true</code> if there is already a mapping for the given Cx entity. No mapping
+	 * can happen because there is a mapping for a previous version of the given entity, or there is
+	 * no mapping at all.
+	 * 
+	 * @param cxEntity
+	 *            a Cx entity
+	 * @return a boolean
+	 */
+	public boolean hasMapping(CxEntity cxEntity) {
+		Objects.requireNonNull(cxEntity, "cxEntity must not be null in isUpToDate");
+		return mapEntities.containsKey(cxEntity);
 	}
 
 	public <T extends EObject, U extends EObject> void putMapping(Entity entity, T cxObj, U irObj) {
