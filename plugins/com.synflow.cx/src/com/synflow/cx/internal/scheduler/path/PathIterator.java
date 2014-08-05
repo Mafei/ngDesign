@@ -14,8 +14,8 @@ import java.util.Iterator;
 import java.util.ListIterator;
 
 import com.synflow.cx.cx.StatementIf;
-import com.synflow.cx.internal.scheduler.node.Node;
-import com.synflow.cx.internal.scheduler.node.NodeIterator;
+import com.synflow.models.node.Node;
+import com.synflow.models.node.NodeIterator;
 
 /**
  * This class defines an iterator of paths.

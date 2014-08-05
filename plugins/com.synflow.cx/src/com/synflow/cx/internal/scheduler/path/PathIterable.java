@@ -12,7 +12,7 @@ package com.synflow.cx.internal.scheduler.path;
 
 import java.util.Iterator;
 
-import com.synflow.cx.internal.scheduler.node.Node;
+import com.synflow.models.node.Node;
 
 /**
  * This class defines an iterable over paths.

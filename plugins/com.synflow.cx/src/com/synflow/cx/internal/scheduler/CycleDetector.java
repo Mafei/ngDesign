@@ -28,8 +28,8 @@ import com.synflow.cx.cx.StatementWrite;
 import com.synflow.cx.cx.VarRef;
 import com.synflow.cx.cx.Variable;
 import com.synflow.cx.internal.instantiation.IInstantiator;
-import com.synflow.cx.internal.scheduler.node.Node;
 import com.synflow.cx.internal.services.VoidCxSwitch;
+import com.synflow.models.node.Node;
 import com.synflow.models.util.Void;
 
 /**

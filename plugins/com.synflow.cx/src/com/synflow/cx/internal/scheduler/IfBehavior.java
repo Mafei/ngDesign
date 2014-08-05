@@ -10,7 +10,7 @@
  *******************************************************************************/
 package com.synflow.cx.internal.scheduler;
 
-import com.synflow.cx.internal.scheduler.node.Node;
+import com.synflow.models.node.Node;
 
 /**
  * This interface defines methods to handle the scheduling of if statements:

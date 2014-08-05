@@ -67,11 +67,10 @@ import com.synflow.models.ir.TypeArray;
 import com.synflow.models.ir.TypeInt;
 import com.synflow.models.ir.Var;
 import com.synflow.models.util.EcoreHelper;
-import com.synflow.models.util.OrccUtil;
 
 /**
- * This class defines an interpreter for an actor. The interpreter can
- * {@link #initialize()} and {@link #schedule()} the actor.
+ * This class defines an interpreter for an actor. The interpreter can {@link #initialize()} and
+ * {@link #schedule()} the actor.
  * 
  * @author Pierre-Laurent Lagalaye
  * @author Matthieu Wipliez
@@ -79,12 +78,57 @@ import com.synflow.models.util.OrccUtil;
  */
 public class ActorInterpreter extends IrSwitch<Object> {
 
+	/**
+	 * Returns a new string that is an unescaped version of the given string. Unespaced means that
+	 * "\\\\", "\\n", "\\r", "\\t" are replaced by '\\', '\n', '\r', '\t' respectively.
+	 * 
+	 * @param string
+	 *            a string
+	 * @return a new string that is an unescaped version of the given string
+	 */
+	public static String getUnescapedString(String string) {
+		StringBuilder builder = new StringBuilder(string.length());
+		boolean escape = false;
+		for (int i = 0; i < string.length(); i++) {
+			char chr = string.charAt(i);
+			if (escape) {
+				switch (chr) {
+				case '\\':
+					builder.append('\\');
+					break;
+				case 'n':
+					builder.append('\n');
+					break;
+				case 'r':
+					builder.append('\r');
+					break;
+				case 't':
+					builder.append('\t');
+					break;
+				default:
+					// we could throw an exception here
+					builder.append(chr);
+					break;
+				}
+				escape = false;
+			} else {
+				if (chr == '\\') {
+					escape = true;
+				} else {
+					builder.append(chr);
+				}
+			}
+		}
+
+		return builder.toString();
+	}
 	/** the associated interpreted actor */
 	protected Actor actor;
 	/** branch being visited */
 	protected int branch;
 	/** the expression evaluator */
 	protected ExpressionEvaluator exprInterpreter;
+
 	/** Actor's FSM current state */
 	protected State fsmState;
 
@@ -120,8 +164,7 @@ public class ActorInterpreter extends IrSwitch<Object> {
 	}
 
 	/**
-	 * Calls the print procedure. Prints to stdout by default. This method may
-	 * be overridden.
+	 * Calls the print procedure. Prints to stdout by default. This method may be overridden.
 	 * 
 	 * @param arguments
 	 *            arguments of the print
@@ -132,7 +175,7 @@ public class ActorInterpreter extends IrSwitch<Object> {
 				// String characters rework for escaped control
 				// management
 				String str = ((ExprString) expr).getValue();
-				String unescaped = OrccUtil.getUnescapedString(str);
+				String unescaped = getUnescapedString(str);
 				System.out.println(unescaped);
 			} else {
 				Object value = exprInterpreter.doSwitch(expr);
@@ -263,9 +306,8 @@ public class ActorInterpreter extends IrSwitch<Object> {
 				Object value = ValueUtil.get(type, array, indexes);
 				target.setValue(value);
 			} catch (IndexOutOfBoundsException e) {
-				throw new OrccRuntimeException(
-						"Array Index Out of Bound at line "
-								+ instr.getLineNumber());
+				throw new OrccRuntimeException("Array Index Out of Bound at line "
+						+ instr.getLineNumber());
 			}
 		}
 		return null;
@@ -306,9 +348,8 @@ public class ActorInterpreter extends IrSwitch<Object> {
 			try {
 				ValueUtil.set(type, array, value, indexes);
 			} catch (IndexOutOfBoundsException e) {
-				throw new OrccRuntimeException(
-						"Array Index Out of Bound at line "
-								+ instr.getLineNumber() + "");
+				throw new OrccRuntimeException("Array Index Out of Bound at line "
+						+ instr.getLineNumber() + "");
 			}
 		}
 		return null;
@@ -321,8 +362,7 @@ public class ActorInterpreter extends IrSwitch<Object> {
 		for (Var local : procedure.getLocals()) {
 			Type type = local.getType();
 			if (type.isArray()) {
-				Object value = ValueUtil
-						.createArray((TypeArray) local.getType());
+				Object value = ValueUtil.createArray((TypeArray) local.getType());
 				local.setValue(value);
 			}
 		}
@@ -331,8 +371,8 @@ public class ActorInterpreter extends IrSwitch<Object> {
 	}
 
 	/**
-	 * Returns true if the action has no output pattern, or if it has an output
-	 * pattern and there is enough room in the FIFOs to satisfy it.
+	 * Returns true if the action has no output pattern, or if it has an output pattern and there is
+	 * enough room in the FIFOs to satisfy it.
 	 * 
 	 * @param outputPattern
 	 *            output pattern of an action
@@ -379,19 +419,16 @@ public class ActorInterpreter extends IrSwitch<Object> {
 			if (!clippedValue.equals(intVal)) {
 
 				String container = "";
-				Action parentAction = EcoreHelper.getContainerOfType(
-						instruction, Action.class);
+				Action parentAction = EcoreHelper.getContainerOfType(instruction, Action.class);
 				if (parentAction != null) {
 					container = parentAction.getName();
-				} else if (EcoreHelper.getContainerOfType(instruction,
-						Procedure.class) != null) {
-					container = EcoreHelper.getContainerOfType(instruction,
-							Procedure.class).getName();
+				} else if (EcoreHelper.getContainerOfType(instruction, Procedure.class) != null) {
+					container = EcoreHelper.getContainerOfType(instruction, Procedure.class)
+							.getName();
 				}
 
-				System.err.println("[signed overflow/underflow] "
-						+ actor.getName() + ":" + container + " line: "
-						+ instruction.getLineNumber());
+				System.err.println("[signed overflow/underflow] " + actor.getName() + ":"
+						+ container + " line: " + instruction.getLineNumber());
 			}
 		}
 
@@ -415,9 +452,8 @@ public class ActorInterpreter extends IrSwitch<Object> {
 	}
 
 	/**
-	 * Executes the given action. This implementation allocates input/output
-	 * pattern and executes the body. Should be overriden by implementations to
-	 * perform read/write from/to FIFOs.
+	 * Executes the given action. This implementation allocates input/output pattern and executes
+	 * the body. Should be overriden by implementations to perform read/write from/to FIFOs.
 	 * 
 	 * @param action
 	 *            an action
@@ -432,8 +468,8 @@ public class ActorInterpreter extends IrSwitch<Object> {
 	}
 
 	/**
-	 * Returns the value of the <code>actor</code> attribute. This may be
-	 * <code>null</code> if the visitor did not set it.
+	 * Returns the value of the <code>actor</code> attribute. This may be <code>null</code> if the
+	 * visitor did not set it.
 	 * 
 	 * @return the value of the <code>actor</code> attribute
 	 */
@@ -485,19 +521,15 @@ public class ActorInterpreter extends IrSwitch<Object> {
 	}
 
 	/**
-	 * Initializes external resources referenced by an object (actor, procedure,
-	 * etc.)
+	 * Initializes external resources referenced by an object (actor, procedure, etc.)
 	 * 
 	 * @param obj
-	 *            an EObject which potentially use external variables or
-	 *            procedures
+	 *            an EObject which potentially use external variables or procedures
 	 */
 	private void initExternalResources(EObject obj) {
-		Map<EObject, Collection<Setting>> map = EcoreUtil.ExternalCrossReferencer
-				.find(obj);
+		Map<EObject, Collection<Setting>> map = EcoreUtil.ExternalCrossReferencer.find(obj);
 		for (EObject externalObject : map.keySet()) {
-			if (externalObject instanceof Var
-					&& ((Var) externalObject).getValue() == null) {
+			if (externalObject instanceof Var && ((Var) externalObject).getValue() == null) {
 				initializeVar((Var) externalObject);
 			} else if (externalObject instanceof Procedure) {
 				initExternalResources(externalObject);
@@ -506,9 +538,8 @@ public class ActorInterpreter extends IrSwitch<Object> {
 	}
 
 	/**
-	 * Initialize interpreted actor. That is to say constant parameters,
-	 * initialized state variables, allocation and initialization of state
-	 * arrays.
+	 * Initialize interpreted actor. That is to say constant parameters, initialized state
+	 * variables, allocation and initialization of state arrays.
 	 */
 	public void initialize() {
 		try {
@@ -532,8 +563,8 @@ public class ActorInterpreter extends IrSwitch<Object> {
 				fsmState = null;
 			}
 		} catch (OrccRuntimeException ex) {
-			throw new OrccRuntimeException("Runtime exception thrown by actor "
-					+ actor.getName(), ex);
+			throw new OrccRuntimeException("Runtime exception thrown by actor " + actor.getName(),
+					ex);
 		}
 	}
 
@@ -569,10 +600,9 @@ public class ActorInterpreter extends IrSwitch<Object> {
 	}
 
 	/**
-	 * Returns true if the given action is schedulable. This implementation
-	 * allocates the peek pattern and calls the scheduler procedure. This method
-	 * should be overridden to define how to test the schedulability of an
-	 * action.
+	 * Returns true if the given action is schedulable. This implementation allocates the peek
+	 * pattern and calls the scheduler procedure. This method should be overridden to define how to
+	 * test the schedulability of an action.
 	 * 
 	 * @param action
 	 *            an action
@@ -588,8 +618,7 @@ public class ActorInterpreter extends IrSwitch<Object> {
 	/**
 	 * Schedule next schedulable action if any
 	 * 
-	 * @return <code>true</code> if an action was scheduled, <code>false</code>
-	 *         otherwise
+	 * @return <code>true</code> if an action was scheduled, <code>false</code> otherwise
 	 */
 	public boolean schedule() {
 		try {
@@ -603,8 +632,8 @@ public class ActorInterpreter extends IrSwitch<Object> {
 				return true;
 			}
 		} catch (OrccRuntimeException ex) {
-			throw new OrccRuntimeException("Runtime exception thrown by actor "
-					+ actor.getName(), ex);
+			throw new OrccRuntimeException("Runtime exception thrown by actor " + actor.getName(),
+					ex);
 		}
 	}
 

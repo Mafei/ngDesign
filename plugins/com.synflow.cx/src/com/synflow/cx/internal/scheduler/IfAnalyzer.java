@@ -19,8 +19,8 @@ import java.util.List;
 import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.Branch;
 import com.synflow.cx.cx.StatementIf;
-import com.synflow.cx.internal.scheduler.node.Node;
 import com.synflow.cx.internal.services.VoidCxSwitch;
+import com.synflow.models.node.Node;
 import com.synflow.models.util.Void;
 
 /**

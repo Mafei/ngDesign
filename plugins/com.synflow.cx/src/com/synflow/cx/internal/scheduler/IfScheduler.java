@@ -16,12 +16,12 @@ import java.util.List;
 import org.eclipse.emf.ecore.EObject;
 
 import com.synflow.cx.internal.instantiation.IInstantiator;
-import com.synflow.cx.internal.scheduler.node.Node;
 import com.synflow.cx.internal.scheduler.path.Path;
 import com.synflow.cx.internal.scheduler.path.PathIterable;
 import com.synflow.models.dpn.Actor;
 import com.synflow.models.dpn.FSM;
 import com.synflow.models.dpn.Transition;
+import com.synflow.models.node.Node;
 import com.synflow.models.util.SwitchUtil;
 
 /**

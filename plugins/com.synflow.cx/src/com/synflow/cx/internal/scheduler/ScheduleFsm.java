@@ -15,7 +15,6 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableSet;
 import com.synflow.cx.internal.instantiation.IInstantiator;
-import com.synflow.cx.internal.scheduler.node.Node;
 import com.synflow.models.dpn.Action;
 import com.synflow.models.dpn.Actor;
 import com.synflow.models.dpn.DpnFactory;
@@ -23,6 +22,7 @@ import com.synflow.models.dpn.FSM;
 import com.synflow.models.dpn.Port;
 import com.synflow.models.dpn.State;
 import com.synflow.models.dpn.Transition;
+import com.synflow.models.node.Node;
 
 /**
  * This class defines FSM capabilities on top of the Schedule class. It overrides

@@ -38,7 +38,6 @@
  */
 package com.synflow.models.util;
 
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -50,7 +49,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -151,22 +149,6 @@ public class EcoreHelper {
 		return eObject;
 	}
 
-	/**
-	 * Finds the feature of the given object that has the given name, and returns its value in the
-	 * given object.
-	 * 
-	 * @param eObject
-	 *            an EObject
-	 * @param name
-	 *            name of a feature of the object's class
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T> T getFeature(EObject eObject, String name) {
-		EClass eClass = eObject.eClass();
-		EStructuralFeature feature = eClass.getEStructuralFeature(name);
-		return (T) eObject.eGet(feature);
-	}
-
 	public static IFile getFile(EObject eObject) {
 		Resource resource = eObject.eResource();
 		if (resource == null) {
@@ -186,22 +168,6 @@ public class EcoreHelper {
 		IPath path = new Path(fullPath);
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		return root.getFile(path);
-	}
-
-	/**
-	 * Finds the feature of the given object that has the given name, and returns its value as a
-	 * list.
-	 * 
-	 * @param eObject
-	 *            an EObject
-	 * @param name
-	 *            name of a feature of the object's class
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T> List<T> getList(EObject eObject, String name) {
-		EClass eClass = eObject.eClass();
-		EStructuralFeature feature = eClass.getEStructuralFeature(name);
-		return (List<T>) eObject.eGet(feature);
 	}
 
 	/**
@@ -276,53 +242,6 @@ public class EcoreHelper {
 		} catch (RuntimeException e) {
 		}
 		return null;
-	}
-
-	/**
-	 * Puts the given EObject in the resource that belongs to the given resource set as identified
-	 * by the given URI.
-	 * 
-	 * @param set
-	 *            a resource set
-	 * @param uri
-	 *            URI of a resource
-	 * @param object
-	 *            an EObject
-	 * @return <code>true</code> if serialization succeeded
-	 */
-	public static boolean putEObject(ResourceSet set, URI uri, EObject object) {
-		Resource resource = set.getResource(uri, false);
-		if (resource == null) {
-			resource = set.createResource(uri);
-		} else {
-			resource.getContents().clear();
-		}
-
-		resource.getContents().add(object);
-		try {
-			resource.save(null);
-			return true;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
-
-	/**
-	 * Finds the feature of the given object that has the given name, and sets its value in the
-	 * given object to the given value.
-	 * 
-	 * @param eObject
-	 *            an EObject
-	 * @param name
-	 *            name of a feature of the object's class
-	 * @param value
-	 *            value that should be set
-	 */
-	public static void setFeature(EObject eObject, String name, Object value) {
-		EClass eClass = eObject.eClass();
-		EStructuralFeature feature = eClass.getEStructuralFeature(name);
-		eObject.eSet(feature, value);
 	}
 
 }

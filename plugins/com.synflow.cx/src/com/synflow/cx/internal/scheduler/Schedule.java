@@ -19,11 +19,11 @@ import com.synflow.cx.cx.CExpression;
 import com.synflow.cx.cx.StatementWrite;
 import com.synflow.cx.cx.VarRef;
 import com.synflow.cx.internal.instantiation.IInstantiator;
-import com.synflow.cx.internal.scheduler.node.Node;
 import com.synflow.models.dpn.Action;
 import com.synflow.models.dpn.DpnFactory;
 import com.synflow.models.dpn.Pattern;
 import com.synflow.models.dpn.Port;
+import com.synflow.models.node.Node;
 import com.synflow.models.util.Void;
 
 /**

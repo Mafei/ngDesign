@@ -19,8 +19,8 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
 import com.synflow.cx.cx.Branch;
 import com.synflow.cx.cx.CExpression;
-import com.synflow.cx.internal.scheduler.node.Node;
 import com.synflow.cx.services.CxPrinter;
+import com.synflow.models.node.Node;
 
 /**
  * This class defines a code path as an iterable over StatementCond.

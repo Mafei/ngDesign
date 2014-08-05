@@ -16,9 +16,9 @@ import com.google.inject.name.Named
 import com.synflow.core.IFileWriter
 import com.synflow.core.ISynflowConstants
 import com.synflow.core.SynflowCore
-import com.synflow.models.util.DomUtil
-import com.synflow.models.util.NodeIterable
-import com.synflow.models.util.SimpleNamespaceContext
+import com.synflow.models.util.dom.DomUtil
+import com.synflow.models.util.dom.NodeIterable
+import com.synflow.models.util.dom.SimpleNamespaceContext
 import java.util.ArrayList
 import java.util.List
 import javax.xml.xpath.XPath

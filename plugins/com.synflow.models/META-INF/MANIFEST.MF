@@ -19,7 +19,9 @@ Export-Package: com.synflow.models,
  com.synflow.models.ir.impl,
  com.synflow.models.ir.transform,
  com.synflow.models.ir.util,
- com.synflow.models.util
+ com.synflow.models.node,
+ com.synflow.models.util,
+ com.synflow.models.util.dom
 Require-Bundle: com.google.gson;visibility:=reexport;bundle-version="2.1.0",
  org.eclipse.core.runtime;visibility:=reexport;bundle-version="3.9.0",
  org.eclipse.core.resources;visibility:=reexport;bundle-version="3.8.0",

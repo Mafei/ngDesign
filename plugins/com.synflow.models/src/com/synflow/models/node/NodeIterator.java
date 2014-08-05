@@ -8,7 +8,7 @@
  * Contributors:
  *    Matthieu Wipliez - initial API and implementation and/or initial documentation
  *******************************************************************************/
-package com.synflow.cx.internal.scheduler.node;
+package com.synflow.models.node;
 
 import java.util.ListIterator;
 

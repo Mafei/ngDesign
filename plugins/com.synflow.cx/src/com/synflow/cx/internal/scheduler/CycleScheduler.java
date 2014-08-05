@@ -25,12 +25,12 @@ import com.synflow.cx.cx.CExpression;
 import com.synflow.cx.cx.StatementIf;
 import com.synflow.cx.cx.Variable;
 import com.synflow.cx.internal.instantiation.IInstantiator;
-import com.synflow.cx.internal.scheduler.node.Node;
 import com.synflow.models.dpn.Actor;
 import com.synflow.models.dpn.FSM;
 import com.synflow.models.dpn.State;
 import com.synflow.models.dpn.Transition;
 import com.synflow.models.graph.Edge;
+import com.synflow.models.node.Node;
 import com.synflow.models.util.SwitchUtil;
 import com.synflow.models.util.Void;
 

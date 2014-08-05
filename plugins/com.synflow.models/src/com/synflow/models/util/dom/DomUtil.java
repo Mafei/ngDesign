@@ -27,7 +27,7 @@
  * WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.synflow.models.util;
+package com.synflow.models.util.dom;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

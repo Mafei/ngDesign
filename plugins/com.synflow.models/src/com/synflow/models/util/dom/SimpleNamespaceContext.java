@@ -8,7 +8,7 @@
  * Contributors:
  *    Matthieu Wipliez - initial API and implementation and/or initial documentation
  *******************************************************************************/
-package com.synflow.models.util;
+package com.synflow.models.util.dom;
 
 import java.util.Iterator;
 

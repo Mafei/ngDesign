@@ -19,10 +19,11 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 import com.synflow.core.IFileWriter;
 import com.synflow.core.SynflowCore;
-import com.synflow.models.util.OrccUtil;
 
 /**
  * This class defines an implementation of a IFileWriter based on the Eclipse IFile class. The name
@@ -32,6 +33,53 @@ import com.synflow.models.util.OrccUtil;
  * 
  */
 public class EclipseFileWriter implements IFileWriter {
+
+	/**
+	 * If it does not exist, creates the given folder. If the parent folders do not exist either,
+	 * create them.
+	 * 
+	 * @param folder
+	 *            a folder
+	 * @throws CoreException
+	 */
+	public static void createFolder(IFolder folder) throws CoreException {
+		IPath path = folder.getFullPath();
+		if (folder.exists()) {
+			return;
+		}
+
+		int n = path.segmentCount();
+		if (n < 2) {
+			throw new IllegalArgumentException("the path of the given folder "
+					+ "must have at least two segments");
+		}
+
+		// check project
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		IProject project = root.getProject(path.segment(0));
+		if (!project.exists()) {
+			project.create(null);
+		}
+
+		// open project
+		if (!project.isOpen()) {
+			project.open(null);
+		}
+
+		// check folder
+		folder = root.getFolder(path.uptoSegment(2));
+		if (!folder.exists()) {
+			folder.create(true, true, null);
+		}
+
+		// and then check all the descendants
+		for (int i = 2; i < n; i++) {
+			folder = folder.getFolder(new Path(path.segment(i)));
+			if (!folder.exists()) {
+				folder.create(true, true, null);
+			}
+		}
+	}
 
 	private IProject project;
 
@@ -72,7 +120,7 @@ public class EclipseFileWriter implements IFileWriter {
 				file.setContents(source, true, true, null);
 			} else {
 				if (!file.getParent().exists()) {
-					OrccUtil.createFolder((IFolder) file.getParent());
+					createFolder((IFolder) file.getParent());
 				}
 				file.create(source, true, null);
 			}

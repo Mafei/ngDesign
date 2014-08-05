@@ -8,7 +8,7 @@
  * Contributors:
  *    Matthieu Wipliez - initial API and implementation and/or initial documentation
  *******************************************************************************/
-package com.synflow.models.util;
+package com.synflow.models.util.dom;
 
 import java.util.Iterator;
 
@@ -18,7 +18,7 @@ import org.w3c.dom.NodeList;
 import com.google.common.collect.UnmodifiableIterator;
 
 /**
- * This class defines an iterable over Nodes.
+ * This class defines an iterable over DOM Nodes.
  * 
  * @author Matthieu Wipliez
  * 
