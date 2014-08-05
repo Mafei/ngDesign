@@ -30,7 +30,7 @@ public class Node {
 
 	private Node next;
 
-	private final Node parent;
+	private Node parent;
 
 	private Node previous;
 
@@ -114,6 +114,28 @@ public class Node {
 	}
 
 	/**
+	 * Deletes this node: removes links between this node and parent and siblings.
+	 */
+	public void delete() {
+		if (parent != null) {
+			parent.remove(this);
+		}
+
+		// unlink from siblings
+		if (previous != null) {
+			previous.next = next;
+		}
+		if (next != null) {
+			next.previous = previous;
+		}
+
+		// remove outgoing links for additional safety (prevent accidental iteration)
+		this.parent = null;
+		this.previous = null;
+		this.next = null;
+	}
+
+	/**
 	 * Returns an iterable over this node's children.
 	 * 
 	 * @return an {@link Iterable}&lt;{@link Node}&gt;
@@ -183,6 +205,22 @@ public class Node {
 	 */
 	public boolean hasChildren() {
 		return firstChild != null;
+	}
+
+	/**
+	 * Removes links to the given child. Only does something if the child is the first/last child of
+	 * this node.
+	 * 
+	 * @param child
+	 *            a child node
+	 */
+	private void remove(Node child) {
+		if (firstChild == child) {
+			firstChild = child.next;
+		}
+		if (lastChild == child) {
+			lastChild = child.previous;
+		}
 	}
 
 	/**
