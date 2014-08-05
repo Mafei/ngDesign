@@ -137,6 +137,11 @@ public class ModuleCompilerImpl extends CxSwitch<Void> implements IModuleCompile
 
 		// serialize to relative file name (obtained by deresolving URI against base URI)
 		URI base = ((AbstractFileSystemAccess) fsa).getURI("");
+		if (!base.lastSegment().isEmpty()) {
+			// last segment must be empty for URI to be deresolved properly
+			base = base.appendSegment("");
+		}
+
 		URI uri = entity.eResource().getURI();
 		String fileName = uri.deresolve(base).toString();
 		fsa.generateFile(fileName, os.toString());
