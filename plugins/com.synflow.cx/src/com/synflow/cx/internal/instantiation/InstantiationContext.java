@@ -92,12 +92,12 @@ public class InstantiationContext extends Node {
 	 * @return a string
 	 */
 	public String getName() {
-		Node parent = getParent();
 		List<String> path = new ArrayList<>();
-		while (parent != null) {
-			path.add((String) parent.getContent());
-			parent = parent.getParent();
-		}
+		Node node = this;
+		do {
+			path.add((String) node.getContent());
+			node = node.getParent();
+		} while (node != null);
 
 		return Joiner.on('_').join(Lists.reverse(path));
 	}
