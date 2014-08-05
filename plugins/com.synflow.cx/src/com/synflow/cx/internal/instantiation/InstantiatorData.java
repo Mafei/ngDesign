@@ -61,6 +61,14 @@ public class InstantiatorData {
 		map.put(ctx, entity);
 	}
 
+	public Map<InstantiationContext, Entity> getContextMapping(CxEntity cxEntity) {
+		Objects.requireNonNull(cxEntity, "cxEntity must not be null in getEntities");
+
+		URI uri = EcoreUtil.getURI(cxEntity);
+		CxEntity candidate = uriMap.get(uri);
+		return mapEntities.get(candidate);
+	}
+
 	public Collection<Entity> getEntities(CxEntity cxEntity) {
 		Objects.requireNonNull(cxEntity, "cxEntity must not be null in getEntities");
 

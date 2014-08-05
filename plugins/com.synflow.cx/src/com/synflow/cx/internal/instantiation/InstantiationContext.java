@@ -27,6 +27,7 @@ import com.synflow.cx.cx.Null;
 import com.synflow.cx.cx.Obj;
 import com.synflow.cx.cx.Pair;
 import com.synflow.cx.cx.Primitive;
+import com.synflow.models.dpn.Instance;
 import com.synflow.models.node.Node;
 
 /**
@@ -37,6 +38,10 @@ import com.synflow.models.node.Node;
  *
  */
 public class InstantiationContext extends Node {
+
+	private Inst inst;
+
+	private Instance instance;
 
 	private Map<String, CExpression> properties;
 
@@ -50,6 +55,7 @@ public class InstantiationContext extends Node {
 	 */
 	public InstantiationContext(InstantiationContext parent, Inst inst) {
 		super(parent, inst.getName());
+		this.inst = inst;
 
 		// first add properties from parent context
 		properties = new LinkedHashMap<>(parent.properties);
@@ -86,6 +92,14 @@ public class InstantiationContext extends Node {
 		properties = new LinkedHashMap<>();
 	}
 
+	public Inst getInst() {
+		return inst;
+	}
+
+	public Instance getInstance() {
+		return instance;
+	}
+
 	/**
 	 * Returns the full name as an underscore-separated list of names.
 	 * 
@@ -109,6 +123,10 @@ public class InstantiationContext extends Node {
 	 */
 	public Map<String, CExpression> getProperties() {
 		return Collections.unmodifiableMap(properties);
+	}
+
+	public void setInstance(Instance instance) {
+		this.instance = instance;
 	}
 
 }

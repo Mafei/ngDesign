@@ -13,6 +13,8 @@ package com.synflow.cx.internal.instantiation;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 
@@ -37,6 +39,7 @@ import com.synflow.cx.cx.Connect;
 import com.synflow.cx.cx.CxEntity;
 import com.synflow.cx.cx.CxPackage.Literals;
 import com.synflow.cx.cx.Inst;
+import com.synflow.cx.cx.Instantiable;
 import com.synflow.cx.cx.Module;
 import com.synflow.cx.cx.Network;
 import com.synflow.cx.cx.VarRef;
@@ -289,6 +292,7 @@ public class InstantiatorImpl implements IInstantiator {
 			Entity subEntity = instantiate(info, subCtx);
 
 			Instance instance = createInstance(dpn, inst, subEntity);
+			subCtx.setInstance(instance);
 			putMapping(inst, instance);
 		}
 
@@ -315,6 +319,31 @@ public class InstantiatorImpl implements IInstantiator {
 		} else {
 			Module module = (Module) resource.getContents().get(0);
 			entities = module.getEntities();
+
+			for (CxEntity cxEntity : entities) {
+				Map<InstantiationContext, Entity> map = data.getContextMapping(cxEntity);
+				for (Entry<InstantiationContext, Entity> entry : map.entrySet()) {
+					InstantiationContext ctx = entry.getKey();
+					InstantiationContext parent = (InstantiationContext) ctx.getParent();
+					ctx.delete();
+
+					Inst inst = ctx.getInst();
+					if (inst == null) {
+						EntityInfo info = entityMapper.createEntityInfo(cxEntity);
+						instantiate(info, ctx);
+					} else {
+						inst.setEntity((Instantiable) cxEntity);
+						Instance instance = ctx.getInstance();
+
+						InstantiationContext newCtx = new InstantiationContext(parent, inst);
+						EntityInfo info = entityMapper.createEntityInfo(inst, newCtx);
+						Entity entity = instantiate(info, newCtx);
+						instance.setEntity(entity);
+					}
+				}
+			}
+
+			return;
 		}
 
 		for (CxEntity cxEntity : entities) {
