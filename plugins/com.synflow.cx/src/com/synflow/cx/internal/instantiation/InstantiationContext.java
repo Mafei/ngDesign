@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import com.synflow.cx.cx.CExpression;
 import com.synflow.cx.cx.Element;
 import com.synflow.cx.cx.Inst;
@@ -26,6 +27,7 @@ import com.synflow.cx.cx.Null;
 import com.synflow.cx.cx.Obj;
 import com.synflow.cx.cx.Pair;
 import com.synflow.cx.cx.Primitive;
+import com.synflow.models.node.Node;
 
 /**
  * This class defines an instantiation context as the path and properties obtained throughout the
@@ -34,9 +36,7 @@ import com.synflow.cx.cx.Primitive;
  * @author Matthieu Wipliez
  *
  */
-public class InstantiationContext {
-
-	private List<String> path;
+public class InstantiationContext extends Node {
 
 	private Map<String, CExpression> properties;
 
@@ -49,8 +49,7 @@ public class InstantiationContext {
 	 *            name of an instance
 	 */
 	public InstantiationContext(InstantiationContext parent, Inst inst) {
-		path = new ArrayList<>(parent.path);
-		path.add(inst.getName());
+		super(parent, inst.getName());
 
 		// first add properties from parent context
 		properties = new LinkedHashMap<>(parent.properties);
@@ -83,9 +82,7 @@ public class InstantiationContext {
 	 *            name of the entity at the root of the hierarchy
 	 */
 	public InstantiationContext(String name) {
-		path = new ArrayList<>();
-		path.add(name);
-
+		super(name);
 		properties = new LinkedHashMap<>();
 	}
 
@@ -95,7 +92,14 @@ public class InstantiationContext {
 	 * @return a string
 	 */
 	public String getName() {
-		return Joiner.on('_').join(path);
+		Node parent = getParent();
+		List<String> path = new ArrayList<>();
+		while (parent != null) {
+			path.add((String) parent.getContent());
+			parent = parent.getParent();
+		}
+
+		return Joiner.on('_').join(Lists.reverse(path));
 	}
 
 	/**
