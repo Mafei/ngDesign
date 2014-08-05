@@ -45,12 +45,9 @@ import org.w3c.dom.ls.LSOutput;
 import org.w3c.dom.ls.LSParser;
 import org.w3c.dom.ls.LSSerializer;
 
-import com.synflow.models.OrccRuntimeException;
-
 /**
- * This class defines utility methods to create DOM documents, to print them to
- * an output stream using DOM 3 Load Save objects and to make easier the parsing
- * of XML files.
+ * This class defines utility methods to create DOM documents, to print them to an output stream
+ * using DOM 3 Load Save objects and to make easier the parsing of XML files.
  * 
  * @author Matthieu Wipliez
  * @author Herve Yviquel
@@ -75,8 +72,8 @@ public class DomUtil {
 	}
 
 	/**
-	 * Creates a new instance of the DOM registry and get an implementation of
-	 * DOM 3 with Load Save objects.
+	 * Creates a new instance of the DOM registry and get an implementation of DOM 3 with Load Save
+	 * objects.
 	 */
 	private static void getImplementation() {
 		try {
@@ -87,22 +84,20 @@ public class DomUtil {
 			if (impl == null) {
 				impl = registry.getDOMImplementation("Core 3.0 XML 3.0 LS");
 				if (impl == null) {
-					throw new OrccRuntimeException(
-							"no DOM 3 implementation found");
+					throw new RuntimeException("no DOM 3 implementation found");
 				}
 			}
 		} catch (ClassNotFoundException e) {
-			throw new OrccRuntimeException("DOM error", e);
+			throw new RuntimeException("DOM error", e);
 		} catch (InstantiationException e) {
-			throw new OrccRuntimeException("DOM error", e);
+			throw new RuntimeException("DOM error", e);
 		} catch (IllegalAccessException e) {
-			throw new OrccRuntimeException("DOM error", e);
+			throw new RuntimeException("DOM error", e);
 		}
 	}
 
 	/**
-	 * Parses the given input stream as XML and returns the corresponding DOM
-	 * document.
+	 * Parses the given input stream as XML and returns the corresponding DOM document.
 	 * 
 	 * @param is
 	 *            an input stream
@@ -117,8 +112,7 @@ public class DomUtil {
 		input.setByteStream(is);
 
 		// parse without comments and whitespace
-		LSParser builder = implLS.createLSParser(
-				DOMImplementationLS.MODE_SYNCHRONOUS, null);
+		LSParser builder = implLS.createLSParser(DOMImplementationLS.MODE_SYNCHRONOUS, null);
 		DOMConfiguration config = builder.getDomConfig();
 		config.setParameter("comments", false);
 		config.setParameter("element-content-whitespace", false);
@@ -127,10 +121,9 @@ public class DomUtil {
 	}
 
 	/**
-	 * Parses the given String as XML and returns the corresponding DOM
-	 * document. The String is converted to an input stream so that encoding is
-	 * taken into account (otherwise if we pass a String to an LSInput DOM will
-	 * ignore the encoding and assume UTF-16).
+	 * Parses the given String as XML and returns the corresponding DOM document. The String is
+	 * converted to an input stream so that encoding is taken into account (otherwise if we pass a
+	 * String to an LSInput DOM will ignore the encoding and assume UTF-16).
 	 * 
 	 * @param str
 	 *            a String
@@ -163,9 +156,8 @@ public class DomUtil {
 	}
 
 	/**
-	 * Returns a string representation of the given node. Like
-	 * {@link #parseDocument(String)}, we use an intermediary byte array output
-	 * stream so we can specify the encoding.
+	 * Returns a string representation of the given node. Like {@link #parseDocument(String)}, we
+	 * use an intermediary byte array output stream so we can specify the encoding.
 	 * 
 	 * @param node
 	 *            a DOM node

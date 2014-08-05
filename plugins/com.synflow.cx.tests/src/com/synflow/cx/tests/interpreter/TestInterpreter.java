@@ -16,7 +16,6 @@ import java.util.List;
 import org.junit.Assert;
 
 import com.synflow.cx.tests.TestUtil;
-import com.synflow.models.OrccRuntimeException;
 import com.synflow.models.dpn.Action;
 import com.synflow.models.dpn.Actor;
 import com.synflow.models.dpn.Pattern;
@@ -102,7 +101,7 @@ public class TestInterpreter extends ActorInterpreter {
 				Object value = ValueUtil.get(eltType, array, indexes);
 				target.setValue(value);
 			} catch (IndexOutOfBoundsException e) {
-				throw new OrccRuntimeException("Array index out of bounds at line "
+				throw new IndexOutOfBoundsException("Array index out of bounds at line "
 						+ instr.getLineNumber());
 			}
 		}
@@ -135,7 +134,7 @@ public class TestInterpreter extends ActorInterpreter {
 				value = clipValue(eltType, value, instr);
 				ValueUtil.set(eltType, array, value, indexes);
 			} catch (IndexOutOfBoundsException e) {
-				throw new OrccRuntimeException("Array index out of bounds at line "
+				throw new IndexOutOfBoundsException("Array index out of bounds at line "
 						+ instr.getLineNumber());
 			}
 		}
@@ -244,21 +243,21 @@ public class TestInterpreter extends ActorInterpreter {
 	 * @return <code>true</code> if all tokens from the given port have been consumed
 	 */
 	private boolean isEmpty(Port port, String name) {
-//		Attribute attribute = port.getAttribute(name);
-//		Assert.assertNotNull(attribute);
-//
-//		EObject value = attribute.getContainedValue();
-//		Assert.assertTrue(value instanceof ExprList);
-//
-//		// check all remaining tokens are "null"
-//		ExprList expected = (ExprList) value;
-//		List<Expression> tokens = expected.getValue();
-//		for (Expression token : tokens) {
-//			if (isNull(token)) {
-//				continue;
-//			}
-//			return false;
-//		}
+		// Attribute attribute = port.getAttribute(name);
+		// Assert.assertNotNull(attribute);
+		//
+		// EObject value = attribute.getContainedValue();
+		// Assert.assertTrue(value instanceof ExprList);
+		//
+		// // check all remaining tokens are "null"
+		// ExprList expected = (ExprList) value;
+		// List<Expression> tokens = expected.getValue();
+		// for (Expression token : tokens) {
+		// if (isNull(token)) {
+		// continue;
+		// }
+		// return false;
+		// }
 		return true;
 	}
 

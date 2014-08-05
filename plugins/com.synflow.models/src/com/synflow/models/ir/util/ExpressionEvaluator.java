@@ -31,7 +31,6 @@ package com.synflow.models.ir.util;
 
 import java.math.BigInteger;
 
-import com.synflow.models.OrccRuntimeException;
 import com.synflow.models.ir.ExprBinary;
 import com.synflow.models.ir.ExprBool;
 import com.synflow.models.ir.ExprFloat;
@@ -114,7 +113,7 @@ public class ExpressionEvaluator extends IrSwitch<Object> {
 		}
 
 		// evaluated ok, but not as an integer
-		throw new OrccRuntimeException("expected integer expression");
+		throw new IllegalArgumentException("expected integer expression");
 	}
 
 }

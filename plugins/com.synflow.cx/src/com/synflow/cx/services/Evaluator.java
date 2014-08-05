@@ -58,7 +58,6 @@ import com.synflow.cx.cx.ValueExpr;
 import com.synflow.cx.cx.ValueList;
 import com.synflow.cx.cx.Variable;
 import com.synflow.cx.cx.util.CxSwitch;
-import com.synflow.models.OrccRuntimeException;
 import com.synflow.models.ir.OpBinary;
 import com.synflow.models.ir.OpUnary;
 import com.synflow.models.ir.util.ValueUtil;
@@ -102,7 +101,7 @@ public class Evaluator extends CxSwitch<Object> {
 	public static Object getValue(EObject eObject) {
 		try {
 			return new Evaluator().doSwitch(eObject);
-		} catch (OrccRuntimeException e) {
+		} catch (IllegalArgumentException e) {
 			return null;
 		}
 	}

@@ -29,7 +29,6 @@ import org.eclipse.emf.ecore.EStructuralFeature.Setting;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import com.synflow.models.OrccRuntimeException;
 import com.synflow.models.dpn.Actor;
 import com.synflow.models.dpn.DPN;
 import com.synflow.models.dpn.Entity;
@@ -83,7 +82,7 @@ public abstract class AbstractTransformer extends DpnSwitch<Void> {
 					} else if (eObject instanceof Procedure) {
 						name = ((Procedure) eObject).getName();
 					} else {
-						throw new OrccRuntimeException("unexpected eObject type: " + eObject);
+						throw new IllegalArgumentException("unexpected eObject type: " + eObject);
 					}
 					array.add(new JsonPrimitive(name));
 				}

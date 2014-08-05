@@ -28,17 +28,13 @@
  */
 package com.synflow.models.ir;
 
-import java.lang.String;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.emf.common.util.Enumerator;
-
-import com.synflow.models.OrccRuntimeException;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This class defines the unary operators of the IR.
@@ -200,10 +196,10 @@ public enum OpUnary implements Enumerator {
 	 * @throws OrccRuntimeException
 	 *             if there is no operator with the given name
 	 */
-	public static OpUnary getOperator(String name) throws OrccRuntimeException {
+	public static OpUnary getOperator(String name) {
 		OpUnary op = operators.get(name);
 		if (op == null) {
-			throw new OrccRuntimeException("unknown operator \"" + name + "\"");
+			throw new IllegalArgumentException("unknown operator \"" + name + "\"");
 		} else {
 			return op;
 		}

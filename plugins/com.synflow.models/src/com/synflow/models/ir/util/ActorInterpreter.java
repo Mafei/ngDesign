@@ -40,7 +40,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature.Setting;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
-import com.synflow.models.OrccRuntimeException;
 import com.synflow.models.dpn.Action;
 import com.synflow.models.dpn.Actor;
 import com.synflow.models.dpn.Pattern;
@@ -122,6 +121,7 @@ public class ActorInterpreter extends IrSwitch<Object> {
 
 		return builder.toString();
 	}
+
 	/** the associated interpreted actor */
 	protected Actor actor;
 	/** branch being visited */
@@ -216,7 +216,7 @@ public class ActorInterpreter extends IrSwitch<Object> {
 			ret = doSwitch(block.getJoinBlock());
 			branch = oldBranch;
 		} else {
-			throw new OrccRuntimeException("Condition "
+			throw new IllegalStateException("Condition "
 					+ new ExpressionPrinter().toString(block.getCondition())
 					+ " not boolean at line " + block.getLineNumber());
 		}
@@ -251,12 +251,7 @@ public class ActorInterpreter extends IrSwitch<Object> {
 		Var target = instr.getTarget().getVariable();
 		Object value = exprInterpreter.doSwitch(instr.getValue());
 		value = clipValue(target.getType(), value, instr);
-		try {
-			target.setValue(value);
-		} catch (OrccRuntimeException e) {
-			String file = actor.getFileName();
-			throw new OrccRuntimeException(file, instr.getLineNumber(), "", e);
-		}
+		target.setValue(value);
 		return null;
 	}
 
@@ -306,7 +301,7 @@ public class ActorInterpreter extends IrSwitch<Object> {
 				Object value = ValueUtil.get(type, array, indexes);
 				target.setValue(value);
 			} catch (IndexOutOfBoundsException e) {
-				throw new OrccRuntimeException("Array Index Out of Bound at line "
+				throw new IndexOutOfBoundsException("Array Index Out of Bound at line "
 						+ instr.getLineNumber());
 			}
 		}
@@ -348,7 +343,7 @@ public class ActorInterpreter extends IrSwitch<Object> {
 			try {
 				ValueUtil.set(type, array, value, indexes);
 			} catch (IndexOutOfBoundsException e) {
-				throw new OrccRuntimeException("Array Index Out of Bound at line "
+				throw new IndexOutOfBoundsException("Array Index Out of Bound at line "
 						+ instr.getLineNumber() + "");
 			}
 		}
@@ -562,9 +557,8 @@ public class ActorInterpreter extends IrSwitch<Object> {
 			} else {
 				fsmState = null;
 			}
-		} catch (OrccRuntimeException ex) {
-			throw new OrccRuntimeException("Runtime exception thrown by actor " + actor.getName(),
-					ex);
+		} catch (RuntimeException ex) {
+			throw new RuntimeException("Runtime exception thrown by actor " + actor.getName(), ex);
 		}
 	}
 
@@ -631,9 +625,8 @@ public class ActorInterpreter extends IrSwitch<Object> {
 				execute(action);
 				return true;
 			}
-		} catch (OrccRuntimeException ex) {
-			throw new OrccRuntimeException("Runtime exception thrown by actor " + actor.getName(),
-					ex);
+		} catch (RuntimeException ex) {
+			throw new RuntimeException("Runtime exception thrown by actor " + actor.getName(), ex);
 		}
 	}
 

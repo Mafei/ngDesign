@@ -11,7 +11,6 @@
  *******************************************************************************/
 package com.synflow.generators.vhdl
 
-import com.synflow.models.OrccRuntimeException
 import com.synflow.models.dpn.Port
 import com.synflow.models.ir.BlockBasic
 import com.synflow.models.ir.BlockIf
@@ -167,7 +166,7 @@ class VhdlIrPrinter extends VhdlExpressionPrinter {
 	}
 
 	override caseTypeString(TypeString type) {
-		throw new OrccRuntimeException("unsupported String type")
+		throw new IllegalArgumentException("unsupported String type")
 	}
 
 	override caseVar(Var variable) {

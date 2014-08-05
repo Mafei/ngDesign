@@ -45,7 +45,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
 
-import com.synflow.models.OrccRuntimeException;
 import com.synflow.models.ir.ExprBool;
 import com.synflow.models.ir.ExprFloat;
 import com.synflow.models.ir.ExprInt;
@@ -79,7 +78,6 @@ public class ValueUtil {
 	 * @return an integer value or <code>null</code>
 	 */
 	public static Object add(Object val1, Object val2) {
-
 		if (isFloat(val1) && isFloat(val2)) {
 			return ((BigDecimal) val1).add((BigDecimal) val2);
 		} else if (isFloat(val1) && isInt(val2)) {
@@ -91,7 +89,7 @@ public class ValueUtil {
 		} else if (isString(val1) || isString(val2)) {
 			return val1.toString() + val2.toString();
 		}
-		throw new OrccRuntimeException("type mismatch in add");
+		throw new IllegalArgumentException("type mismatch in add");
 	}
 
 	/**
@@ -110,7 +108,7 @@ public class ValueUtil {
 		} else if (isInt(val1) && isInt(val2)) {
 			return ((BigInteger) val1).and((BigInteger) val2);
 		}
-		throw new OrccRuntimeException("type mismatch in and");
+		throw new IllegalArgumentException("type mismatch in and");
 	}
 
 	/**
@@ -284,7 +282,7 @@ public class ValueUtil {
 			return ((BigInteger) val1).divide((BigInteger) val2);
 		}
 
-		throw new OrccRuntimeException("type mismatch in divide");
+		throw new IllegalArgumentException("type mismatch in divide");
 	}
 
 	/**
@@ -308,7 +306,7 @@ public class ValueUtil {
 				return false;
 			}
 		}
-		throw new OrccRuntimeException("type mismatch in equals");
+		throw new IllegalArgumentException("type mismatch in equals");
 	}
 
 	/**
@@ -327,7 +325,7 @@ public class ValueUtil {
 		} else if (isInt(val1) && isInt(val2)) {
 			return ((BigInteger) val1).compareTo((BigInteger) val2) >= 0;
 		}
-		throw new OrccRuntimeException("type mismatch in ge");
+		throw new IllegalArgumentException("type mismatch in ge");
 	}
 
 	/**
@@ -388,7 +386,7 @@ public class ValueUtil {
 			}
 			return BigInteger.valueOf(longVal);
 		}
-		throw new OrccRuntimeException("unexpected type in set");
+		throw new IllegalArgumentException("unexpected type in set");
 	}
 
 	/**
@@ -424,7 +422,7 @@ public class ValueUtil {
 		if (isInt(value)) {
 			return ((BigInteger) value).intValue();
 		}
-		throw new OrccRuntimeException("value is not an int");
+		throw new IllegalArgumentException("value is not an int");
 	}
 
 	private static int getIntValue(Object value) {
@@ -435,7 +433,7 @@ public class ValueUtil {
 		} else if (isString(value)) {
 			return (Integer.parseInt((String) value));
 		}
-		throw new OrccRuntimeException("type mismatch in getIntValue");
+		throw new IllegalArgumentException("type mismatch in getIntValue");
 	}
 
 	/**
@@ -491,7 +489,7 @@ public class ValueUtil {
 			} else if (expr.isExprTypeConv()) {
 				return getValue(((ExprTypeConv) expr).getExpr());
 			} else if (expr.isExprList()) {
-				throw new OrccRuntimeException("list type not supported yet in getValue");
+				throw new IllegalArgumentException("list type not supported yet in getValue");
 			}
 		}
 		return null;
@@ -513,7 +511,7 @@ public class ValueUtil {
 		} else if (isInt(val1) && isInt(val2)) {
 			return ((BigInteger) val1).compareTo((BigInteger) val2) > 0;
 		}
-		throw new OrccRuntimeException("type mismatch in gt");
+		throw new IllegalArgumentException("type mismatch in gt");
 	}
 
 	/**
@@ -627,7 +625,7 @@ public class ValueUtil {
 		} else if (isInt(val1) && isInt(val2)) {
 			return ((BigInteger) val1).compareTo((BigInteger) val2) <= 0;
 		}
-		throw new OrccRuntimeException("type mismatch in le");
+		throw new IllegalArgumentException("type mismatch in le");
 	}
 
 	/**
@@ -657,7 +655,7 @@ public class ValueUtil {
 		if (isBool(val1) && isBool(val2)) {
 			return ((Boolean) val1) && ((Boolean) val2);
 		}
-		throw new OrccRuntimeException("type mismatch in logicAnd");
+		throw new IllegalArgumentException("type mismatch in logicAnd");
 	}
 
 	/**
@@ -672,7 +670,7 @@ public class ValueUtil {
 		if (isBool(value)) {
 			return !((Boolean) value);
 		}
-		throw new OrccRuntimeException("type mismatch in logicNot");
+		throw new IllegalArgumentException("type mismatch in logicNot");
 	}
 
 	/**
@@ -689,7 +687,7 @@ public class ValueUtil {
 		if (isBool(val1) && isBool(val2)) {
 			return ((Boolean) val1) || ((Boolean) val2);
 		}
-		throw new OrccRuntimeException("type mismatch in logicOr");
+		throw new IllegalArgumentException("type mismatch in logicOr");
 	}
 
 	/**
@@ -708,7 +706,7 @@ public class ValueUtil {
 		} else if (isInt(val1) && isInt(val2)) {
 			return ((BigInteger) val1).compareTo((BigInteger) val2) < 0;
 		}
-		throw new OrccRuntimeException("type mismatch in lt");
+		throw new IllegalArgumentException("type mismatch in lt");
 	}
 
 	/**
@@ -725,7 +723,7 @@ public class ValueUtil {
 		if (isInt(val1) && isInt(val2)) {
 			return ((BigInteger) val1).mod((BigInteger) val2);
 		}
-		throw new OrccRuntimeException("type mismatch in mod");
+		throw new IllegalArgumentException("type mismatch in mod");
 	}
 
 	/**
@@ -748,7 +746,7 @@ public class ValueUtil {
 		} else if (isInt(val1) && isInt(val2)) {
 			return ((BigInteger) val1).multiply((BigInteger) val2);
 		}
-		throw new OrccRuntimeException("type mismatch in multiply");
+		throw new IllegalArgumentException("type mismatch in multiply");
 	}
 
 	/**
@@ -765,7 +763,7 @@ public class ValueUtil {
 		} else if (isInt(value)) {
 			return ((BigInteger) value).negate();
 		}
-		throw new OrccRuntimeException("type mismatch in negate");
+		throw new IllegalArgumentException("type mismatch in negate");
 	}
 
 	/**
@@ -780,7 +778,7 @@ public class ValueUtil {
 		if (isInt(value)) {
 			return ((BigInteger) value).not();
 		}
-		throw new OrccRuntimeException("type mismatch in not");
+		throw new IllegalArgumentException("type mismatch in not");
 	}
 
 	/**
@@ -798,7 +796,7 @@ public class ValueUtil {
 		if (isBool(result)) {
 			return !((Boolean) result);
 		}
-		throw new OrccRuntimeException("type mismatch in notEquals");
+		throw new IllegalArgumentException("type mismatch in notEquals");
 	}
 
 	/**
@@ -817,7 +815,7 @@ public class ValueUtil {
 		} else if (isInt(val1) && isInt(val2)) {
 			return ((BigInteger) val1).or((BigInteger) val2);
 		}
-		throw new OrccRuntimeException("type mismatch in or");
+		throw new IllegalArgumentException("type mismatch in or");
 	}
 
 	/**
@@ -835,7 +833,7 @@ public class ValueUtil {
 			int exponent = ((BigInteger) val2).intValue();
 			return ((BigInteger) val1).pow(exponent);
 		}
-		throw new OrccRuntimeException("type mismatch in pow");
+		throw new IllegalArgumentException("type mismatch in pow");
 	}
 
 	/**
@@ -884,7 +882,7 @@ public class ValueUtil {
 				valueToSet = value;
 			}
 		} else {
-			throw new OrccRuntimeException("unexpected type in set");
+			throw new IllegalArgumentException("unexpected type in set");
 		}
 		Array.set(array, index, valueToSet);
 	}
@@ -904,7 +902,7 @@ public class ValueUtil {
 			int n = ((BigInteger) val2).intValue();
 			return ((BigInteger) val1).shiftLeft(n);
 		}
-		throw new OrccRuntimeException("type mismatch in shiftLeft");
+		throw new IllegalArgumentException("type mismatch in shiftLeft");
 	}
 
 	/**
@@ -922,7 +920,7 @@ public class ValueUtil {
 			int n = ((BigInteger) val2).intValue();
 			return ((BigInteger) val1).shiftRight(n);
 		}
-		throw new OrccRuntimeException("type mismatch in shiftRight");
+		throw new IllegalArgumentException("type mismatch in shiftRight");
 	}
 
 	/**
@@ -945,7 +943,7 @@ public class ValueUtil {
 		} else if (isInt(val1) && isInt(val2)) {
 			return ((BigInteger) val1).subtract((BigInteger) val2);
 		}
-		throw new OrccRuntimeException("type mismatch in subtract");
+		throw new IllegalArgumentException("type mismatch in subtract");
 	}
 
 	/**
@@ -964,7 +962,7 @@ public class ValueUtil {
 		} else if (isInt(val1) && isInt(val2)) {
 			return ((BigInteger) val1).xor((BigInteger) val2);
 		}
-		throw new OrccRuntimeException("type mismatch in xor");
+		throw new IllegalArgumentException("type mismatch in xor");
 	}
 
 }
