@@ -7,8 +7,7 @@ Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Export-Package: com.synflow.models,
- com.synflow.models.dpn,
+Export-Package: com.synflow.models.dpn,
  com.synflow.models.dpn.impl,
  com.synflow.models.dpn.util,
  com.synflow.models.graph,
