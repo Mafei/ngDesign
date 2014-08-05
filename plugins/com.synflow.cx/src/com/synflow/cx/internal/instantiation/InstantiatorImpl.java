@@ -12,9 +12,7 @@ package com.synflow.cx.internal.instantiation;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -24,26 +22,22 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.resource.IReferenceDescription;
 import org.eclipse.xtext.resource.IResourceDescription;
 import org.eclipse.xtext.resource.IResourceDescriptions;
 import org.eclipse.xtext.resource.impl.ResourceDescriptionsProvider;
 
-import com.google.common.collect.Iterables;
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.synflow.core.util.CoreUtil;
-import com.synflow.cx.cx.Bundle;
 import com.synflow.cx.cx.Connect;
 import com.synflow.cx.cx.CxEntity;
 import com.synflow.cx.cx.CxPackage.Literals;
 import com.synflow.cx.cx.Inst;
+import com.synflow.cx.cx.Module;
 import com.synflow.cx.cx.Network;
 import com.synflow.cx.cx.VarRef;
 import com.synflow.cx.internal.CopyOf;
@@ -77,17 +71,13 @@ public class InstantiatorImpl implements IInstantiator {
 	@Inject
 	private IResourceDescription.Manager manager;
 
-	private Map<Entity, Map<EObject, EObject>> mapCxToIr;
-
-	private Multimap<CxEntity, Entity> mapEntities;
+	private InstantiatorData data;
 
 	@Inject
 	private ResourceDescriptionsProvider provider;
 
 	public InstantiatorImpl() {
 		builtins = new ArrayList<>();
-		mapCxToIr = new HashMap<>();
-		mapEntities = LinkedHashMultimap.create();
 	}
 
 	/**
@@ -209,7 +199,7 @@ public class InstantiatorImpl implements IInstantiator {
 	public void forEachMapping(CxEntity cxEntity, Executable<Entity> executable) {
 		Objects.requireNonNull(cxEntity, "cxEntity must not be null in forEachMapping");
 
-		Collection<Entity> entities = mapEntities.get(cxEntity);
+		Collection<Entity> entities = data.getEntities(cxEntity);
 		for (Entity entity : entities) {
 			execute(entity, executable);
 		}
@@ -223,31 +213,13 @@ public class InstantiatorImpl implements IInstantiator {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public <T extends EObject, U extends EObject> U getMapping(Entity entity, T cxObj) {
-		Objects.requireNonNull(entity, "entity must not be null in getMapping");
-
-		Map<EObject, EObject> map = mapCxToIr.get(entity);
-		if (map == null) {
-			return null;
-		}
-
-		U irObj = (U) map.get(cxObj);
-		if (irObj == null) {
-			CxEntity cxEntity = EcoreUtil2.getContainerOfType(cxObj, CxEntity.class);
-			if (cxEntity instanceof Bundle) {
-				entity = Iterables.getFirst(mapEntities.get(cxEntity), null);
-				if (entity != null) {
-					irObj = (U) mapCxToIr.get(entity).get(cxObj);
-				}
-			}
-		}
-		return irObj;
+		return data.getMapping(entity, cxObj);
 	}
 
 	@Override
 	public <T extends EObject, U extends EObject> U getMapping(T cxObj) {
-		return getMapping(entity, cxObj);
+		return data.getMapping(this.entity, cxObj);
 	}
 
 	@Override
@@ -274,16 +246,17 @@ public class InstantiatorImpl implements IInstantiator {
 	 */
 	private Entity instantiate(final EntityInfo info, final InstantiationContext ctx) {
 		final CxEntity cxEntity = info.getCxEntity();
+		data.updateUri(cxEntity);
+
 		Entity entity = entityMapper.doSwitch(info.getCxEntity());
 		execute(entity, new Executable<Entity>() {
-			@Override
 			public void exec(Entity entity) {
 				entityMapper.configureEntity(entity, info, ctx);
 			}
 		});
 
 		// add mapping, optionally add to builtins
-		mapEntities.put(cxEntity, entity);
+		data.associate(cxEntity, entity);
 		if (CoreUtil.isBuiltin(entity)) {
 			builtins.add(entity);
 		}
@@ -291,7 +264,6 @@ public class InstantiatorImpl implements IInstantiator {
 		// instantiate network
 		if (cxEntity instanceof Network) {
 			execute(entity, new Executable<Entity>() {
-				@Override
 				public void exec(Entity entity) {
 					instantiate((Network) cxEntity, ctx);
 				}
@@ -325,14 +297,7 @@ public class InstantiatorImpl implements IInstantiator {
 
 	@Override
 	public <T extends EObject, U extends EObject> void putMapping(Entity entity, T cxObj, U irObj) {
-		Objects.requireNonNull(entity, "entity must not be null in putMapping");
-
-		Map<EObject, EObject> map = mapCxToIr.get(entity);
-		if (map == null) {
-			map = new HashMap<>();
-			mapCxToIr.put(entity, map);
-		}
-		map.put(cxObj, irObj);
+		data.putMapping(entity, cxObj, irObj);
 	}
 
 	@Override
@@ -342,10 +307,17 @@ public class InstantiatorImpl implements IInstantiator {
 
 	@Override
 	public void update(Resource resource) {
-		mapCxToIr = new HashMap<>();
-		mapEntities = LinkedHashMultimap.create();
+		Iterable<CxEntity> entities;
+		if (data == null) {
+			data = new InstantiatorData();
+			ResourceSet resourceSet = resource.getResourceSet();
+			entities = findTopFrom(resourceSet);
+		} else {
+			Module module = (Module) resource.getContents().get(0);
+			entities = module.getEntities();
+		}
 
-		for (CxEntity cxEntity : findTopFrom(resource.getResourceSet())) {
+		for (CxEntity cxEntity : entities) {
 			EntityInfo info = entityMapper.getEntityInfo(cxEntity);
 			instantiate(info, new InstantiationContext(cxEntity.getName()));
 		}
