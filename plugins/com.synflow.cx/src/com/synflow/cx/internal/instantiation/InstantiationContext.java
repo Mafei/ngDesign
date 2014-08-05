@@ -39,11 +39,11 @@ import com.synflow.models.node.Node;
  */
 public class InstantiationContext extends Node {
 
-	private Inst inst;
+	private final Inst inst;
 
-	private Instance instance;
+	private final Instance instance;
 
-	private Map<String, CExpression> properties;
+	private final Map<String, CExpression> properties;
 
 	/**
 	 * Creates a new instantiation context using the given parent context and the given name.
@@ -53,9 +53,10 @@ public class InstantiationContext extends Node {
 	 * @param name
 	 *            name of an instance
 	 */
-	public InstantiationContext(InstantiationContext parent, Inst inst) {
+	public InstantiationContext(InstantiationContext parent, Inst inst, Instance instance) {
 		super(parent, inst.getName());
 		this.inst = inst;
+		this.instance = instance;
 
 		// first add properties from parent context
 		properties = new LinkedHashMap<>(parent.properties);
@@ -90,6 +91,8 @@ public class InstantiationContext extends Node {
 	public InstantiationContext(String name) {
 		super(name);
 		properties = new LinkedHashMap<>();
+		inst = null;
+		instance = null;
 	}
 
 	public Inst getInst() {
@@ -123,10 +126,6 @@ public class InstantiationContext extends Node {
 	 */
 	public Map<String, CExpression> getProperties() {
 		return Collections.unmodifiableMap(properties);
-	}
-
-	public void setInstance(Instance instance) {
-		this.instance = instance;
 	}
 
 }

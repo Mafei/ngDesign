@@ -8,6 +8,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
+
 import com.google.common.collect.BiMap;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -332,9 +333,16 @@ public class DpnFactoryImpl extends EFactoryImpl implements DpnFactory {
 	}
 
 	@Override
-	public Instance createInstance(String id, Entity entity) {
+	public Instance createInstance(String name) {
 		InstanceImpl instance = new InstanceImpl();
-		instance.setName(id);
+		instance.setName(name);
+		return instance;
+	}
+
+	@Override
+	public Instance createInstance(String name, Entity entity) {
+		InstanceImpl instance = new InstanceImpl();
+		instance.setName(name);
 		instance.setEntity(entity);
 		return instance;
 	}

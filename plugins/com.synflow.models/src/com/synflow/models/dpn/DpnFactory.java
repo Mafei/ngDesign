@@ -136,7 +136,9 @@ public interface DpnFactory extends EFactory {
 	 */
 	Instance createInstance();
 
-	Instance createInstance(String id, Entity entity);
+	Instance createInstance(String name);
+
+	Instance createInstance(String name, Entity entity);
 
 	JsonObject createJsonObjectFromString(String json);
 

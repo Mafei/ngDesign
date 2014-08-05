@@ -106,30 +106,6 @@ public class InstantiatorImpl implements IInstantiator {
 		}
 	}
 
-	/**
-	 * Creates an instance from the given Inst object.
-	 * 
-	 * @param inst
-	 *            a Cx instance
-	 * @return an IR instance
-	 */
-	private Instance createInstance(DPN dpn, Inst inst, Entity entity) {
-		// create instance and adds to DPN
-		final Instance instance = DpnFactory.eINSTANCE.createInstance(inst.getName(), entity);
-		dpn.add(instance);
-
-		// set properties. For anonymous tasks, use the task's properties for the instance
-		PropertiesSupport support;
-		if (inst.getTask() == null) {
-			support = new PropertiesSupport(inst);
-		} else {
-			support = new PropertiesSupport(inst.getTask());
-		}
-		support.setProperties(instance);
-
-		return instance;
-	}
-
 	private void execute(Entity entity, Executable<Entity> executable) {
 		Entity oldEntity = this.entity;
 		this.entity = entity;
@@ -288,13 +264,23 @@ public class InstantiatorImpl implements IInstantiator {
 	private void instantiate(Network network, InstantiationContext ctx) {
 		DPN dpn = (DPN) entity;
 		for (Inst inst : network.getInstances()) {
-			InstantiationContext subCtx = new InstantiationContext(ctx, inst);
+			Instance instance = DpnFactory.eINSTANCE.createInstance(inst.getName());
+			putMapping(inst, instance);
+			dpn.add(instance);
+
+			InstantiationContext subCtx = new InstantiationContext(ctx, inst, instance);
 			EntityInfo info = entityMapper.createEntityInfo(inst, subCtx);
 			Entity subEntity = instantiate(info, subCtx);
+			instance.setEntity(subEntity);
 
-			Instance instance = createInstance(dpn, inst, subEntity);
-			subCtx.setInstance(instance);
-			putMapping(inst, instance);
+			// set properties. For anonymous tasks, use the task's properties for the instance
+			PropertiesSupport support;
+			if (inst.getTask() == null) {
+				support = new PropertiesSupport(inst);
+			} else {
+				support = new PropertiesSupport(inst.getTask());
+			}
+			support.setProperties(instance);
 		}
 
 		connect(network, dpn);
@@ -340,11 +326,14 @@ public class InstantiatorImpl implements IInstantiator {
 				EntityInfo info = entityMapper.createEntityInfo(cxEntity);
 				instantiate(info, ctx);
 			} else {
-				inst.setEntity((Instantiable) cxEntity);
 				Instance instance = ctx.getInstance();
-
-				InstantiationContext newCtx = new InstantiationContext(parent, inst);
+				InstantiationContext newCtx = new InstantiationContext(parent, inst, instance);
 				EntityInfo info = entityMapper.createEntityInfo(inst, newCtx);
+
+				// update inst's entity to the latest version
+				inst.setEntity((Instantiable) cxEntity);
+
+				// instantiate
 				Entity entity = instantiate(info, newCtx);
 				instance.setEntity(entity);
 			}
