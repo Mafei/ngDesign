@@ -158,7 +158,8 @@ public class InstantiatorImpl implements IInstantiator {
 		// collect all entities (bundles and instantiable entities)
 		EClass type = Literals.CX_ENTITY;
 		for (IEObjectDescription objDesc : resourceDescriptions.getExportedObjectsByType(type)) {
-			topUris.add(objDesc.getEObjectURI());
+			URI uri = resourceSet.getURIConverter().normalize(objDesc.getEObjectURI());
+			topUris.add(uri);
 		}
 
 		// remove all entities that are instantiated
