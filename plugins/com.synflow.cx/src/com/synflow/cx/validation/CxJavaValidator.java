@@ -95,7 +95,7 @@ public class CxJavaValidator extends AbstractCxJavaValidator {
 		}
 	}
 
-	@Check
+	@Check(NORMAL)
 	public void checkTask(final Task task) {
 		Variable function = CxUtil.getFunction(task, NAME_LOOP);
 		if (function == null) {
