@@ -256,7 +256,7 @@ public class InstantiatorImpl implements IInstantiator {
 		});
 
 		// add mapping, optionally add to builtins
-		data.associate(cxEntity, entity);
+		data.associate(cxEntity, ctx, entity);
 		if (CoreUtil.isBuiltin(entity)) {
 			builtins.add(entity);
 		}
@@ -285,7 +285,7 @@ public class InstantiatorImpl implements IInstantiator {
 		DPN dpn = (DPN) entity;
 		for (Inst inst : network.getInstances()) {
 			InstantiationContext subCtx = new InstantiationContext(ctx, inst);
-			EntityInfo info = entityMapper.getEntityInfo(inst, subCtx);
+			EntityInfo info = entityMapper.createEntityInfo(inst, subCtx);
 			Entity subEntity = instantiate(info, subCtx);
 
 			Instance instance = createInstance(dpn, inst, subEntity);
@@ -318,7 +318,7 @@ public class InstantiatorImpl implements IInstantiator {
 		}
 
 		for (CxEntity cxEntity : entities) {
-			EntityInfo info = entityMapper.getEntityInfo(cxEntity);
+			EntityInfo info = entityMapper.createEntityInfo(cxEntity);
 			instantiate(info, new InstantiationContext(cxEntity.getName()));
 		}
 	}

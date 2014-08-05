@@ -11,7 +11,9 @@
 package com.synflow.cx.internal.instantiation;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -21,8 +23,6 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.EcoreUtil2;
 
 import com.google.common.collect.Iterables;
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Multimap;
 import com.synflow.cx.cx.Bundle;
 import com.synflow.cx.cx.CxEntity;
 import com.synflow.models.dpn.Entity;
@@ -38,24 +38,37 @@ public class InstantiatorData {
 	private Map<Entity, Map<EObject, EObject>> mapCxToIr;
 
 	/**
-	 * multi map from Cx entity to IR entities
+	 * map (Cx entity, instantiation context) -> IR entity
 	 */
-	private Multimap<CxEntity, Entity> mapEntities;
+	private Map<CxEntity, Map<InstantiationContext, Entity>> mapEntities;
 
 	private Map<URI, CxEntity> uriMap;
 
 	public InstantiatorData() {
 		mapCxToIr = new HashMap<>();
-		mapEntities = LinkedHashMultimap.create();
+		mapEntities = new HashMap<>();
 		uriMap = new HashMap<>();
 	}
 
-	public void associate(CxEntity cxEntity, Entity entity) {
-		mapEntities.put(cxEntity, entity);
+	public void associate(CxEntity cxEntity, InstantiationContext ctx, Entity entity) {
+		Objects.requireNonNull(cxEntity, "cxEntity must not be null in associate");
+
+		Map<InstantiationContext, Entity> map = mapEntities.get(cxEntity);
+		if (map == null) {
+			map = new LinkedHashMap<>();
+			mapEntities.put(cxEntity, map);
+		}
+		map.put(ctx, entity);
 	}
 
 	public Collection<Entity> getEntities(CxEntity cxEntity) {
-		return mapEntities.get(cxEntity);
+		Objects.requireNonNull(cxEntity, "cxEntity must not be null in getEntities");
+
+		Map<InstantiationContext, Entity> map = mapEntities.get(cxEntity);
+		if (map == null) {
+			return Collections.emptyList();
+		}
+		return map.values();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -71,7 +84,7 @@ public class InstantiatorData {
 		if (irObj == null) {
 			CxEntity cxEntity = EcoreUtil2.getContainerOfType(cxObj, CxEntity.class);
 			if (cxEntity instanceof Bundle) {
-				entity = Iterables.getFirst(mapEntities.get(cxEntity), null);
+				entity = Iterables.getFirst(getEntities(cxEntity), null);
 				if (entity != null) {
 					irObj = (U) mapCxToIr.get(entity).get(cxObj);
 				}
@@ -98,7 +111,7 @@ public class InstantiatorData {
 			for (Entity entity : getEntities((CxEntity) candidate)) {
 				mapCxToIr.remove(entity);
 			}
-			mapEntities.removeAll(candidate);
+			mapEntities.remove(candidate);
 		}
 		uriMap.put(uri, cxEntity);
 	}

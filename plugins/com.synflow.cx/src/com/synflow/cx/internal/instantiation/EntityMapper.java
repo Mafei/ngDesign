@@ -34,13 +34,13 @@ import com.synflow.cx.UriComputer;
 import com.synflow.cx.cx.Bundle;
 import com.synflow.cx.cx.CExpression;
 import com.synflow.cx.cx.CxEntity;
+import com.synflow.cx.cx.CxPackage.Literals;
 import com.synflow.cx.cx.Inst;
 import com.synflow.cx.cx.Instantiable;
 import com.synflow.cx.cx.Module;
 import com.synflow.cx.cx.Network;
 import com.synflow.cx.cx.Task;
 import com.synflow.cx.cx.Variable;
-import com.synflow.cx.cx.CxPackage.Literals;
 import com.synflow.cx.cx.util.CxSwitch;
 import com.synflow.cx.internal.TransformerUtil;
 import com.synflow.cx.internal.instantiation.properties.PropertiesSupport;
@@ -146,7 +146,7 @@ public class EntityMapper extends CxSwitch<Entity> {
 	 *            a Cx instance
 	 * @return info about the IR entity
 	 */
-	public EntityInfo getEntityInfo(CxEntity cxEntity) {
+	public EntityInfo createEntityInfo(CxEntity cxEntity) {
 		// get URI of .ir file
 		URI cxUri = cxEntity.eResource().getURI();
 		String name = getName(cxEntity);
@@ -162,7 +162,7 @@ public class EntityMapper extends CxSwitch<Entity> {
 	 *            a Cx instance
 	 * @return info about the IR entity
 	 */
-	public EntityInfo getEntityInfo(Inst inst, InstantiationContext ctx) {
+	public EntityInfo createEntityInfo(Inst inst, InstantiationContext ctx) {
 		Instantiable cxEntity;
 		if (inst.getTask() == null) {
 			cxEntity = inst.getEntity();
@@ -171,13 +171,16 @@ public class EntityMapper extends CxSwitch<Entity> {
 		}
 
 		// compute specialized name
-		String name;
-		Map<Variable, EObject> values = getVariablesMap(cxEntity, ctx);
-		if (values.isEmpty()) {
-			name = getName(cxEntity);
-		} else {
-			name = ctx.getName();
-		}
+		String name = ctx.getName();
+		// TODO come back later if it's not too complicated to do that
+		// like a task T instantiated twice by two different networks
+		// but T does not depend on properties
+		// Map<Variable, EObject> values = getVariablesMap(cxEntity, ctx);
+		// if (values.isEmpty()) {
+		// name = getName(cxEntity);
+		// } else {
+		// name = ctx.getName();
+		// }
 
 		// get URI of .ir file
 		URI cxUri = cxEntity.eResource().getURI();
@@ -212,9 +215,9 @@ public class EntityMapper extends CxSwitch<Entity> {
 	 *            instantiation context
 	 * @return a map
 	 */
-	private Map<Variable, EObject> getVariablesMap(CxEntity cxEntity, InstantiationContext ctx) {
-		return visitProperties(cxEntity, ctx, false);
-	}
+	// private Map<Variable, EObject> getVariablesMap(CxEntity cxEntity, InstantiationContext ctx) {
+	// return visitProperties(cxEntity, ctx, false);
+	// }
 
 	/**
 	 * Restore values using the given map.
