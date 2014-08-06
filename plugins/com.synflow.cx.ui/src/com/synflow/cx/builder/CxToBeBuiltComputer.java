@@ -55,6 +55,9 @@ public class CxToBeBuiltComputer implements IToBeBuiltComputerContribution {
 
 	@Override
 	public void removeProject(ToBeBuilt toBeBuilt, IProject project, IProgressMonitor monitor) {
+		// this is called when a clean build starts
+		// we just clear the instantiator's data
+
 		ensureInstantiatorInjected();
 		instantiator.clearData();
 	}
@@ -67,8 +70,11 @@ public class CxToBeBuiltComputer implements IToBeBuiltComputerContribution {
 	@Override
 	public void updateProject(ToBeBuilt toBeBuilt, IProject project, IProgressMonitor monitor)
 			throws CoreException {
-		ensureInstantiatorInjected();
-		instantiator.clearData();
+		// this is called when a full build starts
+		// (if caused by a clean, removeProject has already run)
+
+		// this is where we should update the instantiator, except that at this point we have
+		// no build data and no resource description data.
 	}
 
 	@Override

@@ -58,6 +58,11 @@ public class CxBuilderState extends ClusteringBuilderState {
 	}
 
 	private void fillUriSet(Set<URI> resourceUris, IResourceDescription description) {
+		// just ignore resource descriptions that are not yet loaded
+		if (description == null) {
+			return;
+		}
+
 		for (IReferenceDescription refDesc : description.getReferenceDescriptions()) {
 			if (refDesc.getEReference() == Literals.INST__ENTITY) {
 				URI uriInstantiable = refDesc.getTargetEObjectUri();
