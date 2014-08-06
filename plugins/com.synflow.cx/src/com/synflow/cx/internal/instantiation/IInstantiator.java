@@ -49,6 +49,8 @@ public interface IInstantiator {
 	 */
 	Iterable<Entity> getBuiltins();
 
+	InstantiatorData getData();
+
 	/**
 	 * Returns the IR object that corresponds to the given Cx object in the given entity.
 	 * 

@@ -193,6 +193,11 @@ public class InstantiatorImpl implements IInstantiator {
 	}
 
 	@Override
+	public InstantiatorData getData() {
+		return data;
+	}
+
+	@Override
 	public <T extends EObject, U extends EObject> U getMapping(Entity entity, T cxObj) {
 		return data.getMapping(entity, cxObj);
 	}
