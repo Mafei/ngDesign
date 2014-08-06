@@ -15,7 +15,7 @@ import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
 
-import com.synflow.cx.internal.instantiation.IInstantiator;
+import com.synflow.cx.instantiation.IInstantiator;
 import com.synflow.cx.internal.scheduler.path.Path;
 import com.synflow.cx.internal.scheduler.path.PathIterable;
 import com.synflow.models.dpn.Actor;

@@ -27,7 +27,7 @@ import com.synflow.cx.cx.Instantiable;
 import com.synflow.cx.cx.Network;
 import com.synflow.cx.cx.Variable;
 import com.synflow.cx.cx.CxPackage.Literals;
-import com.synflow.cx.internal.instantiation.IInstantiator;
+import com.synflow.cx.instantiation.IInstantiator;
 import com.synflow.models.dpn.Connection;
 import com.synflow.models.dpn.DPN;
 import com.synflow.models.dpn.Endpoint;

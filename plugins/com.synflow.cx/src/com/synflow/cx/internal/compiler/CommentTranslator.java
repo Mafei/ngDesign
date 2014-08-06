@@ -44,7 +44,7 @@ import com.synflow.cx.cx.Task;
 import com.synflow.cx.cx.VarDecl;
 import com.synflow.cx.cx.Variable;
 import com.synflow.cx.cx.util.CxSwitch;
-import com.synflow.cx.internal.instantiation.IInstantiator;
+import com.synflow.cx.instantiation.IInstantiator;
 import com.synflow.models.dpn.Entity;
 import com.synflow.models.util.Executable;
 import com.synflow.models.util.Void;

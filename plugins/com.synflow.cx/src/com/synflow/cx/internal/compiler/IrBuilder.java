@@ -33,7 +33,7 @@ import java.util.Map;
 import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.CExpression;
 import com.synflow.cx.cx.Variable;
-import com.synflow.cx.internal.instantiation.IInstantiator;
+import com.synflow.cx.instantiation.IInstantiator;
 import com.synflow.cx.internal.services.Typer;
 import com.synflow.cx.services.Evaluator;
 import com.synflow.models.dpn.Entity;

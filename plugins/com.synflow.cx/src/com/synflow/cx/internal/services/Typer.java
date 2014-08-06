@@ -70,7 +70,7 @@ import com.synflow.cx.cx.ValueList;
 import com.synflow.cx.cx.VarRef;
 import com.synflow.cx.cx.Variable;
 import com.synflow.cx.cx.util.CxSwitch;
-import com.synflow.cx.internal.instantiation.IInstantiator;
+import com.synflow.cx.instantiation.IInstantiator;
 import com.synflow.cx.services.Evaluator;
 import com.synflow.models.dpn.Port;
 import com.synflow.models.ir.IrFactory;

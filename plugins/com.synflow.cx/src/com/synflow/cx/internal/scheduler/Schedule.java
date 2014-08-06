@@ -18,7 +18,7 @@ import com.synflow.cx.cx.Branch;
 import com.synflow.cx.cx.CExpression;
 import com.synflow.cx.cx.StatementWrite;
 import com.synflow.cx.cx.VarRef;
-import com.synflow.cx.internal.instantiation.IInstantiator;
+import com.synflow.cx.instantiation.IInstantiator;
 import com.synflow.models.dpn.Action;
 import com.synflow.models.dpn.DpnFactory;
 import com.synflow.models.dpn.Pattern;

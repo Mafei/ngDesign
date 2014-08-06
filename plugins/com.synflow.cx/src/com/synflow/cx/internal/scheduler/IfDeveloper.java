@@ -25,7 +25,7 @@ import com.synflow.cx.cx.CExpression;
 import com.synflow.cx.cx.Enter;
 import com.synflow.cx.cx.Leave;
 import com.synflow.cx.cx.StatementIf;
-import com.synflow.cx.internal.instantiation.IInstantiator;
+import com.synflow.cx.instantiation.IInstantiator;
 import com.synflow.cx.internal.scheduler.path.Path;
 import com.synflow.models.dpn.Actor;
 import com.synflow.models.dpn.DpnFactory;

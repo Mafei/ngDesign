@@ -44,7 +44,7 @@ import com.synflow.cx.cx.StatementVariable;
 import com.synflow.cx.cx.Task;
 import com.synflow.cx.cx.VarRef;
 import com.synflow.cx.cx.Variable;
-import com.synflow.cx.internal.instantiation.IInstantiator;
+import com.synflow.cx.instantiation.IInstantiator;
 import com.synflow.cx.internal.services.BoolCxSwitch;
 import com.synflow.cx.internal.services.Typer;
 import com.synflow.models.dpn.Entity;

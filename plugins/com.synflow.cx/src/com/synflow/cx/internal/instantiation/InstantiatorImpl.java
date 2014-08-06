@@ -44,6 +44,7 @@ import com.synflow.cx.cx.Instantiable;
 import com.synflow.cx.cx.Module;
 import com.synflow.cx.cx.Network;
 import com.synflow.cx.cx.VarRef;
+import com.synflow.cx.instantiation.IInstantiator;
 import com.synflow.cx.internal.CopyOf;
 import com.synflow.cx.internal.instantiation.properties.PropertiesSupport;
 import com.synflow.models.dpn.DPN;
@@ -84,6 +85,11 @@ public class InstantiatorImpl implements IInstantiator {
 
 	public InstantiatorImpl() {
 		builtins = new ArrayList<>();
+	}
+
+	@Override
+	public void clearData() {
+		data = null;
 	}
 
 	/**
@@ -193,11 +199,6 @@ public class InstantiatorImpl implements IInstantiator {
 		List<Entity> result = builtins;
 		builtins = new ArrayList<>();
 		return result;
-	}
-
-	@Override
-	public InstantiatorData getData() {
-		return data;
 	}
 
 	@Override
@@ -334,7 +335,8 @@ public class InstantiatorImpl implements IInstantiator {
 	}
 
 	private void updateEntity(CxEntity cxEntity) {
-		Map<InstantiationContext, Entity> map = data.getPreviousAssociation(cxEntity);
+		URI uri = EcoreUtil.getURI(cxEntity);
+		Map<InstantiationContext, Entity> map = data.getAssociation(uri);
 		Set<Entry<InstantiationContext, Entity>> set = ImmutableSet.copyOf(map.entrySet());
 		for (Entry<InstantiationContext, Entity> entry : set) {
 			InstantiationContext ctx = entry.getKey();

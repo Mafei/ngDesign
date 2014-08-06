@@ -25,6 +25,7 @@ import com.synflow.cx.cx.Module;
 import com.synflow.cx.cx.Network;
 import com.synflow.cx.cx.Task;
 import com.synflow.cx.cx.Variable;
+import com.synflow.cx.instantiation.IInstantiator;
 import com.synflow.cx.internal.services.Typer;
 import com.synflow.cx.services.Evaluator;
 import com.synflow.models.dpn.Actor;

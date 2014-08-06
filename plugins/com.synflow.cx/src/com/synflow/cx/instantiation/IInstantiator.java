@@ -8,7 +8,7 @@
  * Contributors:
  *    Matthieu Wipliez - initial API and implementation and/or initial documentation
  *******************************************************************************/
-package com.synflow.cx.internal.instantiation;
+package com.synflow.cx.instantiation;
 
 import org.eclipse.emf.ecore.EObject;
 
@@ -16,6 +16,7 @@ import com.google.inject.ImplementedBy;
 import com.synflow.cx.cx.CxEntity;
 import com.synflow.cx.cx.Module;
 import com.synflow.cx.cx.VarRef;
+import com.synflow.cx.internal.instantiation.InstantiatorImpl;
 import com.synflow.models.dpn.Entity;
 import com.synflow.models.dpn.Port;
 import com.synflow.models.util.Executable;
@@ -28,6 +29,11 @@ import com.synflow.models.util.Executable;
  */
 @ImplementedBy(InstantiatorImpl.class)
 public interface IInstantiator {
+
+	/**
+	 * Clears all data retained by the instantiator.
+	 */
+	void clearData();
 
 	/**
 	 * For each IR entity associated to the given Cx entity, calls the executable. The instantiator
@@ -48,8 +54,6 @@ public interface IInstantiator {
 	 * @return an iterable over entities
 	 */
 	Iterable<Entity> getBuiltins();
-
-	InstantiatorData getData();
 
 	/**
 	 * Returns the IR object that corresponds to the given Cx object in the given entity.

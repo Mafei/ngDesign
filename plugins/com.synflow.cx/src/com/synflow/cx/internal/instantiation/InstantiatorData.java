@@ -61,6 +61,18 @@ public class InstantiatorData {
 		map.put(ctx, entity);
 	}
 
+	/**
+	 * Returns the mapping associated with the given URI.
+	 * 
+	 * @param uri
+	 *            a URI
+	 * @return a map
+	 */
+	public Map<InstantiationContext, Entity> getAssociation(URI uri) {
+		CxEntity candidate = uriMap.get(uri);
+		return mapEntities.get(candidate);
+	}
+
 	public Collection<Entity> getEntities(CxEntity cxEntity) {
 		Objects.requireNonNull(cxEntity, "cxEntity must not be null in getEntities");
 
@@ -91,22 +103,6 @@ public class InstantiatorData {
 			}
 		}
 		return irObj;
-	}
-
-	/**
-	 * Returns the mapping associated with the previous version of the given Cx entity. Looks up
-	 * using the entity's URI.
-	 * 
-	 * @param cxEntity
-	 *            a Cx entity
-	 * @return a map
-	 */
-	public Map<InstantiationContext, Entity> getPreviousAssociation(CxEntity cxEntity) {
-		Objects.requireNonNull(cxEntity, "cxEntity must not be null in getPreviousAssociation");
-
-		URI uri = EcoreUtil.getURI(cxEntity);
-		CxEntity candidate = uriMap.get(uri);
-		return mapEntities.get(candidate);
 	}
 
 	/**

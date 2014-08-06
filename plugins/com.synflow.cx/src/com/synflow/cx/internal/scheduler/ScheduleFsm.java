@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.ImmutableSet;
-import com.synflow.cx.internal.instantiation.IInstantiator;
+import com.synflow.cx.instantiation.IInstantiator;
 import com.synflow.models.dpn.Action;
 import com.synflow.models.dpn.Actor;
 import com.synflow.models.dpn.DpnFactory;

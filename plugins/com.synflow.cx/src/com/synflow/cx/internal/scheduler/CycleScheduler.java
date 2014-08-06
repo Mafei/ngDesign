@@ -24,7 +24,7 @@ import com.synflow.cx.cx.Branch;
 import com.synflow.cx.cx.CExpression;
 import com.synflow.cx.cx.StatementIf;
 import com.synflow.cx.cx.Variable;
-import com.synflow.cx.internal.instantiation.IInstantiator;
+import com.synflow.cx.instantiation.IInstantiator;
 import com.synflow.models.dpn.Actor;
 import com.synflow.models.dpn.FSM;
 import com.synflow.models.dpn.State;

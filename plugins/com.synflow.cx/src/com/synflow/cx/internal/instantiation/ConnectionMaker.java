@@ -36,6 +36,7 @@ import com.synflow.cx.cx.Inst;
 import com.synflow.cx.cx.Network;
 import com.synflow.cx.cx.VarRef;
 import com.synflow.cx.cx.CxPackage.Literals;
+import com.synflow.cx.instantiation.IInstantiator;
 import com.synflow.cx.internal.ErrorMarker;
 import com.synflow.models.dpn.Connection;
 import com.synflow.models.dpn.DPN;
