@@ -125,9 +125,6 @@ public class EntityMapper extends CxSwitch<Entity> {
 		int lineNumber = TransformerUtil.getStartLine(info.getCxEntity());
 		entity.setLineNumber(lineNumber);
 
-		// add to resource
-		info.createResource(entity);
-
 		// set values on entity
 		Map<Variable, EObject> values = setValues(info.getCxEntity(), ctx);
 

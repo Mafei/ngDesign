@@ -11,11 +11,8 @@
 package com.synflow.cx.internal.instantiation;
 
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
 
 import com.synflow.cx.cx.CxEntity;
-import com.synflow.models.dpn.Entity;
 
 /**
  * This class holds information about a Cx entity, its specialized name and URI of the corresponding
@@ -38,24 +35,21 @@ public class EntityInfo {
 		this.uri = uri;
 	}
 
-	/**
-	 * Creates a resource with the URI given to the constructor, and adds the given entity to it.
-	 * 
-	 * @param entity
-	 *            an entity
-	 */
-	public void createResource(Entity entity) {
-		ResourceSet set = cxEntity.eResource().getResourceSet();
-		Resource resource = set.createResource(uri);
-		resource.getContents().add(entity);
-	}
-
 	public CxEntity getCxEntity() {
 		return cxEntity;
 	}
 
 	public String getName() {
 		return name;
+	}
+
+	public URI getURI() {
+		return uri;
+	}
+
+	@Override
+	public String toString() {
+		return name + " " + uri;
 	}
 
 }

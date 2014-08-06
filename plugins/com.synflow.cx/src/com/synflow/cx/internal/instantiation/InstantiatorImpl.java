@@ -30,6 +30,7 @@ import org.eclipse.xtext.resource.IResourceDescription;
 import org.eclipse.xtext.resource.IResourceDescriptions;
 import org.eclipse.xtext.resource.impl.ResourceDescriptionsProvider;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -78,6 +79,8 @@ public class InstantiatorImpl implements IInstantiator {
 
 	@Inject
 	private ResourceDescriptionsProvider provider;
+
+	private ResourceSet resourceSet;
 
 	public InstantiatorImpl() {
 		builtins = new ArrayList<>();
@@ -234,6 +237,12 @@ public class InstantiatorImpl implements IInstantiator {
 		data.updateUri(cxEntity);
 
 		Entity entity = entityMapper.doSwitch(info.getCxEntity());
+
+		// add to resource
+		Resource resource = resourceSet.createResource(info.getURI());
+		resource.getContents().add(entity);
+
+		// configure entity
 		execute(entity, new Executable<Entity>() {
 			public void exec(Entity entity) {
 				entityMapper.configureEntity(entity, info, ctx);
@@ -303,25 +312,31 @@ public class InstantiatorImpl implements IInstantiator {
 
 	@Override
 	public void update(Module module) {
-		if (data == null) {
-			data = new InstantiatorData();
-			ResourceSet resourceSet = module.eResource().getResourceSet();
-			for (CxEntity cxEntity : findTopFrom(resourceSet)) {
-				EntityInfo info = entityMapper.createEntityInfo(cxEntity);
-				instantiate(info, new InstantiationContext(cxEntity.getName()));
-			}
-		} else {
-			for (CxEntity cxEntity : module.getEntities()) {
-				if (!data.hasMapping(cxEntity)) {
-					updateEntity(cxEntity);
+		resourceSet = module.eResource().getResourceSet();
+
+		try {
+			if (data == null) {
+				data = new InstantiatorData();
+				for (CxEntity cxEntity : findTopFrom(resourceSet)) {
+					EntityInfo info = entityMapper.createEntityInfo(cxEntity);
+					instantiate(info, new InstantiationContext(cxEntity.getName()));
+				}
+			} else {
+				for (CxEntity cxEntity : module.getEntities()) {
+					if (!data.isAssociated(cxEntity)) {
+						updateEntity(cxEntity);
+					}
 				}
 			}
+		} finally {
+			resourceSet = null;
 		}
 	}
 
 	private void updateEntity(CxEntity cxEntity) {
-		Map<InstantiationContext, Entity> map = data.getPreviousMapping(cxEntity);
-		for (Entry<InstantiationContext, Entity> entry : map.entrySet()) {
+		Map<InstantiationContext, Entity> map = data.getPreviousAssociation(cxEntity);
+		Set<Entry<InstantiationContext, Entity>> set = ImmutableSet.copyOf(map.entrySet());
+		for (Entry<InstantiationContext, Entity> entry : set) {
 			InstantiationContext ctx = entry.getKey();
 			InstantiationContext parent = (InstantiationContext) ctx.getParent();
 			ctx.delete();
