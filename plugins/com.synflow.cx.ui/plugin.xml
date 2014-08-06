@@ -488,4 +488,16 @@
            name="Graph">
      </view>
   </extension>
+  <extension
+        point="org.eclipse.xtext.ui.shared.sharedStateContributingModule">
+     <module
+           class="com.synflow.cx.builder.CxContributingModule">
+     </module>
+  </extension>
+  <extension
+        point="org.eclipse.xtext.ui.shared.overridingGuiceModule">
+     <module
+           class="com.synflow.cx.builder.CxOverridingModule">
+     </module>
+   </extension>
 </plugin>
