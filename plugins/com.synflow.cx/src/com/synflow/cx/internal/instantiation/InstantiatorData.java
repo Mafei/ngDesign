@@ -101,8 +101,8 @@ public class InstantiatorData {
 	 *            a Cx entity
 	 * @return a map
 	 */
-	public Map<InstantiationContext, Entity> getPreviousMapping(CxEntity cxEntity) {
-		Objects.requireNonNull(cxEntity, "cxEntity must not be null in getPreviousMapping");
+	public Map<InstantiationContext, Entity> getPreviousAssociation(CxEntity cxEntity) {
+		Objects.requireNonNull(cxEntity, "cxEntity must not be null in getPreviousAssociation");
 
 		URI uri = EcoreUtil.getURI(cxEntity);
 		CxEntity candidate = uriMap.get(uri);
@@ -118,8 +118,8 @@ public class InstantiatorData {
 	 *            a Cx entity
 	 * @return a boolean
 	 */
-	public boolean hasMapping(CxEntity cxEntity) {
-		Objects.requireNonNull(cxEntity, "cxEntity must not be null in isUpToDate");
+	public boolean isAssociated(CxEntity cxEntity) {
+		Objects.requireNonNull(cxEntity, "cxEntity must not be null in isAssociated");
 		return mapEntities.containsKey(cxEntity);
 	}
 

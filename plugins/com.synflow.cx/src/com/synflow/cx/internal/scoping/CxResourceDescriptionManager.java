@@ -88,7 +88,7 @@ public class CxResourceDescriptionManager extends DefaultResourceDescriptionMana
 					hasBundlesOnly = false;
 					if (eClass == Literals.NETWORK) {
 						Network network = (Network) objDesc.getEObjectOrProxy();
-						if (!data.hasMapping(network)) {
+						if (!data.isAssociated(network)) {
 							mustUpdateSet = true;
 						}
 					}
@@ -108,7 +108,7 @@ public class CxResourceDescriptionManager extends DefaultResourceDescriptionMana
 
 				for (IEObjectDescription obj : desc.getExportedObjectsByType(Literals.CX_ENTITY)) {
 					CxEntity cxEntity = (CxEntity) obj.getEObjectOrProxy();
-					Map<InstantiationContext, Entity> map = data.getPreviousMapping(cxEntity);
+					Map<InstantiationContext, Entity> map = data.getPreviousAssociation(cxEntity);
 					for (InstantiationContext ctx : map.keySet()) {
 						computeSet(ctx);
 					}
