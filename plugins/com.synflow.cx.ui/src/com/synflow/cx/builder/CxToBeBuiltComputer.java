@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2014 Synflow SAS.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Matthieu Wipliez - initial API and implementation and/or initial documentation
+ *******************************************************************************/
 package com.synflow.cx.builder;
 
 import static com.synflow.cx.ui.internal.CxActivator.COM_SYNFLOW_CX_CX;
@@ -11,13 +21,27 @@ import org.eclipse.xtext.builder.impl.IToBeBuiltComputerContribution;
 import org.eclipse.xtext.builder.impl.ToBeBuilt;
 
 import com.google.inject.Injector;
-import com.synflow.cx.internal.instantiation.IInstantiator;
+import com.synflow.cx.instantiation.IInstantiator;
 import com.synflow.cx.ui.internal.CxActivator;
 
+/**
+ * This class defines a contributing ToBeBuiltComputer. For now just clears instantiation data on
+ * full builds and when projects are added/removed.
+ * 
+ * @author Matthieu Wipliez
+ *
+ */
 @SuppressWarnings("restriction")
 public class CxToBeBuiltComputer implements IToBeBuiltComputerContribution {
 
 	private IInstantiator instantiator;
+
+	private void ensureInstantiatorInjected() {
+		if (instantiator == null) {
+			Injector injector = CxActivator.getInstance().getInjector(COM_SYNFLOW_CX_CX);
+			instantiator = injector.getInstance(IInstantiator.class);
+		}
+	}
 
 	@Override
 	public boolean isPossiblyHandled(IStorage storage) {
@@ -31,6 +55,8 @@ public class CxToBeBuiltComputer implements IToBeBuiltComputerContribution {
 
 	@Override
 	public void removeProject(ToBeBuilt toBeBuilt, IProject project, IProgressMonitor monitor) {
+		ensureInstantiatorInjected();
+		instantiator.clearData();
 	}
 
 	@Override
@@ -41,11 +67,7 @@ public class CxToBeBuiltComputer implements IToBeBuiltComputerContribution {
 	@Override
 	public void updateProject(ToBeBuilt toBeBuilt, IProject project, IProgressMonitor monitor)
 			throws CoreException {
-		if (instantiator == null) {
-			Injector injector = CxActivator.getInstance().getInjector(COM_SYNFLOW_CX_CX);
-			instantiator = injector.getInstance(IInstantiator.class);
-		}
-
+		ensureInstantiatorInjected();
 		instantiator.clearData();
 	}
 
