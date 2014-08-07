@@ -340,6 +340,9 @@ public class InstantiatorImpl implements IInstantiator {
 	private void updateEntity(CxEntity cxEntity) {
 		URI uri = EcoreUtil.getURI(cxEntity);
 		Map<InstantiationContext, Entity> map = data.getAssociation(uri);
+
+		// copy entry set because map is modified by instantiation
+		// old contexts are discarded, new ones added
 		Set<Entry<InstantiationContext, Entity>> set = ImmutableSet.copyOf(map.entrySet());
 		for (Entry<InstantiationContext, Entity> entry : set) {
 			InstantiationContext ctx = entry.getKey();
@@ -353,12 +356,12 @@ public class InstantiatorImpl implements IInstantiator {
 			} else {
 				Instance instance = ctx.getInstance();
 				InstantiationContext newCtx = new InstantiationContext(parent, inst, instance);
-				EntityInfo info = entityMapper.createEntityInfo(inst, newCtx);
 
 				// update inst's entity to the latest version
 				inst.setEntity((Instantiable) cxEntity);
 
 				// instantiate
+				EntityInfo info = entityMapper.createEntityInfo(inst, newCtx);
 				Entity entity = instantiate(info, newCtx);
 				instance.setEntity(entity);
 			}
