@@ -19,6 +19,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -153,8 +154,11 @@ public class InstantiatorImpl implements IInstantiator {
 		// which do not have reference descriptions
 		for (IResourceDescription resDesc : resourceDescriptions.getAllResourceDescriptions()) {
 			URI uri = resDesc.getURI();
-			Resource resource = resourceSet.getResource(uri, false);
-			if (resource == null) {
+			Resource resource;
+			try {
+				resource = resourceSet.getResource(uri, true);
+			} catch (WrappedException e) {
+				// resource can't be created/loaded, just skip
 				continue;
 			}
 
@@ -175,8 +179,7 @@ public class InstantiatorImpl implements IInstantiator {
 			type = Literals.CX_ENTITY;
 			for (IEObjectDescription objDesc : resDesc.getExportedObjectsByType(type)) {
 				if (uri.equals(objDesc.getEObjectURI())) {
-					EObject proxy = objDesc.getEObjectOrProxy();
-					EObject resolved = EcoreUtil.resolve(proxy, resourceSet);
+					EObject resolved = EcoreUtil.resolve(objDesc.getEObjectOrProxy(), resourceSet);
 					entities.add((CxEntity) resolved);
 				}
 			}
