@@ -13,6 +13,7 @@ package com.synflow.cx.internal.instantiation;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -57,6 +58,14 @@ public class InstantiatorData {
 		if (map == null) {
 			map = new LinkedHashMap<>();
 			mapEntities.put(cxEntity, map);
+		} else {
+			Iterator<InstantiationContext> it = map.keySet().iterator();
+			while (it.hasNext()) {
+				InstantiationContext subCtx = it.next();
+				if (subCtx.getParent() == null) {
+					it.remove();
+				}
+			}
 		}
 		map.put(ctx, entity);
 	}
@@ -133,13 +142,15 @@ public class InstantiatorData {
 	public void updateUri(CxEntity cxEntity) {
 		URI uri = EcoreUtil.getURI(cxEntity);
 		CxEntity candidate = uriMap.get(uri);
-		if (cxEntity != candidate && candidate != null) {
-			for (Entity entity : getEntities((CxEntity) candidate)) {
-				mapCxToIr.remove(entity);
+		if (cxEntity != candidate) {
+			if (candidate != null) {
+				for (Entity entity : getEntities((CxEntity) candidate)) {
+					mapCxToIr.remove(entity);
+				}
+				mapEntities.remove(candidate);
 			}
-			mapEntities.remove(candidate);
+			uriMap.put(uri, cxEntity);
 		}
-		uriMap.put(uri, cxEntity);
 	}
 
 }
