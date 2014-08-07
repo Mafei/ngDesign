@@ -10,6 +10,8 @@
  *******************************************************************************/
 package com.synflow.models.node;
 
+import java.util.Iterator;
+
 import com.google.common.base.Strings;
 
 /**
@@ -114,25 +116,13 @@ public class Node {
 	}
 
 	/**
-	 * Deletes this node: removes links between this node and parent and siblings.
+	 * Deletes this node and all its descendants (children, grand-children, etc).
 	 */
 	public void delete() {
-		if (parent != null) {
-			parent.remove(this);
+		if (hasChildren()) {
+			removeChildren();
 		}
-
-		// unlink from siblings
-		if (previous != null) {
-			previous.next = next;
-		}
-		if (next != null) {
-			next.previous = previous;
-		}
-
-		// remove outgoing links for additional safety (prevent accidental iteration)
-		this.parent = null;
-		this.previous = null;
-		this.next = null;
+		remove();
 	}
 
 	/**
@@ -208,18 +198,42 @@ public class Node {
 	}
 
 	/**
-	 * Removes links to the given child. Only does something if the child is the first/last child of
-	 * this node.
-	 * 
-	 * @param child
-	 *            a child node
+	 * Removes this node.
 	 */
-	private void remove(Node child) {
-		if (firstChild == child) {
-			firstChild = child.next;
+	public void remove() {
+		// remove incoming link from previous
+		if (previous != null) {
+			previous.next = next;
 		}
-		if (lastChild == child) {
-			lastChild = child.previous;
+
+		// remove incoming link from next
+		if (next != null) {
+			next.previous = previous;
+		}
+
+		// remove incoming links from parent
+		if (parent != null) {
+			if (parent.firstChild == this) {
+				parent.firstChild = next;
+			}
+
+			if (parent.lastChild == this) {
+				parent.lastChild = previous;
+			}
+		}
+
+		// remove outgoing links
+		parent = previous = next = null;
+	}
+
+	/**
+	 * Removes children recursively.
+	 */
+	void removeChildren() {
+		Iterator<Node> it = getChildren().iterator();
+		while (it.hasNext()) {
+			it.next().removeChildren();
+			it.remove();
 		}
 	}
 

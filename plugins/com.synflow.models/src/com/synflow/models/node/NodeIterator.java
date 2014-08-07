@@ -24,11 +24,6 @@ public class NodeIterator implements ListIterator<Node> {
 
 	private Node referenceNode;
 
-	public NodeIterator(NodeIterator it) {
-		currentNode = it.currentNode;
-		referenceNode = it.referenceNode;
-	}
-
 	public NodeIterator(Node node) {
 		this.referenceNode = node;
 	}
@@ -110,7 +105,8 @@ public class NodeIterator implements ListIterator<Node> {
 
 	@Override
 	public void remove() {
-		throw new UnsupportedOperationException();
+		currentNode.remove();
+		currentNode = null;
 	}
 
 	/**
