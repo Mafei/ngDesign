@@ -18,10 +18,17 @@ import static com.synflow.cx.CxConstants.NAME_SETUP_DEPRECATED;
 import static com.synflow.cx.validation.IssueCodes.ERR_MAIN_FUNCTION_BAD_TYPE;
 import static org.eclipse.xtext.validation.CheckType.NORMAL;
 
+import java.util.Set;
+
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
+import org.eclipse.xtext.util.Triple;
+import org.eclipse.xtext.util.Tuples;
 import org.eclipse.xtext.validation.Check;
 
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.CxEntity;
@@ -49,14 +56,45 @@ import com.synflow.models.util.Executable;
  */
 public class CxJavaValidator extends AbstractCxJavaValidator {
 
+	/**
+	 * stores already-registered issues (copy/paste from Xtext)
+	 */
+	private Set<Triple<EObject, EStructuralFeature, String>> accepted;
+
 	@Inject
 	private IInstantiator instantiator;
 
 	@Inject
 	private Typer typer;
 
+	@Override
+	public void acceptError(String message, EObject object, EStructuralFeature feature, int index,
+			String code, String... issueData) {
+		if (accepted.add(Tuples.create(object, feature, message))) {
+			super.acceptError(message, object, feature, index, code, issueData);
+		}
+	}
+
+	@Override
+	public void acceptInfo(String message, EObject object, EStructuralFeature feature, int index,
+			String code, String... issueData) {
+		if (accepted.add(Tuples.create(object, feature, message))) {
+			super.acceptInfo(message, object, feature, index, code, issueData);
+		}
+	}
+
+	@Override
+	public void acceptWarning(String message, EObject object, EStructuralFeature feature,
+			int index, String code, String... issueData) {
+		if (accepted.add(Tuples.create(object, feature, message))) {
+			super.acceptWarning(message, object, feature, index, code, issueData);
+		}
+	}
+
 	@Check(NORMAL)
 	public void checkModule(Module module) {
+		accepted = Sets.newHashSet();
+
 		EList<Diagnostic> errors = module.eResource().getErrors();
 		if (!errors.isEmpty()) {
 			// skip validation as long as the module has syntax errors or link errors
