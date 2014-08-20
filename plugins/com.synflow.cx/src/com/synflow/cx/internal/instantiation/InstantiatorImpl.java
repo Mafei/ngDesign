@@ -144,8 +144,14 @@ public class InstantiatorImpl implements IInstantiator {
 		// collect all entities (bundles and instantiable entities)
 		EClass type = Literals.CX_ENTITY;
 		for (IEObjectDescription objDesc : resourceDescriptions.getExportedObjectsByType(type)) {
+			// we normalize the URI because URIs of reference descriptions are normalized too
+			// note that 'normalized' by EMF means from resource to plugin
 			URI uri = resourceSet.getURIConverter().normalize(objDesc.getEObjectURI());
-			topUris.add(uri);
+
+			// filters out objects whose URI is platform:/plugin (they can never be 'top' URIs)
+			if (!uri.isPlatformPlugin()) {
+				topUris.add(uri);
+			}
 		}
 
 		// remove all entities that are instantiated
@@ -172,6 +178,8 @@ public class InstantiatorImpl implements IInstantiator {
 		}
 
 		// loads objects from topUris
+		// note that URIs in topUris must be normalized in the Xtext sense for this to work
+		// (platform:/plugin mapped to platform:/resource)
 		List<CxEntity> entities = new ArrayList<>(topUris.size());
 		for (URI uri : topUris) {
 			URI uriRes = uri.trimFragment();
