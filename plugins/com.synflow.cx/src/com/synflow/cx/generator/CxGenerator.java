@@ -14,12 +14,11 @@ import static com.synflow.cx.CxConstants.NAME_LOOP;
 import static com.synflow.cx.CxConstants.NAME_LOOP_DEPRECATED;
 import static com.synflow.cx.CxConstants.NAME_SETUP;
 import static com.synflow.cx.CxConstants.NAME_SETUP_DEPRECATED;
-import static com.synflow.models.util.SwitchUtil.DONE;
-import static com.synflow.models.util.SwitchUtil.visit;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.emf.common.util.URI;
@@ -36,13 +35,13 @@ import com.synflow.core.transformations.impl.StoreOnceTransformation;
 import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.Bundle;
 import com.synflow.cx.cx.CxEntity;
+import com.synflow.cx.cx.CxPackage;
 import com.synflow.cx.cx.Inst;
 import com.synflow.cx.cx.Module;
 import com.synflow.cx.cx.Network;
 import com.synflow.cx.cx.Task;
 import com.synflow.cx.cx.VarDecl;
 import com.synflow.cx.cx.Variable;
-import com.synflow.cx.cx.util.CxSwitch;
 import com.synflow.cx.instantiation.IInstantiator;
 import com.synflow.cx.internal.compiler.ActorTransformer;
 import com.synflow.cx.internal.compiler.CommentTranslator;
@@ -55,11 +54,11 @@ import com.synflow.cx.internal.scheduler.CycleScheduler;
 import com.synflow.cx.internal.scheduler.IfScheduler;
 import com.synflow.cx.internal.services.Typer;
 import com.synflow.models.dpn.Actor;
+import com.synflow.models.dpn.DPN;
 import com.synflow.models.dpn.Entity;
 import com.synflow.models.dpn.Instance;
 import com.synflow.models.dpn.Unit;
 import com.synflow.models.util.Executable;
-import com.synflow.models.util.Void;
 
 /**
  * This class defines a generator for Cx resources.
@@ -67,133 +66,6 @@ import com.synflow.models.util.Void;
  * @author Matthieu Wipliez
  */
 public class CxGenerator implements IGenerator {
-
-	/**
-	 * This class defines a switch that visits a Cx entity and transforms it to the entity given at
-	 * construction time.
-	 * 
-	 * @author Matthieu Wipliez
-	 *
-	 */
-	private class CxTransformer extends CxSwitch<Void> {
-
-		private Entity entity;
-
-		public CxTransformer(Entity entity) {
-			this.entity = entity;
-		}
-
-		@Override
-		public Void caseBundle(final Bundle bundle) {
-			transformBundle(bundle, (Unit) entity);
-			return DONE;
-		}
-
-		@Override
-		public Void caseInst(Inst inst) {
-			final Task task = inst.getTask();
-			if (task != null) {
-				Entity oldEntity = entity;
-				Instance instance = instantiator.getMapping(entity, inst);
-				entity = instance.getEntity();
-				doSwitch(task);
-				entity = oldEntity;
-			}
-			return DONE;
-		}
-
-		@Override
-		public Void caseNetwork(final Network network) {
-			return visit(this, network.getInstances());
-		}
-
-		@Override
-		public Void caseTask(final Task task) {
-			transformTask(task, (Actor) entity);
-			return DONE;
-		}
-
-		/**
-		 * Transforms the given bundle into a unit.
-		 * 
-		 * @param bundle
-		 *            Cx bundle
-		 * @param unit
-		 *            IR unit
-		 */
-		private void transformBundle(Bundle bundle, Unit unit) {
-			transformDeclarations(unit, bundle.getDecls());
-			new ProcedureTransformation(new LoadStoreReplacer()).doSwitch(unit);
-		}
-
-		/**
-		 * Transforms the given declarations (variables, procedures) to IR variables and procedures.
-		 * 
-		 * @param procedures
-		 *            a list of IR procedures that will be created
-		 * @param module
-		 *            a list of declarations
-		 */
-		private void transformDeclarations(Entity entity, List<VarDecl> variables) {
-			for (Variable variable : CxUtil.getStateVars(variables)) {
-				if (CxUtil.isFunction(variable)) {
-					if (CxUtil.isConstant(variable)) {
-						// visit constant functions
-						FunctionTransformer transformer = new FunctionTransformer(instantiator,
-								typer, entity);
-						transformer.doSwitch(variable);
-					}
-				} else {
-					// visit variables (they are automatically added to the entity by mapper)
-					instantiator.getMapping(entity, variable);
-				}
-			}
-		}
-
-		/**
-		 * Transforms the given task to an actor. Runs schedulers, transforms actor, beautifies FSM,
-		 * runs several transformations on the code.
-		 * 
-		 * @param task
-		 *            Cx task
-		 * @param actor
-		 *            IR actor
-		 */
-		private void transformTask(Task task, Actor actor) {
-			transformDeclarations(actor, task.getDecls());
-
-			// finds init and run functions
-			Variable setup = null;
-			Variable loop = null;
-			for (Variable function : CxUtil.getFunctions(task.getDecls())) {
-				String name = function.getName();
-				if (NAME_SETUP.equals(name) || NAME_SETUP_DEPRECATED.equals(name)) {
-					setup = function;
-				} else if (NAME_LOOP.equals(name) || NAME_LOOP_DEPRECATED.equals(name)) {
-					loop = function;
-				}
-			}
-
-			// schedules cycles, if statements, and transforms actor
-			CycleScheduler scheduler = new CycleScheduler(instantiator, actor);
-			scheduler.schedule(setup, loop);
-			new IfScheduler(instantiator, actor).visit();
-			new ActorTransformer(instantiator, typer, actor).visit();
-
-			// post-process FSM: rename states and actions
-			new FsmBeautifier().visit(actor);
-
-			// promotes local variables used over more than one cycle to state variables
-			// and replaces load/stores of local variables by use/assigns
-			new VariablePromoter(actor.getVariables()).visit(actor);
-			new ProcedureTransformation(new LoadStoreReplacer()).doSwitch(actor);
-
-			// apply store once transformation to scheduler and removes side effects
-			new SchedulerTransformation(new StoreOnceTransformation()).doSwitch(actor);
-			new SchedulerTransformation(new SideEffectRemover()).doSwitch(actor);
-		}
-
-	}
 
 	@Inject
 	private IInstantiator instantiator;
@@ -218,7 +90,26 @@ public class CxGenerator implements IGenerator {
 			instantiator.forEachMapping(cxEntity, new Executable<Entity>() {
 				@Override
 				public void exec(Entity entity) {
-					new CxTransformer(entity).doSwitch(cxEntity);
+					switch (cxEntity.eClass().getClassifierID()) {
+					case CxPackage.BUNDLE:
+						transformBundle((Bundle) cxEntity, (Unit) entity);
+						break;
+
+					case CxPackage.NETWORK:
+						// transforms inner tasks of the network
+						Iterable<Actor> actors = transformNetwork((Network) cxEntity, (DPN) entity);
+
+						// serializes all actors
+						for (Actor inner : actors) {
+							serialize(fsa, inner);
+						}
+						break;
+
+					case CxPackage.TASK:
+						transformTask((Task) cxEntity, (Actor) entity);
+						break;
+					}
+
 					serialize(fsa, entity);
 				}
 			});
@@ -282,6 +173,110 @@ public class CxGenerator implements IGenerator {
 		for (Entity entity : instantiator.getBuiltins()) {
 			serialize(fsa, entity);
 		}
+	}
+
+	/**
+	 * Transforms the given bundle into a unit.
+	 * 
+	 * @param bundle
+	 *            Cx bundle
+	 * @param unit
+	 *            IR unit
+	 */
+	private void transformBundle(Bundle bundle, Unit unit) {
+		transformDeclarations(unit, bundle.getDecls());
+		new ProcedureTransformation(new LoadStoreReplacer()).doSwitch(unit);
+	}
+
+	/**
+	 * Transforms the given declarations (variables, procedures) to IR variables and procedures.
+	 * 
+	 * @param procedures
+	 *            a list of IR procedures that will be created
+	 * @param module
+	 *            a list of declarations
+	 */
+	private void transformDeclarations(Entity entity, List<VarDecl> variables) {
+		for (Variable variable : CxUtil.getStateVars(variables)) {
+			if (CxUtil.isFunction(variable)) {
+				if (CxUtil.isConstant(variable)) {
+					// visit constant functions
+					FunctionTransformer transformer = new FunctionTransformer(instantiator, typer,
+							entity);
+					transformer.doSwitch(variable);
+				}
+			} else {
+				// visit variables (they are automatically added to the entity by mapper)
+				instantiator.getMapping(entity, variable);
+			}
+		}
+	}
+
+	/**
+	 * Calls {@link #transformTask(Task, Actor)} for each inner task of the given network, and
+	 * returns the actors that were transformed.
+	 * 
+	 * @param network
+	 *            a network
+	 * @param dpn
+	 *            the DPN corresponding to the network
+	 * @return an iterable over actors that correspond to inner tasks. May be empty.
+	 */
+	private Iterable<Actor> transformNetwork(Network network, DPN dpn) {
+		List<Actor> innerTasks = new ArrayList<>();
+		for (Inst inst : network.getInstances()) {
+			final Task task = inst.getTask();
+			if (task != null) {
+				Instance instance = instantiator.getMapping(dpn, inst);
+				Actor actor = (Actor) instance.getEntity();
+				transformTask(task, actor);
+				innerTasks.add(actor);
+			}
+		}
+		return innerTasks;
+	}
+
+	/**
+	 * Transforms the given task to an actor. Runs schedulers, transforms actor, beautifies FSM,
+	 * runs several transformations on the code.
+	 * 
+	 * @param task
+	 *            Cx task
+	 * @param actor
+	 *            IR actor
+	 */
+	private void transformTask(Task task, Actor actor) {
+		transformDeclarations(actor, task.getDecls());
+
+		// finds init and run functions
+		Variable setup = null;
+		Variable loop = null;
+		for (Variable function : CxUtil.getFunctions(task.getDecls())) {
+			String name = function.getName();
+			if (NAME_SETUP.equals(name) || NAME_SETUP_DEPRECATED.equals(name)) {
+				setup = function;
+			} else if (NAME_LOOP.equals(name) || NAME_LOOP_DEPRECATED.equals(name)) {
+				loop = function;
+			}
+		}
+
+		// schedules cycles, if statements, and transforms actor
+		CycleScheduler scheduler = new CycleScheduler(instantiator, actor);
+		scheduler.schedule(setup, loop);
+		new IfScheduler(instantiator, actor).visit();
+		new ActorTransformer(instantiator, typer, actor).visit();
+
+		// post-process FSM: rename states and actions
+		new FsmBeautifier().visit(actor);
+
+		// promotes local variables used over more than one cycle to state variables
+		// and replaces load/stores of local variables by use/assigns
+		new VariablePromoter(actor.getVariables()).visit(actor);
+		new ProcedureTransformation(new LoadStoreReplacer()).doSwitch(actor);
+
+		// apply store once transformation to scheduler and removes side effects
+		new SchedulerTransformation(new StoreOnceTransformation()).doSwitch(actor);
+		new SchedulerTransformation(new SideEffectRemover()).doSwitch(actor);
 	}
 
 }
