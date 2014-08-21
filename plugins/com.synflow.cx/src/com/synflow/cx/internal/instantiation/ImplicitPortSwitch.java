@@ -39,15 +39,18 @@ import com.synflow.models.util.Void;
  */
 public class ImplicitPortSwitch extends VoidCxSwitch {
 
+	private DPN dpn;
+
 	private Instance instance;
 
 	private InstantiatorImpl instantiator;
 
 	private ConnectionMaker maker;
 
-	public ImplicitPortSwitch(InstantiatorImpl instantiator, ConnectionMaker maker) {
+	public ImplicitPortSwitch(InstantiatorImpl instantiator, ConnectionMaker maker, DPN dpn) {
 		this.instantiator = instantiator;
 		this.maker = maker;
+		this.dpn = dpn;
 	}
 
 	@Override
@@ -59,6 +62,12 @@ public class ImplicitPortSwitch extends VoidCxSwitch {
 		}
 
 		return super.caseExpressionVariable(expr);
+	}
+
+	@Override
+	public Void caseInst(Inst inst) {
+		instance = instantiator.getMapping(dpn, inst);
+		return super.caseInst(inst);
 	}
 
 	@Override
@@ -83,22 +92,16 @@ public class ImplicitPortSwitch extends VoidCxSwitch {
 	 *            reference to a port in another instance or in the containing network
 	 * @return an endpoint
 	 */
-	private Endpoint getEndpoint(VarRef ref) {
+	private Endpoint getEndpoint(DPN dpn, VarRef ref) {
 		Variable cxPort = ref.getVariable();
-		Instance otherInst = maker.getInstance(ref);
+		Instance otherInst = maker.getInstance(dpn, ref);
 		if (otherInst == null) {
-			DPN dpn = instance.getDPN();
 			Port otherPort = instantiator.getMapping(dpn, cxPort);
 			return new Endpoint(dpn, otherPort);
 		} else {
 			Port otherPort = instantiator.getMapping(otherInst.getEntity(), cxPort);
 			return new Endpoint(otherInst, otherPort);
 		}
-	}
-
-	public void visitInst(Inst inst, Instance instance) {
-		this.instance = instance;
-		visit(this, inst.getTask());
 	}
 
 	private void visitPort(VarRef ref) {
@@ -109,7 +112,7 @@ public class ImplicitPortSwitch extends VoidCxSwitch {
 			INode node = NodeModelUtils.getNode(ref);
 			final String link = NodeModelUtils.getTokenText(node);
 
-			Endpoint otherEndpoint = getEndpoint(ref);
+			Endpoint otherEndpoint = getEndpoint(dpn, ref);
 			Port otherPort = otherEndpoint.getPort();
 			port = instantiator.getMapping(instance.getEntity(), otherPort);
 			if (port == null) {

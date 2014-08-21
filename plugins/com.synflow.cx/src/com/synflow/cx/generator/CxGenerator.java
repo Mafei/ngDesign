@@ -93,16 +93,10 @@ public class CxGenerator implements IGenerator {
 		public Void caseInst(Inst inst) {
 			final Task task = inst.getTask();
 			if (task != null) {
-				Instance instance = instantiator.getMapping(entity, inst);
 				Entity oldEntity = entity;
+				Instance instance = instantiator.getMapping(entity, inst);
 				entity = instance.getEntity();
-
-				instantiator.execute(instance.getEntity(), new Executable<Entity>() {
-					public void exec(Entity entity) {
-						doSwitch(task);
-					}
-				});
-
+				doSwitch(task);
 				entity = oldEntity;
 			}
 			return DONE;

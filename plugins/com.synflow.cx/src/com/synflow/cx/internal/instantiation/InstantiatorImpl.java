@@ -10,6 +10,8 @@
  *******************************************************************************/
 package com.synflow.cx.internal.instantiation;
 
+import static com.synflow.models.util.SwitchUtil.visit;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -71,8 +73,6 @@ public class InstantiatorImpl implements IInstantiator {
 
 	private InstantiatorData data;
 
-	private Entity entity;
-
 	@Inject
 	private EntityMapper entityMapper;
 
@@ -105,25 +105,11 @@ public class InstantiatorImpl implements IInstantiator {
 		maker.initialize(dpn);
 
 		// solves references to implicit ports
-		ImplicitPortSwitch visitor = new ImplicitPortSwitch(this, maker);
-		for (Inst inst : network.getInstances()) {
-			Instance instance = getMapping(inst);
-			visitor.visitInst(inst, instance);
-		}
+		ImplicitPortSwitch visitor = new ImplicitPortSwitch(this, maker, dpn);
+		visit(visitor, network.getInstances());
 
 		for (Connect connect : network.getConnects()) {
 			maker.makeConnection(dpn, connect);
-		}
-	}
-
-	@Override
-	public void execute(Entity entity, Executable<Entity> executable) {
-		Entity oldEntity = this.entity;
-		this.entity = entity;
-		try {
-			executable.exec(entity);
-		} finally {
-			this.entity = oldEntity;
 		}
 	}
 
@@ -202,7 +188,7 @@ public class InstantiatorImpl implements IInstantiator {
 
 		Collection<Entity> entities = data.getEntities(cxEntity);
 		for (Entity entity : entities) {
-			execute(entity, executable);
+			executable.exec(entity);
 		}
 	}
 
@@ -216,11 +202,6 @@ public class InstantiatorImpl implements IInstantiator {
 	@Override
 	public <T extends EObject, U extends EObject> U getMapping(Entity entity, T cxObj) {
 		return data.getMapping(entity, cxObj);
-	}
-
-	@Override
-	public <T extends EObject, U extends EObject> U getMapping(T cxObj) {
-		return data.getMapping(this.entity, cxObj);
 	}
 
 	@Override
@@ -256,11 +237,7 @@ public class InstantiatorImpl implements IInstantiator {
 		resource.getContents().add(entity);
 
 		// configure entity
-		execute(entity, new Executable<Entity>() {
-			public void exec(Entity entity) {
-				entityMapper.configureEntity(entity, info, ctx);
-			}
-		});
+		entityMapper.configureEntity(entity, info, ctx);
 
 		// add mapping, optionally add to builtins
 		data.associate(cxEntity, ctx, entity);
@@ -270,11 +247,7 @@ public class InstantiatorImpl implements IInstantiator {
 
 		// instantiate network
 		if (cxEntity instanceof Network) {
-			execute(entity, new Executable<Entity>() {
-				public void exec(Entity entity) {
-					instantiate((Network) cxEntity, ctx);
-				}
-			});
+			instantiate((Network) cxEntity, entity, ctx);
 		}
 
 		return entity;
@@ -288,11 +261,11 @@ public class InstantiatorImpl implements IInstantiator {
 	 * @param ctx
 	 *            instantiation context (hierarchical path, inherited properties)
 	 */
-	private void instantiate(Network network, InstantiationContext ctx) {
+	private void instantiate(Network network, Entity entity, InstantiationContext ctx) {
 		DPN dpn = (DPN) entity;
 		for (Inst inst : network.getInstances()) {
 			Instance instance = DpnFactory.eINSTANCE.createInstance(inst.getName());
-			putMapping(inst, instance);
+			putMapping(dpn, inst, instance);
 			dpn.add(instance);
 
 			InstantiationContext subCtx = new InstantiationContext(ctx, inst, instance);
@@ -316,11 +289,6 @@ public class InstantiatorImpl implements IInstantiator {
 	@Override
 	public <T extends EObject, U extends EObject> void putMapping(Entity entity, T cxObj, U irObj) {
 		data.putMapping(entity, cxObj, irObj);
-	}
-
-	@Override
-	public <T extends EObject, U extends EObject> void putMapping(T cxObj, U irObj) {
-		putMapping(entity, cxObj, irObj);
 	}
 
 	@Override

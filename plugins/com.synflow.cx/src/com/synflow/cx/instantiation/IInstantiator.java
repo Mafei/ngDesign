@@ -36,19 +36,8 @@ public interface IInstantiator {
 	void clearData();
 
 	/**
-	 * Sets the current entity to the given entity, calls the executable's exec method, and after
-	 * the method returns, restores the current entity to its previous value.
-	 * 
-	 * @param entity
-	 *            IR entity
-	 * @param executable
-	 *            an executable
-	 */
-	void execute(Entity entity, Executable<Entity> executable);
-
-	/**
 	 * Retrieves all IR entities associated to the given Cx entity, and for each <code>entity</code>
-	 * , calls <code>execute(entity, executable)</code>.
+	 * , calls <code>executable.exec(entity)</code>.
 	 * 
 	 * @param cxEntity
 	 *            Cx entity
@@ -78,16 +67,6 @@ public interface IInstantiator {
 	<T extends EObject, U extends EObject> U getMapping(Entity entity, T cxObj);
 
 	/**
-	 * Returns the IR object that corresponds to the given Cx object in the current entity (set by
-	 * {@link #forEachMapping(CxEntity, Executable)}).
-	 * 
-	 * @param cxObj
-	 *            a Cx object (entity, variable, port...)
-	 * @return the IR mapping
-	 */
-	<T extends EObject, U extends EObject> U getMapping(T cxObj);
-
-	/**
 	 * Returns the IR port that corresponds to the given reference.
 	 * 
 	 * @param entity
@@ -109,16 +88,6 @@ public interface IInstantiator {
 	 *            the IR object that corresponds to <code>cxObj</code> in the given entity
 	 */
 	<T extends EObject, U extends EObject> void putMapping(Entity entity, T cxObj, U irObj);
-
-	/**
-	 * Adds a mapping from the given Cx object to the given IR object in the current entity.
-	 * 
-	 * @param cxObj
-	 *            a Cx object (entity, variable, port...)
-	 * @param irObj
-	 *            the IR object that corresponds to <code>cxObj</code> in the current entity
-	 */
-	<T extends EObject, U extends EObject> void putMapping(T cxObj, U irObj);
 
 	/**
 	 * Updates the instantiation tree with entities of the given module. Most of the time this

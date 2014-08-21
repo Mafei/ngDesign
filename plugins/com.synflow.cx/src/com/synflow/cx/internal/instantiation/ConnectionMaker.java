@@ -108,7 +108,7 @@ public class ConnectionMaker {
 	private void checkPortAssociation(DPN dpn, Connect connect, int index, VarRef ref,
 			Port targetPort) {
 		// get port types
-		Port port = instantiator.getMapping(ref.getVariable());
+		Port port = instantiator.getMapping(dpn, ref.getVariable());
 		Type srcType = port.getType();
 		Type tgtType = targetPort.getType();
 
@@ -132,7 +132,7 @@ public class ConnectionMaker {
 		if (sourcePort.eContainer() == dpn) {
 			otherEndPoint = new Endpoint(dpn, sourcePort);
 		} else {
-			otherEndPoint = new Endpoint(getInstance(ref), sourcePort);
+			otherEndPoint = new Endpoint(getInstance(dpn, ref), sourcePort);
 		}
 
 		Endpoint thisEndPoint;
@@ -216,7 +216,7 @@ public class ConnectionMaker {
 	 *            a port reference
 	 * @return an instance
 	 */
-	Instance getInstance(VarRef ref) {
+	Instance getInstance(DPN dpn, VarRef ref) {
 		String link = NodeModelUtils.getTokenText(NodeModelUtils.getNode(ref));
 		QualifiedName name = converter.toQualifiedName(link);
 		if (name.getSegmentCount() == 1) {
@@ -228,7 +228,7 @@ public class ConnectionMaker {
 		IEObjectDescription eObjectDescription = scope.getSingleElement(qualifiedLinkName);
 
 		Inst inst = (Inst) eObjectDescription.getEObjectOrProxy();
-		return instantiator.getMapping(inst);
+		return instantiator.getMapping(dpn, inst);
 	}
 
 	/**
@@ -258,7 +258,7 @@ public class ConnectionMaker {
 				ports = dpn.getInputs();
 			}
 		} else {
-			instance = instantiator.getMapping(connect.getInstance());
+			instance = instantiator.getMapping(dpn, connect.getInstance());
 			name = instance.getName();
 			Entity entity = instance.getEntity();
 			if (TYPE_READS.equals(connect.getType())) {
@@ -285,12 +285,12 @@ public class ConnectionMaker {
 				break;
 			}
 
-			Port sourcePort = instantiator.getMapping(ref.getVariable());
+			Port sourcePort = instantiator.getMapping(dpn, ref.getVariable());
 
 			// removes sourcePort from portMap
 			// this is done for any combination of this/instance and reads/writes
 			// for ports other than (instance, input) and (dpn, output) this is a no-op
-			Instance sourceInst = getInstance(ref);
+			Instance sourceInst = getInstance(dpn, ref);
 			if (sourceInst == null) {
 				portMap.remove(dpn, sourcePort);
 			} else {

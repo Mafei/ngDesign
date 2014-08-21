@@ -169,7 +169,7 @@ public class IrBuilder {
 			return localMap.get(variable);
 		}
 
-		return instantiator.getMapping(variable);
+		return instantiator.getMapping(entity, variable);
 	}
 
 	public final Procedure getProcedure() {
@@ -184,7 +184,7 @@ public class IrBuilder {
 	 * @return the IR procedure that corresponds to the given function
 	 */
 	final Procedure getProcedure(Variable function) {
-		return instantiator.getMapping(function);
+		return instantiator.getMapping(entity, function);
 	}
 
 	/**
@@ -261,7 +261,7 @@ public class IrBuilder {
 	 * @param function
 	 */
 	final void setProcedure(Variable function) {
-		procedure = instantiator.getMapping(function);
+		procedure = instantiator.getMapping(entity, function);
 		blocks = procedure.getBlocks();
 	}
 

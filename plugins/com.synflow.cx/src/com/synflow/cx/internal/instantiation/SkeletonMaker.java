@@ -124,7 +124,7 @@ public class SkeletonMaker extends DpnSwitch<Void> {
 			entity.getOutputs().add(dpnPort);
 		}
 
-		instantiator.putMapping(port, dpnPort);
+		instantiator.putMapping(entity, port, dpnPort);
 	}
 
 	/**
@@ -141,7 +141,7 @@ public class SkeletonMaker extends DpnSwitch<Void> {
 		if (CxUtil.isFunction(variable)) {
 			Procedure procedure = eINSTANCE.createProcedure(name, lineNumber, type);
 			entity.getProcedures().add(procedure);
-			instantiator.putMapping(variable, procedure);
+			instantiator.putMapping(entity, variable, procedure);
 		} else {
 			boolean assignable = !CxUtil.isConstant(variable);
 
@@ -154,7 +154,7 @@ public class SkeletonMaker extends DpnSwitch<Void> {
 
 			// add to variables list of containing entity
 			entity.getVariables().add(var);
-			instantiator.putMapping(variable, var);
+			instantiator.putMapping(entity, variable, var);
 		}
 	}
 
