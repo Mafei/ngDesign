@@ -108,9 +108,10 @@ public class Typer extends CxSwitch<Type> {
 		}
 	}
 
+	private Entity entity;
+
 	@Inject
 	private IInstantiator instantiator;
-	private Entity entity;
 
 	@Override
 	public Type caseExpressionBinary(ExpressionBinary expression) {

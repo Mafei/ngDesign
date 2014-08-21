@@ -32,12 +32,13 @@ import com.google.common.collect.Iterables;
 import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.Branch;
 import com.synflow.cx.cx.CExpression;
+import com.synflow.cx.cx.CxPackage.Literals;
 import com.synflow.cx.cx.ExpressionBinary;
 import com.synflow.cx.cx.ExpressionCast;
 import com.synflow.cx.cx.ExpressionIf;
 import com.synflow.cx.cx.ExpressionUnary;
 import com.synflow.cx.cx.ExpressionVariable;
-import com.synflow.cx.cx.Network;
+import com.synflow.cx.cx.Inst;
 import com.synflow.cx.cx.StatementAssign;
 import com.synflow.cx.cx.StatementLoop;
 import com.synflow.cx.cx.StatementPrint;
@@ -48,13 +49,13 @@ import com.synflow.cx.cx.Task;
 import com.synflow.cx.cx.VarDecl;
 import com.synflow.cx.cx.VarRef;
 import com.synflow.cx.cx.Variable;
-import com.synflow.cx.cx.CxPackage.Literals;
 import com.synflow.cx.instantiation.IInstantiator;
 import com.synflow.cx.internal.AstUtil;
 import com.synflow.cx.internal.services.Typer;
 import com.synflow.cx.services.CxPrinter;
 import com.synflow.cx.services.Evaluator;
 import com.synflow.models.dpn.Entity;
+import com.synflow.models.dpn.Instance;
 import com.synflow.models.ir.IrFactory;
 import com.synflow.models.ir.OpBinary;
 import com.synflow.models.ir.OpUnary;
@@ -64,7 +65,6 @@ import com.synflow.models.ir.TypeBool;
 import com.synflow.models.ir.util.TypePrinter;
 import com.synflow.models.ir.util.TypeUtil;
 import com.synflow.models.ir.util.ValueUtil;
-import com.synflow.models.util.Executable;
 import com.synflow.models.util.Void;
 
 /**
@@ -214,8 +214,16 @@ public class TypeChecker extends Checker {
 	}
 
 	@Override
-	public Void caseNetwork(Network network) {
-		return visit(this, network.getInstances());
+	public Void caseInst(Inst inst) {
+		final Task task = inst.getTask();
+		if (task != null) {
+			Entity oldEntity = entity;
+			Instance instance = instantiator.getMapping(entity, inst);
+			entity = instance.getEntity();
+			doSwitch(task);
+			entity = oldEntity;
+		}
+		return DONE;
 	}
 
 	@Override
@@ -341,12 +349,7 @@ public class TypeChecker extends Checker {
 
 	@Override
 	public Void caseTask(final Task task) {
-		instantiator.forEachMapping(task, new Executable<Entity>() {
-			@Override
-			public void exec(Entity entity) {
-				visit(TypeChecker.this, CxUtil.getFunctions(task.getDecls()));
-			}
-		});
+		visit(TypeChecker.this, CxUtil.getFunctions(task.getDecls()));
 		return DONE;
 	}
 
