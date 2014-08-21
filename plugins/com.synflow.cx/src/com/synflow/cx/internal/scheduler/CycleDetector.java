@@ -29,6 +29,7 @@ import com.synflow.cx.cx.VarRef;
 import com.synflow.cx.cx.Variable;
 import com.synflow.cx.instantiation.IInstantiator;
 import com.synflow.cx.internal.services.VoidCxSwitch;
+import com.synflow.models.dpn.Actor;
 import com.synflow.models.node.Node;
 import com.synflow.models.util.Void;
 
@@ -45,8 +46,8 @@ public class CycleDetector extends VoidCxSwitch implements ICycleListener {
 	/**
 	 * Creates a new cycle detector with a new schedule.
 	 */
-	public CycleDetector(IInstantiator instantiator) {
-		schedule = new Schedule(instantiator);
+	public CycleDetector(IInstantiator instantiator, Actor actor) {
+		schedule = new Schedule(instantiator, actor);
 	}
 
 	/**

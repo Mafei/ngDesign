@@ -46,11 +46,9 @@ import com.synflow.cx.cx.VarRef;
 import com.synflow.cx.cx.Variable;
 import com.synflow.cx.instantiation.IInstantiator;
 import com.synflow.cx.internal.services.BoolCxSwitch;
-import com.synflow.cx.internal.services.Typer;
 import com.synflow.models.dpn.Entity;
 import com.synflow.models.dpn.InterfaceType;
 import com.synflow.models.dpn.Port;
-import com.synflow.models.ir.Type;
 import com.synflow.models.util.Executable;
 
 /**
@@ -84,9 +82,6 @@ public class ExpressionValidator extends AbstractDeclarativeValidator {
 	@Inject
 	private IInstantiator instantiator;
 
-	@Inject
-	private Typer typer;
-
 	@Check
 	public void checkCondition(Branch stmt) {
 		checkFunctionCalls(stmt.getCondition());
@@ -111,8 +106,8 @@ public class ExpressionValidator extends AbstractDeclarativeValidator {
 			return;
 		}
 
-		Type type = typer.getType(variable);
-		if (type != null && !type.isArray() && !variable.isInitialized()) {
+		boolean isArray = !variable.getDimensions().isEmpty();
+		if (!isArray && !variable.isInitialized()) {
 			error("The local variable '" + variable.getName() + "' may not have been initialized",
 					expr, Literals.EXPRESSION_VARIABLE__SOURCE, ERR_LOCAL_NOT_INITIALIZED);
 		}
@@ -132,7 +127,7 @@ public class ExpressionValidator extends AbstractDeclarativeValidator {
 			public void exec(Entity entity) {
 				Multiset<Port> portsRead = LinkedHashMultiset.create();
 				Multiset<Port> portsAvailable = LinkedHashMultiset.create();
-				computePortSets(portsAvailable, portsRead, expr);
+				computePortSets(entity, portsAvailable, portsRead, expr);
 
 				boolean hasMultipleReads = false;
 				for (Entry<Port> entry : portsRead.entrySet()) {
@@ -208,7 +203,8 @@ public class ExpressionValidator extends AbstractDeclarativeValidator {
 	 * @param condition
 	 *            the condition to visit
 	 */
-	public void computePortSets(Multiset<Port> available, Multiset<Port> read, CExpression condition) {
+	public void computePortSets(Entity entity, Multiset<Port> available, Multiset<Port> read,
+			CExpression condition) {
 		List<ExpressionVariable> exprs;
 		if (condition == null) {
 			return;
@@ -219,7 +215,7 @@ public class ExpressionValidator extends AbstractDeclarativeValidator {
 			VarRef ref = expr.getSource();
 			Variable variable = ref.getVariable();
 			if (CxUtil.isPort(variable)) {
-				Port port = instantiator.getPort(ref);
+				Port port = instantiator.getPort(entity, ref);
 				String prop = expr.getProperty();
 				if (PROP_AVAILABLE.equals(prop)) {
 					available.add(port);

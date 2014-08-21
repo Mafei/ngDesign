@@ -72,6 +72,7 @@ import com.synflow.cx.cx.Variable;
 import com.synflow.cx.cx.util.CxSwitch;
 import com.synflow.cx.instantiation.IInstantiator;
 import com.synflow.cx.services.Evaluator;
+import com.synflow.models.dpn.Entity;
 import com.synflow.models.dpn.Port;
 import com.synflow.models.ir.IrFactory;
 import com.synflow.models.ir.OpBinary;
@@ -109,6 +110,7 @@ public class Typer extends CxSwitch<Type> {
 
 	@Inject
 	private IInstantiator instantiator;
+	private Entity entity;
 
 	@Override
 	public Type caseExpressionBinary(ExpressionBinary expression) {
@@ -308,7 +310,7 @@ public class Typer extends CxSwitch<Type> {
 	public Type caseVarRef(VarRef ref) {
 		Variable variable = ref.getVariable();
 		if (CxUtil.isPort(variable)) {
-			Port port = instantiator.getPort(ref);
+			Port port = instantiator.getPort(entity, ref);
 			return port.getType();
 		}
 
@@ -331,8 +333,14 @@ public class Typer extends CxSwitch<Type> {
 	 *            an AST node
 	 * @return the type of the given object
 	 */
-	public Type getType(EObject eObject) {
-		return doSwitch(eObject);
+	public Type getType(Entity entity, EObject eObject) {
+		Entity oldEntity = this.entity;
+		this.entity = entity;
+		try {
+			return doSwitch(eObject);
+		} finally {
+			this.entity = oldEntity;
+		}
 	}
 
 	/**
@@ -348,9 +356,9 @@ public class Typer extends CxSwitch<Type> {
 			return null;
 		}
 
-		Type type = getType(it.next());
+		Type type = doSwitch(it.next());
 		while (it.hasNext()) {
-			type = TypeUtil.getLargest(type, getType(it.next()));
+			type = TypeUtil.getLargest(type, doSwitch(it.next()));
 		}
 
 		return type;

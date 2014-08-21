@@ -114,7 +114,7 @@ public class SkeletonMaker extends DpnSwitch<Void> {
 
 	private void transformPort(final Entity entity, final Variable port) {
 		InterfaceType ifType = CxUtil.getInterface(port);
-		Type type = typer.doSwitch(port);
+		Type type = typer.getType(entity, port);
 		String name = port.getName();
 
 		Port dpnPort = DpnFactory.eINSTANCE.createPort(type, name, ifType);
@@ -135,7 +135,7 @@ public class SkeletonMaker extends DpnSwitch<Void> {
 	 */
 	private void transformVariable(Entity entity, Variable variable) {
 		int lineNumber = getStartLine(variable);
-		Type type = typer.doSwitch(variable);
+		Type type = typer.getType(entity, variable);
 		String name = variable.getName();
 
 		if (CxUtil.isFunction(variable)) {

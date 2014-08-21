@@ -116,7 +116,8 @@ public class InstantiatorImpl implements IInstantiator {
 		}
 	}
 
-	private void execute(Entity entity, Executable<Entity> executable) {
+	@Override
+	public void execute(Entity entity, Executable<Entity> executable) {
 		Entity oldEntity = this.entity;
 		this.entity = entity;
 		try {
@@ -223,14 +224,14 @@ public class InstantiatorImpl implements IInstantiator {
 	}
 
 	@Override
-	public Port getPort(VarRef refOrCopyOfRef) {
+	public Port getPort(Entity entity, VarRef refOrCopyOfRef) {
 		final VarRef ref = CopyOf.getOriginal(refOrCopyOfRef);
 
 		// first try port in named task/network
-		Port port = getMapping(ref.getVariable());
+		Port port = getMapping(entity, ref.getVariable());
 		if (port == null) {
 			// otherwise get mapping of reference (anonymous task)
-			port = getMapping(ref);
+			port = getMapping(entity, ref);
 		}
 		return port;
 	}

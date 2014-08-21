@@ -36,6 +36,7 @@ import com.google.inject.Inject;
 import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.Block;
 import com.synflow.cx.cx.CExpression;
+import com.synflow.cx.cx.CxPackage.Literals;
 import com.synflow.cx.cx.ExpressionVariable;
 import com.synflow.cx.cx.Instantiable;
 import com.synflow.cx.cx.Module;
@@ -50,11 +51,8 @@ import com.synflow.cx.cx.TypeDecl;
 import com.synflow.cx.cx.TypeGen;
 import com.synflow.cx.cx.Value;
 import com.synflow.cx.cx.Variable;
-import com.synflow.cx.cx.CxPackage.Literals;
 import com.synflow.cx.internal.services.BoolCxSwitch;
-import com.synflow.cx.internal.services.Typer;
 import com.synflow.cx.services.Evaluator;
-import com.synflow.models.ir.Type;
 import com.synflow.models.ir.util.ValueUtil;
 
 /**
@@ -93,8 +91,8 @@ public class StructuralValidator extends AbstractDeclarativeValidator {
 	@Inject
 	private IScopeProvider scopeProvider;
 
-	@Inject
-	private Typer typer;
+	// @Inject
+	// private Typer typer;
 
 	@Check
 	public void checkArrayMultiDimPowerOfTwo(Variable variable) {
@@ -102,21 +100,22 @@ public class StructuralValidator extends AbstractDeclarativeValidator {
 			return;
 		}
 
-		Type type = typer.getType(variable);
-		if (type == null) {
-			return;
-		}
-
-		int dimensions = Typer.getNumDimensions(type);
-		if (dimensions >= 2) {
-			// for (int dim : ((TypeArray) type).getDimensions()) {
-			// if (!ValueUtil.isPowerOfTwo(dim)) {
-			// error("Multi-dimensional arrays must have dimensions that are power-of-two",
-			// variable, Literals.VARIABLE__DIMENSIONS,
-			// ERR_ARRAY_MULTI_NON_POWER_OF_TWO);
-			// }
-			// }
-		}
+		// TODO we need an entity here, this check should be moved elsewhere
+		// Type type = typer.getType(variable);
+		// if (type == null) {
+		// return;
+		// }
+		//
+		// int dimensions = Typer.getNumDimensions(type);
+		// if (dimensions >= 2) {
+		// for (int dim : ((TypeArray) type).getDimensions()) {
+		// if (!ValueUtil.isPowerOfTwo(dim)) {
+		// error("Multi-dimensional arrays must have dimensions that are power-of-two",
+		// variable, Literals.VARIABLE__DIMENSIONS,
+		// ERR_ARRAY_MULTI_NON_POWER_OF_TWO);
+		// }
+		// }
+		// }
 	}
 
 	@Check

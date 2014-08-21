@@ -34,14 +34,11 @@ import com.synflow.models.node.Node;
  */
 public class ScheduleFsm extends Schedule {
 
-	private Actor actor;
-
 	/**
 	 * Creates a new empty schedule that will use the given actor.
 	 */
 	public ScheduleFsm(IInstantiator instantiator, Actor actor) {
-		super(instantiator);
-		this.actor = actor;
+		super(instantiator, actor);
 
 		setNode(new Node());
 

@@ -174,8 +174,8 @@ public class FunctionTransformer extends CxSwitch<EObject> implements Transforme
 
 	@Override
 	public Expression caseExpressionCast(ExpressionCast expression) {
-		Type targetType = typer.getType(expression.getType());
-		Type sourceType = typer.getType(expression.getExpression());
+		Type targetType = typer.getType(builder.entity, expression.getType());
+		Type sourceType = typer.getType(builder.entity, expression.getExpression());
 		Expression expr = transformExpr(expression.getExpression());
 
 		return eINSTANCE.cast(targetType, sourceType, expr);
@@ -204,7 +204,8 @@ public class FunctionTransformer extends CxSwitch<EObject> implements Transforme
 		builder.add(block);
 
 		// update target if necessary
-		Var target = builder.createVar(lineNumber, typer.getType(expression), "tmp_if");
+		Type type = typer.getType(builder.entity, expression);
+		Var target = builder.createVar(lineNumber, type, "tmp_if");
 
 		// transforms "then" and "else" expressions
 		builder.setBlocks(block.getThenBlocks());

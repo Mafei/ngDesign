@@ -157,7 +157,7 @@ public class ActorBuilder extends IrBuilder {
 	 * @return an IR Var
 	 */
 	final Var getPatternVar(Pattern pattern, VarRef ref) {
-		Port port = instantiator.getPort(ref);
+		Port port = instantiator.getPort(entity, ref);
 		if (!pattern.contains(port)) {
 			pattern.add(port);
 		}
@@ -197,7 +197,7 @@ public class ActorBuilder extends IrBuilder {
 
 		// add load
 		Variable variable = ref.getVariable();
-		Type type = typer.getType(variable);
+		Type type = typer.getType(entity, variable);
 		Var target = createVar(lineNumber, type, "local_" + variable.getName());
 		InstLoad load = eINSTANCE.createInstLoad(lineNumber, target, var);
 		add(load);

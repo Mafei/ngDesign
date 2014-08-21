@@ -147,7 +147,7 @@ public class IrBuilder {
 	 */
 	private Var createVar(Variable variable) {
 		int lineNumber = getStartLine(variable);
-		Type type = typer.getType(variable);
+		Type type = typer.getType(entity, variable);
 		String name = variable.getName();
 		boolean assignable = !CxUtil.isConstant(variable);
 

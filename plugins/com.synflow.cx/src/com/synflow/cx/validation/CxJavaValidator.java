@@ -44,6 +44,7 @@ import com.synflow.cx.internal.scheduler.CycleDetector;
 import com.synflow.cx.internal.services.Typer;
 import com.synflow.cx.internal.validation.NetworkChecker;
 import com.synflow.cx.internal.validation.TypeChecker;
+import com.synflow.models.dpn.Actor;
 import com.synflow.models.dpn.DPN;
 import com.synflow.models.dpn.Entity;
 import com.synflow.models.util.Executable;
@@ -119,7 +120,8 @@ public class CxJavaValidator extends AbstractCxJavaValidator {
 					}
 
 					// check types
-					new TypeChecker(CxJavaValidator.this, instantiator, typer).doSwitch(cxEntity);
+					new TypeChecker(CxJavaValidator.this, instantiator, typer, entity)
+							.doSwitch(cxEntity);
 
 					if (cxEntity instanceof Instantiable) {
 						printErrors((Instantiable) cxEntity);
@@ -198,7 +200,7 @@ public class CxJavaValidator extends AbstractCxJavaValidator {
 			instantiator.forEachMapping(task, new Executable<Entity>() {
 				@Override
 				public void exec(Entity entity) {
-					if (new CycleDetector(instantiator).hasCycleBreaks(run)) {
+					if (new CycleDetector(instantiator, (Actor) entity).hasCycleBreaks(run)) {
 						String message = "A combinational task must not have cycle breaks";
 						error(message, run, null, -1);
 					}

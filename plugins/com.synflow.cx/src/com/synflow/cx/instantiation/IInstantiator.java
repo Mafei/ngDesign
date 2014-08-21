@@ -36,14 +36,25 @@ public interface IInstantiator {
 	void clearData();
 
 	/**
-	 * For each IR entity associated to the given Cx entity, calls the executable. The instantiator
-	 * sets the current entity to the entity given to the executable's exec method before calling
-	 * it.
+	 * Sets the current entity to the given entity, calls the executable's exec method, and after
+	 * the method returns, restores the current entity to its previous value.
+	 * 
+	 * @param entity
+	 *            IR entity
+	 * @param executable
+	 *            an executable
+	 */
+	void execute(Entity entity, Executable<Entity> executable);
+
+	/**
+	 * Retrieves all IR entities associated to the given Cx entity, and for each <code>entity</code>
+	 * , calls <code>execute(entity, executable)</code>.
 	 * 
 	 * @param cxEntity
 	 *            Cx entity
 	 * @param executable
 	 *            an executable
+	 * @see #execute(Entity, Executable)
 	 */
 	void forEachMapping(CxEntity cxEntity, Executable<Entity> executable);
 
@@ -79,11 +90,13 @@ public interface IInstantiator {
 	/**
 	 * Returns the IR port that corresponds to the given reference.
 	 * 
+	 * @param entity
+	 *            the entity in which the mapping exists
 	 * @param ref
 	 *            a reference to a Cx port
 	 * @return an IR port
 	 */
-	Port getPort(VarRef ref);
+	Port getPort(Entity entity, VarRef ref);
 
 	/**
 	 * Adds a mapping from the given Cx object to the given IR object in the given entity.

@@ -78,7 +78,7 @@ public class ActorTransformer extends FunctionTransformer {
 		List<CExpression> arguments = enter.getParameters();
 		Iterator<CExpression> it = arguments.iterator();
 		for (Variable variable : function.getParameters()) {
-			Type type = typer.getType(variable);
+			Type type = typer.getType(builder.entity, variable);
 			Var var = builder.createVar(lineNumber, type, variable.getName());
 			builder.put(variable, var);
 

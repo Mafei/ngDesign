@@ -76,19 +76,23 @@ import com.synflow.models.util.Void;
  */
 public class TypeChecker extends Checker {
 
+	private Entity entity;
+
 	private final IInstantiator instantiator;
 
 	private final Typer typer;
 
-	public TypeChecker(ValidationMessageAcceptor acceptor, IInstantiator instantiator, Typer typer) {
+	public TypeChecker(ValidationMessageAcceptor acceptor, IInstantiator instantiator, Typer typer,
+			Entity entity) {
 		super(acceptor);
 		this.instantiator = instantiator;
 		this.typer = typer;
+		this.entity = entity;
 	}
 
 	@Override
 	public Void caseBranch(Branch stmt) {
-		Type typeExpr = typer.getType(stmt.getCondition());
+		Type typeExpr = typer.getType(entity, stmt.getCondition());
 		checkAssign(IrFactory.eINSTANCE.createTypeBool(), typeExpr, stmt,
 				Literals.BRANCH__CONDITION);
 
@@ -109,13 +113,13 @@ public class TypeChecker extends Checker {
 		doSwitch(e2);
 
 		// get types
-		Type t1 = typer.getType(e1);
-		Type t2 = typer.getType(e2);
+		Type t1 = typer.getType(entity, e1);
+		Type t2 = typer.getType(entity, e2);
 		if (t1 == null || t2 == null) {
 			return DONE;
 		}
 
-		Type type = typer.getType(expression);
+		Type type = typer.getType(entity, expression);
 		if (type == null) {
 			error("The operator " + op.getText() + " is undefined for the argument types "
 					+ new TypePrinter().toString(t1) + " and " + new TypePrinter().toString(t2),
@@ -159,7 +163,7 @@ public class TypeChecker extends Checker {
 
 	@Override
 	public Void caseExpressionIf(ExpressionIf expr) {
-		Type typeExpr = typer.getType(expr.getCondition());
+		Type typeExpr = typer.getType(entity, expr.getCondition());
 		if (!(typeExpr instanceof TypeBool)) {
 			error("Type mismatch: cannot convert from " + new TypePrinter().toString(typeExpr)
 					+ " to bool", expr, Literals.EXPRESSION_IF__CONDITION, ERR_TYPE_MISMATCH);
@@ -179,11 +183,11 @@ public class TypeChecker extends Checker {
 		// check sub expressions
 		doSwitch(subExpr);
 
-		if (typer.getType(subExpr) == null) {
+		if (typer.getType(entity, subExpr) == null) {
 			return DONE;
 		}
 
-		Type type = typer.getType(expression);
+		Type type = typer.getType(entity, expression);
 		if (type == null) {
 			error("The operator " + op.getText() + " is undefined for the argument type "
 					+ new TypePrinter().toString(type), expression, null, INSIGNIFICANT_INDEX);
@@ -235,7 +239,7 @@ public class TypeChecker extends Checker {
 		}
 
 		// compute type of variable
-		Type targetType = typer.getType(ref);
+		Type targetType = typer.getType(entity, ref);
 		if (targetType == null) {
 			return DONE;
 		}
@@ -258,14 +262,15 @@ public class TypeChecker extends Checker {
 
 		// check type
 		CExpression value = AstUtil.getAssignValue(stmt);
-		checkAssign(targetType, typer.getType(value), stmt, Literals.STATEMENT_ASSIGN__VALUE);
+		checkAssign(targetType, typer.getType(entity, value), stmt,
+				Literals.STATEMENT_ASSIGN__VALUE);
 
 		return DONE;
 	}
 
 	@Override
 	public Void caseStatementLoop(StatementLoop stmt) {
-		Type typeExpr = typer.getType(stmt.getCondition());
+		Type typeExpr = typer.getType(entity, stmt.getCondition());
 		checkAssign(IrFactory.eINSTANCE.createTypeBool(), typeExpr, stmt,
 				Literals.STATEMENT_LOOP__CONDITION);
 
@@ -277,7 +282,7 @@ public class TypeChecker extends Checker {
 		for (CExpression expr : stmt.getArgs()) {
 			doSwitch(expr);
 
-			Type type = typer.getType(expr);
+			Type type = typer.getType(entity, expr);
 			if (type != null && type.isVoid()) {
 				error("Type mismatch: cannot print void", expr, null, ERR_TYPE_MISMATCH);
 			}
@@ -289,7 +294,7 @@ public class TypeChecker extends Checker {
 	@Override
 	public Void caseStatementReturn(StatementReturn stmt) {
 		Variable function = getContainerOfType(stmt, Variable.class);
-		Type target = typer.getType(function);
+		Type target = typer.getType(entity, function);
 
 		CExpression value = stmt.getValue();
 		if (value == null) {
@@ -298,7 +303,8 @@ public class TypeChecker extends Checker {
 						+ new TypePrinter().toString(target), stmt, null, ERR_TYPE_MISMATCH);
 			}
 		} else {
-			checkAssign(target, typer.getType(value), stmt, Literals.STATEMENT_RETURN__VALUE);
+			checkAssign(target, typer.getType(entity, value), stmt,
+					Literals.STATEMENT_RETURN__VALUE);
 		}
 
 		return DONE;
@@ -308,14 +314,14 @@ public class TypeChecker extends Checker {
 	public Void caseStatementVariable(StatementVariable stmt) {
 		int index = 0;
 		for (Variable variable : stmt.getVariables()) {
-			Type typeVar = typer.getType(variable);
+			Type typeVar = typer.getType(entity, variable);
 			EObject value = variable.getValue();
 			if (value != null) {
 				// type check of value
 				doSwitch(value);
 
 				// check assignment
-				checkAssign(typeVar, typer.getType(value), stmt,
+				checkAssign(typeVar, typer.getType(entity, value), stmt,
 						Literals.STATEMENT_VARIABLE__VARIABLES, index);
 			}
 			index++;
@@ -326,8 +332,8 @@ public class TypeChecker extends Checker {
 
 	@Override
 	public Void caseStatementWrite(StatementWrite stmt) {
-		Type typePort = typer.getType(stmt.getPort());
-		Type typeExpr = typer.getType(stmt.getValue());
+		Type typePort = typer.getType(entity, stmt.getPort());
+		Type typeExpr = typer.getType(entity, stmt.getValue());
 		checkAssign(typePort, typeExpr, stmt, Literals.STATEMENT_WRITE__VALUE);
 
 		return visit(this, stmt.getValue());
@@ -372,7 +378,7 @@ public class TypeChecker extends Checker {
 	}
 
 	public void checkBitSelect(ExpressionVariable expr) {
-		Type type = typer.getType(expr.getSource());
+		Type type = typer.getType(entity, expr.getSource());
 		checkArrayAccess(expr, type, expr.getIndexes());
 	}
 
@@ -444,7 +450,7 @@ public class TypeChecker extends Checker {
 		Iterable<Type> types = Iterables.transform(arguments, new Function<CExpression, Type>() {
 			@Override
 			public Type apply(CExpression expression) {
-				return typer.getType(expression);
+				return typer.getType(entity, expression);
 			}
 		});
 
@@ -454,7 +460,7 @@ public class TypeChecker extends Checker {
 			Iterator<Type> itT = types.iterator();
 			boolean hasErrors = false;
 			while (itV.hasNext() && itT.hasNext()) {
-				Type target = typer.getType(itV.next());
+				Type target = typer.getType(entity, itV.next());
 				Type source = itT.next();
 				if (target == null || source == null) {
 					continue;

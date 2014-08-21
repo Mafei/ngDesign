@@ -20,6 +20,7 @@ import com.synflow.cx.cx.StatementWrite;
 import com.synflow.cx.cx.VarRef;
 import com.synflow.cx.instantiation.IInstantiator;
 import com.synflow.models.dpn.Action;
+import com.synflow.models.dpn.Actor;
 import com.synflow.models.dpn.DpnFactory;
 import com.synflow.models.dpn.Pattern;
 import com.synflow.models.dpn.Port;
@@ -35,6 +36,8 @@ import com.synflow.models.util.Void;
  */
 public class Schedule {
 
+	protected final Actor actor;
+
 	private final IInstantiator instantiator;
 
 	private ICycleListener listener;
@@ -43,8 +46,9 @@ public class Schedule {
 
 	private boolean usePeek;
 
-	public Schedule(IInstantiator instantiator) {
+	public Schedule(IInstantiator instantiator, Actor actor) {
 		this.instantiator = instantiator;
+		this.actor = actor;
 		node = new Node(DpnFactory.eINSTANCE.createActionEmpty());
 	}
 
@@ -55,7 +59,7 @@ public class Schedule {
 	 *            an existing schedule
 	 */
 	public Schedule(Schedule schedule) {
-		this(schedule.instantiator);
+		this(schedule.instantiator, schedule.actor);
 		DpnFactory.eINSTANCE.addPatterns(getAction(), schedule.getAction());
 		this.listener = schedule.listener;
 	}
@@ -128,7 +132,7 @@ public class Schedule {
 	 *            reference to an input port
 	 */
 	public void read(VarRef ref) {
-		Port port = instantiator.getPort(ref);
+		Port port = instantiator.getPort(actor, ref);
 		if (hasBeenRead(port)) {
 			startNewCycle();
 		}
@@ -209,7 +213,7 @@ public class Schedule {
 	 */
 	public void write(Switch<Void> voidSwitch, StatementWrite stmt) {
 		// first check for existing writes
-		Port port = instantiator.getPort(stmt.getPort());
+		Port port = instantiator.getPort(actor, stmt.getPort());
 		if (hasBeenWritten(port)) {
 			startNewCycle();
 		}

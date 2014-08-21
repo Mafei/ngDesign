@@ -56,6 +56,7 @@ import com.synflow.cx.internal.scheduler.IfScheduler;
 import com.synflow.cx.internal.services.Typer;
 import com.synflow.models.dpn.Actor;
 import com.synflow.models.dpn.Entity;
+import com.synflow.models.dpn.Instance;
 import com.synflow.models.dpn.Unit;
 import com.synflow.models.util.Executable;
 import com.synflow.models.util.Void;
@@ -90,7 +91,21 @@ public class CxGenerator implements IGenerator {
 
 		@Override
 		public Void caseInst(Inst inst) {
-			return visit(this, inst.getTask());
+			final Task task = inst.getTask();
+			if (task != null) {
+				Instance instance = instantiator.getMapping(entity, inst);
+				Entity oldEntity = entity;
+				entity = instance.getEntity();
+
+				instantiator.execute(instance.getEntity(), new Executable<Entity>() {
+					public void exec(Entity entity) {
+						doSwitch(task);
+					}
+				});
+
+				entity = oldEntity;
+			}
+			return DONE;
 		}
 
 		@Override
@@ -136,7 +151,7 @@ public class CxGenerator implements IGenerator {
 					}
 				} else {
 					// visit variables (they are automatically added to the entity by mapper)
-					instantiator.getMapping(variable);
+					instantiator.getMapping(entity, variable);
 				}
 			}
 		}

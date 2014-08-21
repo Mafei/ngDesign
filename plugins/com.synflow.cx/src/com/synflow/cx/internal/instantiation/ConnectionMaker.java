@@ -105,7 +105,7 @@ public class ConnectionMaker {
 		}
 	}
 
-	private void checkPortAssociation(Connect connect, Instance instance, int index, VarRef ref,
+	private void checkPortAssociation(DPN dpn, Connect connect, int index, VarRef ref,
 			Port targetPort) {
 		// get port types
 		Port port = instantiator.getMapping(ref.getVariable());
@@ -118,7 +118,7 @@ public class ConnectionMaker {
 		checkAssign(srcName, srcType, tgtType, connect, Literals.CONNECT__PORTS, index);
 
 		// check ports have the same interface type
-		Port sourcePort = instantiator.getPort(ref);
+		Port sourcePort = instantiator.getPort(dpn, ref);
 		if (sourcePort.getInterface() != targetPort.getInterface()) {
 			addError(new ErrorMarker("Port mismatch: incompatible interface type between "
 					+ srcName + " and '" + targetPort.getName() + "'", connect,
@@ -300,7 +300,7 @@ public class ConnectionMaker {
 			Port targetPort = it.next();
 			targetPorts.add(targetPort);
 
-			checkPortAssociation(connect, instance, index, ref, targetPort);
+			checkPortAssociation(dpn, connect, index, ref, targetPort);
 			index++;
 
 			connect(dpn, connect, instance, ref, sourcePort, targetPort);
