@@ -19,23 +19,15 @@ import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.xtext.naming.IQualifiedNameConverter;
-import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
-import org.eclipse.xtext.resource.IEObjectDescription;
-import org.eclipse.xtext.scoping.IScope;
-import org.eclipse.xtext.scoping.IScopeProvider;
 
-import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.inject.Inject;
-import com.synflow.cx.cx.CxPackage;
 import com.synflow.cx.cx.Connect;
-import com.synflow.cx.cx.Inst;
+import com.synflow.cx.cx.CxPackage.Literals;
 import com.synflow.cx.cx.Network;
 import com.synflow.cx.cx.VarRef;
-import com.synflow.cx.cx.CxPackage.Literals;
 import com.synflow.cx.instantiation.IInstantiator;
 import com.synflow.cx.internal.ErrorMarker;
 import com.synflow.models.dpn.Connection;
@@ -46,7 +38,6 @@ import com.synflow.models.dpn.Entity;
 import com.synflow.models.dpn.Instance;
 import com.synflow.models.dpn.Port;
 import com.synflow.models.ir.Type;
-import com.synflow.models.ir.util.IrUtil;
 import com.synflow.models.ir.util.TypePrinter;
 import com.synflow.models.ir.util.TypeUtil;
 
@@ -56,10 +47,12 @@ import com.synflow.models.ir.util.TypeUtil;
  * @author Matthieu Wipliez
  * 
  */
-public class ConnectionMaker {
+public class ExplicitConnector {
+
+	private DPN dpn;
 
 	@Inject
-	private IQualifiedNameConverter converter;
+	private ConnectorHelper helper;
 
 	@Inject
 	private IInstantiator instantiator;
@@ -68,14 +61,7 @@ public class ConnectionMaker {
 	 * A map whose keys are Instance or DPN, and whose values are ports that can be written to
 	 * (input ports for instance, output ports for DPN).
 	 */
-	private final Multimap<EObject, Port> portMap;
-
-	@Inject
-	private IScopeProvider scopeProvider;
-
-	public ConnectionMaker() {
-		portMap = LinkedHashMultimap.create();
-	}
+	private Multimap<EObject, Port> portMap;
 
 	private void addError(ErrorMarker marker) {
 		Network network = (Network) marker.getSource().eContainer();
@@ -105,8 +91,7 @@ public class ConnectionMaker {
 		}
 	}
 
-	private void checkPortAssociation(DPN dpn, Connect connect, int index, VarRef ref,
-			Port targetPort) {
+	private void checkPortAssociation(Connect connect, int index, VarRef ref, Port targetPort) {
 		// get port types
 		Port port = instantiator.getMapping(dpn, ref.getVariable());
 		Type srcType = port.getType();
@@ -126,13 +111,13 @@ public class ConnectionMaker {
 		}
 	}
 
-	private void connect(DPN dpn, Connect connect, Instance instance, VarRef ref, Port sourcePort,
+	private void connect(Connect connect, Instance instance, VarRef ref, Port sourcePort,
 			Port targetPort) {
 		Endpoint otherEndPoint;
 		if (sourcePort.eContainer() == dpn) {
 			otherEndPoint = new Endpoint(dpn, sourcePort);
 		} else {
-			otherEndPoint = new Endpoint(getInstance(dpn, ref), sourcePort);
+			otherEndPoint = new Endpoint(helper.getInstance(dpn, ref), sourcePort);
 		}
 
 		Endpoint thisEndPoint;
@@ -152,100 +137,19 @@ public class ConnectionMaker {
 		dpn.getGraph().add(conn);
 	}
 
-	/**
-	 * Creates a new port from the given parameters, and adds a connection to the DPN associated
-	 * with the network containing the instance.
-	 * 
-	 * @param link
-	 *            link
-	 * @param instance
-	 *            an instance
-	 * @param otherPort
-	 *            IR port
-	 * @param ref
-	 *            reference to the port
-	 * @return a new IR port
-	 */
-	Port getConnectedPort(String link, Instance instance, Endpoint otherEndPoint) {
-		boolean isDpnPort = !otherEndPoint.hasInstance();
+	public void connect(Multimap<EObject, Port> portMap, Network network, DPN dpn) {
+		this.portMap = portMap;
+		this.dpn = dpn;
 
-		// create connection
-		DPN dpn = instance.getDPN();
-		Port otherPort = otherEndPoint.getPort();
-		boolean isInput = IrUtil.isInput(otherPort);
-
-		// compute otherEndPoint and portName
-		Port thisPort = IrUtil.copy(otherPort);
-		if (isDpnPort) {
-			// this port is defined in this instance or containing netwok
-			String portName = dpn.getSimpleName() + "_" + otherPort.getName();
-			thisPort.setName(portName);
-		} else {
-			// this port is defined by another instance
-			String portName = otherEndPoint.getInstance().getName() + "_" + otherPort.getName();
-			thisPort.setName(portName);
-
-			// if this is an input port, remove it from the port map
-			if (isInput) {
-				portMap.remove(otherEndPoint.getInstance(), otherPort);
-			}
+		for (Connect connect : network.getConnects()) {
+			makeConnection(connect);
 		}
 
-		// create connection, add port to entity
-		Connection conn;
-		Endpoint thisEndPoint = new Endpoint(instance, thisPort);
-		if (!(isDpnPort ^ isInput)) { // both 0 or both 1
-			instance.getEntity().getInputs().add(thisPort);
-			conn = DpnFactory.eINSTANCE.createConnection(otherEndPoint, thisEndPoint);
-		} else {
-			instance.getEntity().getOutputs().add(thisPort);
-			conn = DpnFactory.eINSTANCE.createConnection(thisEndPoint, otherEndPoint);
-		}
-
-		// add connection to graph
-		dpn.getGraph().add(conn);
-
-		return thisPort;
+		this.dpn = null;
+		this.portMap = null;
 	}
 
-	/**
-	 * If the given port reference refers to a port in an instance, returns that instance.
-	 * Otherwise, if the reference is that of a simple port (no instance), returns null.
-	 * 
-	 * @param ref
-	 *            a port reference
-	 * @return an instance
-	 */
-	Instance getInstance(DPN dpn, VarRef ref) {
-		String link = NodeModelUtils.getTokenText(NodeModelUtils.getNode(ref));
-		QualifiedName name = converter.toQualifiedName(link);
-		if (name.getSegmentCount() == 1) {
-			return null;
-		}
-
-		IScope scope = scopeProvider.getScope(ref, CxPackage.Literals.CONNECT__INSTANCE);
-		QualifiedName qualifiedLinkName = converter.toQualifiedName(name.getFirstSegment());
-		IEObjectDescription eObjectDescription = scope.getSingleElement(qualifiedLinkName);
-
-		Inst inst = (Inst) eObjectDescription.getEObjectOrProxy();
-		return instantiator.getMapping(dpn, inst);
-	}
-
-	/**
-	 * Initializes this connection maker with the given DPN.
-	 * 
-	 * @param dpn
-	 *            a DPN
-	 */
-	public void initialize(DPN dpn) {
-		portMap.putAll(dpn, dpn.getOutputs());
-
-		for (Instance instance : dpn.getInstances()) {
-			portMap.putAll(instance, instance.getEntity().getInputs());
-		}
-	}
-
-	public void makeConnection(DPN dpn, Connect connect) {
+	private void makeConnection(Connect connect) {
 		Instance instance = null;
 		String name;
 
@@ -290,7 +194,7 @@ public class ConnectionMaker {
 			// removes sourcePort from portMap
 			// this is done for any combination of this/instance and reads/writes
 			// for ports other than (instance, input) and (dpn, output) this is a no-op
-			Instance sourceInst = getInstance(dpn, ref);
+			Instance sourceInst = helper.getInstance(dpn, ref);
 			if (sourceInst == null) {
 				portMap.remove(dpn, sourcePort);
 			} else {
@@ -300,10 +204,10 @@ public class ConnectionMaker {
 			Port targetPort = it.next();
 			targetPorts.add(targetPort);
 
-			checkPortAssociation(dpn, connect, index, ref, targetPort);
+			checkPortAssociation(connect, index, ref, targetPort);
 			index++;
 
-			connect(dpn, connect, instance, ref, sourcePort, targetPort);
+			connect(connect, instance, ref, sourcePort, targetPort);
 		}
 
 		// removes target ports accessed by "reads"

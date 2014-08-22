@@ -10,8 +10,6 @@
  *******************************************************************************/
 package com.synflow.cx.internal.instantiation;
 
-import static com.synflow.models.util.SwitchUtil.visit;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -34,12 +32,13 @@ import org.eclipse.xtext.resource.IResourceDescriptions;
 import org.eclipse.xtext.resource.impl.ResourceDescriptionsProvider;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.synflow.core.util.CoreUtil;
-import com.synflow.cx.cx.Connect;
 import com.synflow.cx.cx.CxEntity;
 import com.synflow.cx.cx.CxPackage.Literals;
 import com.synflow.cx.cx.Inst;
@@ -68,13 +67,16 @@ public class InstantiatorImpl implements IInstantiator {
 
 	private List<Entity> builtins;
 
-	@Inject
-	private Provider<ConnectionMaker> connectionMakerProvider;
-
 	private InstantiatorData data;
 
 	@Inject
 	private EntityMapper entityMapper;
+
+	@Inject
+	private Provider<ExplicitConnector> explicitConnectorProvider;
+
+	@Inject
+	private Provider<ImplicitConnector> implicitConnectorProvider;
 
 	@Inject
 	private IResourceDescription.Manager manager;
@@ -101,16 +103,14 @@ public class InstantiatorImpl implements IInstantiator {
 	 * @param dpn
 	 */
 	private void connect(Network network, DPN dpn) {
-		ConnectionMaker maker = connectionMakerProvider.get();
-		maker.initialize(dpn);
-
-		// solves references to implicit ports
-		ImplicitPortSwitch visitor = new ImplicitPortSwitch(this, maker, dpn);
-		visit(visitor, network.getInstances());
-
-		for (Connect connect : network.getConnects()) {
-			maker.makeConnection(dpn, connect);
+		Multimap<EObject, Port> portMap = LinkedHashMultimap.create();
+		portMap.putAll(dpn, dpn.getOutputs());
+		for (Instance instance : dpn.getInstances()) {
+			portMap.putAll(instance, instance.getEntity().getInputs());
 		}
+
+		implicitConnectorProvider.get().connect(portMap, network, dpn);
+		explicitConnectorProvider.get().connect(portMap, network, dpn);
 	}
 
 	/**
