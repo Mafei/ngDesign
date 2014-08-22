@@ -11,9 +11,9 @@
 package com.synflow.cx.internal.instantiation;
 
 import static com.synflow.cx.CxConstants.TYPE_READS;
+import static com.synflow.models.dpn.DpnFactory.eINSTANCE;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -30,12 +30,8 @@ import com.synflow.cx.cx.Network;
 import com.synflow.cx.cx.VarRef;
 import com.synflow.cx.instantiation.IInstantiator;
 import com.synflow.cx.internal.ErrorMarker;
-import com.synflow.models.dpn.Connection;
 import com.synflow.models.dpn.DPN;
-import com.synflow.models.dpn.DpnFactory;
 import com.synflow.models.dpn.Endpoint;
-import com.synflow.models.dpn.Entity;
-import com.synflow.models.dpn.Instance;
 import com.synflow.models.dpn.Port;
 import com.synflow.models.ir.Type;
 import com.synflow.models.ir.util.TypePrinter;
@@ -91,10 +87,10 @@ public class ExplicitConnector {
 		}
 	}
 
-	private void checkPortAssociation(Connect connect, int index, VarRef ref, Port targetPort) {
+	private void checkPortAssociation(Connect connect, int index, VarRef ref, Port sourcePort,
+			Port targetPort) {
 		// get port types
-		Port port = instantiator.getMapping(dpn, ref.getVariable());
-		Type srcType = port.getType();
+		Type srcType = sourcePort.getType();
 		Type tgtType = targetPort.getType();
 
 		// check assign
@@ -103,38 +99,11 @@ public class ExplicitConnector {
 		checkAssign(srcName, srcType, tgtType, connect, Literals.CONNECT__PORTS, index);
 
 		// check ports have the same interface type
-		Port sourcePort = instantiator.getPort(dpn, ref);
 		if (sourcePort.getInterface() != targetPort.getInterface()) {
 			addError(new ErrorMarker("Port mismatch: incompatible interface type between "
 					+ srcName + " and '" + targetPort.getName() + "'", connect,
 					Literals.CONNECT__PORTS, index));
 		}
-	}
-
-	private void connect(Connect connect, Instance instance, VarRef ref, Port sourcePort,
-			Port targetPort) {
-		Endpoint otherEndPoint;
-		if (sourcePort.eContainer() == dpn) {
-			otherEndPoint = new Endpoint(dpn, sourcePort);
-		} else {
-			otherEndPoint = new Endpoint(helper.getInstance(dpn, ref), sourcePort);
-		}
-
-		Endpoint thisEndPoint;
-		if (connect.isThis()) {
-			thisEndPoint = new Endpoint(dpn, targetPort);
-		} else {
-			thisEndPoint = new Endpoint(instance, targetPort);
-		}
-
-		Connection conn;
-		if (TYPE_READS.equals(connect.getType())) {
-			conn = DpnFactory.eINSTANCE.createConnection(otherEndPoint, thisEndPoint);
-		} else {
-			conn = DpnFactory.eINSTANCE.createConnection(thisEndPoint, otherEndPoint);
-		}
-
-		dpn.getGraph().add(conn);
 	}
 
 	public void connect(Multimap<EObject, Port> portMap, Network network, DPN dpn) {
@@ -149,70 +118,68 @@ public class ExplicitConnector {
 		this.portMap = null;
 	}
 
+	/**
+	 * Translates the connect statement. By definition, "target" refers to the dpn/instance that
+	 * appears on the left of the .reads/writes. "target port" refers to a port that belongs to that
+	 * target.
+	 * 
+	 * @param connect
+	 */
 	private void makeConnection(Connect connect) {
-		Instance instance = null;
-		String name;
+		ConnectionInfo info = new ConnectionInfo(instantiator, portMap, dpn, connect);
 
-		Collection<Port> ports;
-		if (connect.isThis()) {
-			name = "this";
-			if (TYPE_READS.equals(connect.getType())) {
-				ports = portMap.get(dpn);
-			} else { // TYPE_WRITES
-				ports = dpn.getInputs();
-			}
-		} else {
-			instance = instantiator.getMapping(dpn, connect.getInstance());
-			name = instance.getName();
-			Entity entity = instance.getEntity();
-			if (TYPE_READS.equals(connect.getType())) {
-				ports = portMap.get(instance);
-			} else { // TYPE_WRITES
-				ports = entity.getOutputs();
-			}
-		}
-
-		Iterator<Port> it = ports.iterator();
+		Iterator<Port> it = info.iterator();
 		List<Port> targetPorts = new ArrayList<>();
 		int index = 0;
 		for (VarRef ref : connect.getPorts()) {
-			if (index >= ports.size()) {
+			if (index >= info.getNumPorts()) {
 				if (TYPE_READS.equals(connect.getType())) {
 					String kind = connect.isThis() ? "output" : "input";
 					addError(new ErrorMarker("Connectivity: no more ports available, all " + kind
-							+ " ports of '" + name + "' are already connected", connect));
+							+ " ports of '" + info.getName() + "' are already connected", connect));
 				} else {
-					addError(new ErrorMarker("Connectivity: too many ports given to '" + name
-							+ ".writes', expected at most " + ports.size() + ", got "
-							+ connect.getPorts().size(), connect));
+					addError(new ErrorMarker("Connectivity: too many ports given to '"
+							+ info.getName() + ".writes', expected at most " + info.getNumPorts()
+							+ ", got " + connect.getPorts().size(), connect));
 				}
 				break;
-			}
-
-			Port sourcePort = instantiator.getMapping(dpn, ref.getVariable());
-
-			// removes sourcePort from portMap
-			// this is done for any combination of this/instance and reads/writes
-			// for ports other than (instance, input) and (dpn, output) this is a no-op
-			Instance sourceInst = helper.getInstance(dpn, ref);
-			if (sourceInst == null) {
-				portMap.remove(dpn, sourcePort);
-			} else {
-				portMap.remove(sourceInst, sourcePort);
 			}
 
 			Port targetPort = it.next();
 			targetPorts.add(targetPort);
 
-			checkPortAssociation(connect, index, ref, targetPort);
-			index++;
+			Endpoint targetEndpoint;
+			if (connect.isThis()) {
+				targetEndpoint = new Endpoint(dpn, targetPort);
+			} else {
+				targetEndpoint = new Endpoint(info.getInstance(), targetPort);
+			}
 
-			connect(connect, instance, ref, sourcePort, targetPort);
+			Endpoint sourceEndpoint = helper.getEndpoint(dpn, ref);
+
+			// removes sourcePort from portMap
+			// this is done for any combination of this/instance and reads/writes
+			// for ports other than (instance, input) and (dpn, output) this is a no-op
+			if (sourceEndpoint.hasInstance()) {
+				portMap.remove(sourceEndpoint.getInstance(), sourceEndpoint.getPort());
+			} else {
+				portMap.remove(dpn, sourceEndpoint.getPort());
+			}
+
+			checkPortAssociation(connect, index, ref, sourceEndpoint.getPort(), targetPort);
+
+			if (TYPE_READS.equals(connect.getType())) {
+				dpn.getGraph().add(eINSTANCE.createConnection(sourceEndpoint, targetEndpoint));
+			} else {
+				dpn.getGraph().add(eINSTANCE.createConnection(targetEndpoint, sourceEndpoint));
+			}
+
+			index++;
 		}
 
 		// removes target ports accessed by "reads"
 		if (TYPE_READS.equals(connect.getType())) {
-			EObject key = connect.isThis() ? dpn : instance;
+			EObject key = connect.isThis() ? dpn : info.getInstance();
 			for (Port port : targetPorts) {
 				portMap.remove(key, port);
 			}

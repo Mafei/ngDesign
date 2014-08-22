@@ -36,7 +36,6 @@ import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.synflow.core.util.CoreUtil;
 import com.synflow.cx.cx.CxEntity;
@@ -73,10 +72,10 @@ public class InstantiatorImpl implements IInstantiator {
 	private EntityMapper entityMapper;
 
 	@Inject
-	private Provider<ExplicitConnector> explicitConnectorProvider;
+	private ExplicitConnector explicitConnector;
 
 	@Inject
-	private Provider<ImplicitConnector> implicitConnectorProvider;
+	private ImplicitConnector implicitConnector;
 
 	@Inject
 	private IResourceDescription.Manager manager;
@@ -109,8 +108,8 @@ public class InstantiatorImpl implements IInstantiator {
 			portMap.putAll(instance, instance.getEntity().getInputs());
 		}
 
-		implicitConnectorProvider.get().connect(portMap, network, dpn);
-		explicitConnectorProvider.get().connect(portMap, network, dpn);
+		implicitConnector.connect(portMap, network, dpn);
+		explicitConnector.connect(portMap, network, dpn);
 	}
 
 	/**
