@@ -39,7 +39,7 @@ entity SynchronousFIFO is
     dout_send        : out std_logic;
     dout             : out std_logic_vector(width - 1 downto 0);
                                         -- Ready to send
-    ready            : in  std_logic;
+    rdy            : in  std_logic;
                                         -- Flags
     full             : out std_logic;
     almost_full      : out std_logic;
@@ -81,9 +81,9 @@ begin
 
   -- wr_enable and rd_enable are active iff the flags allow it
   wr_enable <= din_send and not full_i;
-  rd_enable <= ready and not empty_i;
+  rd_enable <= rdy and not empty_i;
 
-  ram : entity work.Dual_Port_RAM
+  ram : entity work.DualPortRAM
     generic map (
       depth => depth,
       width => width)
