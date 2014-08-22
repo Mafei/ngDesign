@@ -241,15 +241,39 @@ package body sim_package is
   end procedure;
 
   procedure writeValue(file f : fd; signal target : out std_logic; signal target_send : out std_logic) is
+    variable result : std_logic_vector(6 downto 0);
+    variable result_send : std_logic_vector(6 downto 0);
+    variable valid : boolean;
   begin
-    writeValue(f, target);
-    writeValue(f, target_send);
+    readValue(f, result, valid);
+    if valid then
+      readValue(f, result_send, valid);
+      if valid then
+        target_send <= result_send(0);
+        if result_send(0) = '1' then
+          -- only set value if send is true
+          target <= result(0);
+        end if;
+      end if;
+    end if;
   end procedure;
 
   procedure writeValue(file f : fd; signal target : out std_logic_vector; signal target_send : out std_logic) is
+    variable result : std_logic_vector(target'length - 1 downto 0);
+    variable result_send : std_logic_vector(6 downto 0);
+    variable valid : boolean;
   begin
-    writeValue(f, target);
-    writeValue(f, target_send);
+    readValue(f, result, valid);
+    if valid then
+      readValue(f, result_send, valid);
+      if valid then
+        target_send <= result_send(0);
+        if result_send(0) = '1' then
+          -- only set value if send is true
+          target <= result;
+        end if;
+      end if;
+    end if;
   end procedure;
 
 end sim_package;
