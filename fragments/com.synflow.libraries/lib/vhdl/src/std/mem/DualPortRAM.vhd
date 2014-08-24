@@ -31,11 +31,10 @@ entity DualPortRAM is
   generic (
     depth : integer := 8;
     width : integer := 16;
-    initVal: integer := 0);
+    numAdditionalRegisters : integer := 0);
   port (
     wr_clock        : in  std_logic;
     rd_clock        : in  std_logic;
-    reset_n         : in  std_logic;
     --
     wr_address      : in  std_logic_vector(depth - 1 downto 0);
     data            : in  std_logic_vector(width - 1 downto 0);

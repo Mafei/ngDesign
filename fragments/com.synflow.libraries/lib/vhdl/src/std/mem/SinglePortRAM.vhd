@@ -28,10 +28,9 @@ entity SinglePortRAM is
   generic (
     depth   : integer := 8;
     width   : integer := 16;
-    initVal : integer := 0);
+    numAdditionalRegisters : integer := 0);
   port (
     clock           : in  std_logic;
-    reset_n         : in  std_logic;
     --
     address         : in  std_logic_vector(depth - 1 downto 0);
     data            : in  std_logic_vector(width - 1 downto 0);
@@ -54,7 +53,7 @@ architecture arch_Single_Port_RAM of SinglePortRAM is
   -----------------------------------------------------------------------------
   -- Internal signal declarations
   -----------------------------------------------------------------------------
-  shared variable ram : ram_type := (others => std_logic_vector(to_signed(initVal, width)));
+  shared variable ram : ram_type;
 
 -------------------------------------------------------------------------------  
 begin
