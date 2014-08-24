@@ -866,6 +866,13 @@ public class IrFactoryImpl extends EFactoryImpl implements IrFactory {
 		return typeString;
 	}
 
+	@Override
+	public Type createTypeString(int size) {
+		TypeStringImpl typeString = new TypeStringImpl();
+		typeString.setSize(size);
+		return typeString;
+	}
+
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * 

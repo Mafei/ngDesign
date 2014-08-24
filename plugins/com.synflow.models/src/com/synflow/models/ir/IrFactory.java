@@ -595,6 +595,8 @@ public interface IrFactory extends EFactory {
 	 */
 	TypeString createTypeString();
 
+	Type createTypeString(int size);
+
 	/**
 	 * Returns a new object of class '<em>Type Void</em>'. <!-- begin-user-doc --> <!-- end-user-doc
 	 * -->
