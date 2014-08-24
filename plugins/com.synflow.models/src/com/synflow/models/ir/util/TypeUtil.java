@@ -395,36 +395,14 @@ public class TypeUtil {
 	}
 
 	/**
-	 * Returns the unresolved type of the given expression. Equivalent to
-	 * <code>getType(expr, false);</code>
+	 * Returns the unresolved type of the given expression.
 	 * 
 	 * @param expr
 	 *            an expression
 	 * @return a type
 	 */
 	public static Type getType(Expression expr) {
-		return getType(expr, false);
-	}
-
-	/**
-	 * Returns the type of the given expression. If <code>resolve</code> is <code>true</code>,
-	 * attemps to resolve the type.
-	 * 
-	 * @param expr
-	 *            an expression
-	 * @param resolve
-	 *            a boolean flag
-	 * @return a type
-	 */
-	public static Type getType(Expression expr, boolean resolve) {
-		Type type = new IrTyper().doSwitch(expr);
-		if (resolve) {
-			Type resolved = new TypeEvaluator().doSwitch(type);
-			if (resolved != null) {
-				return resolved;
-			}
-		}
-		return type;
+		return new IrTyper().doSwitch(expr);
 	}
 
 	/**

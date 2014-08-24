@@ -43,7 +43,7 @@ public abstract class HDLTyper extends AbstractExpressionTransformer {
 		Type type;
 		if (op.isArithmetic() || op == OpBinary.SHIFT_LEFT) {
 			// cast to target size (as computed by IR type system)
-			type = TypeUtil.getType(expr, true);
+			type = TypeUtil.getType(expr);
 		} else {
 			// cast to largest common type
 			type = TypeUtil.getLargest(t1, t2);
