@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ProjectScope;
@@ -39,6 +40,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import com.google.inject.ConfigurationException;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -90,10 +92,34 @@ public class SynflowCore implements BundleActivator {
 		String name = getProjectPreferences(project).get(PROP_GENERATOR, null);
 		if (name == null) {
 			// no generator associated with the project
+			try {
+				IMarker marker = project.createMarker(IMarker.PROBLEM);
+				marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
+				String msg = "No generator associated with project '" + project.getName()
+						+ "'. Please edit project properties.";
+				marker.setAttribute(IMarker.MESSAGE, msg);
+			} catch (CoreException e) {
+				SynflowCore.log(e);
+			}
 			return null;
 		}
 
-		ICodeGenerator generator = getDefault().getInstance(ICodeGenerator.class, name);
+		ICodeGenerator generator;
+		try {
+			generator = getDefault().getInstance(ICodeGenerator.class, name);
+		} catch (ConfigurationException e) {
+			generator = null;
+			try {
+				IMarker marker = project.createMarker(IMarker.PROBLEM);
+				marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
+				String msg = name + " code generator required to compile project '"
+						+ project.getName() + "' is not available. "
+						+ "Please edit project properties.";
+				marker.setAttribute(IMarker.MESSAGE, msg);
+			} catch (CoreException ex) {
+				SynflowCore.log(ex);
+			}
+		}
 		return generator;
 	}
 
@@ -238,7 +264,7 @@ public class SynflowCore implements BundleActivator {
 	public static IStatus validateIdentifier(String id) {
 		IStatus status = JavaConventions.validateIdentifier(id, VERSION_1_7, VERSION_1_7);
 		if (!status.isOK()) {
-			String message = "''" + id + "'' is not a valid identifier";
+			String message = "'" + id + "' is not a valid identifier";
 			status = new Status(IStatus.ERROR, PLUGIN_ID, message);
 		}
 		return status;

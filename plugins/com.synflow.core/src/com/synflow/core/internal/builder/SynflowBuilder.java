@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
@@ -71,9 +72,17 @@ public class SynflowBuilder extends IncrementalProjectBuilder {
 			buildJob.schedule();
 		}
 
+		// clean markers that might be set if code generators are not configured properly
+		try {
+			project.deleteMarkers(IMarker.PROBLEM, false, 0);
+		} catch (CoreException e) {
+			SynflowCore.log(e);
+		}
+
 		// get generator for the project
 		ICodeGenerator generator = SynflowCore.getGenerator(project);
 		if (generator == null) {
+			// might happen if no code generator was set, or an invalid one
 			return null;
 		}
 
