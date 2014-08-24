@@ -154,6 +154,10 @@ public class Typer extends CxSwitch<Type> {
 
 	@Override
 	public Type caseExpressionString(ExpressionString expression) {
+		if (expression.eContainer() instanceof CExpression) {
+			BigInteger value = (BigInteger) Evaluator.getValue(expression);
+			return IrFactory.eINSTANCE.createTypeIntOrUint(value);
+		}
 		return IrFactory.eINSTANCE.createTypeString();
 	}
 

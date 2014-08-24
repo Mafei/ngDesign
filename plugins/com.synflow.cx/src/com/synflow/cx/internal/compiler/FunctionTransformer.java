@@ -226,7 +226,12 @@ public class FunctionTransformer extends CxSwitch<EObject> implements Transforme
 
 	@Override
 	public Expression caseExpressionString(ExpressionString expression) {
-		return eINSTANCE.createExprString(expression.getValue());
+		if (expression.eContainer() instanceof CExpression) {
+			BigInteger value = (BigInteger) Evaluator.getValue(expression);
+			return eINSTANCE.createExprInt(value);
+		} else {
+			return eINSTANCE.createExprString(expression.getValue());
+		}
 	}
 
 	@Override
