@@ -28,7 +28,6 @@ import com.synflow.models.ir.ExprVar;
 import com.synflow.models.ir.Expression;
 import com.synflow.models.ir.InstCall;
 import com.synflow.models.ir.IrFactory;
-import com.synflow.models.ir.OpBinary;
 import com.synflow.models.ir.Type;
 import com.synflow.models.ir.TypeInt;
 import com.synflow.models.ir.Var;
@@ -45,10 +44,9 @@ public class VhdlCastAdder extends AbstractExpressionTransformer {
 
 	@Override
 	public Expression caseExprBinary(ExprBinary expr) {
-		OpBinary op = expr.getOp();
 		Expression e1 = expr.getE1();
 		Expression e2 = expr.getE2();
-		if (op.isComparison() && e1.isExprInt() && e2.isExprInt()) {
+		if (e1.isExprInt() && e2.isExprInt()) {
 			expr.setE1(eINSTANCE.convert(UNSIGNED, e1));
 		}
 
