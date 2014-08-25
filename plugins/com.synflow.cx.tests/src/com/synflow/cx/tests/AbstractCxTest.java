@@ -20,6 +20,7 @@ import java.util.Map;
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.URIMappingRegistryImpl;
@@ -40,6 +41,7 @@ import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 import com.google.gson.JsonPrimitive;
 import com.google.inject.Inject;
@@ -231,12 +233,14 @@ public abstract class AbstractCxTest extends AbstractXtextTests {
 		// clears loaded resources to force reloading them from disk
 		resourceSet.getResources().clear();
 
-		return Iterables.transform(module.getEntities(), new Function<CxEntity, Entity>() {
+		Iterable<Entity> entities;
+		entities = Iterables.transform(module.getEntities(), new Function<CxEntity, Entity>() {
 			@Override
 			public Entity apply(CxEntity input) {
 				return getEntity(module.getPackage() + "." + input.getName());
 			}
 		});
+		return Iterables.filter(entities, Predicates.notNull());
 	}
 
 	private Entity getEntity(String name) {
@@ -245,10 +249,16 @@ public abstract class AbstractCxTest extends AbstractXtextTests {
 		URI uriIr = access.getURI(path);
 
 		// load actor
-		Resource irResource = resourceSet.getResource(uriIr, true);
-		EObject eObject = irResource.getContents().get(0);
-		assertNotNull(eObject);
-		return (Entity) eObject;
+		try {
+			Resource irResource = resourceSet.getResource(uriIr, true);
+			EObject eObject = irResource.getContents().get(0);
+			assertNotNull(eObject);
+			return (Entity) eObject;
+		} catch (WrappedException e) {
+			// could not load IR entity
+			// happens when entity is not top level
+			return null;
+		}
 	}
 
 	/**
