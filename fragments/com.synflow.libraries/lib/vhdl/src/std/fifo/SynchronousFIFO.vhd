@@ -88,14 +88,16 @@ begin
       depth => depth,
       width => width)
     port map (
-      wr_clock        => clock,
-      rd_clock        => clock,
-      reset_n         => reset_n,
-      wr_address      => std_logic_vector(wr_address),
-      data            => din,
-      data_send       => wr_enable,
-      rd_address      => std_logic_vector(rd_address),
-      q               => dout);
+      clock_a     => clock,
+      clock_b     => clock,
+      address_a   => std_logic_vector(rd_address),
+      data_a      => (others => '0'),
+      data_a_send => '0',
+      address_b   => std_logic_vector(wr_address),
+      data_b      => din,
+      data_b_send => wr_enable,
+      q_a => dout,
+      q_b => open);
 
   wr_ctrl : entity work.FIFO_Write_Controller
     generic map (
