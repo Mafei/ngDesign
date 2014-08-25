@@ -17,11 +17,15 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.xtext.builder.clustering.ClusteringBuilderState;
 import org.eclipse.xtext.builder.clustering.CurrentDescriptions;
 import org.eclipse.xtext.builder.impl.BuildData;
+import org.eclipse.xtext.builder.impl.QueuedBuildData;
+import org.eclipse.xtext.builder.impl.ToBeBuilt;
 import org.eclipse.xtext.resource.IReferenceDescription;
 import org.eclipse.xtext.resource.IResourceDescription;
 import org.eclipse.xtext.resource.IResourceDescriptions;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Sets;
+import com.google.inject.Inject;
 import com.synflow.cx.cx.CxPackage.Literals;
 
 /**
@@ -33,6 +37,30 @@ import com.synflow.cx.cx.CxPackage.Literals;
  */
 @SuppressWarnings("restriction")
 public class CxBuilderState extends ClusteringBuilderState {
+
+	/**
+	 * This class defines an ordered ToBeBuilt implementation that uses a linked hash set to store
+	 * URIs to be built in the order in which they are added.
+	 * 
+	 * @author Matthieu Wipliez
+	 *
+	 */
+	private static class ToBeBuiltOrdered extends ToBeBuilt {
+
+		private Set<URI> myToBeUpdated;
+
+		public ToBeBuiltOrdered(BuildData buildData) {
+			myToBeUpdated = Sets.newLinkedHashSet(buildData.getToBeUpdated());
+		}
+
+		@Override
+		public Set<URI> getToBeUpdated() {
+			return myToBeUpdated;
+		}
+	}
+
+	@Inject
+	private QueuedBuildData queuedBuildData;
 
 	/**
 	 * Using the given IResourceDescriptions, adds to toBeUpdated all resources that are
@@ -66,6 +94,11 @@ public class CxBuilderState extends ClusteringBuilderState {
 	protected void writeNewResourceDescriptions(BuildData buildData,
 			IResourceDescriptions oldState, CurrentDescriptions newState,
 			final IProgressMonitor monitor) {
+		// we create a new build data that uses our ToBeBuiltOrdered
+		// so we retain the order of URIs (top down from the hierarchy)
+		buildData = new BuildData(buildData.getProjectName(), buildData.getResourceSet(),
+				new ToBeBuiltOrdered(buildData), queuedBuildData);
+
 		// add dependent resources to the toBeUpdated set
 		// a better solution in the future would be to use information computed by the instantiator
 		// and store it in the IEObjectDescription
@@ -76,4 +109,5 @@ public class CxBuilderState extends ClusteringBuilderState {
 
 		super.writeNewResourceDescriptions(buildData, oldState, newState, monitor);
 	}
+
 }
