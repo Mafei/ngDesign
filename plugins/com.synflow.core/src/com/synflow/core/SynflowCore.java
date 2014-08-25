@@ -10,7 +10,6 @@
  *******************************************************************************/
 package com.synflow.core;
 
-import static com.synflow.core.ISynflowConstants.PROP_GENERATOR;
 import static org.eclipse.core.runtime.Platform.getPreferencesService;
 import static org.eclipse.jdt.core.JavaCore.VERSION_1_7;
 
@@ -62,6 +61,8 @@ public class SynflowCore implements BundleActivator {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "com.synflow.core";
+
+	public static final String PROP_GENERATOR = PLUGIN_ID + ".generator";
 
 	/**
 	 * Returns the bundle associated with this plug-in.

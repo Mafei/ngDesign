@@ -10,7 +10,7 @@
  *******************************************************************************/
 package com.synflow.ngDesign.ui.internal.properties;
 
-import static com.synflow.core.ISynflowConstants.PROP_GENERATOR;
+import static com.synflow.core.SynflowCore.PROP_GENERATOR;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;

@@ -15,8 +15,6 @@ import com.synflow.core.IExportConfiguration.Target
 import java.io.File
 import org.eclipse.core.runtime.Path
 
-import static com.synflow.core.ISynflowConstants.*
-
 /**
  * This class defines a generator of Diamond project file.
  * 

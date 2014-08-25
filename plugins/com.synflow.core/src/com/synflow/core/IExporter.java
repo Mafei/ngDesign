@@ -21,6 +21,11 @@ import com.synflow.models.dpn.Entity;
 public interface IExporter {
 
 	/**
+	 * name of the folder where synthesis projects are generated
+	 */
+	String FOLDER_PROJECTS = "projects";
+
+	/**
 	 * Runs this exporter on the given entity.
 	 * 
 	 * @param entity
