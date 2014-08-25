@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Synflow SAS.
+ * Copyright (c) 2014 Synflow SAS.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,30 +8,27 @@
  * Contributors:
  *    Matthieu Wipliez - initial API and implementation and/or initial documentation
  *******************************************************************************/
-package com.synflow.generators.vhdl
+package com.synflow.ngDesign.exporters.vhdl;
 
-import com.synflow.models.ir.ExprBool
-import com.synflow.models.ir.ExprInt
-import com.synflow.models.ir.ExprString
-import com.synflow.models.ir.util.IrSwitch
+import com.google.common.collect.ImmutableList;
+import com.synflow.core.IExportConfiguration;
 
 /**
- * This class defines a value printer for instance arguments
+ * This class defines the export configuration for VHDL.
  * 
  * @author Matthieu Wipliez
+ *
  */
-class VhdlArgValuePrinter extends IrSwitch<CharSequence> {
+public class VhdlExportConfiguration implements IExportConfiguration {
 
-	override caseExprBool(ExprBool expr) {
-		if (expr.value) "'1'" else "'0'"
+	@Override
+	public Iterable<String> getLibraryFiles() {
+		return ImmutableList.of("com.synflow.lib.Helper_functions");
 	}
 
-	override caseExprInt(ExprInt expr) {
-		expr.value.toString
-	}
-
-	override caseExprString(ExprString expr) {
-		'''"«expr.value»"'''
+	@Override
+	public Iterable<String> getSimulationFiles() {
+		return ImmutableList.of("com.synflow.lib.sim_package");
 	}
 
 }

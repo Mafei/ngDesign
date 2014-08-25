@@ -8,21 +8,19 @@
  * Contributors:
  *    Matthieu Wipliez - initial API and implementation and/or initial documentation
  *******************************************************************************/
-package com.synflow.cx.tests.codegen.vhdl;
-
-import com.synflow.cx.tests.CustomCxInjectorProvider;
-import com.synflow.ngDesign.NgDesignModule;
+package com.synflow.core;
 
 /**
- * This class defines a custom CxInjectorProvider that uses the core generators module.
+ * This interface defines an export configuration, i.e. what is necessary for proper simulation,
+ * synthesis, etc. for a given language.
  * 
  * @author Matthieu Wipliez
- *
+ * 
  */
-public class CxInjectorProviderVhdl extends CustomCxInjectorProvider {
+public interface IExportConfiguration {
 
-	public CxInjectorProviderVhdl() {
-		super(new NgDesignModule());
-	}
+	Iterable<String> getLibraryFiles();
+
+	Iterable<String> getSimulationFiles();
 
 }

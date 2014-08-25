@@ -41,14 +41,5 @@
             type="org.eclipse.core.resources.IResource">
       </propertyTester>
    </extension>
-   <extension
-         point="com.synflow.core.injection">
-      <module
-            class="com.synflow.generators.CoreGeneratorsModule">
-      </module>
-      <generator
-            name="VHDL">
-      </generator>
-   </extension>
 
 </plugin>

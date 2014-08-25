@@ -9,11 +9,11 @@
  *    Nicolas Siret - initial API and implementation and/or initial documentation
  *    Matthieu Wipliez - refactoring and maintenance
  *******************************************************************************/
-package com.synflow.generators.vhdl
+package com.synflow.ngDesign.generators.vhdl
 
 import com.google.common.collect.Iterables
 import com.google.gson.JsonArray
-import com.synflow.generators.Namer
+import com.synflow.core.generators.Namer
 import com.synflow.models.dpn.Actor
 import com.synflow.models.dpn.DPN
 import com.synflow.models.dpn.Entity

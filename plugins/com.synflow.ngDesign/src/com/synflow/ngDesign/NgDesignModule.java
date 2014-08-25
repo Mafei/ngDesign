@@ -8,13 +8,14 @@
  * Contributors:
  *    Matthieu Wipliez - initial API and implementation and/or initial documentation
  *******************************************************************************/
-package com.synflow.generators;
+package com.synflow.ngDesign;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
 import com.synflow.core.ICodeGenerator;
-import com.synflow.generators.stimulus.StimulusGenerator;
-import com.synflow.generators.vhdl.VhdlCodeGenerator;
+import com.synflow.core.IExportConfiguration;
+import com.synflow.ngDesign.exporters.vhdl.VhdlExportConfiguration;
+import com.synflow.ngDesign.generators.vhdl.VhdlCodeGenerator;
 
 /**
  * This class defines the VHDL module.
@@ -22,16 +23,15 @@ import com.synflow.generators.vhdl.VhdlCodeGenerator;
  * @author Matthieu Wipliez
  *
  */
-public class CoreGeneratorsModule extends AbstractModule {
+public class NgDesignModule extends AbstractModule {
 
 	public static final String VHDL = "VHDL";
 
 	@Override
 	protected void configure() {
-		// code generators
-		bind(ICodeGenerator.class).annotatedWith(Names.named("Stimulus")).to(
-				StimulusGenerator.class);
 		bind(ICodeGenerator.class).annotatedWith(Names.named(VHDL)).to(VhdlCodeGenerator.class);
+		bind(IExportConfiguration.class).annotatedWith(Names.named(VHDL)).to(
+				VhdlExportConfiguration.class);
 	}
 
 }

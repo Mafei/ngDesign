@@ -8,13 +8,13 @@
  * Contributors:
  *    Matthieu Wipliez - initial API and implementation and/or initial documentation
  *******************************************************************************/
-package com.synflow.generators.stimulus;
+package com.synflow.core.internal.generators.stimulus;
 
 import static com.synflow.core.IProperties.PROP_TEST;
 import static com.synflow.core.ISynflowConstants.FOLDER_SIM;
 
 import com.google.gson.JsonObject;
-import com.synflow.generators.AbstractGenerator;
+import com.synflow.core.generators.AbstractGenerator;
 import com.synflow.models.dpn.Entity;
 import com.synflow.models.ir.util.IrUtil;
 

@@ -8,7 +8,7 @@
  * Contributors:
  *    Matthieu Wipliez - initial API and implementation and/or initial documentation
  *******************************************************************************/
-package com.synflow.generators.stimulus
+package com.synflow.core.internal.generators.stimulus
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive

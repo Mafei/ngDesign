@@ -8,7 +8,7 @@
  * Contributors:
  *    Matthieu Wipliez - initial API and implementation and/or initial documentation
  *******************************************************************************/
-package com.synflow.generators.vhdl;
+package com.synflow.ngDesign.generators.vhdl;
 
 import static com.synflow.models.util.SwitchUtil.DONE;
 
@@ -21,8 +21,6 @@ import com.synflow.core.transformations.ModuleTransformation;
 import com.synflow.core.transformations.ProcedureTransformation;
 import com.synflow.core.transformations.impl.CodeCleaner;
 import com.synflow.core.transformations.impl.StoreOnceTransformation;
-import com.synflow.generators.vhdl.transformations.VhdlCastAdder;
-import com.synflow.generators.vhdl.transformations.VhdlTyper;
 import com.synflow.models.dpn.Actor;
 import com.synflow.models.dpn.DPN;
 import com.synflow.models.dpn.Unit;
@@ -30,6 +28,8 @@ import com.synflow.models.ir.transform.PhiRemoval;
 import com.synflow.models.ir.transform.SSATransformation;
 import com.synflow.models.ir.transform.SSAVariableRenamer;
 import com.synflow.models.util.Void;
+import com.synflow.ngDesign.generators.vhdl.transformations.VhdlCastAdder;
+import com.synflow.ngDesign.generators.vhdl.transformations.VhdlTyper;
 
 /**
  * This class defines an abstract generator that uses Xtend for templates.

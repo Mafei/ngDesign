@@ -9,7 +9,7 @@
  *    Nicolas Siret - initial API and implementation and/or initial documentation
  *    Matthieu Wipliez - refactoring and maintenance
  *******************************************************************************/
-package com.synflow.generators.vhdl
+package com.synflow.ngDesign.generators.vhdl
 
 import com.synflow.models.dpn.Action
 import com.synflow.models.dpn.Actor
@@ -20,7 +20,7 @@ import com.synflow.models.dpn.Transition
 import com.synflow.models.ir.TypeInt
 import java.util.List
 
-import static extension com.synflow.generators.vhdl.HdlGeneratorUtil.*
+import static extension com.synflow.ngDesign.generators.vhdl.HdlGeneratorUtil.*
 
 /**
  * This class extends the IR printer for load/store to pattern variables, and

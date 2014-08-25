@@ -8,7 +8,7 @@
  * Contributors:
  *    Matthieu Wipliez - initial API and implementation and/or initial documentation
  *******************************************************************************/
-package com.synflow.generators
+package com.synflow.core.generators
 
 import com.synflow.models.ir.Expression
 import com.synflow.models.ir.util.IrSwitch

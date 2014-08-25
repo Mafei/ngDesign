@@ -8,7 +8,7 @@
  * Contributors:
  *    Matthieu Wipliez - initial API and implementation and/or initial documentation
  *******************************************************************************/
-package com.synflow.generators.vhdl;
+package com.synflow.ngDesign.generators.vhdl;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -17,7 +17,7 @@ import java.util.Map;
 
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
-import com.synflow.generators.Namer;
+import com.synflow.core.generators.Namer;
 import com.synflow.models.dpn.Endpoint;
 import com.synflow.models.ir.Block;
 import com.synflow.models.ir.BlockBasic;

@@ -55,5 +55,13 @@
          </property>
       </product>
    </extension>
-
+   <extension
+         point="com.synflow.core.injection">
+      <module
+            class="com.synflow.ngDesign.NgDesignModule">
+      </module>
+      <generator
+            name="VHDL">
+      </generator>
+   </extension>
 </plugin>

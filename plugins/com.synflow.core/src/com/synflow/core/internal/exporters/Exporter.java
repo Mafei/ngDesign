@@ -62,15 +62,6 @@ public abstract class Exporter implements IExporter {
 
 	private static final Map<String, List<String>> simFiles = new HashMap<>();
 
-	static {
-		// TODO add library files
-		// libraryFiles.put(VERILOG, Collections.<String> emptyList());
-		// libraryFiles.put(VHDL, Arrays.asList("com.synflow.lib.Helper_functions"));
-		//
-		// simFiles.put(VERILOG, Arrays.asList("com.synflow.lib.TraceSupport"));
-		// simFiles.put(VHDL, Arrays.asList("com.synflow.lib.sim_package"));
-	}
-
 	public static Iterable<String> getRootDependencies(String language, int target) {
 		List<String> files = libraryFiles.get(language);
 		if (target == TARGET_SIMULATION) {
@@ -180,10 +171,9 @@ public abstract class Exporter implements IExporter {
 
 		// headers in Verilog must not be compiled/part of a project
 		// because they are only valid when included by tasks/networks
-		// TODO Verilog
-		// if (!VERILOG.equals(language)) {
-		addPaths(units);
-		// }
+		if (!"Verilog".equals(language)) {
+			addPaths(units);
+		}
 
 		// adds entities
 		addPaths(visitor.getEntities());

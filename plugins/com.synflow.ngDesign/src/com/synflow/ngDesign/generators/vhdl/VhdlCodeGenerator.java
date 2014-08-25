@@ -8,16 +8,16 @@
  * Contributors:
  *    Matthieu Wipliez - initial API and implementation and/or initial documentation
  *******************************************************************************/
-package com.synflow.generators.vhdl;
+package com.synflow.ngDesign.generators.vhdl;
 
 import java.util.Set;
 import java.util.regex.Pattern;
 
 import com.google.common.collect.ImmutableSet;
-import com.synflow.generators.AbstractGenerator;
-import com.synflow.generators.CoreGeneratorsModule;
-import com.synflow.generators.Namer;
+import com.synflow.core.generators.AbstractGenerator;
+import com.synflow.core.generators.Namer;
 import com.synflow.models.dpn.Entity;
+import com.synflow.ngDesign.NgDesignModule;
 
 /**
  * This class implements a generator for VHDL.
@@ -75,7 +75,7 @@ public class VhdlCodeGenerator extends AbstractGenerator {
 
 	@Override
 	public String getName() {
-		return CoreGeneratorsModule.VHDL;
+		return NgDesignModule.VHDL;
 	}
 
 	@Override

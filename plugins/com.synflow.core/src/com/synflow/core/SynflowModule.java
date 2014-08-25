@@ -24,6 +24,7 @@ import com.synflow.core.internal.exporters.DiamondExporter;
 import com.synflow.core.internal.exporters.IseExporter;
 import com.synflow.core.internal.exporters.QuartusExporter;
 import com.synflow.core.internal.exporters.SimFilesExporter;
+import com.synflow.core.internal.generators.stimulus.StimulusGenerator;
 
 /**
  * This class defines the Synflow core plug-in, as well as various constants.
@@ -38,6 +39,10 @@ public class SynflowModule extends AbstractModule {
 		// file writers
 		bind(IFileWriter.class).annotatedWith(Names.named("File")).to(NativeFileWriter.class);
 		bind(IFileWriter.class).annotatedWith(Names.named("Eclipse")).to(EclipseFileWriter.class);
+
+		// built-in stimulus generator
+		bind(ICodeGenerator.class).annotatedWith(Names.named("Stimulus")).to(
+				StimulusGenerator.class);
 
 		// exporters
 		bind(IExporter.class).annotatedWith(Names.named("Diamond")).to(DiamondExporter.class);

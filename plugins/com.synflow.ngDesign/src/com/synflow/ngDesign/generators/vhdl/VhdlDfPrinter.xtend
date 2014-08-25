@@ -9,11 +9,11 @@
  *    Nicolas Siret - initial API and implementation and/or initial documentation
  *    Matthieu Wipliez - refactoring and maintenance
  *******************************************************************************/
-package com.synflow.generators.vhdl
+package com.synflow.ngDesign.generators.vhdl
 
 import com.google.common.collect.Iterables
 import com.google.gson.JsonObject
-import com.synflow.generators.Namer
+import com.synflow.core.generators.Namer
 import com.synflow.models.dpn.Actor
 import com.synflow.models.dpn.DPN
 import com.synflow.models.dpn.Endpoint
@@ -30,7 +30,7 @@ import java.util.List
 import org.eclipse.core.runtime.Path
 
 import static com.synflow.core.IProperties.*
-import static com.synflow.generators.vhdl.HdlGeneratorUtil.*
+import static com.synflow.ngDesign.generators.vhdl.HdlGeneratorUtil.*
 
 /**
  * This class defines a VHDL module (actor or unit) printer.

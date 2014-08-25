@@ -8,7 +8,7 @@
  * Contributors:
  *    Matthieu Wipliez - initial API and implementation and/or initial documentation
  *******************************************************************************/
-package com.synflow.generators.vhdl.transformations;
+package com.synflow.ngDesign.generators.vhdl.transformations;
 
 import static com.synflow.models.ir.ExprTypeConv.SIGNED;
 import static com.synflow.models.ir.ExprTypeConv.UNSIGNED;

@@ -9,9 +9,9 @@
  *    Nicolas Siret - initial API and implementation and/or initial documentation
  *    Matthieu Wipliez - refactoring and maintenance
  *******************************************************************************/
-package com.synflow.generators.vhdl
+package com.synflow.ngDesign.generators.vhdl
 
-import com.synflow.generators.ExpressionPrinter
+import com.synflow.core.generators.ExpressionPrinter
 import com.synflow.models.ir.ExprBinary
 import com.synflow.models.ir.ExprBool
 import com.synflow.models.ir.ExprInt

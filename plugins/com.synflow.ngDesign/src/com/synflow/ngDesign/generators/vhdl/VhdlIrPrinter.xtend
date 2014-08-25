@@ -9,7 +9,7 @@
  *    Nicolas Siret - initial API and implementation and/or initial documentation
  *    Matthieu Wipliez - refactoring and maintenance
  *******************************************************************************/
-package com.synflow.generators.vhdl
+package com.synflow.ngDesign.generators.vhdl
 
 import com.synflow.models.dpn.Port
 import com.synflow.models.ir.BlockBasic
