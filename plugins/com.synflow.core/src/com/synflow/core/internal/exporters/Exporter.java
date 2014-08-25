@@ -12,7 +12,6 @@
 package com.synflow.core.internal.exporters;
 
 import static com.synflow.core.ISynflowConstants.SUFFIX_GEN;
-import static com.synflow.core.ISynflowConstants.TARGET_SIMULATION;
 import static org.eclipse.emf.ecore.util.EcoreUtil.getRootContainer;
 
 import java.io.IOException;
@@ -22,7 +21,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -39,6 +37,7 @@ import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.synflow.core.ICodeGenerator;
+import com.synflow.core.IExportConfiguration;
 import com.synflow.core.IExporter;
 import com.synflow.core.IFileWriter;
 import com.synflow.core.SynflowCore;
@@ -57,19 +56,6 @@ import com.synflow.models.ir.util.IrUtil;
  * 
  */
 public abstract class Exporter implements IExporter {
-
-	private static final Map<String, List<String>> libraryFiles = new HashMap<>();
-
-	private static final Map<String, List<String>> simFiles = new HashMap<>();
-
-	public static Iterable<String> getRootDependencies(String language, int target) {
-		List<String> files = libraryFiles.get(language);
-		if (target == TARGET_SIMULATION) {
-			// add files specific to simulation
-			return Iterables.concat(files, simFiles.get(language));
-		}
-		return files;
-	}
 
 	private ICodeGenerator currentGenerator;
 
@@ -93,7 +79,7 @@ public abstract class Exporter implements IExporter {
 
 	private Map<EObject, IProject> projectMap;
 
-	private int target;
+	private IExportConfiguration.Target target;
 
 	@Inject
 	@Named("Eclipse")
@@ -155,7 +141,9 @@ public abstract class Exporter implements IExporter {
 
 		// first add root dependencies
 		final String language = currentGenerator.getName();
-		for (String root : getRootDependencies(language, target)) {
+		IExportConfiguration config = SynflowCore.getDefault().getInstance(
+				IExportConfiguration.class, language);
+		for (String root : config.getRootDependencies(target)) {
 			copyDependency(root);
 
 			paths.add(computePath(project, root));
@@ -307,7 +295,7 @@ public abstract class Exporter implements IExporter {
 		date = format.format(new Date());
 	}
 
-	protected void setParameters(String path, int target) {
+	protected void setParameters(String path, IExportConfiguration.Target target) {
 		folder = project.getFolder(path);
 		this.target = target;
 	}

@@ -22,13 +22,13 @@ import com.synflow.core.IExportConfiguration;
 public class VhdlExportConfiguration implements IExportConfiguration {
 
 	@Override
-	public Iterable<String> getLibraryFiles() {
-		return ImmutableList.of("com.synflow.lib.Helper_functions");
-	}
-
-	@Override
-	public Iterable<String> getSimulationFiles() {
-		return ImmutableList.of("com.synflow.lib.sim_package");
+	public Iterable<String> getRootDependencies(Target target) {
+		String helper = "com.synflow.lib.Helper_functions";
+		if (target == Target.SIMULATION) {
+			return ImmutableList.of(helper, "com.synflow.lib.sim_package");
+		} else {
+			return ImmutableList.of(helper);
+		}
 	}
 
 }

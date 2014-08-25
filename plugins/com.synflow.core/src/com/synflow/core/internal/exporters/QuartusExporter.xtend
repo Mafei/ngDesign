@@ -10,6 +10,7 @@
  *******************************************************************************/
 package com.synflow.core.internal.exporters
 
+import com.synflow.core.IExportConfiguration.Target
 import java.io.File
 import org.eclipse.core.runtime.Path
 
@@ -29,7 +30,7 @@ class QuartusExporter extends Exporter {
 	override doExport() {
 		val name = entity.simpleName
 		val path = new Path(FOLDER_PROJECTS).append(name).toString
-		setParameters(path, TARGET_SYNTHESIS)
+		setParameters(path, Target.SYNTHESIS)
 
 		writer.write(path + "/" + name + ".qpf", printQpf)
 		writer.write(path + "/" + name + ".qsf", printQsf)

@@ -11,6 +11,7 @@
  *******************************************************************************/
 package com.synflow.core.internal.exporters
 
+import com.synflow.core.IExportConfiguration.Target
 import com.synflow.models.dpn.Actor
 import com.synflow.models.dpn.DPN
 import com.synflow.models.dpn.Instance
@@ -34,7 +35,7 @@ class SimFilesExporter extends Exporter {
 	 * Exports simulation files.
 	 */
 	override doExport() {
-		setParameters(FOLDER_SIM, TARGET_SIMULATION)
+		setParameters(FOLDER_SIM, Target.SIMULATION)
 
 		val name = entity.simpleName
 		writer.write(FOLDER_SIM + "/compile_" + name + ".tcl", printTcl())
@@ -94,7 +95,7 @@ class SimFilesExporter extends Exporter {
 
 	def printWave() {
 		val clocks = entity.properties.getAsJsonArray(PROP_CLOCKS)
-		
+
 		'''
 		onerror {resume}
 		quietly WaveActivateNextPane {} 0
@@ -160,8 +161,8 @@ class SimFilesExporter extends Exporter {
 
 	def printPort(String group, CharSequence hier, String instName, Port port) {
 		val name = '''«hier»/«port.name»'''
-		val color = if (IrUtil.isInput(port)) "Cadet Blue" else "Orange Red"
-		val dir = if (IrUtil.isInput(port)) "input" else "output"
+		val color = if(IrUtil.isInput(port)) "Cadet Blue" else "Orange Red"
+		val dir = if(IrUtil.isInput(port)) "input" else "output"
 
 		'''
 		«IF port.sync»

@@ -96,14 +96,4 @@ public interface ISynflowConstants {
 	 */
 	String SUFFIX_GEN = "-gen";
 
-	/**
-	 * target: simulation
-	 */
-	int TARGET_SIMULATION = 0;
-
-	/**
-	 * target: synthesis
-	 */
-	int TARGET_SYNTHESIS = 1;
-
 }

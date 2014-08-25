@@ -19,8 +19,10 @@ package com.synflow.core;
  */
 public interface IExportConfiguration {
 
-	Iterable<String> getLibraryFiles();
+	enum Target {
+		SIMULATION, SYNTHESIS
+	}
 
-	Iterable<String> getSimulationFiles();
+	Iterable<String> getRootDependencies(Target target);
 
 }
