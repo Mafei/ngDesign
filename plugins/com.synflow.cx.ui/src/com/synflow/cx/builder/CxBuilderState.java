@@ -10,6 +10,7 @@
  *******************************************************************************/
 package com.synflow.cx.builder;
 
+import java.util.Collection;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -21,6 +22,7 @@ import org.eclipse.xtext.builder.impl.QueuedBuildData;
 import org.eclipse.xtext.builder.impl.ToBeBuilt;
 import org.eclipse.xtext.resource.IReferenceDescription;
 import org.eclipse.xtext.resource.IResourceDescription;
+import org.eclipse.xtext.resource.IResourceDescription.Delta;
 import org.eclipse.xtext.resource.IResourceDescriptions;
 
 import com.google.common.collect.ImmutableList;
@@ -88,6 +90,25 @@ public class CxBuilderState extends ClusteringBuilderState {
 				}
 			}
 		}
+
+		// add other references to variables
+		// will add bundles to the list of resources to be updated
+		for (IReferenceDescription refDesc : description.getReferenceDescriptions()) {
+			if (refDesc.getEReference() == Literals.VAR_REF__VARIABLE) {
+				toBeUpdated.add(refDesc.getTargetEObjectUri().trimFragment());
+			}
+		}
+	}
+
+	@Override
+	protected void queueAffectedResources(Set<URI> allRemainingURIs,
+			IResourceDescriptions oldState, CurrentDescriptions newState, Collection<Delta> deltas,
+			BuildData buildData, final IProgressMonitor monitor) {
+		// temporary fix: don't queue affected resources because it messes up instantiation
+
+		// this means that we potentially won't properly regenerate entities when a bundle changes
+		// that's ok for now, all this should be replaced anyway, probably using the instantiator to
+		// track dependencies
 	}
 
 	@Override
