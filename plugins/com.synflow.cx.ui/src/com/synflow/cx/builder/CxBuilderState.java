@@ -102,8 +102,9 @@ public class CxBuilderState extends ClusteringBuilderState {
 
 	@Override
 	protected void queueAffectedResources(Set<URI> allRemainingURIs,
-			IResourceDescriptions oldState, CurrentDescriptions newState, Collection<Delta> deltas,
-			BuildData buildData, final IProgressMonitor monitor) {
+			IResourceDescriptions oldState, CurrentDescriptions newState,
+			Collection<Delta> changedDeltas, Collection<Delta> allDeltas, BuildData buildData,
+			final IProgressMonitor monitor) {
 		// temporary fix: don't queue affected resources because it messes up instantiation
 
 		// this means that we potentially won't properly regenerate entities when a bundle changes
