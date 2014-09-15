@@ -15,7 +15,7 @@ import static com.synflow.cx.CxConstants.NAME_LOOP;
 import static com.synflow.cx.CxConstants.NAME_LOOP_DEPRECATED;
 import static com.synflow.cx.CxConstants.NAME_SETUP;
 import static com.synflow.cx.CxConstants.NAME_SETUP_DEPRECATED;
-import static com.synflow.cx.validation.IssueCodes.ERR_MAIN_FUNCTION_BAD_TYPE;
+import static com.synflow.cx.validation.IssueCodes.ERR_ENTRY_FUNCTION_BAD_TYPE;
 import static org.eclipse.xtext.validation.CheckType.NORMAL;
 
 import java.util.Set;
@@ -144,7 +144,7 @@ public class CxJavaValidator extends AbstractCxJavaValidator {
 		final Variable loop = function;
 		if (!CxUtil.isVoid(loop)) {
 			String message = "The 'loop' function must have type void";
-			error(message, loop, Literals.VARIABLE__NAME, ERR_MAIN_FUNCTION_BAD_TYPE);
+			error(message, loop, Literals.VARIABLE__NAME, ERR_ENTRY_FUNCTION_BAD_TYPE);
 		}
 
 		function = CxUtil.getFunction(task, NAME_SETUP);
@@ -155,7 +155,7 @@ public class CxJavaValidator extends AbstractCxJavaValidator {
 		final Variable setup = function;
 		if (setup != null && !CxUtil.isVoid(setup)) {
 			String message = "The 'setup' function must have type void";
-			error(message, setup, Literals.VARIABLE__NAME, ERR_MAIN_FUNCTION_BAD_TYPE);
+			error(message, setup, Literals.VARIABLE__NAME, ERR_ENTRY_FUNCTION_BAD_TYPE);
 		}
 
 		instantiator.forEachMapping(task, new Executable<Entity>() {

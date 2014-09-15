@@ -14,11 +14,10 @@ import static com.synflow.cx.validation.IssueCodes.ERR_CANNOT_ASSIGN_CONST;
 import static com.synflow.cx.validation.IssueCodes.ERR_CMP_ALWAYS_FALSE;
 import static com.synflow.cx.validation.IssueCodes.ERR_CMP_ALWAYS_TRUE;
 import static com.synflow.cx.validation.IssueCodes.ERR_DIV_MOD_NOT_CONST_POW_Of_TWO;
+import static com.synflow.cx.validation.IssueCodes.ERR_ENTRY_FUNCTION_BAD_TYPE;
 import static com.synflow.cx.validation.IssueCodes.ERR_EXPECTED_CONST;
 import static com.synflow.cx.validation.IssueCodes.ERR_ILLEGAL_FENCE;
 import static com.synflow.cx.validation.IssueCodes.ERR_LOCAL_NOT_INITIALIZED;
-import static com.synflow.cx.validation.IssueCodes.ERR_MAIN_FUNCTION_BAD_TYPE;
-import static com.synflow.cx.validation.IssueCodes.ERR_MISSING_MAIN_FUNCTION;
 import static com.synflow.cx.validation.IssueCodes.ERR_MULTIPLE_READS;
 import static com.synflow.cx.validation.IssueCodes.ERR_SIDE_EFFECTS_FUNCTION;
 import static com.synflow.cx.validation.IssueCodes.ERR_TYPE_MISMATCH;
@@ -236,7 +235,7 @@ public class XFailTests extends AbstractCxTest {
 	@Test
 	public void checkMainFunctionIncorrectType() throws Exception {
 		assertError(getModule("com/synflow/test/xfail/MainFunctionIncorrectType.cf"),
-				ERR_MAIN_FUNCTION_BAD_TYPE);
+				ERR_ENTRY_FUNCTION_BAD_TYPE);
 	}
 
 	@Test
@@ -249,12 +248,6 @@ public class XFailTests extends AbstractCxTest {
 	public void checkModByNonPowerOfTwo() throws Exception {
 		assertError(getModule("com/synflow/test/xfail/ModByNonPowerOfTwo.cf"),
 				ERR_DIV_MOD_NOT_CONST_POW_Of_TWO);
-	}
-
-	@Test
-	public void checkModuleWithNoFunctions() throws Exception {
-		assertError(getModule("com/synflow/test/xfail/ModuleWithNoFunctions.cf"),
-				ERR_MISSING_MAIN_FUNCTION);
 	}
 
 	@Test

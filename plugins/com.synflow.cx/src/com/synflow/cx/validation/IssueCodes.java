@@ -38,6 +38,8 @@ public interface IssueCodes {
 
 	String ERR_DUPLICATE_DECLARATIONS = "errDuplicateDeclarations";
 
+	String ERR_ENTRY_FUNCTION_BAD_TYPE = "errEntryFunctionBadType";
+
 	String ERR_EXPECTED_CONST = "errExpectedConstant";
 
 	String ERR_FUNCTION_CALL = "errFunctionCall";
@@ -45,10 +47,6 @@ public interface IssueCodes {
 	String ERR_ILLEGAL_FENCE = "errIllegalFence";
 
 	String ERR_LOCAL_NOT_INITIALIZED = "errLocalNotInitialized";
-
-	String ERR_MAIN_FUNCTION_BAD_TYPE = "errFirstFunctionBadType";
-
-	String ERR_MISSING_MAIN_FUNCTION = "errMissingMainFunction";
 
 	/**
 	 * multiple reads are forbidden in expressions
@@ -66,5 +64,9 @@ public interface IssueCodes {
 	String ERR_UNRESOLVED_FUNCTION = "errUnresolvedFunction";
 
 	String ERR_VAR_DECL = "errVariableDeclaration";
+
+	String WARN_SHOULD_START_LOWER = "warnShouldStartWithLowercase";
+
+	String WARN_SHOULD_START_UPPER = "warnShouldStartWithUppercase";
 
 }
