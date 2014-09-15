@@ -10,9 +10,9 @@
  *******************************************************************************/
 package com.synflow.cx.ui.quickfix;
 
-import static com.synflow.cx.validation.IssueCodes.ERR_MAIN_FUNCTION_BAD_TYPE;
-import static com.synflow.cx.validation.IssueCodes.ERR_MISSING_MAIN_FUNCTION;
+import static com.synflow.cx.validation.IssueCodes.ERR_ENTRY_FUNCTION_BAD_TYPE;
 import static com.synflow.cx.validation.IssueCodes.ERR_UNRESOLVED_FUNCTION;
+import static com.synflow.cx.validation.IssueCodes.WARN_SHOULD_REPLACE_NAME;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.text.BadLocationException;
@@ -39,25 +39,8 @@ import com.synflow.cx.cx.Variable;
  */
 public class CxQuickfixProvider extends DefaultQuickfixProvider {
 
-	@Fix(ERR_MISSING_MAIN_FUNCTION)
-	public void addFunctionWithModuleName(final Issue issue, IssueResolutionAcceptor acceptor) {
-		final int offset = issue.getOffset();
-		final int length = issue.getLength();
-
-		acceptor.accept(issue, "Create 'main' function",
-				"Adds a new void function to this module named 'main'", null, new IModification() {
-					public void apply(IModificationContext context) throws BadLocationException {
-						IXtextDocument document = context.getXtextDocument();
-
-						String text = document.get(offset, length) + "\n\nvoid main() {\n}\n";
-						document.replace(offset, length, text);
-					}
-				});
-
-	}
-
-	@Fix(ERR_MAIN_FUNCTION_BAD_TYPE)
-	public void correctFirstFunctionType(final Issue issue, IssueResolutionAcceptor acceptor) {
+	@Fix(ERR_ENTRY_FUNCTION_BAD_TYPE)
+	public void changeTypeToVoid(final Issue issue, IssueResolutionAcceptor acceptor) {
 		acceptor.accept(issue, "Change type to void", "Change function type to void", null,
 				new ISemanticModification() {
 
@@ -90,6 +73,24 @@ public class CxQuickfixProvider extends DefaultQuickfixProvider {
 			}
 		});
 		createLinkingIssueResolutions(issue, acceptor);
+	}
+
+	@Fix(WARN_SHOULD_REPLACE_NAME)
+	public void replaceName(final Issue issue, IssueResolutionAcceptor acceptor) {
+		final String name = issue.getData()[0];
+		final String replacement = issue.getData()[1];
+		final int offset = issue.getOffset();
+		final int length = issue.getLength();
+
+		acceptor.accept(issue, "Replace '" + name + "' by '" + replacement + "'",
+				"Updates the name to respect the recommended coding style.", null,
+				new IModification() {
+					public void apply(IModificationContext context) throws BadLocationException {
+						IXtextDocument document = context.getXtextDocument();
+						document.replace(offset, length, replacement);
+					}
+				});
+
 	}
 
 }

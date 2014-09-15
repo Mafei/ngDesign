@@ -65,8 +65,6 @@ public interface IssueCodes {
 
 	String ERR_VAR_DECL = "errVariableDeclaration";
 
-	String WARN_SHOULD_START_LOWER = "warnShouldStartWithLowercase";
-
-	String WARN_SHOULD_START_UPPER = "warnShouldStartWithUppercase";
+	String WARN_SHOULD_REPLACE_NAME = "warnShouldReplaceName";
 
 }
