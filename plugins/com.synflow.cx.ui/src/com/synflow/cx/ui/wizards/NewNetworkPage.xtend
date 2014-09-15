@@ -31,7 +31,7 @@ class NewNetworkPage extends NewFilePage {
 		 */
 		package «package»;
 
-		network «name» {
+		network «entityName» {
 			in u8 a, sync b; out u16 c;
 
 			// instantiate task/network A
