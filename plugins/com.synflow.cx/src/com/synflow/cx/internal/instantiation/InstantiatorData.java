@@ -39,25 +39,36 @@ public class InstantiatorData {
 	private Map<Entity, Map<EObject, EObject>> mapCxToIr;
 
 	/**
+	 * map Cx entity -> IR entity
+	 */
+	private Map<CxEntity, Entity> mapEntities;
+
+	/**
 	 * map (Cx entity, instantiation context) -> IR entity
 	 */
-	private Map<CxEntity, Map<InstantiationContext, Entity>> mapEntities;
+	private Map<CxEntity, Map<InstantiationContext, Entity>> mapSpecialized;
 
 	private Map<URI, CxEntity> uriMap;
 
 	public InstantiatorData() {
 		mapCxToIr = new HashMap<>();
 		mapEntities = new HashMap<>();
+		mapSpecialized = new HashMap<>();
 		uriMap = new HashMap<>();
+	}
+
+	public void associate(CxEntity cxEntity, Entity entity) {
+		Objects.requireNonNull(cxEntity, "cxEntity must not be null in associate");
+		mapEntities.put(cxEntity, entity);
 	}
 
 	public void associate(CxEntity cxEntity, InstantiationContext ctx, Entity entity) {
 		Objects.requireNonNull(cxEntity, "cxEntity must not be null in associate");
 
-		Map<InstantiationContext, Entity> map = mapEntities.get(cxEntity);
+		Map<InstantiationContext, Entity> map = mapSpecialized.get(cxEntity);
 		if (map == null) {
 			map = new LinkedHashMap<>();
-			mapEntities.put(cxEntity, map);
+			mapSpecialized.put(cxEntity, map);
 		} else {
 			Iterator<InstantiationContext> it = map.keySet().iterator();
 			while (it.hasNext()) {
@@ -71,21 +82,21 @@ public class InstantiatorData {
 	}
 
 	/**
-	 * Returns the mapping associated with the given URI.
+	 * Returns the entity currently associated with the URI of the given entity.
 	 * 
-	 * @param uri
-	 *            a URI
-	 * @return a map
+	 * @param cxEntity
+	 *            a Cx entity whose URI is used to look up in URI map
+	 * @return a Cx entity (may be <code>null</code>, may be the same as <code>cxEntity</code>)
 	 */
-	public Map<InstantiationContext, Entity> getAssociation(URI uri) {
-		CxEntity candidate = uriMap.get(uri);
-		return mapEntities.get(candidate);
+	public CxEntity getCurrentMapping(CxEntity cxEntity) {
+		URI uri = EcoreUtil.getURI(cxEntity);
+		return uriMap.get(uri);
 	}
 
 	public Collection<Entity> getEntities(CxEntity cxEntity) {
 		Objects.requireNonNull(cxEntity, "cxEntity must not be null in getEntities");
 
-		Map<InstantiationContext, Entity> map = mapEntities.get(cxEntity);
+		Map<InstantiationContext, Entity> map = mapSpecialized.get(cxEntity);
 		if (map == null) {
 			return Collections.emptyList();
 		}
@@ -115,17 +126,14 @@ public class InstantiatorData {
 	}
 
 	/**
-	 * Returns <code>true</code> if there is already a mapping for the given Cx entity. No mapping
-	 * can happen because there is a mapping for a previous version of the given entity, or there is
-	 * no mapping at all.
+	 * Returns the specialization info associated with the given Cx entity.
 	 * 
 	 * @param cxEntity
 	 *            a Cx entity
-	 * @return a boolean
+	 * @return a map
 	 */
-	public boolean isAssociated(CxEntity cxEntity) {
-		Objects.requireNonNull(cxEntity, "cxEntity must not be null in isAssociated");
-		return mapEntities.containsKey(cxEntity);
+	public Map<InstantiationContext, Entity> getSpecialization(CxEntity cxEntity) {
+		return mapSpecialized.get(cxEntity);
 	}
 
 	public <T extends EObject, U extends EObject> void putMapping(Entity entity, T cxObj, U irObj) {
@@ -147,7 +155,7 @@ public class InstantiatorData {
 				for (Entity entity : getEntities((CxEntity) candidate)) {
 					mapCxToIr.remove(entity);
 				}
-				mapEntities.remove(candidate);
+				mapSpecialized.remove(candidate);
 			}
 			uriMap.put(uri, cxEntity);
 		}

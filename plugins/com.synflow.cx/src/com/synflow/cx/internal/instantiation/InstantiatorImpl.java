@@ -295,18 +295,16 @@ public class InstantiatorImpl implements IInstantiator {
 		resourceSet = module.eResource().getResourceSet();
 
 		try {
+			Iterable<CxEntity> entities;
 			if (data == null) {
 				data = new InstantiatorData();
-				for (CxEntity cxEntity : findTopFrom(resourceSet)) {
-					EntityInfo info = entityMapper.createEntityInfo(cxEntity);
-					instantiate(info, new InstantiationContext(cxEntity.getName()));
-				}
+				entities = findTopFrom(resourceSet);
 			} else {
-				for (CxEntity cxEntity : module.getEntities()) {
-					if (!data.isAssociated(cxEntity)) {
-						updateEntity(cxEntity);
-					}
-				}
+				entities = module.getEntities();
+			}
+
+			for (CxEntity cxEntity : entities) {
+				updateEntity(cxEntity);
 			}
 		} finally {
 			resourceSet = null;
@@ -314,9 +312,25 @@ public class InstantiatorImpl implements IInstantiator {
 	}
 
 	private void updateEntity(CxEntity cxEntity) {
-		URI uri = EcoreUtil.getURI(cxEntity);
-		Map<InstantiationContext, Entity> map = data.getAssociation(uri);
+		CxEntity oldEntity = data.getCurrentMapping(cxEntity);
+		if (cxEntity == oldEntity) {
+			// data is up to date
+			return;
+		}
 
+		// look up specialization info using previous entity
+		Map<InstantiationContext, Entity> map = data.getSpecialization(oldEntity);
+		if (map == null) {
+			// no previous record of specialization info exists
+			EntityInfo info = entityMapper.createEntityInfo(cxEntity);
+			instantiate(info, new InstantiationContext(cxEntity.getName()));
+		} else {
+			// update specialization info
+			updateSpecialized(cxEntity, map);
+		}
+	}
+
+	private void updateSpecialized(CxEntity cxEntity, Map<InstantiationContext, Entity> map) {
 		// copy entry set because map is modified by instantiation
 		// old contexts are discarded, new ones added
 		Set<Entry<InstantiationContext, Entity>> set = ImmutableSet.copyOf(map.entrySet());
