@@ -222,14 +222,13 @@ public class InstantiatorImpl implements IInstantiator {
 	 * @param info
 	 *            entity info (URI of IR, name, reference to original Cx entity)
 	 * @param ctx
-	 *            instantiation context (hierarchical path, inherited properties)
+	 *            instantiation context (hierarchical path, inherited properties). May be
+	 *            <code>null</code>.
 	 * @return a specialized IR entity
 	 */
-	private Entity instantiate(final EntityInfo info, final InstantiationContext ctx) {
-		final CxEntity cxEntity = info.getCxEntity();
-		data.updateUri(cxEntity);
-
-		Entity entity = entityMapper.doSwitch(info.getCxEntity());
+	private Entity instantiate(EntityInfo info, InstantiationContext ctx) {
+		CxEntity cxEntity = info.getCxEntity();
+		Entity entity = entityMapper.doSwitch(cxEntity);
 
 		// add to resource
 		Resource resource = resourceSet.createResource(info.getURI());
@@ -238,8 +237,8 @@ public class InstantiatorImpl implements IInstantiator {
 		// configure entity
 		entityMapper.configureEntity(entity, info, ctx);
 
-		// add mapping, optionally add to builtins
-		data.associate(cxEntity, ctx, entity);
+		// update mapping, optionally add to builtins
+		data.updateMapping(cxEntity, entity, ctx);
 		if (CoreUtil.isBuiltin(entity)) {
 			builtins.add(entity);
 		}
@@ -267,9 +266,19 @@ public class InstantiatorImpl implements IInstantiator {
 			putMapping(dpn, inst, instance);
 			dpn.add(instance);
 
-			InstantiationContext subCtx = new InstantiationContext(ctx, inst, instance);
-			EntityInfo info = entityMapper.createEntityInfo(inst, subCtx);
-			Entity subEntity = instantiate(info, subCtx);
+			Entity subEntity;
+			if (ctx == null) {
+				subEntity = data.getMapping(inst.getEntity());
+				if (subEntity == null) {
+					EntityInfo info = entityMapper.createEntityInfo(inst.getEntity());
+					instantiate(info, null);
+					subEntity = data.getMapping(inst.getEntity());
+				}
+			} else {
+				InstantiationContext subCtx = new InstantiationContext(ctx, inst, instance);
+				EntityInfo info = entityMapper.createEntityInfo(inst, subCtx);
+				subEntity = instantiate(info, subCtx);
+			}
 			instance.setEntity(subEntity);
 
 			// set properties. For anonymous tasks, use the task's properties for the instance
@@ -323,7 +332,7 @@ public class InstantiatorImpl implements IInstantiator {
 		if (map == null) {
 			// no previous record of specialization info exists
 			EntityInfo info = entityMapper.createEntityInfo(cxEntity);
-			instantiate(info, new InstantiationContext(cxEntity.getName()));
+			instantiate(info, null);
 		} else {
 			// update specialization info
 			updateSpecialized(cxEntity, map);

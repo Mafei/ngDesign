@@ -109,30 +109,34 @@ public class EntityMapper extends CxSwitch<Entity> {
 	 *            instantiation context
 	 */
 	public void configureEntity(Entity entity, EntityInfo info, InstantiationContext ctx) {
+		CxEntity cxEntity = info.getCxEntity();
+
 		// set name
 		if (CoreUtil.isBuiltin(entity)) {
-			entity.setName(getName(info.getCxEntity()));
+			entity.setName(getName(cxEntity));
 		} else {
 			entity.setName(info.getName());
 		}
 
 		// set file name
-		Module module = EcoreUtil2.getContainerOfType(info.getCxEntity(), Module.class);
+		Module module = EcoreUtil2.getContainerOfType(cxEntity, Module.class);
 		String fileName = CxUtil.getFileName(module);
 		entity.setFileName(fileName);
 
 		// set line number
-		int lineNumber = TransformerUtil.getStartLine(info.getCxEntity());
+		int lineNumber = TransformerUtil.getStartLine(cxEntity);
 		entity.setLineNumber(lineNumber);
 
-		// set values on entity
-		Map<Variable, EObject> values = setValues(info.getCxEntity(), ctx);
-
-		try {
-			skeletonMaker.createSkeleton(info.getCxEntity(), entity);
-		} finally {
-			// restore values
-			restoreValues(values);
+		// create skeleton (with proper values if ctx is given)
+		if (ctx == null) {
+			skeletonMaker.createSkeleton(cxEntity, entity);
+		} else {
+			Map<Variable, EObject> values = setValues(cxEntity, ctx);
+			try {
+				skeletonMaker.createSkeleton(cxEntity, entity);
+			} finally {
+				restoreValues(values);
+			}
 		}
 	}
 
