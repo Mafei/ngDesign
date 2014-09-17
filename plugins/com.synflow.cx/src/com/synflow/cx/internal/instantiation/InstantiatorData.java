@@ -26,7 +26,6 @@ import org.eclipse.xtext.EcoreUtil2;
 import com.google.common.collect.Iterables;
 import com.synflow.cx.cx.Bundle;
 import com.synflow.cx.cx.CxEntity;
-import com.synflow.cx.cx.Instantiable;
 import com.synflow.models.dpn.Entity;
 
 /**
@@ -73,6 +72,7 @@ public class InstantiatorData {
 	public Collection<Entity> getEntities(CxEntity cxEntity) {
 		Objects.requireNonNull(cxEntity, "cxEntity must not be null in getEntities");
 
+		// TODO look up in mapEntities
 		Map<InstantiationContext, Entity> map = mapSpecialized.get(cxEntity);
 		if (map == null) {
 			return Collections.emptyList();
@@ -110,7 +110,7 @@ public class InstantiatorData {
 	 *            an instantiable Cx entity
 	 * @return an IR entity, or <code>null</code>
 	 */
-	public Entity getMapping(Instantiable instantiable) {
+	public Entity getMapping(CxEntity instantiable) {
 		Entity entity = mapEntities.get(instantiable);
 		if (entity == null) {
 			URI uri = EcoreUtil.getURI(instantiable);

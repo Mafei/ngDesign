@@ -59,7 +59,10 @@ public class InstantiationContext extends Node {
 		this.instance = instance;
 
 		// first add properties from parent context
-		properties = new LinkedHashMap<>(parent.properties);
+		properties = new LinkedHashMap<>();
+		if (parent != null) {
+			properties.putAll(parent.properties);
+		}
 
 		// then add inst's properties (may override parent's)
 		Obj obj = inst.getArguments();

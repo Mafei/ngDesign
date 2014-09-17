@@ -151,7 +151,7 @@ public class EntityMapper extends CxSwitch<Entity> {
 		// get URI of .ir file
 		URI cxUri = cxEntity.eResource().getURI();
 		String name = getName(cxEntity);
-		URI uri = UriComputer.INSTANCE.computeUri(null, cxUri, name);
+		URI uri = UriComputer.INSTANCE.computeUri(name, cxUri, null);
 
 		return new EntityInfo(cxEntity, name, uri);
 	}
@@ -172,21 +172,20 @@ public class EntityMapper extends CxSwitch<Entity> {
 		}
 
 		// compute specialized name
-		String name = ctx.getName();
-		// TODO come back later if it's not too complicated to do that
 		// like a task T instantiated twice by two different networks
 		// but T does not depend on properties
-		// Map<Variable, EObject> values = getVariablesMap(cxEntity, ctx);
-		// if (values.isEmpty()) {
-		// name = getName(cxEntity);
-		// } else {
-		// name = ctx.getName();
-		// }
+		String name = ctx.getName();
+		Map<Variable, EObject> values = getVariablesMap(cxEntity, ctx);
+		if (values.isEmpty()) {
+			name = getName(cxEntity);
+		} else {
+			name = ctx.getName();
+		}
 
 		// get URI of .ir file
 		URI cxUri = cxEntity.eResource().getURI();
 		URI uriInst = EcoreUtil.getURI(inst);
-		URI uri = UriComputer.INSTANCE.computeUri(uriInst, cxUri, name);
+		URI uri = UriComputer.INSTANCE.computeUri(name, cxUri, uriInst);
 
 		return new EntityInfo(cxEntity, name, uri);
 	}
@@ -216,9 +215,9 @@ public class EntityMapper extends CxSwitch<Entity> {
 	 *            instantiation context
 	 * @return a map
 	 */
-	// private Map<Variable, EObject> getVariablesMap(CxEntity cxEntity, InstantiationContext ctx) {
-	// return visitProperties(cxEntity, ctx, false);
-	// }
+	private Map<Variable, EObject> getVariablesMap(CxEntity cxEntity, InstantiationContext ctx) {
+		return visitProperties(cxEntity, ctx, false);
+	}
 
 	/**
 	 * Restore values using the given map.

@@ -268,11 +268,18 @@ public class InstantiatorImpl implements IInstantiator {
 
 			Entity subEntity;
 			if (ctx == null) {
-				subEntity = data.getMapping(inst.getEntity());
+				InstantiationContext subCtx = new InstantiationContext(ctx, inst, instance);
+				EntityInfo info = entityMapper.createEntityInfo(inst, subCtx);
+				
+				subEntity = data.getMapping(info.getCxEntity());
 				if (subEntity == null) {
-					EntityInfo info = entityMapper.createEntityInfo(inst.getEntity());
-					instantiate(info, null);
-					subEntity = data.getMapping(inst.getEntity());
+					if (subCtx.getName().equals(info.getName())) {
+						// specialized
+						subEntity = instantiate(info, subCtx);
+					} else {
+						instantiate(info, null);
+						subEntity = data.getMapping(info.getCxEntity());
+					}
 				}
 			} else {
 				InstantiationContext subCtx = new InstantiationContext(ctx, inst, instance);

@@ -36,15 +36,15 @@ public class UriComputer extends ExtensibleURIConverterImpl {
 	/**
 	 * Computes the URI to a .ir file based on the context, uri, and name of the entity.
 	 * 
-	 * @param context
-	 *            URI to a module (may be <code>null</code>)
-	 * @param uri
-	 *            uri of a .cf resource
 	 * @param name
 	 *            name of the entity
+	 * @param uri
+	 *            uri of a .cf resource
+	 * @param context
+	 *            URI to a module (may be <code>null</code>)
 	 * @return a new absolute URI
 	 */
-	public URI computeUri(URI context, URI uri, String name) {
+	public URI computeUri(String name, URI uri, URI context) {
 		URI result;
 		if (uri.isPlatformResource()) {
 			result = URI.createPlatformResourceURI(uri.segment(1) + "/" + FOLDER_IR, false);
@@ -54,7 +54,7 @@ public class UriComputer extends ExtensibleURIConverterImpl {
 			result = keepPrefix(normalized, uri);
 		} else if (uri.isPlatformPlugin()) {
 			// return URI in the right place based on the context
-			return computeUri(null, context, name);
+			return computeUri(name, context, null);
 		} else {
 			result = uri;
 		}
