@@ -227,18 +227,17 @@ public class InstantiatorImpl implements IInstantiator {
 	 * @return a specialized IR entity
 	 */
 	private Entity instantiate(EntityInfo info, InstantiationContext ctx) {
+		// map entity and update mapping
 		CxEntity cxEntity = info.getCxEntity();
 		Entity entity = entityMapper.doSwitch(cxEntity);
+		data.updateMapping(cxEntity, entity, ctx);
 
 		// add to resource
 		Resource resource = resourceSet.createResource(info.getURI());
 		resource.getContents().add(entity);
 
-		// configure entity
+		// configure entity, if built-in add to builtins list
 		entityMapper.configureEntity(entity, info, ctx);
-
-		// update mapping, optionally add to builtins
-		data.updateMapping(cxEntity, entity, ctx);
 		if (CoreUtil.isBuiltin(entity)) {
 			builtins.add(entity);
 		}
