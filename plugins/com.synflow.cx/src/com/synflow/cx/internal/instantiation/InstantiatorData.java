@@ -69,15 +69,48 @@ public class InstantiatorData {
 		return uriMap.get(uri);
 	}
 
+	/**
+	 * Returns a collection of IR entities associated with the given Cx entity. If the Cx entity is
+	 * specialized, this method returns a list of possibly many specialized IR entities
+	 * corresponding to the original Cx entity; otherwise a single IR entity is returned.
+	 * 
+	 * @param cxEntity
+	 *            a Cx entity
+	 * @return a collection of IR entities
+	 */
 	public Collection<Entity> getEntities(CxEntity cxEntity) {
 		Objects.requireNonNull(cxEntity, "cxEntity must not be null in getEntities");
 
-		// TODO look up in mapEntities
+		Entity entity = mapEntities.get(cxEntity);
+		if (entity != null) {
+			return Collections.singleton(entity);
+		}
+
 		Map<InstantiationContext, Entity> map = mapSpecialized.get(cxEntity);
 		if (map == null) {
 			return Collections.emptyList();
 		}
 		return map.values();
+	}
+
+	/**
+	 * Returns the IR entity that is currently or was previously associated with the given Cx
+	 * instantiable.
+	 * 
+	 * @param instantiable
+	 *            an instantiable Cx entity
+	 * @return an IR entity, or <code>null</code>
+	 */
+	public Entity getMapping(CxEntity instantiable) {
+		Entity entity = mapEntities.get(instantiable);
+		if (entity == null) {
+			URI uri = EcoreUtil.getURI(instantiable);
+			CxEntity oldEntity = uriMap.get(uri);
+			if (oldEntity != null) {
+				entity = mapEntities.get(oldEntity);
+			}
+		}
+		return entity;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -100,26 +133,6 @@ public class InstantiatorData {
 			}
 		}
 		return irObj;
-	}
-
-	/**
-	 * Returns the IR entity that is currently or was previously associated with the given Cx
-	 * instantiable.
-	 * 
-	 * @param instantiable
-	 *            an instantiable Cx entity
-	 * @return an IR entity, or <code>null</code>
-	 */
-	public Entity getMapping(CxEntity instantiable) {
-		Entity entity = mapEntities.get(instantiable);
-		if (entity == null) {
-			URI uri = EcoreUtil.getURI(instantiable);
-			CxEntity oldEntity = uriMap.get(uri);
-			if (oldEntity != null) {
-				entity = mapEntities.get(oldEntity);
-			}
-		}
-		return entity;
 	}
 
 	/**
@@ -148,22 +161,27 @@ public class InstantiatorData {
 		Objects.requireNonNull(cxEntity, "cxEntity must not be null in updateMapping");
 
 		URI uri = EcoreUtil.getURI(cxEntity);
-		CxEntity oldEntity = uriMap.put(uri, cxEntity);
-		if (ctx == null) {
-			if (cxEntity != oldEntity) {
-				mapCxToIr.remove(mapEntities.remove(oldEntity));
-			}
+		CxEntity oldEntity = uriMap.get(uri);
+		if (oldEntity != cxEntity) {
+			uriMap.put(uri, cxEntity);
 
-			mapEntities.put(cxEntity, entity);
-		} else {
-			if (cxEntity != oldEntity) {
-				Map<InstantiationContext, Entity> map = mapSpecialized.remove(oldEntity);
-				if (map != null) {
-					mapCxToIr.entrySet().removeAll(map.values());
+			// clean up anything associated with previous version of cxEntity
+			if (oldEntity != null) {
+				if (ctx == null) {
+					mapCxToIr.remove(mapEntities.remove(oldEntity));
+				} else {
+					Map<InstantiationContext, Entity> map = mapSpecialized.remove(oldEntity);
+					if (map != null) {
+						mapCxToIr.entrySet().removeAll(map.values());
+					}
 				}
 			}
+		}
 
-			// update map<ctx, entity>
+		// updates mapEntities/mapSpecialized
+		if (ctx == null) {
+			mapEntities.put(cxEntity, entity);
+		} else {
 			Map<InstantiationContext, Entity> map = mapSpecialized.get(cxEntity);
 			if (map == null) {
 				map = new LinkedHashMap<>();

@@ -260,31 +260,28 @@ public class InstantiatorImpl implements IInstantiator {
 	 *            instantiation context (hierarchical path, inherited properties)
 	 */
 	private void instantiate(Network network, Entity entity, InstantiationContext ctx) {
+		ctx = new InstantiationContext(network.getName());
 		DPN dpn = (DPN) entity;
 		for (Inst inst : network.getInstances()) {
 			Instance instance = DpnFactory.eINSTANCE.createInstance(inst.getName());
 			putMapping(dpn, inst, instance);
 			dpn.add(instance);
 
+			InstantiationContext subCtx = new InstantiationContext(ctx, inst, instance);
+			EntityInfo info = entityMapper.createEntityInfo(inst, subCtx);
+
 			Entity subEntity;
-			if (ctx == null) {
-				InstantiationContext subCtx = new InstantiationContext(ctx, inst, instance);
-				EntityInfo info = entityMapper.createEntityInfo(inst, subCtx);
-				
+			if (subCtx.getName().equals(info.getName())) {
+				// specialized
+				subEntity = instantiate(info, subCtx);
+			} else {
+				// not specialized, try to look up existing mapping
 				subEntity = data.getMapping(info.getCxEntity());
 				if (subEntity == null) {
-					if (subCtx.getName().equals(info.getName())) {
-						// specialized
-						subEntity = instantiate(info, subCtx);
-					} else {
-						instantiate(info, null);
-						subEntity = data.getMapping(info.getCxEntity());
-					}
+					// otherwise, instantiate entity
+					instantiate(info, null);
+					subEntity = data.getMapping(info.getCxEntity());
 				}
-			} else {
-				InstantiationContext subCtx = new InstantiationContext(ctx, inst, instance);
-				EntityInfo info = entityMapper.createEntityInfo(inst, subCtx);
-				subEntity = instantiate(info, subCtx);
 			}
 			instance.setEntity(subEntity);
 
