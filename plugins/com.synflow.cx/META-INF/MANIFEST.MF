@@ -5,9 +5,9 @@ Bundle-Vendor: Synflow SAS
 Bundle-Version: 0.11.0.qualifier
 Bundle-SymbolicName: com.synflow.cx;singleton:=true
 Bundle-ActivationPolicy: lazy
-Require-Bundle: org.eclipse.xtext;bundle-version="2.6.0";visibility:=reexport,
- org.eclipse.xtext.generator;bundle-version="2.6.0";resolution:=optional,
- org.eclipse.xtext.util;bundle-version="2.6.0",
+Require-Bundle: org.eclipse.xtext;bundle-version="2.7.1";visibility:=reexport,
+ org.eclipse.xtext.generator;bundle-version="2.7.1";resolution:=optional,
+ org.eclipse.xtext.util;bundle-version="2.7.1",
  org.eclipse.emf.codegen.ecore;resolution:=optional,
  org.eclipse.emf.common,
  org.eclipse.emf.ecore,
