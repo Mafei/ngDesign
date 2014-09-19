@@ -7,6 +7,7 @@
 package com.synflow.models.dpn.impl;
 
 import org.eclipse.emf.ecore.EClass;
+
 import com.synflow.models.dpn.DpnPackage;
 import com.synflow.models.dpn.Unit;
 import com.synflow.models.ir.Procedure;
@@ -20,6 +21,7 @@ import com.synflow.models.ir.Procedure;
  * @generated
  */
 public class UnitImpl extends EntityImpl implements Unit {
+
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * 
@@ -49,4 +51,11 @@ public class UnitImpl extends EntityImpl implements Unit {
 		return null;
 	}
 
-} // UnitImpl
+	@Override
+	public String toString() {
+		if (eIsProxy())
+			return super.toString();
+		return "unit " + getName();
+	}
+
+}

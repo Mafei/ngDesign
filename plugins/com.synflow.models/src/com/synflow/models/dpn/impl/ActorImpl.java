@@ -7,6 +7,7 @@
 package com.synflow.models.dpn.impl;
 
 import java.util.Collection;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -20,6 +21,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 import org.eclipse.emf.ecore.util.InternalEList;
+
 import com.synflow.models.dpn.Action;
 import com.synflow.models.dpn.Actor;
 import com.synflow.models.dpn.DpnPackage;
@@ -283,4 +285,11 @@ public class ActorImpl extends EntityImpl implements Actor {
 					newFsm));
 	}
 
-} // ActorImpl
+	@Override
+	public String toString() {
+		if (eIsProxy())
+			return super.toString();
+		return "actor " + getName();
+	}
+
+}

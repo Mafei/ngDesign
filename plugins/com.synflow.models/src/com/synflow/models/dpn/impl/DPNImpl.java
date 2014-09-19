@@ -526,7 +526,7 @@ public class DPNImpl extends EntityImpl implements DPN {
 	public String toString() {
 		if (eIsProxy())
 			return super.toString();
-		return getName();
+		return "network " + getName();
 	}
 
 }

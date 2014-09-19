@@ -592,27 +592,11 @@ public class EntityImpl extends EObjectImpl implements Entity {
 					oldProperties, properties));
 	}
 
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
 	@Override
 	public String toString() {
 		if (eIsProxy())
 			return super.toString();
-
-		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (fileName: ");
-		result.append(fileName);
-		result.append(", lineNumber: ");
-		result.append(lineNumber);
-		result.append(", name: ");
-		result.append(name);
-		result.append(", properties: ");
-		result.append(properties);
-		result.append(')');
-		return result.toString();
+		return "entity " + getName();
 	}
 
 }
