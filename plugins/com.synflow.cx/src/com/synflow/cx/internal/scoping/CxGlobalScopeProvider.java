@@ -10,12 +10,8 @@
  *******************************************************************************/
 package com.synflow.cx.internal.scoping;
 
-import java.util.Set;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.xtext.linking.impl.ImportedNamesAdapter;
-import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.scoping.IScope;
 import org.eclipse.xtext.scoping.impl.DefaultGlobalScopeProvider;
@@ -24,34 +20,17 @@ import com.google.common.base.Predicate;
 
 /**
  * This class extends the default global scope provider with a parent scope that knows about
- * built-in components. This is much, much cleaner/simpler than the Xtend solution. Methods
- * getImportedNamesAdapter and getImportedNamesSet are taken from Xbase.
+ * built-in components.
  * 
  * @author Matthieu Wipliez
  * 
  */
 public class CxGlobalScopeProvider extends DefaultGlobalScopeProvider {
 
-	private ImportedNamesAdapter getImportedNamesAdapter(Resource resource) {
-		ImportedNamesAdapter adapter = ImportedNamesAdapter.find(resource);
-		if (adapter != null)
-			return adapter;
-		ImportedNamesAdapter importedNamesAdapter = new ImportedNamesAdapter();
-		resource.eAdapters().add(importedNamesAdapter);
-		return importedNamesAdapter;
-	}
-
-	private Set<QualifiedName> getImportedNamesSet(Resource resource) {
-		ImportedNamesAdapter adapter = getImportedNamesAdapter(resource);
-		return adapter.getImportedNames();
-	}
-
 	@Override
 	protected IScope getScope(final Resource resource, boolean ignoreCase, EClass type,
 			Predicate<IEObjectDescription> filter) {
-		ComponentScope parent = new ComponentScope(IScope.NULLSCOPE, resource.getResourceSet(),
-				getImportedNamesSet(resource));
-
+		ComponentScope parent = new ComponentScope(IScope.NULLSCOPE, resource.getResourceSet());
 		return getScope(parent, resource, ignoreCase, type, filter);
 	}
 

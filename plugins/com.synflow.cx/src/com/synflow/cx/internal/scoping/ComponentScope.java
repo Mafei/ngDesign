@@ -16,7 +16,6 @@ import static java.util.Collections.singleton;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -58,13 +57,10 @@ public class ComponentScope extends AbstractScope {
 		return uri.appendFragment("//@entities." + index);
 	}
 
-	private final Set<QualifiedName> importedNames;
-
 	private ResourceSet resourceSet;
 
-	public ComponentScope(IScope parent, ResourceSet resourceSet, Set<QualifiedName> importedNames) {
+	public ComponentScope(IScope parent, ResourceSet resourceSet) {
 		super(parent, false);
-		this.importedNames = importedNames;
 		this.resourceSet = resourceSet;
 	}
 
@@ -84,8 +80,6 @@ public class ComponentScope extends AbstractScope {
 
 	@Override
 	public IEObjectDescription getSingleElement(QualifiedName name) {
-		importedNames.add(name.toLowerCase());
-
 		URI uri = uriMap.get(name.toString());
 		if (uri != null) {
 			EObject eObject = resourceSet.getEObject(uri, true);
