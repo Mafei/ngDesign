@@ -8,7 +8,7 @@
  * Contributors:
  *    Matthieu Wipliez - initial API and implementation and/or initial documentation
  *******************************************************************************/
-package com.synflow.cx.internal.scoping;
+package com.synflow.cx.resource;
 
 import java.util.HashMap;
 import java.util.Iterator;
