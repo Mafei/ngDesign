@@ -27,12 +27,15 @@ public class EntityInfo {
 
 	private final String name;
 
+	private final boolean specialized;
+
 	private final URI uri;
 
-	public EntityInfo(CxEntity cxEntity, String name, URI uri) {
+	public EntityInfo(CxEntity cxEntity, String name, URI uri, boolean specialized) {
 		this.cxEntity = cxEntity;
 		this.name = name;
 		this.uri = uri;
+		this.specialized = specialized;
 	}
 
 	public CxEntity getCxEntity() {
@@ -45,6 +48,10 @@ public class EntityInfo {
 
 	public URI getURI() {
 		return uri;
+	}
+
+	public boolean isSpecialized() {
+		return specialized;
 	}
 
 	@Override

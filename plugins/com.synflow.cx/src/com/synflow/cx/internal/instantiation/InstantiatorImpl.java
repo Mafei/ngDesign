@@ -259,7 +259,12 @@ public class InstantiatorImpl implements IInstantiator {
 	 *            instantiation context (hierarchical path, inherited properties)
 	 */
 	private void instantiate(Network network, Entity entity, InstantiationContext ctx) {
-		ctx = new InstantiationContext(network.getName());
+		if (ctx == null) {
+			// create a context for this network to serve as a parent context
+			// only useful for specialized instances
+			ctx = new InstantiationContext(entity.getName());
+		}
+
 		DPN dpn = (DPN) entity;
 		for (Inst inst : network.getInstances()) {
 			Instance instance = DpnFactory.eINSTANCE.createInstance(inst.getName());
@@ -267,19 +272,22 @@ public class InstantiatorImpl implements IInstantiator {
 			dpn.add(instance);
 
 			InstantiationContext subCtx = new InstantiationContext(ctx, inst, instance);
-			EntityInfo info = entityMapper.createEntityInfo(inst, subCtx);
+			EntityInfo info = entityMapper.createEntityInfo(subCtx);
 
 			Entity subEntity;
-			if (subCtx.getName().equals(info.getName())) {
-				// specialized
+			if (info.isSpecialized()) {
+				// specialized: instantiate with sub-context
 				subEntity = instantiate(info, subCtx);
 			} else {
-				// not specialized, try to look up existing mapping
+				// not specialized: remove sub-context (not needed anymore)
+				subCtx.delete();
+
+				// try to look up existing mapping
 				subEntity = data.getMapping(info.getCxEntity());
 				if (subEntity == null) {
-					// otherwise, instantiate entity
-					instantiate(info, null);
-					subEntity = data.getMapping(info.getCxEntity());
+					// no existing mapping, transform Cx entity to IR
+					// not specialized => no need for instantiation context (1:1 mapping)
+					subEntity = instantiate(info, null);
 				}
 			}
 			instance.setEntity(subEntity);
@@ -363,7 +371,7 @@ public class InstantiatorImpl implements IInstantiator {
 				inst.setEntity((Instantiable) cxEntity);
 
 				// instantiate
-				EntityInfo info = entityMapper.createEntityInfo(inst, newCtx);
+				EntityInfo info = entityMapper.createEntityInfo(newCtx);
 				Entity entity = instantiate(info, newCtx);
 				instance.setEntity(entity);
 			}

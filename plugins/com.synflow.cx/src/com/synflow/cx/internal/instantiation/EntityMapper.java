@@ -141,53 +141,56 @@ public class EntityMapper extends CxSwitch<Entity> {
 	}
 
 	/**
-	 * Returns info for the IR entity instantiated by the given instance.
+	 * Returns an EntityInfo about the given Cx entity.
 	 * 
-	 * @param inst
-	 *            a Cx instance
-	 * @return info about the IR entity
+	 * @param cxEntity
+	 *            a Cx entity
+	 * @return an EntityInfo object
 	 */
 	public EntityInfo createEntityInfo(CxEntity cxEntity) {
-		// get URI of .ir file
-		URI cxUri = cxEntity.eResource().getURI();
-		String name = getName(cxEntity);
-		URI uri = UriComputer.INSTANCE.computeUri(name, cxUri, null);
-
-		return new EntityInfo(cxEntity, name, uri);
+		return createEntityInfo(cxEntity, null, null);
 	}
 
 	/**
-	 * Returns info for the IR entity instantiated by the given instance.
+	 * Returns an EntityInfo about the given entity.
 	 * 
+	 * @param cxEntity
+	 *            Cx entity
 	 * @param inst
-	 *            a Cx instance
-	 * @return info about the IR entity
+	 *            instance, may be <code>null</code>
+	 * @param specializedName
+	 *            specialized name, if null this method uses the entity name as returned by
+	 *            {@link #getName(CxEntity)}
+	 * @return an EntityInfo object
 	 */
-	public EntityInfo createEntityInfo(Inst inst, InstantiationContext ctx) {
-		Instantiable cxEntity;
-		if (inst.getTask() == null) {
-			cxEntity = inst.getEntity();
-		} else {
-			cxEntity = inst.getTask();
-		}
-
-		// compute specialized name
-		// like a task T instantiated twice by two different networks
-		// but T does not depend on properties
-		String name = ctx.getName();
-		Map<Variable, EObject> values = getVariablesMap(cxEntity, ctx);
-		if (values.isEmpty()) {
-			name = getName(cxEntity);
-		} else {
-			name = ctx.getName();
-		}
-
-		// get URI of .ir file
+	private EntityInfo createEntityInfo(CxEntity cxEntity, Inst inst, String specializedName) {
+		boolean specialized = specializedName != null;
+		String name = specialized ? specializedName : getName(cxEntity);
 		URI cxUri = cxEntity.eResource().getURI();
-		URI uriInst = EcoreUtil.getURI(inst);
+		URI uriInst = inst == null ? null : EcoreUtil.getURI(inst);
 		URI uri = UriComputer.INSTANCE.computeUri(name, cxUri, uriInst);
 
-		return new EntityInfo(cxEntity, name, uri);
+		return new EntityInfo(cxEntity, name, uri, specialized);
+	}
+
+	/**
+	 * Returns an EntityInfo for the Cx entity instantiated using the given instantiation context.
+	 * 
+	 * @param ctx
+	 *            an instantiation context
+	 * @return an EntityInfo
+	 */
+	public EntityInfo createEntityInfo(InstantiationContext ctx) {
+		// if this instance declares an inner task, it is specialized
+		Inst inst = ctx.getInst();
+		boolean specialized = inst.getTask() != null;
+		Instantiable cxEntity = specialized ? inst.getTask() : inst.getEntity();
+
+		// if the instance depends on parent's properties, it is specialized
+		Map<Variable, EObject> values = getVariablesMap(cxEntity, ctx);
+		specialized |= !values.isEmpty();
+
+		return createEntityInfo(cxEntity, inst, specialized ? ctx.getName() : null);
 	}
 
 	/**
