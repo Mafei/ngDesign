@@ -23,7 +23,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.EcoreUtil2;
 
-import com.google.common.collect.Iterables;
 import com.synflow.cx.cx.Bundle;
 import com.synflow.cx.cx.CxEntity;
 import com.synflow.models.dpn.Entity;
@@ -126,9 +125,10 @@ public class InstantiatorData {
 		if (irObj == null) {
 			CxEntity cxEntity = EcoreUtil2.getContainerOfType(cxObj, CxEntity.class);
 			if (cxEntity instanceof Bundle) {
-				entity = Iterables.getFirst(getEntities(cxEntity), null);
+				// lookup in mapEntities, because Bundles are not specialized (yet)
+				entity = mapEntities.get(cxEntity);
 				if (entity != null) {
-					irObj = (U) mapCxToIr.get(entity).get(cxObj);
+					return getMapping(entity, cxObj);
 				}
 			}
 		}
