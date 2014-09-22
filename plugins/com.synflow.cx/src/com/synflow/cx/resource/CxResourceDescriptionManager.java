@@ -12,7 +12,8 @@ package com.synflow.cx.resource;
 
 import java.util.Collection;
 
-import org.eclipse.xtext.naming.QualifiedName;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.resource.IResourceDescription;
 import org.eclipse.xtext.resource.IResourceDescription.Delta;
@@ -20,7 +21,14 @@ import org.eclipse.xtext.resource.IResourceDescription.Manager.AllChangeAware;
 import org.eclipse.xtext.resource.IResourceDescriptions;
 import org.eclipse.xtext.resource.impl.DefaultResourceDescriptionManager;
 
+import com.google.common.collect.Iterables;
+import com.google.inject.Inject;
+import com.synflow.cx.cx.CxEntity;
 import com.synflow.cx.cx.CxPackage.Literals;
+import com.synflow.cx.cx.Inst;
+import com.synflow.cx.cx.Instantiable;
+import com.synflow.cx.cx.Network;
+import com.synflow.cx.instantiation.IInstantiator;
 
 /**
  * This class describes a resource description manager.
@@ -31,16 +39,27 @@ import com.synflow.cx.cx.CxPackage.Literals;
 public class CxResourceDescriptionManager extends DefaultResourceDescriptionManager implements
 		AllChangeAware {
 
+	@Inject
+	private IInstantiator instantiator;
+
 	@Override
 	public boolean isAffectedByAny(Collection<Delta> deltas, IResourceDescription candidate,
 			IResourceDescriptions context) throws IllegalArgumentException {
-		for (IEObjectDescription objDesc : candidate.getExportedObjectsByType(Literals.BUNDLE)) {
-			// a candidate is a bundle, is it loaded by the deltas?
-			for (Delta delta : deltas) {
-				for (QualifiedName name : delta.getNew().getImportedNames()) {
-					// if the description imports something from the bundle, we consider
-					// that the bundle is "affected" so it will be loaded by the instantiator
-					if (name.startsWithIgnoreCase(objDesc.getName())) {
+		for (Delta delta : deltas) {
+			if (!Iterables.isEmpty(candidate.getExportedObjectsByType(Literals.BUNDLE))) {
+				// a candidate is a bundle, is it loaded by the deltas?
+				if (isAffected(getImportedNames(delta.getNew()), candidate)) {
+					return true;
+				}
+			}
+
+			// check instantiator to see if necessary to revalidate specialized sub-entities
+			IResourceDescription resDesc = delta.getNew();
+			for (IEObjectDescription objDesc : resDesc.getExportedObjectsByType(Literals.NETWORK)) {
+				CxEntity entity = instantiator.getEntity(objDesc.getEObjectURI());
+				if (entity != null) {
+					Network network = (Network) entity;
+					if (isAffected(network, candidate)) {
 						return true;
 					}
 				}
@@ -48,6 +67,20 @@ public class CxResourceDescriptionManager extends DefaultResourceDescriptionMana
 		}
 
 		return isAffected(deltas, candidate, context);
+	}
+
+	private boolean isAffected(Network network, IResourceDescription candidate) {
+		for (Inst inst : network.getInstances()) {
+			Instantiable entity = inst.getEntity();
+			URI uri = EcoreUtil.getURI(entity);
+			if (candidate.getURI().equals(uri.trimFragment())) {
+				// candidate is being instantiated
+				if (instantiator.isSpecialized(uri)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 }

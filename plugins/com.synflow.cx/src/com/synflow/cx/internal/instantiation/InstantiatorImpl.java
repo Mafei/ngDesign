@@ -10,6 +10,8 @@
  *******************************************************************************/
 package com.synflow.cx.internal.instantiation;
 
+import static org.eclipse.emf.ecore.util.EcoreUtil.getURI;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -199,6 +201,11 @@ public class InstantiatorImpl implements IInstantiator {
 	}
 
 	@Override
+	public CxEntity getEntity(URI uri) {
+		return data.getEntity(uri);
+	}
+
+	@Override
 	public <T extends EObject, U extends EObject> U getMapping(Entity entity, T cxObj) {
 		return data.getMapping(entity, cxObj);
 	}
@@ -259,16 +266,25 @@ public class InstantiatorImpl implements IInstantiator {
 	 *            instantiation context (hierarchical path, inherited properties)
 	 */
 	private void instantiate(Network network, Entity entity, InstantiationContext ctx) {
+		boolean usePreviousMapping = false;
 		if (ctx == null) {
 			// create a context for this network to serve as a parent context
 			// only useful for specialized instances
 			ctx = new InstantiationContext(entity.getName());
+
+			for (Inst inst : network.getInstances()) {
+				Instantiable instantiable = (Instantiable) inst.eGet(Literals.INST__ENTITY, false);
+				if (instantiable != null && instantiable.eIsProxy()) {
+					usePreviousMapping = true;
+					break;
+				}
+			}
 		}
 
 		DPN dpn = (DPN) entity;
 		for (Inst inst : network.getInstances()) {
 			Instance instance = DpnFactory.eINSTANCE.createInstance(inst.getName());
-			putMapping(dpn, inst, instance);
+			data.putMapping(dpn, inst, instance);
 			dpn.add(instance);
 
 			InstantiationContext subCtx = new InstantiationContext(ctx, inst, instance);
@@ -285,9 +301,16 @@ public class InstantiatorImpl implements IInstantiator {
 				// try to look up existing mapping
 				subEntity = data.getMapping(info.getCxEntity());
 				if (subEntity == null) {
-					// no existing mapping, transform Cx entity to IR
-					// not specialized => no need for instantiation context (1:1 mapping)
-					subEntity = instantiate(info, null);
+					if (usePreviousMapping) {
+						URI uri = EcoreUtil.getURI(info.getCxEntity());
+						subEntity = data.getMapping(data.getEntity(uri));
+					}
+
+					if (subEntity == null) {
+						// no existing mapping, transform Cx entity to IR
+						// not specialized => no need for instantiation context (1:1 mapping)
+						subEntity = instantiate(info, null);
+					}
 				}
 			}
 			instance.setEntity(subEntity);
@@ -303,6 +326,11 @@ public class InstantiatorImpl implements IInstantiator {
 		}
 
 		connect(network, dpn);
+	}
+
+	@Override
+	public boolean isSpecialized(URI uri) {
+		return data.isSpecialized(uri);
 	}
 
 	@Override
@@ -332,7 +360,7 @@ public class InstantiatorImpl implements IInstantiator {
 	}
 
 	private void updateEntity(CxEntity cxEntity) {
-		CxEntity oldEntity = data.getCurrentMapping(cxEntity);
+		CxEntity oldEntity = data.getEntity(getURI(cxEntity));
 		if (cxEntity == oldEntity) {
 			// data is up to date
 			return;

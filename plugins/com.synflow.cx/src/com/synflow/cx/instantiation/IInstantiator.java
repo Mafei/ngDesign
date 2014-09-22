@@ -10,6 +10,7 @@
  *******************************************************************************/
 package com.synflow.cx.instantiation;
 
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 
 import com.google.inject.ImplementedBy;
@@ -56,6 +57,15 @@ public interface IInstantiator {
 	Iterable<Entity> getBuiltins();
 
 	/**
+	 * Returns the Cx entity currently associated with the given URI.
+	 * 
+	 * @param uri
+	 *            URI of a Cx entity
+	 * @return a Cx entity (may be <code>null</code>)
+	 */
+	CxEntity getEntity(URI uri);
+
+	/**
 	 * Returns the IR object that corresponds to the given Cx object in the given entity.
 	 * 
 	 * @param entity
@@ -76,6 +86,15 @@ public interface IInstantiator {
 	 * @return an IR port
 	 */
 	Port getPort(Entity entity, VarRef ref);
+
+	/**
+	 * Checks whether the object at the given URI is specialized.
+	 * 
+	 * @param uri
+	 *            URI
+	 * @return true if the object at the given URI is specialized
+	 */
+	boolean isSpecialized(URI uri);
 
 	/**
 	 * Adds a mapping from the given Cx object to the given IR object in the given entity.

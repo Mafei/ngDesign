@@ -57,18 +57,6 @@ public class InstantiatorData {
 	}
 
 	/**
-	 * Returns the entity currently associated with the URI of the given entity.
-	 * 
-	 * @param cxEntity
-	 *            a Cx entity whose URI is used to look up in URI map
-	 * @return a Cx entity (may be <code>null</code>, may be the same as <code>cxEntity</code>)
-	 */
-	public CxEntity getCurrentMapping(CxEntity cxEntity) {
-		URI uri = EcoreUtil.getURI(cxEntity);
-		return uriMap.get(uri);
-	}
-
-	/**
 	 * Returns a collection of IR entities associated with the given Cx entity. If the Cx entity is
 	 * specialized, this method returns a list of possibly many specialized IR entities
 	 * corresponding to the original Cx entity; otherwise a single IR entity is returned.
@@ -93,6 +81,17 @@ public class InstantiatorData {
 	}
 
 	/**
+	 * Returns the Cx entity currently associated with the given URI.
+	 * 
+	 * @param uri
+	 *            URI of a Cx entity
+	 * @return a Cx entity (may be <code>null</code>)
+	 */
+	public CxEntity getEntity(URI uri) {
+		return uriMap.get(uri);
+	}
+
+	/**
 	 * Returns the IR entity that is currently or was previously associated with the given Cx
 	 * instantiable.
 	 * 
@@ -101,15 +100,7 @@ public class InstantiatorData {
 	 * @return an IR entity, or <code>null</code>
 	 */
 	public Entity getMapping(CxEntity instantiable) {
-		Entity entity = mapEntities.get(instantiable);
-		if (entity == null) {
-			URI uri = EcoreUtil.getURI(instantiable);
-			CxEntity oldEntity = uriMap.get(uri);
-			if (oldEntity != null) {
-				entity = mapEntities.get(oldEntity);
-			}
-		}
-		return entity;
+		return mapEntities.get(instantiable);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -146,6 +137,28 @@ public class InstantiatorData {
 		return mapSpecialized.get(cxEntity);
 	}
 
+	/**
+	 * Checks whether the object at the given URI is specialized.
+	 * 
+	 * @param uri
+	 *            URI
+	 * @return true if the object at the given URI is specialized
+	 */
+	public boolean isSpecialized(URI uri) {
+		CxEntity cxEntity = uriMap.get(uri);
+		return mapSpecialized.containsKey(cxEntity);
+	}
+
+	/**
+	 * Adds a mapping from the given Cx object to the given IR object in the given entity.
+	 * 
+	 * @param entity
+	 *            an IR entity
+	 * @param cxObj
+	 *            a Cx object (entity, variable, port...)
+	 * @param irObj
+	 *            the IR object that corresponds to <code>cxObj</code> in the given entity
+	 */
 	public <T extends EObject, U extends EObject> void putMapping(Entity entity, T cxObj, U irObj) {
 		Objects.requireNonNull(entity, "entity must not be null in putMapping");
 
