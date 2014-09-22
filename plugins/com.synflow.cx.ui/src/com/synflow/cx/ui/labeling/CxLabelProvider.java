@@ -14,7 +14,6 @@ import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider;
 
 import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.Bundle;
-import com.synflow.cx.cx.CExpression;
 import com.synflow.cx.cx.Import;
 import com.synflow.cx.cx.Imported;
 import com.synflow.cx.cx.Inst;
@@ -26,7 +25,6 @@ import com.synflow.cx.cx.TypeRef;
 import com.synflow.cx.cx.Typedef;
 import com.synflow.cx.cx.Variable;
 import com.synflow.cx.services.CxPrinter;
-import com.synflow.cx.services.Evaluator;
 
 /**
  * Provides labels for a EObjects.
@@ -83,18 +81,7 @@ public class CxLabelProvider extends DefaultEObjectLabelProvider {
 	}
 
 	public String text(TypeGen type) {
-		CExpression size = type.getSize();
-		String spec = getText(type.getSpec());
-		if (size == null) {
-			return spec;
-		} else {
-			int evaluatedSize = Evaluator.getIntValue(size);
-			if (evaluatedSize == -1) {
-				return spec + "<" + new CxPrinter().toString(size) + ">";
-			} else {
-				return spec + "<" + evaluatedSize + ">";
-			}
-		}
+		return new CxPrinter().toString(type);
 	}
 
 	public String text(TypeRef type) {
