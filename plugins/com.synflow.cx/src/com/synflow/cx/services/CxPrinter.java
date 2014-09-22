@@ -205,7 +205,13 @@ public class CxPrinter extends CxSwitch<Void> {
 		builder.append(pair.getKey());
 		builder.append('"');
 		builder.append(':');
-		doSwitch(pair.getValue());
+
+		Element value = pair.getValue();
+		if (value == null) {
+			builder.append("null");
+		} else {
+			doSwitch(pair.getValue());
+		}
 		return DONE;
 	}
 
