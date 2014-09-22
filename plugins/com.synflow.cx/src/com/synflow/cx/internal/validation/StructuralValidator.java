@@ -18,10 +18,8 @@ import static com.synflow.cx.validation.IssueCodes.ERR_TYPE_ONE_BIT;
 import static com.synflow.cx.validation.IssueCodes.ERR_VAR_DECL;
 import static java.math.BigInteger.ZERO;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.naming.QualifiedName;
@@ -30,6 +28,7 @@ import org.eclipse.xtext.scoping.IScope;
 import org.eclipse.xtext.scoping.IScopeProvider;
 import org.eclipse.xtext.validation.AbstractDeclarativeValidator;
 import org.eclipse.xtext.validation.Check;
+import org.eclipse.xtext.validation.EValidatorRegistrar;
 
 import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
@@ -295,11 +294,10 @@ public class StructuralValidator extends AbstractDeclarativeValidator {
 		}
 	}
 
+
 	@Override
-	protected List<EPackage> getEPackages() {
-		List<EPackage> result = new ArrayList<EPackage>();
-		result.add(com.synflow.cx.cx.CxPackage.eINSTANCE);
-		return result;
+	public void register(EValidatorRegistrar registrar) {
+		// do nothing: packages are already registered by CxJavaValidator
 	}
 
 }

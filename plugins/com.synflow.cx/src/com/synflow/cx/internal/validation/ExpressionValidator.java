@@ -20,14 +20,13 @@ import static com.synflow.cx.validation.IssueCodes.ERR_TYPE_MISMATCH;
 import static com.synflow.models.util.SwitchUtil.check;
 import static org.eclipse.xtext.validation.CheckType.NORMAL;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.validation.AbstractDeclarativeValidator;
 import org.eclipse.xtext.validation.Check;
+import org.eclipse.xtext.validation.EValidatorRegistrar;
 
 import com.google.common.collect.LinkedHashMultiset;
 import com.google.common.collect.Multiset;
@@ -227,10 +226,8 @@ public class ExpressionValidator extends AbstractDeclarativeValidator {
 	}
 
 	@Override
-	protected List<EPackage> getEPackages() {
-		List<EPackage> result = new ArrayList<EPackage>();
-		result.add(com.synflow.cx.cx.CxPackage.eINSTANCE);
-		return result;
+	public void register(EValidatorRegistrar registrar) {
+		// do nothing: packages are already registered by CxJavaValidator
 	}
 
 	@Check
