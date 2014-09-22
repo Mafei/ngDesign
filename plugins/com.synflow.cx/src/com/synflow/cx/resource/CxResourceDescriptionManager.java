@@ -46,15 +46,20 @@ public class CxResourceDescriptionManager extends DefaultResourceDescriptionMana
 	public boolean isAffectedByAny(Collection<Delta> deltas, IResourceDescription candidate,
 			IResourceDescriptions context) throws IllegalArgumentException {
 		for (Delta delta : deltas) {
+			IResourceDescription resDesc = delta.getNew();
+			if (resDesc == null) {
+				// ignore deleted/closed resources
+				continue;
+			}
+
 			if (!Iterables.isEmpty(candidate.getExportedObjectsByType(Literals.BUNDLE))) {
 				// a candidate is a bundle, is it loaded by the deltas?
-				if (isAffected(getImportedNames(delta.getNew()), candidate)) {
+				if (isAffected(getImportedNames(resDesc), candidate)) {
 					return true;
 				}
 			}
 
 			// check instantiator to see if necessary to revalidate specialized sub-entities
-			IResourceDescription resDesc = delta.getNew();
 			for (IEObjectDescription objDesc : resDesc.getExportedObjectsByType(Literals.NETWORK)) {
 				CxEntity entity = instantiator.getEntity(objDesc.getEObjectURI());
 				if (entity != null) {
@@ -72,11 +77,13 @@ public class CxResourceDescriptionManager extends DefaultResourceDescriptionMana
 	private boolean isAffected(Network network, IResourceDescription candidate) {
 		for (Inst inst : network.getInstances()) {
 			Instantiable entity = inst.getEntity();
-			URI uri = EcoreUtil.getURI(entity);
-			if (candidate.getURI().equals(uri.trimFragment())) {
-				// candidate is being instantiated
-				if (instantiator.isSpecialized(uri)) {
-					return true;
+			if (entity != null) {
+				URI uri = EcoreUtil.getURI(entity);
+				if (candidate.getURI().equals(uri.trimFragment())) {
+					// candidate is being instantiated
+					if (instantiator.isSpecialized(uri)) {
+						return true;
+					}
 				}
 			}
 		}
