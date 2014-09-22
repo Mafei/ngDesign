@@ -202,7 +202,7 @@ public class InstantiatorImpl implements IInstantiator {
 
 	@Override
 	public CxEntity getEntity(URI uri) {
-		return data.getEntity(uri);
+		return data.getCxEntity(uri);
 	}
 
 	@Override
@@ -266,19 +266,10 @@ public class InstantiatorImpl implements IInstantiator {
 	 *            instantiation context (hierarchical path, inherited properties)
 	 */
 	private void instantiate(Network network, Entity entity, InstantiationContext ctx) {
-		boolean usePreviousMapping = false;
 		if (ctx == null) {
 			// create a context for this network to serve as a parent context
 			// only useful for specialized instances
 			ctx = new InstantiationContext(entity.getName());
-
-			for (Inst inst : network.getInstances()) {
-				Instantiable instantiable = (Instantiable) inst.eGet(Literals.INST__ENTITY, false);
-				if (instantiable != null && instantiable.eIsProxy()) {
-					usePreviousMapping = true;
-					break;
-				}
-			}
 		}
 
 		DPN dpn = (DPN) entity;
@@ -299,18 +290,11 @@ public class InstantiatorImpl implements IInstantiator {
 				subCtx.delete();
 
 				// try to look up existing mapping
-				subEntity = data.getMapping(info.getCxEntity());
+				subEntity = data.getIrEntity(info.getCxEntity());
 				if (subEntity == null) {
-					if (usePreviousMapping) {
-						URI uri = EcoreUtil.getURI(info.getCxEntity());
-						subEntity = data.getMapping(data.getEntity(uri));
-					}
-
-					if (subEntity == null) {
-						// no existing mapping, transform Cx entity to IR
-						// not specialized => no need for instantiation context (1:1 mapping)
-						subEntity = instantiate(info, null);
-					}
+					// no existing mapping, transform Cx entity to IR
+					// not specialized => no need for instantiation context (1:1 mapping)
+					subEntity = instantiate(info, null);
 				}
 			}
 			instance.setEntity(subEntity);
@@ -360,7 +344,7 @@ public class InstantiatorImpl implements IInstantiator {
 	}
 
 	private void updateEntity(CxEntity cxEntity) {
-		CxEntity oldEntity = data.getEntity(getURI(cxEntity));
+		CxEntity oldEntity = data.getCxEntity(getURI(cxEntity));
 		if (cxEntity == oldEntity) {
 			// data is up to date
 			return;

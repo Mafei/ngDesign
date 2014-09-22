@@ -57,6 +57,17 @@ public class InstantiatorData {
 	}
 
 	/**
+	 * Returns the Cx entity currently associated with the given URI.
+	 * 
+	 * @param uri
+	 *            URI of a Cx entity
+	 * @return a Cx entity (may be <code>null</code>)
+	 */
+	public CxEntity getCxEntity(URI uri) {
+		return uriMap.get(uri);
+	}
+
+	/**
 	 * Returns a collection of IR entities associated with the given Cx entity. If the Cx entity is
 	 * specialized, this method returns a list of possibly many specialized IR entities
 	 * corresponding to the original Cx entity; otherwise a single IR entity is returned.
@@ -81,25 +92,13 @@ public class InstantiatorData {
 	}
 
 	/**
-	 * Returns the Cx entity currently associated with the given URI.
-	 * 
-	 * @param uri
-	 *            URI of a Cx entity
-	 * @return a Cx entity (may be <code>null</code>)
-	 */
-	public CxEntity getEntity(URI uri) {
-		return uriMap.get(uri);
-	}
-
-	/**
-	 * Returns the IR entity that is currently or was previously associated with the given Cx
-	 * instantiable.
+	 * Returns the IR entity that is currently associated with the given Cx instantiable.
 	 * 
 	 * @param instantiable
 	 *            an instantiable Cx entity
 	 * @return an IR entity, or <code>null</code>
 	 */
-	public Entity getMapping(CxEntity instantiable) {
+	public Entity getIrEntity(CxEntity instantiable) {
 		return mapEntities.get(instantiable);
 	}
 
