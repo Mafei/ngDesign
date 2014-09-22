@@ -10,6 +10,8 @@
  *******************************************************************************/
 package com.synflow.models.dpn;
 
+import java.util.Objects;
+
 import com.synflow.models.graph.Vertex;
 
 /**
@@ -25,6 +27,9 @@ public class Endpoint {
 	private final Port port;
 
 	public Endpoint(DPN dpn, Port port) {
+		Objects.requireNonNull(dpn, "dpn must not be null in Endpoint");
+		Objects.requireNonNull(port, "port must not be null in Endpoint");
+
 		if (port.eContainer() != dpn) {
 			throw new IllegalArgumentException("port must be contained in dpn");
 		}
@@ -34,6 +39,9 @@ public class Endpoint {
 	}
 
 	public Endpoint(Instance instance, Port port) {
+		Objects.requireNonNull(instance, "instance must not be null in Endpoint");
+		Objects.requireNonNull(port, "port must not be null in Endpoint");
+
 		this.instance = instance;
 		this.port = port;
 	}
