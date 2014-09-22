@@ -79,6 +79,7 @@ import com.synflow.models.ir.OpBinary;
 import com.synflow.models.ir.OpUnary;
 import com.synflow.models.ir.Type;
 import com.synflow.models.ir.TypeArray;
+import com.synflow.models.ir.TypeInt;
 import com.synflow.models.ir.util.IrUtil;
 import com.synflow.models.ir.util.TypeUtil;
 import com.synflow.models.ir.util.ValueUtil;
@@ -211,9 +212,7 @@ public class Typer extends CxSwitch<Type> {
 
 	@Override
 	public Type caseTypeDecl(TypeDecl type) {
-		boolean signed = !type.isUnsigned();
 		String spec = type.getSpec();
-		int size;
 
 		if ("bool".equals(spec)) {
 			return IrFactory.eINSTANCE.createTypeBool();
@@ -221,31 +220,39 @@ public class Typer extends CxSwitch<Type> {
 			return IrFactory.eINSTANCE.createTypeVoid();
 		} else if ("float".equals(spec)) {
 			return IrFactory.eINSTANCE.createTypeFloat();
-		} else if ("char".equals(spec)) {
-			size = 8;
-		} else if ("short".equals(spec)) {
-			size = 16;
-		} else if ("int".equals(spec)) {
-			size = 32;
-		} else if ("long".equals(spec)) {
-			size = 64;
-		} else if ("uchar".equals(spec)) {
-			signed = false;
-			size = 8;
-		} else if ("ushort".equals(spec)) {
-			signed = false;
-			size = 16;
-		} else if ("uint".equals(spec)) {
-			signed = false;
-			size = 32;
-		} else if ("ulong".equals(spec)) {
-			signed = false;
-			size = 64;
-		} else if (spec == null) {
-			return IrFactory.eINSTANCE.createTypeInt();
+		}
+
+		boolean signed = type.isSigned() || !type.isUnsigned();
+		int size;
+
+		if (spec == null || spec.isEmpty()) {
+			size = 0;
 		} else {
-			signed = (spec.charAt(0) == 'i');
-			size = new BigInteger(spec.substring(1)).intValue();
+			char ch = spec.charAt(0);
+			String rest;
+			if (ch == 'u') {
+				rest = spec.substring(1);
+				signed = false;
+			} else {
+				rest = spec;
+			}
+
+			if ("char".equals(rest)) {
+				size = 8;
+			} else if ("short".equals(rest)) {
+				size = 16;
+			} else if ("int".equals(rest)) {
+				size = 32;
+			} else if ("long".equals(rest)) {
+				size = 64;
+			} else {
+				// like i15 or u29
+				if (rest == spec) {
+					// must use substring
+					rest = spec.substring(1);
+				}
+				size = new BigInteger(rest).intValue();
+			}
 		}
 
 		return IrFactory.eINSTANCE.createTypeInt(size, signed);
@@ -257,10 +264,11 @@ public class Typer extends CxSwitch<Type> {
 	}
 
 	@Override
-	public Type caseTypeGen(TypeGen type) {
-		String spec = type.getSpec();
-		int size = Evaluator.getIntValue(type.getSize());
-		return IrFactory.eINSTANCE.createTypeInt(size, "i".equals(spec));
+	public Type caseTypeGen(TypeGen typeGen) {
+		Type type = doSwitch(typeGen.getSpec());
+		int size = Evaluator.getIntValue(typeGen.getSize());
+		boolean signed = type.isInt() && ((TypeInt) type).isSigned();
+		return IrFactory.eINSTANCE.createTypeInt(size, signed);
 	}
 
 	@Override

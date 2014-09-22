@@ -79,25 +79,20 @@ public class CxLabelProvider extends DefaultEObjectLabelProvider {
 	}
 
 	public String text(TypeDecl type) {
-		boolean unsigned = type.isUnsigned();
-		StringBuilder builder = new StringBuilder(type.getSpec());
-		if (unsigned) {
-			builder.insert(0, "unsigned ");
-		}
-
-		return builder.toString();
+		return new CxPrinter().toString(type);
 	}
 
 	public String text(TypeGen type) {
 		CExpression size = type.getSize();
+		String spec = getText(type.getSpec());
 		if (size == null) {
-			return type.getSpec() + "<?>";
+			return spec;
 		} else {
 			int evaluatedSize = Evaluator.getIntValue(size);
 			if (evaluatedSize == -1) {
-				return type.getSpec() + "<" + new CxPrinter().toString(size) + ">";
+				return spec + "<" + new CxPrinter().toString(size) + ">";
 			} else {
-				return type.getSpec() + evaluatedSize;
+				return spec + "<" + evaluatedSize + ">";
 			}
 		}
 	}

@@ -12,7 +12,7 @@ task SynchronousFIFO {
 
 	const int depth, width;
 
-	in sync u<width> din; out sync u<width> dout;
+	in sync unsigned<width> din; out sync unsigned<width> dout;
 	in bool rdy; out bool full, almost_full, empty;
 
 }
@@ -36,7 +36,7 @@ task AsynchronousFIFO {
 
 	const int depth, width;
 
-	in sync u<width> din; out sync u<width> dout;
+	in sync unsigned<width> din; out sync unsigned<width> dout;
 	in bool rdy; out bool full, almost_full, empty;
 
 }

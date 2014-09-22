@@ -9,7 +9,7 @@ task SinglePortRAM {
 
 	const int depth, width, numAdditionalRegisters = 0;
 
-	in u<depth> address, sync u<width> data; out u<width> q;
+	in uint<depth> address, sync uint<width> data; out uint<width> q;
 
 }
 
@@ -27,8 +27,8 @@ task DualPortRAM {
 
 	const int depth, int width, int numAdditionalRegisters = 0;
 
-	in u<depth> address_a, sync u<width> data_a; out u<width> q_a;
-	in u<depth> address_b, sync u<width> data_b; out u<width> q_b;
+	in uint<depth> address_a, sync uint<width> data_a; out uint<width> q_a;
+	in uint<depth> address_b, sync uint<width> data_b; out uint<width> q_b;
 
 }
 
@@ -46,6 +46,6 @@ task PseudoDualPortRAM {
 
 	const int depth, int width, int numAdditionalRegisters = 0;
 
-	in u<depth> rd_address, wr_address, sync u<width> data; out u<width> q;
+	in uint<depth> rd_address, wr_address, sync uint<width> data; out uint<width> q;
 
 }

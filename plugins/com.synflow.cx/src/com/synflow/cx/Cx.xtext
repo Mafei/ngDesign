@@ -110,7 +110,7 @@ Null: {Null} 'null';
 ///////////////////////////////////////////////////////////////////////////////
 
 // typedef declaration
-Typedef: 'typedef' type=CType name=ValidID ';';
+Typedef: 'typedef' type=TypeWithGen name=ValidID ';';
 
 PortDecl: SinglePortDecl | MultiPortDecl;
 SinglePortDecl: direction=('in' | 'out') ports += PortDef (',' ports += PortDef)* ';';
@@ -120,12 +120,12 @@ MultiPortDecl: sync?='sync' (ready?='ready' | ack?='ack')? '{' decls += SyncPort
 SyncPortDecl returns SinglePortDecl: direction=('in' | 'out') ports += SyncPortDef (',' ports += SyncPortDef)* ';';
 SyncPortDef returns PortDef: (ready?='ready' | ack?='ack')? var=PortVariable;
 
-PortVariable returns Variable: (type = CType)? name = ValidID;
+PortVariable returns Variable: (type = TypeWithGen)? name = ValidID;
 
 // variable/function declaration
 VarDecl:
 	(constant ?= 'const')?
-	(type = CType | void ?= 'void')
+	(type = TypeWithGen | void ?= 'void')
 
 	(variables += Function
 	| variables += StateVar (',' variables += StateVar)* ';')
@@ -140,7 +140,7 @@ Function returns Variable:
 StateVar returns Variable:
 	name = ValidID ('[' dimensions += CExpression ']')* ('=' value=Value)?;
 
-Parameter returns Variable: type = CType name = ValidID;
+Parameter returns Variable: type = TypeNoGen name = ValidID;
 
 // initial value
 Value: ValueList | ValueExpr;
@@ -206,7 +206,7 @@ StatementReturn:
 
 StatementVariable:
 	(constant ?= 'const')?
-	type = CType
+	type = TypeNoGen
 	variables += LocalVar (',' variables += LocalVar)*;
 
 LocalVar returns Variable:
@@ -273,7 +273,7 @@ ExpressionPostfix returns CExpression:
 ;
 
 ExpressionCast:
-	'(' type=CType ')' expression=ExpressionPostfix
+	'(' type=TypeNoGen ')' expression=ExpressionPostfix
 ;
 
 ExpressionVariable:
@@ -335,9 +335,13 @@ terminal fragment EXPONENT: ('e'|'E') ('+' | '-')? DIGIT_DEC+;
 // types
 ///////////////////////////////////////////////////////////////////////////////
 
-CType:
+TypeNoGen returns CType:
 	TypeRef
 	| TypeDecl
+;
+
+TypeWithGen returns CType:
+	TypeNoGen
 	| TypeGen
 ;
 
@@ -346,24 +350,34 @@ terminal TYPE_UINT: 'u' ('1'..'9') ('0'..'9')*;
 
 TypeRef: typeDef=[Typedef|QualifiedName];
 
-TypeGen: spec=ValidID '<' size=TExpr '>';
+TypeGen: spec=ClikeIntType '<' size=TExpr '>';
 
-TypeDecl:
-	(unsigned?='unsigned'?
+ClikeIntType returns TypeDecl:
+	((unsigned?='unsigned' | signed?='signed')
 		(spec='char'
 		| spec='short'
 		| spec='int'
-		| spec='long')
-	)
+		| spec='long')?)
 
-	| spec='bool'
-	| spec='float'
+	| spec='char'
+	| spec='short'
+	| spec='int'
+	| spec='long'
+
 	| spec='uchar'
 	| spec='ushort'
 	| spec='uint'
+	| spec='ulong'
+;
+
+TypeDecl:
+	ClikeIntType
+
+	| spec='bool'
+	| spec='float'
+
 	| spec=TYPE_INT
 	| spec=TYPE_UINT
-	| spec='ulong'
 ;
 
 ///////////////////////////////////////////////////////////////////////////////

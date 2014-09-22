@@ -217,22 +217,43 @@ public class CxPrinter extends CxSwitch<Void> {
 
 	@Override
 	public Void caseTypeDecl(TypeDecl type) {
-		if (type.getSpec().charAt(0) != 'u' && type.isUnsigned()) {
-			builder.append("unsigned ");
+		String spec = type.getSpec();
+		if ("bool".equals(spec) || "float".equals(spec) || "void".equals(spec)) {
+			builder.append(spec);
+			return DONE;
 		}
-		builder.append(type.getSpec());
+
+		if (spec == null) {
+			spec = "int";
+		}
+
+		char ch = spec.charAt(0);
+		if ((ch == 'i' || ch == 'u') && Character.isDigit(spec.charAt(1))) {
+			builder.append(spec);
+		} else {
+			if (ch == 'u') {
+				builder.append("unsigned ");
+				builder.append(spec.substring(1));
+			} else {
+				boolean signed = type.isSigned() || !type.isUnsigned();
+				builder.append(signed ? "signed" : "unsigned");
+				builder.append(" ");
+				builder.append(spec);
+			}
+		}
+
 		return DONE;
 	}
 
 	@Override
 	public Void caseTypeGen(TypeGen type) {
-		builder.append(type.getSpec());
-		builder.append('<');
+		doSwitch(type.getSpec());
 		CExpression size = type.getSize();
 		if (size != null) {
+			builder.append('<');
 			doSwitch(size);
+			builder.append('>');
 		}
-		builder.append('>');
 		return DONE;
 	}
 

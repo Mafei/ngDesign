@@ -47,7 +47,6 @@ import com.synflow.cx.cx.StatementIdle;
 import com.synflow.cx.cx.StatementIf;
 import com.synflow.cx.cx.StatementLoop;
 import com.synflow.cx.cx.TypeDecl;
-import com.synflow.cx.cx.TypeGen;
 import com.synflow.cx.cx.Value;
 import com.synflow.cx.cx.Variable;
 import com.synflow.cx.internal.services.BoolCxSwitch;
@@ -281,19 +280,6 @@ public class StructuralValidator extends AbstractDeclarativeValidator {
 					type, null, ERR_TYPE_ONE_BIT);
 		}
 	}
-
-	@Check
-	public void checkTypeGen(TypeGen type) {
-		String spec = type.getSpec();
-		if (spec == null) {
-			return;
-		}
-
-		if (!"i".equals(spec) && !"u".equals(spec)) {
-			error("Generic type only supports i<expr> and u<expr>", type, null);
-		}
-	}
-
 
 	@Override
 	public void register(EValidatorRegistrar registrar) {

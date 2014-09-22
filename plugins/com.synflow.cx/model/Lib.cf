@@ -35,6 +35,6 @@ task SynchronizerMux {
 
 	const int width = 16, stages = 2;
 
-	in sync u<width> din; out u<width> dout;
+	in sync unsigned int<width> din; out unsigned int<width> dout;
 
 }
