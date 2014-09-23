@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2013 Synflow SAS.
+ * Copyright (c) 2012-2014 Synflow SAS.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,12 +22,15 @@ import org.eclipse.xtext.Keyword;
 import org.eclipse.xtext.RuleCall;
 import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.scoping.IScope;
+import org.eclipse.xtext.ui.editor.contentassist.ConfigurableCompletionProposal;
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.synflow.cx.cx.CxPackage;
+import com.synflow.cx.cx.Inst;
+import com.synflow.cx.cx.Network;
 import com.synflow.cx.cx.StatementWrite;
 import com.synflow.cx.ui.contentassist.AbstractCxProposalProvider;
 
@@ -76,6 +79,34 @@ public class CxProposalProvider extends AbstractCxProposalProvider {
 		if (isKeywordWorthyToPropose(keyword)) {
 			super.completeKeyword(keyword, context, acceptor);
 		}
+	}
+
+	@Override
+	protected ConfigurableCompletionProposal doCreateProposal(String proposal,
+			StyledString displayString, Image image, int priority, ContentAssistContext context) {
+		int replacementOffset = context.getReplaceRegion().getOffset();
+		int replacementLength = context.getReplaceRegion().getLength();
+
+		ConfigurableCompletionProposal result;
+		if (context.getCurrentModel() instanceof Inst) {
+			Network network = (Network) context.getCurrentModel().eContainer();
+			result = new ImportingCompletionProposal(proposal, replacementOffset,
+					replacementLength, proposal.length(), image, displayString, network);
+		} else {
+			result = doCreateProposal(proposal, displayString, image, replacementOffset,
+					replacementLength);
+		}
+		result.setPriority(priority);
+		result.setMatcher(context.getMatcher());
+		result.setReplaceContextLength(context.getReplaceContextLength());
+		return result;
+	}
+
+	@Override
+	protected ConfigurableCompletionProposal doCreateProposal(String proposal,
+			StyledString displayString, Image image, int replacementOffset, int replacementLength) {
+		return new ConfigurableCompletionProposal(proposal, replacementOffset, replacementLength,
+				proposal.length(), image, displayString, null, null);
 	}
 
 	@Override
