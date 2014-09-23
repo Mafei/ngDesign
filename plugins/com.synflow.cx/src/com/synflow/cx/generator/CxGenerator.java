@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -32,6 +33,7 @@ import com.google.inject.Inject;
 import com.synflow.core.transformations.ProcedureTransformation;
 import com.synflow.core.transformations.SchedulerTransformation;
 import com.synflow.core.transformations.impl.StoreOnceTransformation;
+import com.synflow.core.util.CoreUtil;
 import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.Bundle;
 import com.synflow.cx.cx.CxEntity;
@@ -161,6 +163,9 @@ public class CxGenerator implements IGenerator {
 
 		URI uri = entity.eResource().getURI();
 		String fileName = uri.deresolve(base).toString();
+		if (uri.isPlatformResource()) {
+			CoreUtil.ensureCaseConsistency(new Path(uri.toPlatformString(true)));
+		}
 		fsa.generateFile(fileName, os.toString());
 	}
 

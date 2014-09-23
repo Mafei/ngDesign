@@ -19,19 +19,22 @@ import static com.synflow.core.IProperties.PROP_TYPE;
 import static com.synflow.core.ISynflowConstants.FILE_EXT_IR;
 import static com.synflow.core.ISynflowConstants.FOLDER_IR;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
@@ -54,6 +57,31 @@ import com.synflow.models.ir.util.IrUtil;
  * 
  */
 public class CoreUtil {
+
+	/**
+	 * Ensures that the file at the location given by path has the same case as represented by the
+	 * underlying file system. If that's not the case, deletes the file. This avoids any exception
+	 * related to "case variants" and makes sure that case remains consistent between file system
+	 * representation and Eclipse representation. Necessary for case-insensitive file systems like
+	 * Windows.
+	 * 
+	 * @param path
+	 *            path to a file
+	 */
+	public static void ensureCaseConsistency(IPath path) {
+		try {
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			IFile file = root.getFile(path);
+			IFileStore store = EFS.getStore(file.getLocationURI());
+			String localName = store.fetchInfo().getName();
+			if (!file.getName().equals(localName)) {
+				// case difference: remove file with old case
+				file.getParent().getFile(new Path(localName)).delete(true, null);
+			}
+		} catch (CoreException e) {
+			SynflowCore.log(e);
+		}
+	}
 
 	/**
 	 * Returns the list of projects that are in the build path of this project (includes this
@@ -205,11 +233,11 @@ public class CoreUtil {
 	 * @return a string that represents the relative path from source to target
 	 */
 	public static String getRelative(IResource source, IResource target) {
-		Path from = Paths.get(source.getLocation().toString());
-		Path to = Paths.get(target.getLocation().toString());
+		java.nio.file.Path from = Paths.get(source.getLocation().toString());
+		java.nio.file.Path to = Paths.get(target.getLocation().toString());
 		String path = from.relativize(to).toString();
 		// make path portable so it can be used anywhere
-		return new org.eclipse.core.runtime.Path(path).toString();
+		return new Path(path).toString();
 	}
 
 	/**

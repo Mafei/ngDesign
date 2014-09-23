@@ -13,8 +13,6 @@ package com.synflow.core.internal;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -25,6 +23,7 @@ import org.eclipse.core.runtime.CoreException;
 
 import com.synflow.core.IFileWriter;
 import com.synflow.core.SynflowCore;
+import com.synflow.core.util.CoreUtil;
 
 /**
  * This class defines an implementation of a IFileWriter based on the Eclipse IFile class. The name
@@ -85,12 +84,7 @@ public class EclipseFileWriter implements IFileWriter {
 	public void write(String fileName, InputStream source) {
 		IFile file = project.getFile(fileName);
 		try {
-			IFileStore store = EFS.getStore(file.getLocationURI());
-			String localName = store.fetchInfo().getName();
-			if (!file.getName().equals(localName)) {
-				// case difference!
-				file = project.getFile(localName);
-			}
+			CoreUtil.ensureCaseConsistency(file.getFullPath());
 
 			if (file.exists()) {
 				file.setContents(source, true, true, null);

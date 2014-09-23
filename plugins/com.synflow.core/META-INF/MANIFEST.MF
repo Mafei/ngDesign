@@ -8,7 +8,7 @@ Bundle-Activator: com.synflow.core.SynflowCore
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.expressions;bundle-version="3.4.500",
- org.eclipse.core.filesystem;bundle-version="1.3.200",
+ org.eclipse.core.filesystem;bundle-version="1.4.200",
  org.eclipse.xtend.lib;bundle-version="2.4.3",
  com.google.inject;bundle-version="3.0.0",
  com.google.guava,
