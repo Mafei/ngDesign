@@ -260,7 +260,7 @@ public class Typer extends CxSwitch<Type> {
 
 	@Override
 	public Type caseTypedef(Typedef typedef) {
-		return doSwitch(typedef.getType());
+		return instantiator.getMapping(entity, typedef);
 	}
 
 	@Override
@@ -273,7 +273,7 @@ public class Typer extends CxSwitch<Type> {
 
 	@Override
 	public Type caseTypeRef(TypeRef type) {
-		return doSwitch(type.getTypeDef().getType());
+		return doSwitch(type.getTypeDef());
 	}
 
 	@Override

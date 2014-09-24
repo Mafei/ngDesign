@@ -24,6 +24,7 @@ import com.synflow.cx.cx.Instantiable;
 import com.synflow.cx.cx.Module;
 import com.synflow.cx.cx.Network;
 import com.synflow.cx.cx.Task;
+import com.synflow.cx.cx.Typedef;
 import com.synflow.cx.cx.Variable;
 import com.synflow.cx.instantiation.IInstantiator;
 import com.synflow.cx.internal.services.Typer;
@@ -171,6 +172,11 @@ public class SkeletonMaker extends DpnSwitch<Void> {
 			if (CxUtil.isConstant(variable) || !CxUtil.isFunction(variable)) {
 				transformVariable(entity, variable);
 			}
+		}
+
+		for (Typedef typedef : cxEntity.getTypes()) {
+			Type type = typer.getType(entity, typedef.getType());
+			instantiator.putMapping(entity, typedef, type);
 		}
 	}
 
