@@ -29,6 +29,21 @@ import com.synflow.cx.services.CxGrammarAccess.ExpressionUnaryElements;
  */
 public class CxFormatter extends AbstractDeclarativeFormatter {
 
+	private void configureBracketsIndenting(FormattingConfig cfg) {
+		CxGrammarAccess g = getGrammarAccess();
+
+		setIndent(cfg, g.getBundleAccess().getLeftCurlyBracketKeyword_2(), g.getBundleAccess()
+				.getRightCurlyBracketKeyword_5());
+		setIndent(cfg, g.getInstAnonTaskAccess().getLeftCurlyBracketKeyword_2(), g
+				.getInstAnonTaskAccess().getRightCurlyBracketKeyword_6());
+		setIndent(cfg, g.getNetworkAccess().getLeftCurlyBracketKeyword_2(), g.getNetworkAccess()
+				.getRightCurlyBracketKeyword_6());
+		setIndent(cfg, g.getTaskAccess().getLeftCurlyBracketKeyword_2(), g.getTaskAccess()
+				.getRightCurlyBracketKeyword_6());
+		setIndent(cfg, g.getBlockAccess().getLeftCurlyBracketKeyword_1(), g.getBlockAccess()
+				.getRightCurlyBracketKeyword_3());
+	}
+
 	@Override
 	protected void configureFormatting(FormattingConfig cfg) {
 		CxGrammarAccess g = getGrammarAccess();
@@ -42,10 +57,6 @@ public class CxFormatter extends AbstractDeclarativeFormatter {
 
 		// punctuation: () [] , ; . ++ --
 		configurePunctuation(cfg);
-
-		// unary operators
-		ExpressionUnaryElements elt = g.getExpressionUnaryAccess();
-		cfg.setNoSpace().after(elt.getUnaryOperatorAssignment_0_1());
 
 		// special semicolon package
 		cfg.setLinewrap(2).after(g.getModuleAccess().getSemicolonKeyword_2());
@@ -61,26 +72,21 @@ public class CxFormatter extends AbstractDeclarativeFormatter {
 		cfg.setNoLinewrap().after(g.getStatementForAccess().getSemicolonKeyword_5());
 
 		// indentation of { } syntax
-		setIndent(cfg, g.getBundleAccess().getLeftCurlyBracketKeyword_2(), g.getBundleAccess()
-				.getRightCurlyBracketKeyword_5());
-		setIndent(cfg, g.getInstAnonTaskAccess().getLeftCurlyBracketKeyword_2(), g
-				.getInstAnonTaskAccess().getRightCurlyBracketKeyword_6());
-		setIndent(cfg, g.getNetworkAccess().getLeftCurlyBracketKeyword_2(), g.getNetworkAccess()
-				.getRightCurlyBracketKeyword_6());
-		setIndent(cfg, g.getTaskAccess().getLeftCurlyBracketKeyword_2(), g.getTaskAccess()
-				.getRightCurlyBracketKeyword_6());
-		setIndent(cfg, g.getBlockAccess().getLeftCurlyBracketKeyword_1(), g.getBlockAccess()
-				.getRightCurlyBracketKeyword_3());
+		configureBracketsIndenting(cfg);
 
-		// properties
-		configureProperties(cfg);
+		// rest: { } in properties, generic types, etc.
+		configureMisc(cfg);
 	}
 
-	private void configureProperties(FormattingConfig cfg) {
+	private void configureMisc(FormattingConfig cfg) {
 		CxGrammarAccess g = getGrammarAccess();
 
-		// colon
-		cfg.setNoSpace().before(g.getPairAccess().getColonKeyword_1());
+		cfg.setNoSpace().around(g.getTypeGenAccess().getLessThanSignKeyword_1());
+		cfg.setNoSpace().before(g.getTypeGenAccess().getGreaterThanSignKeyword_3());
+
+		// unary operators
+		ExpressionUnaryElements elt = g.getExpressionUnaryAccess();
+		cfg.setNoSpace().after(elt.getUnaryOperatorAssignment_0_1());
 
 		// { } with one-liner in properties
 		setIndentOkOneLine(cfg, g.getObjAccess().getLeftCurlyBracketKeyword_1(), g.getObjAccess()
@@ -128,6 +134,10 @@ public class CxFormatter extends AbstractDeclarativeFormatter {
 			cfg.setNoSpace().before(comma);
 			cfg.setLinewrap(0, 1, 1).after(comma);
 		}
+
+		// colon
+		cfg.setNoSpace().before(g.getPairAccess().getColonKeyword_1());
+		cfg.setNoSpace().before(g.getStatementLabeledAccess().getColonKeyword_1());
 
 		// semicolon
 		for (Keyword semicolon : g.findKeywords(";")) {
