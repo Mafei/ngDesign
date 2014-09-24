@@ -89,9 +89,11 @@ public class CxResourceStrategy extends DefaultResourceDescriptionStrategy {
 
 	private void createTypedef(Typedef typedef, IAcceptor<IEObjectDescription> acceptor) {
 		QualifiedName qualifiedName = getQualifiedNameProvider().getFullyQualifiedName(typedef);
-		String type = new CxPrinter().toString(typedef.getType());
-		Map<String, String> userData = ImmutableMap.of("type", type);
-		acceptor.accept(EObjectDescription.create(qualifiedName, typedef, userData));
+		if (qualifiedName != null && typedef.getType() != null) {
+			String type = new CxPrinter().toString(typedef.getType());
+			Map<String, String> userData = ImmutableMap.of("type", type);
+			acceptor.accept(EObjectDescription.create(qualifiedName, typedef, userData));
+		}
 	}
 
 	private void createVariable(Variable variable, IAcceptor<IEObjectDescription> acceptor) {
