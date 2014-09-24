@@ -15,15 +15,12 @@ import static com.synflow.cx.CxConstants.NAME_LOOP;
 import static com.synflow.cx.CxConstants.NAME_LOOP_DEPRECATED;
 import static com.synflow.cx.CxConstants.NAME_SETUP;
 import static com.synflow.cx.CxConstants.NAME_SETUP_DEPRECATED;
-import static com.synflow.cx.validation.IssueCodes.ERR_ENTRY_FUNCTION_BAD_TYPE;
 import static org.eclipse.xtext.validation.CheckType.NORMAL;
 
 import java.util.Set;
 
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
 import org.eclipse.xtext.util.Triple;
 import org.eclipse.xtext.util.Tuples;
 import org.eclipse.xtext.validation.Check;
@@ -96,12 +93,6 @@ public class CxJavaValidator extends AbstractCxJavaValidator {
 	public void checkModule(Module module) {
 		accepted = Sets.newHashSet();
 
-		EList<Diagnostic> errors = module.eResource().getErrors();
-		if (!errors.isEmpty()) {
-			// skip validation as long as the module has syntax errors or link errors
-			return;
-		}
-
 		// updates the instantiator to reflect changes in this module
 		// this method only performs an actual update if the instantiator is out of date
 		instantiator.update(module);
@@ -117,6 +108,8 @@ public class CxJavaValidator extends AbstractCxJavaValidator {
 						Network network = (Network) cxEntity;
 						DPN dpn = (DPN) entity;
 						networkChecker.checkDPN(network, dpn);
+					} else if (entity instanceof Actor) {
+						checkTask((Task) cxEntity, (Actor) entity);
 					}
 
 					// check types
@@ -131,40 +124,20 @@ public class CxJavaValidator extends AbstractCxJavaValidator {
 		}
 	}
 
-	@Check(NORMAL)
-	public void checkTask(final Task task) {
-		Variable function = CxUtil.getFunction(task, NAME_LOOP);
-		if (function == null) {
-			function = CxUtil.getFunction(task, NAME_LOOP_DEPRECATED);
-			if (function == null) {
-				return;
-			}
+	private void checkTask(Task task, Actor actor) {
+		Variable loop = CxUtil.getFunction(task, NAME_LOOP);
+		if (loop == null) {
+			loop = CxUtil.getFunction(task, NAME_LOOP_DEPRECATED);
 		}
 
-		final Variable loop = function;
-		if (!CxUtil.isVoid(loop)) {
-			String message = "The 'loop' function must have type void";
-			error(message, loop, Literals.VARIABLE__NAME, ERR_ENTRY_FUNCTION_BAD_TYPE);
+		Variable setup = CxUtil.getFunction(task, NAME_SETUP);
+		if (setup == null) {
+			setup = CxUtil.getFunction(task, NAME_SETUP_DEPRECATED);
 		}
 
-		function = CxUtil.getFunction(task, NAME_SETUP);
-		if (function == null) {
-			function = CxUtil.getFunction(task, NAME_SETUP_DEPRECATED);
+		if (actor.getProperties().getAsJsonArray(PROP_CLOCKS).size() == 0) {
+			validateCombinational(task, setup, loop);
 		}
-
-		final Variable setup = function;
-		if (setup != null && !CxUtil.isVoid(setup)) {
-			String message = "The 'setup' function must have type void";
-			error(message, setup, Literals.VARIABLE__NAME, ERR_ENTRY_FUNCTION_BAD_TYPE);
-		}
-
-		instantiator.forEachMapping(task, new Executable<Entity>() {
-			public void exec(Entity entity) {
-				if (entity.getProperties().getAsJsonArray(PROP_CLOCKS).size() == 0) {
-					validate(task, setup, loop);
-				}
-			}
-		});
 	}
 
 	private void printErrors(Instantiable entity) {
@@ -182,7 +155,7 @@ public class CxJavaValidator extends AbstractCxJavaValidator {
 	 * @param scope
 	 *            scope of functions
 	 */
-	public void validate(Task task, Variable setup, final Variable run) {
+	private void validateCombinational(Task task, Variable setup, final Variable loop) {
 		for (Variable variable : CxUtil.getStateVars(task.getDecls())) {
 			if (!CxUtil.isFunction(variable) && !CxUtil.isConstant(variable)) {
 				String message = "A combinational task cannot declare state variables";
@@ -196,13 +169,13 @@ public class CxJavaValidator extends AbstractCxJavaValidator {
 			error(message, setup, Literals.VARIABLE__NAME, -1);
 		}
 
-		if (run != null) {
+		if (loop != null) {
 			instantiator.forEachMapping(task, new Executable<Entity>() {
 				@Override
 				public void exec(Entity entity) {
-					if (new CycleDetector(instantiator, (Actor) entity).hasCycleBreaks(run)) {
+					if (new CycleDetector(instantiator, (Actor) entity).hasCycleBreaks(loop)) {
 						String message = "A combinational task must not have cycle breaks";
-						error(message, run, null, -1);
+						error(message, loop, null, -1);
 					}
 				}
 			});
