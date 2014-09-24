@@ -107,22 +107,23 @@ public class WarningValidator extends AbstractDeclarativeValidator {
 		}
 	}
 
-	private void checkFunction(Variable function) {
+	private void checkDeprecatedFunction(Variable function) {
+		String name = function.getName();
+		if (NAME_SETUP_DEPRECATED.equals(name)) {
+			warning("The function '" + name + "' should be named 'setup'", function,
+					Literals.VARIABLE__NAME, INSIGNIFICANT_INDEX, WARN_SHOULD_REPLACE_NAME, name,
+					"setup");
+		} else if (NAME_LOOP_DEPRECATED.equals(name) || "main".equals(name)) {
+			warning("The function '" + name + "' should be named 'loop'", function,
+					Literals.VARIABLE__NAME, INSIGNIFICANT_INDEX, WARN_SHOULD_REPLACE_NAME, name,
+					"loop");
+		}
+	}
+
+	private void checkUnusedFunction(Variable function) {
 		String name = function.getName();
 		if (NAME_SETUP.equals(name) || NAME_LOOP.equals(name)) {
 			// do not warn for setup/loop
-			return;
-		}
-
-		if (NAME_SETUP_DEPRECATED.equals(name)) {
-			warning("The function '" + name + "' should be named 'setup'", function,
-					Literals.VARIABLE__NAME);
-			return;
-		}
-
-		if (NAME_LOOP_DEPRECATED.equals(name)) {
-			warning("The function '" + name + "' should be named 'loop'", function,
-					Literals.VARIABLE__NAME);
 			return;
 		}
 
@@ -133,27 +134,7 @@ public class WarningValidator extends AbstractDeclarativeValidator {
 		}
 	}
 
-	@Check
-	public void checkUnusedVariable(Variable variable) {
-		if (CxUtil.isPort(variable)) {
-			// do not check ports
-			return;
-		}
-
-		Instantiable entity = getContainerOfType(variable, Instantiable.class);
-		if (entity == null) {
-			// do not warn for variables in bundles
-			return;
-		}
-
-		if (CxUtil.isFunction(variable)) {
-			checkFunction(variable);
-		} else {
-			checkVariable(variable);
-		}
-	}
-
-	private void checkVariable(Variable variable) {
+	private void checkUnusedVariable(Variable variable) {
 		boolean isRead = false, isWritten = false;
 		ResourceSet set = variable.eResource().getResourceSet();
 		Collection<Setting> settings = UsageCrossReferencer.find(variable, set);
@@ -202,6 +183,27 @@ public class WarningValidator extends AbstractDeclarativeValidator {
 
 			warning("The variable " + variable.getName() + " is never written", variable,
 					Literals.VARIABLE__NAME);
+		}
+	}
+
+	@Check
+	public void checkVariable(Variable variable) {
+		if (CxUtil.isPort(variable)) {
+			// do not check ports
+			return;
+		}
+
+		Instantiable entity = getContainerOfType(variable, Instantiable.class);
+		if (entity == null) {
+			// do not warn for variables in bundles
+			return;
+		}
+
+		if (CxUtil.isFunction(variable)) {
+			checkDeprecatedFunction(variable);
+			checkUnusedFunction(variable);
+		} else {
+			checkUnusedVariable(variable);
 		}
 	}
 
