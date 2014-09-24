@@ -10,7 +10,12 @@
  *******************************************************************************/
 package com.synflow.cx.internal.validation;
 
+import static com.synflow.cx.CxConstants.NAME_LOOP;
+import static com.synflow.cx.CxConstants.NAME_LOOP_DEPRECATED;
+import static com.synflow.cx.CxConstants.NAME_SETUP;
+import static com.synflow.cx.CxConstants.NAME_SETUP_DEPRECATED;
 import static com.synflow.cx.validation.IssueCodes.ERR_DUPLICATE_DECLARATIONS;
+import static com.synflow.cx.validation.IssueCodes.ERR_ENTRY_FUNCTION_BAD_TYPE;
 import static com.synflow.cx.validation.IssueCodes.ERR_EXPECTED_CONST;
 import static com.synflow.cx.validation.IssueCodes.ERR_ILLEGAL_FENCE;
 import static com.synflow.cx.validation.IssueCodes.ERR_SIDE_EFFECTS_FUNCTION;
@@ -46,6 +51,7 @@ import com.synflow.cx.cx.StatementFence;
 import com.synflow.cx.cx.StatementIdle;
 import com.synflow.cx.cx.StatementIf;
 import com.synflow.cx.cx.StatementLoop;
+import com.synflow.cx.cx.Task;
 import com.synflow.cx.cx.TypeDecl;
 import com.synflow.cx.cx.Value;
 import com.synflow.cx.cx.Variable;
@@ -270,6 +276,34 @@ public class StructuralValidator extends AbstractDeclarativeValidator {
 			return false;
 		}
 		return true;
+	}
+
+	@Check
+	public void checkTask(Task task) {
+		Variable function = CxUtil.getFunction(task, NAME_LOOP);
+		if (function == null) {
+			function = CxUtil.getFunction(task, NAME_LOOP_DEPRECATED);
+			if (function == null) {
+				return;
+			}
+		}
+
+		Variable loop = function;
+		if (!CxUtil.isVoid(loop)) {
+			String message = "The 'loop' function must have type void";
+			error(message, loop, Literals.VARIABLE__NAME, ERR_ENTRY_FUNCTION_BAD_TYPE);
+		}
+
+		function = CxUtil.getFunction(task, NAME_SETUP);
+		if (function == null) {
+			function = CxUtil.getFunction(task, NAME_SETUP_DEPRECATED);
+		}
+
+		Variable setup = function;
+		if (setup != null && !CxUtil.isVoid(setup)) {
+			String message = "The 'setup' function must have type void";
+			error(message, setup, Literals.VARIABLE__NAME, ERR_ENTRY_FUNCTION_BAD_TYPE);
+		}
 	}
 
 	@Check
