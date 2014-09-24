@@ -385,21 +385,16 @@ public class InstantiatorImpl implements IInstantiator {
 			ctx.delete();
 
 			Inst inst = ctx.getInst();
-			if (inst == null) {
-				EntityInfo info = entityMapper.createEntityInfo(cxEntity);
-				instantiate(info, ctx);
-			} else {
-				Instance instance = ctx.getInstance();
-				InstantiationContext newCtx = new InstantiationContext(parent, inst, instance);
+			Instance instance = ctx.getInstance();
+			InstantiationContext newCtx = new InstantiationContext(parent, inst, instance);
 
-				// update inst's entity to the latest version
-				inst.setEntity((Instantiable) cxEntity);
+			// update inst's entity to the latest version
+			inst.setEntity((Instantiable) cxEntity);
 
-				// instantiate
-				EntityInfo info = entityMapper.createEntityInfo(newCtx);
-				Entity entity = instantiate(info, newCtx);
-				instance.setEntity(entity);
-			}
+			// instantiate
+			EntityInfo info = entityMapper.createEntityInfo(newCtx);
+			Entity entity = instantiate(info, newCtx);
+			instance.setEntity(entity);
 		}
 	}
 
