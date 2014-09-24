@@ -107,7 +107,10 @@ public class InstantiatorImpl implements IInstantiator {
 		Multimap<EObject, Port> portMap = LinkedHashMultimap.create();
 		portMap.putAll(dpn, dpn.getOutputs());
 		for (Instance instance : dpn.getInstances()) {
-			portMap.putAll(instance, instance.getEntity().getInputs());
+			Entity entity = instance.getEntity();
+			if (entity != null) {
+				portMap.putAll(instance, entity.getInputs());
+			}
 		}
 
 		implicitConnector.connect(portMap, network, dpn);
@@ -237,6 +240,10 @@ public class InstantiatorImpl implements IInstantiator {
 		// map entity and update mapping
 		CxEntity cxEntity = info.getCxEntity();
 		Entity entity = entityMapper.doSwitch(cxEntity);
+		if (entity == null) {
+			// happens with unresolved references to instantiable entities
+			return null;
+		}
 		data.updateMapping(cxEntity, entity, ctx);
 
 		// add to resource
@@ -297,6 +304,12 @@ public class InstantiatorImpl implements IInstantiator {
 					subEntity = instantiate(info, null);
 				}
 			}
+
+			// happens with unresolved references to instantiable entities
+			if (subEntity == null) {
+				continue;
+			}
+
 			instance.setEntity(subEntity);
 
 			// set properties. For anonymous tasks, use the task's properties for the instance

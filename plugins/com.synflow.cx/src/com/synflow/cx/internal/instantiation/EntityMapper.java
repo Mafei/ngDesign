@@ -166,6 +166,11 @@ public class EntityMapper extends CxSwitch<Entity> {
 	private EntityInfo createEntityInfo(CxEntity cxEntity, Inst inst, String specializedName) {
 		boolean specialized = specializedName != null;
 		String name = specialized ? specializedName : getName(cxEntity);
+		if (name == null) {
+			// happens when cxEntity is a proxy because it could not be resolved
+			return new EntityInfo(cxEntity, null, null, specialized);
+		}
+
 		URI cxUri = cxEntity.eResource().getURI();
 		URI uriInst = inst == null ? null : EcoreUtil.getURI(inst);
 		URI uri = UriComputer.INSTANCE.computeUri(name, cxUri, uriInst);
