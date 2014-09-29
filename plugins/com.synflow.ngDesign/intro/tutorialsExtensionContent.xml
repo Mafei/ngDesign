@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<introContent>
+  <!-- Extension to the SDK Tutorials Page. -->
+  <extensionContent id="com.synflow.ngDesign" name="ngDesign" path="tutorials/@">
+    <group label="ngDesign" id="tutorials" style-id="content-group">
+      <link url="https://eliademy.com/app/a/courses/9839400951" label="Introduction to the Cx language" id="cx-language" style-id="content-link">
+        <text>Follow the steps for merging changes from one CVS branch into another.</text>
+      </link>
+    </group>
+  </extensionContent>
+</introContent>

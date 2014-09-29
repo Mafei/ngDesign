@@ -8,7 +8,7 @@
       <product
             application="org.eclipse.ui.ide.workbench"
             description="%productBlurb"
-            name="ngDesign">
+            name="%productName">
          <property
                name="preferenceCustomization"
                value="plugin_customization.ini">
@@ -53,6 +53,30 @@
                name="applicationCSSResources"
                value="platform:/plugin/org.eclipse.ui.themes/images/">
          </property>
+         <property
+               name="introTitle"
+               value="%productIntroTitle">
+         </property>
+         <property
+               name="introBrandingImage"
+               value="product:intro-eclipse.png">
+         </property>
+         <property
+               name="introBrandingImageText"
+               value="%productIntroBrandingText">
+         </property>
+         <property
+               name="introDescription-overview"
+               value="%introDescription-overview">
+         </property>
+         <property
+               name="introDescription-tutorials"
+               value="%introDescription-tutorials">
+         </property>
+         <property
+               name="introDescription-samples"
+               value="%introDescription-samples">
+         </property>
       </product>
    </extension>
    <extension
@@ -63,5 +87,19 @@
       <generator
             name="VHDL">
       </generator>
+   </extension>
+   <extension
+         point="org.eclipse.ui.intro">
+      <introProductBinding
+            introId="org.eclipse.ui.intro.universal"
+            productId="com.synflow.ngDesign.product">
+      </introProductBinding>
+   </extension>
+   <extension
+         point="org.eclipse.ui.intro.configExtension">
+      <configExtension
+            configId="org.eclipse.ui.intro.universalConfig"
+            content="intro/tutorialsExtensionContent.xml">
+      </configExtension>
    </extension>
 </plugin>
