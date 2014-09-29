@@ -17,7 +17,7 @@
   <modules>
     <module>../../features/com.synflow.ngDesign.feature</module>
     <module>../../features/com.synflow.ngDesign.ide</module>
-    <module>../../fragments/com.synflow.libraries</module>
+    <module>../../fragments/com.synflow.ngDesign.libraries</module>
     <module>../../plugins/com.synflow.core</module>
     <module>../../plugins/com.synflow.cx</module>
     <module>../../plugins/com.synflow.cx.postprocessor</module>
