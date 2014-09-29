@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 
@@ -247,7 +246,14 @@ public class InstantiatorImpl implements IInstantiator {
 		data.updateMapping(cxEntity, entity, ctx);
 
 		// add to resource
-		Resource resource = resourceSet.createResource(info.getURI());
+		Resource resource = resourceSet.getResource(info.getURI(), false);
+		if (resource == null) {
+			resource = resourceSet.createResource(info.getURI());
+		} else {
+			// IR entity already created during this build, discard
+			// happens when revalidating the instantiating parent of a specialized entity
+			resource.getContents().clear();
+		}
 		resource.getContents().add(entity);
 
 		// configure entity, if built-in add to builtins list
@@ -364,25 +370,32 @@ public class InstantiatorImpl implements IInstantiator {
 		}
 
 		// look up specialization info using previous entity
+		// do this now, before removeSpecialized removes the map
 		Map<InstantiationContext, Entity> map = data.getSpecialization(oldEntity);
+
+		// removes specialized info, returns iterable of contexts to delete later
+		Iterable<InstantiationContext> contexts = data.removeSpecialized(oldEntity);
+
 		if (map == null) {
 			// no previous record of specialization info exists
 			EntityInfo info = entityMapper.createEntityInfo(cxEntity);
 			instantiate(info, null);
 		} else {
 			// update specialization info
-			updateSpecialized(cxEntity, map);
+			updateSpecialized(map, cxEntity);
+		}
+
+		// clean up: deletes old contexts
+		for (InstantiationContext ctx : contexts) {
+			ctx.delete();
 		}
 	}
 
-	private void updateSpecialized(CxEntity cxEntity, Map<InstantiationContext, Entity> map) {
-		// copy entry set because map is modified by instantiation
-		// old contexts are discarded, new ones added
-		Set<Entry<InstantiationContext, Entity>> set = ImmutableSet.copyOf(map.entrySet());
-		for (Entry<InstantiationContext, Entity> entry : set) {
-			InstantiationContext ctx = entry.getKey();
+	private void updateSpecialized(Map<InstantiationContext, Entity> map, CxEntity cxEntity) {
+		// copy context set because map is modified by instantiation
+		Set<InstantiationContext> contexts = ImmutableSet.copyOf(map.keySet());
+		for (InstantiationContext ctx : contexts) {
 			InstantiationContext parent = (InstantiationContext) ctx.getParent();
-			ctx.delete();
 
 			Inst inst = ctx.getInst();
 			Instance instance = ctx.getInstance();
