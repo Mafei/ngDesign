@@ -1,19 +1,31 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <extensions>
-   <page id="tutorials">
-     <group path="page-content/bottom-left" default="true">
-     </group>
-     <group path="page-content/bottom-right" default="true">
-     </group>
-     <group path="page-content/top-left">
-     </group>
-     <group path="page-content/top-right">
-     </group>
-   </page>
-   <page id="whatsnew">
-   </page>
-   <page id="samples">
-   </page>
-   <page id="overview">
-   </page>
+  <page id="tutorials">
+    <group path="page-content/bottom-left" default="true" />
+    <group path="page-content/bottom-right" default="true" />
+    <group path="page-content/top-left" />
+    <group path="page-content/top-right" />
+
+    <hidden>
+      <extension id="org.eclipse.team" importance="low" />
+    </hidden>
+  </page>
+
+  <page id="whatsnew">
+    <hidden>
+      <extension id="org.eclipse.ui.workbench.news" importance="low"/>
+      <extension id="org.eclipse.ui.workbench.migration" importance="low"/>
+      <extension id="org.eclipse.ui.workbench" importance="low"/>
+    </hidden>
+  </page>
+
+  <page id="samples">
+  </page>
+
+  <page id="overview">
+    <hidden>
+      <extension id="org.eclipse.ui.workbench" importance="low"/>
+      <extension id="org.eclipse.m2e" importance="low"/>
+    </hidden>
+  </page>
 </extensions>

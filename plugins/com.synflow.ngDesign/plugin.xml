@@ -99,7 +99,15 @@
          point="org.eclipse.ui.intro.configExtension">
       <configExtension
             configId="org.eclipse.ui.intro.universalConfig"
+            content="intro/samplesExtensionContent.xml">
+      </configExtension>
+      <configExtension
+            configId="org.eclipse.ui.intro.universalConfig"
             content="intro/tutorialsExtensionContent.xml">
+      </configExtension>
+      <configExtension
+            configId="org.eclipse.ui.intro.universalConfig"
+            content="intro/whatsnewExtensionContent.xml">
       </configExtension>
    </extension>
 </plugin>

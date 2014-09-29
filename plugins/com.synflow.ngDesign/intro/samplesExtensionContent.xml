@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<introContent>
+  <extensionContent id="com.synflow.ngDesign" path="samples/@">
+    <group label="Samples of Cx code" id="samples" style-id="content-group">
+      <link url="http://org.eclipse.ui.intro/runAction?class=com.synflow.ngDesign.ui.intro.CheckoutIntroAction&amp;pluginId=com.synflow.ngDesign.ui&amp;url=https://github.com/synflow/examples.git" label="Basic examples" style-id="content-link">
+        <text>This link is to a simple project with basic examples of Cx code.</text>
+      </link>
+
+      <link url="http://org.eclipse.ui.intro/runAction?class=com.synflow.ngDesign.ui.intro.CheckoutIntroAction&amp;pluginId=com.synflow.ngDesign.ui&amp;url=https://github.com/synflow/ethernet-mac.git" label="Ethernet MAC" style-id="content-link">
+        <text>Complete description of an Ethernet MAC.</text>
+      </link>
+    </group>
+  </extensionContent>
+</introContent>
