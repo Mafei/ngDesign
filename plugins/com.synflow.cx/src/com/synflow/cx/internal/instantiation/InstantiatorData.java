@@ -10,21 +10,27 @@
  *******************************************************************************/
 package com.synflow.cx.internal.instantiation;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.EcoreUtil2;
 
+import com.google.common.collect.ImmutableSet;
 import com.synflow.cx.cx.Bundle;
 import com.synflow.cx.cx.CxEntity;
+import com.synflow.cx.cx.Inst;
+import com.synflow.cx.cx.Network;
 import com.synflow.models.dpn.Entity;
 
 /**
@@ -54,6 +60,26 @@ public class InstantiatorData {
 		mapEntities = new HashMap<>();
 		mapSpecialized = new HashMap<>();
 		uriMap = new HashMap<>();
+	}
+
+	/**
+	 * Adds all Cx entities transitively instantiated by the given entity to the
+	 * <code>entities</code> set.
+	 * 
+	 * @param entities
+	 *            a set of entities
+	 * @param cxEntity
+	 *            a Cx entity
+	 */
+	private void collectEntities(Set<CxEntity> entities, CxEntity cxEntity) {
+		entities.add(cxEntity);
+		if (cxEntity instanceof Network) {
+			Network network = (Network) cxEntity;
+			for (Inst inst : network.getInstances()) {
+				CxEntity subEntity = inst.getEntity() == null ? inst.getTask() : inst.getEntity();
+				collectEntities(entities, subEntity);
+			}
+		}
 	}
 
 	/**
@@ -169,6 +195,31 @@ public class InstantiatorData {
 		map.put(cxObj, irObj);
 	}
 
+	/**
+	 * Removes info about all specialized entities that can be reached from the given entity.
+	 * 
+	 * @param cxEntity
+	 */
+	public Iterable<InstantiationContext> removeSpecialized(CxEntity cxEntity) {
+		if (cxEntity == null) {
+			return ImmutableSet.of();
+		}
+
+		Set<CxEntity> entities = new LinkedHashSet<>();
+		collectEntities(entities, cxEntity);
+
+		List<InstantiationContext> contexts = new ArrayList<>();
+		for (CxEntity aCxEntity : entities) {
+			Map<InstantiationContext, Entity> map = mapSpecialized.remove(aCxEntity);
+			if (map != null) {
+				contexts.addAll(map.keySet());
+				mapCxToIr.keySet().removeAll(map.values());
+			}
+		}
+
+		return contexts;
+	}
+
 	public void updateMapping(CxEntity cxEntity, Entity entity, InstantiationContext ctx) {
 		Objects.requireNonNull(cxEntity, "cxEntity must not be null in updateMapping");
 
@@ -176,37 +227,22 @@ public class InstantiatorData {
 		CxEntity oldEntity = uriMap.get(uri);
 		if (oldEntity != cxEntity) {
 			uriMap.put(uri, cxEntity);
-
-			// clean up anything associated with previous version of cxEntity
-			if (oldEntity != null) {
-				if (ctx == null) {
-					mapCxToIr.remove(mapEntities.remove(oldEntity));
-				} else {
-					Map<InstantiationContext, Entity> map = mapSpecialized.remove(oldEntity);
-					if (map != null) {
-						mapCxToIr.entrySet().removeAll(map.values());
-					}
-				}
-			}
 		}
 
 		// updates mapEntities/mapSpecialized
 		if (ctx == null) {
+			// clean up anything associated with previous version of cxEntity
+			// only does this for mapEntities, specialized mappings are cleared by instantiator
+			if (oldEntity != null && oldEntity != cxEntity) {
+				mapCxToIr.remove(mapEntities.remove(oldEntity));
+			}
+
 			mapEntities.put(cxEntity, entity);
 		} else {
 			Map<InstantiationContext, Entity> map = mapSpecialized.get(cxEntity);
 			if (map == null) {
 				map = new LinkedHashMap<>();
 				mapSpecialized.put(cxEntity, map);
-			} else {
-				// clean up old contexts
-				Iterator<InstantiationContext> it = map.keySet().iterator();
-				while (it.hasNext()) {
-					InstantiationContext subCtx = it.next();
-					if (subCtx.getParent() == null) {
-						it.remove();
-					}
-				}
 			}
 			map.put(ctx, entity);
 		}
