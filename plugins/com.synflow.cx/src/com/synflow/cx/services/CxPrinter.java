@@ -314,6 +314,16 @@ public class CxPrinter extends CxSwitch<Void> {
 		return DONE;
 	}
 
+	@Override
+	public Void doSwitch(EObject eObject) {
+		if (eObject == null) {
+			builder.append("null");
+			return DONE;
+		} else {
+			return doSwitch(eObject.eClass(), eObject);
+		}
+	}
+
 	public String toString(EObject eObject) {
 		doSwitch(eObject);
 		return builder.toString();
