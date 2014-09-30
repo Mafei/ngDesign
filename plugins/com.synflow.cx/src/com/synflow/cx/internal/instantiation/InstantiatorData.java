@@ -133,11 +133,13 @@ public class InstantiatorData {
 		Objects.requireNonNull(entity, "entity must not be null in getMapping");
 
 		Map<EObject, EObject> map = mapCxToIr.get(entity);
+		U irObj;
 		if (map == null) {
-			return null;
+			irObj = null;
+		} else {
+			irObj = (U) map.get(cxObj);
 		}
-
-		U irObj = (U) map.get(cxObj);
+	
 		if (irObj == null) {
 			CxEntity cxEntity = EcoreUtil2.getContainerOfType(cxObj, CxEntity.class);
 			if (cxEntity instanceof Bundle) {
