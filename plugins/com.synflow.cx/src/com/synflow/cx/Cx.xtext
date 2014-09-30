@@ -116,7 +116,7 @@ PortDecl: SinglePortDecl | MultiPortDecl;
 SinglePortDecl: direction=('in' | 'out') ports += PortDef (',' ports += PortDef)* ';';
 PortDef: (sync?='sync' (ready?='ready' | ack?='ack')?)? var=PortVariable;
 
-MultiPortDecl: sync?='sync' (ready?='ready' | ack?='ack')? '{' decls += SyncPortDecl+ '}';
+MultiPortDecl: sync?='sync' (ready?='ready' | ack?='ack')? '{' decls += SyncPortDecl* '}';
 SyncPortDecl returns SinglePortDecl: direction=('in' | 'out') ports += SyncPortDef (',' ports += SyncPortDef)* ';';
 SyncPortDef returns PortDef: (ready?='ready' | ack?='ack')? var=PortVariable;
 
