@@ -40,6 +40,10 @@ public class CxFormatter extends AbstractDeclarativeFormatter {
 				.getRightCurlyBracketKeyword_6());
 		setIndent(cfg, g.getTaskAccess().getLeftCurlyBracketKeyword_2(), g.getTaskAccess()
 				.getRightCurlyBracketKeyword_6());
+
+		setIndentOkOneLine(cfg, g.getMultiPortDeclAccess().getLeftCurlyBracketKeyword_2(), g
+				.getMultiPortDeclAccess().getRightCurlyBracketKeyword_4());
+
 		setIndent(cfg, g.getBlockAccess().getLeftCurlyBracketKeyword_1(), g.getBlockAccess()
 				.getRightCurlyBracketKeyword_3());
 	}
