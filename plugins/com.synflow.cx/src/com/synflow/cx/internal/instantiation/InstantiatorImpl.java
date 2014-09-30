@@ -25,11 +25,13 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.synflow.core.util.CoreUtil;
+import com.synflow.cx.cx.Bundle;
 import com.synflow.cx.cx.CxEntity;
 import com.synflow.cx.cx.Inst;
 import com.synflow.cx.cx.Instantiable;
@@ -269,7 +271,8 @@ public class InstantiatorImpl implements IInstantiator {
 				data = new InstantiatorData();
 				entities = loader.loadTopEntities(resourceSet);
 			} else {
-				entities = module.getEntities();
+				Iterable<Bundle> bundles = loader.loadBundles(resourceSet, module.getEntities());
+				entities = Iterables.concat(bundles, module.getEntities());
 			}
 
 			for (CxEntity cxEntity : entities) {

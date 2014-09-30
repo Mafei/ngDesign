@@ -28,10 +28,13 @@ import org.eclipse.xtext.resource.IResourceDescription;
 import org.eclipse.xtext.resource.IResourceDescriptions;
 import org.eclipse.xtext.resource.impl.ResourceDescriptionsProvider;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
+import com.synflow.cx.cx.Bundle;
 import com.synflow.cx.cx.CxEntity;
 import com.synflow.cx.cx.CxPackage.Literals;
+import com.synflow.cx.cx.Module;
 
 /**
  * This class defines a loader of top-level entities.
@@ -82,6 +85,49 @@ public class TopEntitiesLoader {
 		}
 
 		return allUris;
+	}
+
+	public Iterable<Bundle> loadBundles(ResourceSet resourceSet, List<CxEntity> entities) {
+		// find out URIs of resource that contains types/variables that are referenced
+		Set<URI> resourceUris = Sets.newLinkedHashSet();
+		for (CxEntity entity : entities) {
+			Resource resource = entity.eResource();
+			IResourceDescription resDesc = manager.getResourceDescription(resource);
+			for (IReferenceDescription refDesc : resDesc.getReferenceDescriptions()) {
+				if (refDesc.getEReference() == Literals.TYPE_REF__TYPE_DEF
+						|| refDesc.getEReference() == Literals.VAR_REF__VARIABLE) {
+					URI resourceUri = refDesc.getTargetEObjectUri().trimFragment();
+					if (!resourceUri.isPlatformPlugin()) {
+						resourceUris.add(resourceUri);
+					}
+				}
+			}
+		}
+
+		// of these, only keep resources with bundles
+		Set<URI> bundleUris = Sets.newHashSet();
+		IResourceDescriptions resourceDescriptions = provider.getResourceDescriptions(resourceSet);
+		for (URI uri : resourceUris) {
+			IResourceDescription resourceDescription = resourceDescriptions
+					.getResourceDescription(uri);
+			if (!Iterables.isEmpty(resourceDescription.getExportedObjectsByType(Literals.BUNDLE))) {
+				bundleUris.add(uri);
+			}
+		}
+
+		// load bundles
+		Set<Bundle> bundles = Sets.newLinkedHashSet();
+		for (URI uri : bundleUris) {
+			Resource target = resourceSet.getResource(uri, true);
+			Module module = (Module) target.getContents().get(0);
+			for (CxEntity cxEntity : module.getEntities()) {
+				if (cxEntity instanceof Bundle) {
+					bundles.add((Bundle) cxEntity);
+				}
+			}
+		}
+
+		return bundles;
 	}
 
 	private Iterable<CxEntity> loadEntities(ResourceSet resourceSet, Collection<URI> topUris) {
