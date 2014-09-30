@@ -20,7 +20,8 @@ Require-Bundle: org.eclipse.core.expressions,
  org.eclipse.ui.views.log;bundle-version="1.0.400",
  org.eclipse.ui.navigator;bundle-version="3.5.300",
  org.eclipse.ui.navigator.resources;bundle-version="3.4.500",
- org.eclipse.jdt.ui;bundle-version="3.9.1"
+ org.eclipse.jdt.ui;bundle-version="3.9.1",
+ org.eclipse.e4.ui.css.swt.theme
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 
