@@ -20,27 +20,17 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.common.util.WrappedException;
-import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.xtext.resource.IEObjectDescription;
-import org.eclipse.xtext.resource.IReferenceDescription;
-import org.eclipse.xtext.resource.IResourceDescription;
-import org.eclipse.xtext.resource.IResourceDescriptions;
-import org.eclipse.xtext.resource.impl.ResourceDescriptionsProvider;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.synflow.core.util.CoreUtil;
 import com.synflow.cx.cx.CxEntity;
-import com.synflow.cx.cx.CxPackage.Literals;
 import com.synflow.cx.cx.Inst;
 import com.synflow.cx.cx.Instantiable;
 import com.synflow.cx.cx.Module;
@@ -79,10 +69,7 @@ public class InstantiatorImpl implements IInstantiator {
 	private ImplicitConnector implicitConnector;
 
 	@Inject
-	private IResourceDescription.Manager manager;
-
-	@Inject
-	private ResourceDescriptionsProvider provider;
+	private TopEntitiesLoader loader;
 
 	private ResourceSet resourceSet;
 
@@ -114,75 +101,6 @@ public class InstantiatorImpl implements IInstantiator {
 
 		implicitConnector.connect(portMap, network, dpn);
 		explicitConnector.connect(portMap, network, dpn);
-	}
-
-	/**
-	 * Finds all CxEntity objects that are at the top of the hierarchy. Computed as the set of URIs
-	 * of all entities, minus the set of URIs of entities that are instantiated. Currently the
-	 * collection this method returns includes bundles.
-	 * 
-	 * @param resourceSet
-	 *            a resource set from which we obtain an IResourceDescriptions object and that we
-	 *            use for solving proxies
-	 * @return an iterable over CxEntity
-	 */
-	private Iterable<CxEntity> findTopFrom(ResourceSet resourceSet) {
-		Set<URI> topUris = Sets.newLinkedHashSet();
-
-		IResourceDescriptions resourceDescriptions = provider.getResourceDescriptions(resourceSet);
-
-		// collect all entities (bundles and instantiable entities)
-		EClass type = Literals.CX_ENTITY;
-		for (IEObjectDescription objDesc : resourceDescriptions.getExportedObjectsByType(type)) {
-			// we normalize the URI because URIs of reference descriptions are normalized too
-			// note that 'normalized' by EMF means from resource to plugin
-			URI uri = resourceSet.getURIConverter().normalize(objDesc.getEObjectURI());
-
-			// filters out objects whose URI is platform:/plugin (they can never be 'top' URIs)
-			if (!uri.isPlatformPlugin()) {
-				topUris.add(uri);
-			}
-		}
-
-		// remove all entities that are instantiated
-		// we use the manager to get an IResourceDescription because
-		// ResourceDescriptionsProvider may return CopiedResourceDescriptions
-		// which do not have reference descriptions
-		for (IResourceDescription resDesc : resourceDescriptions.getAllResourceDescriptions()) {
-			URI uri = resDesc.getURI();
-			Resource resource;
-			try {
-				resource = resourceSet.getResource(uri, true);
-			} catch (WrappedException e) {
-				// resource can't be created/loaded, just skip
-				continue;
-			}
-
-			resDesc = manager.getResourceDescription(resource);
-			for (IReferenceDescription refDesc : resDesc.getReferenceDescriptions()) {
-				if (refDesc.getEReference() == Literals.INST__ENTITY) {
-					URI uriInstantiable = refDesc.getTargetEObjectUri();
-					topUris.remove(uriInstantiable);
-				}
-			}
-		}
-
-		// loads objects from topUris
-		// note that URIs in topUris must be normalized in the Xtext sense for this to work
-		// (platform:/plugin mapped to platform:/resource)
-		List<CxEntity> entities = new ArrayList<>(topUris.size());
-		for (URI uri : topUris) {
-			URI uriRes = uri.trimFragment();
-			IResourceDescription resDesc = resourceDescriptions.getResourceDescription(uriRes);
-			type = Literals.CX_ENTITY;
-			for (IEObjectDescription objDesc : resDesc.getExportedObjectsByType(type)) {
-				if (uri.equals(objDesc.getEObjectURI())) {
-					EObject resolved = EcoreUtil.resolve(objDesc.getEObjectOrProxy(), resourceSet);
-					entities.add((CxEntity) resolved);
-				}
-			}
-		}
-		return entities;
 	}
 
 	@Override
@@ -349,7 +267,7 @@ public class InstantiatorImpl implements IInstantiator {
 			Iterable<CxEntity> entities;
 			if (data == null) {
 				data = new InstantiatorData();
-				entities = findTopFrom(resourceSet);
+				entities = loader.loadTopEntities(resourceSet);
 			} else {
 				entities = module.getEntities();
 			}
