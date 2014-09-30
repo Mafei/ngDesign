@@ -12,7 +12,6 @@ package com.synflow.ngDesign.ui.internal.wizards;
 
 import static com.synflow.core.ISynflowConstants.FILE_EXT_CFLOW;
 import static com.synflow.core.ISynflowConstants.FOLDER_IR;
-import static com.synflow.core.ISynflowConstants.FOLDER_JAVA_GEN;
 import static com.synflow.core.ISynflowConstants.FOLDER_SIM;
 import static com.synflow.core.ISynflowConstants.FOLDER_TESTBENCH;
 import static org.eclipse.jdt.core.JavaCore.newSourceEntry;
@@ -50,7 +49,7 @@ public class ProjectCreator {
 	private static final IPath[] CP_PATTERNS = { new Path("**/*." + FILE_EXT_CFLOW) };
 
 	private static final String[] IGNORES = new String[] { FOLDER_IR, ".settings", "bin",
-			FOLDER_JAVA_GEN, FOLDER_SIM, FOLDER_TESTBENCH, "verilog-gen", "vhdl-gen" };
+			FOLDER_SIM, FOLDER_TESTBENCH, "verilog-gen", "vhdl-gen" };
 
 	/**
 	 * Synflow must be first for icon to appear correctly
@@ -111,19 +110,12 @@ public class ProjectCreator {
 			src.create(true, true, null);
 		}
 
-		// create "java-gen" folder if it does not exist
-		IFolder javaGen = project.getFolder(FOLDER_JAVA_GEN);
-		if (!javaGen.exists()) {
-			javaGen.create(true, true, null);
-		}
-
-		// add "src", "src-gen" and "java-gen" source entries
+		// add "src" source entry
 		// default JRE
 		IClasspathEntry[] jre = { JavaRuntime.getDefaultJREContainerEntry() };
 		int n = jre.length;
-		IClasspathEntry[] entries = Arrays.copyOf(jre, n + 2);
+		IClasspathEntry[] entries = Arrays.copyOf(jre, n + 1);
 		entries[n] = newSourceEntry(src.getFullPath(), CP_PATTERNS);
-		entries[n + 1] = newSourceEntry(javaGen.getFullPath());
 
 		// create Java project and set entries
 		IJavaProject javaProject = JavaCore.create(project);

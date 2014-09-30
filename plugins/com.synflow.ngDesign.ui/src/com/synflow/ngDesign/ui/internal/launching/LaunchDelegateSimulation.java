@@ -10,9 +10,6 @@
  *******************************************************************************/
 package com.synflow.ngDesign.ui.internal.launching;
 
-import static com.synflow.core.ISynflowConstants.FILE_EXT_IR;
-import static com.synflow.core.ISynflowConstants.FOLDER_IR;
-import static com.synflow.core.ISynflowConstants.FOLDER_JAVA_GEN;
 import static com.synflow.core.ISynflowConstants.FOLDER_SIM;
 import static com.synflow.ngDesign.ui.internal.launching.ILaunchConfigurationConstants.CHECK_PORTS;
 import static com.synflow.ngDesign.ui.internal.launching.ILaunchConfigurationConstants.CLASS;
@@ -38,15 +35,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
@@ -60,7 +54,6 @@ import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.ui.PlatformUI;
 
@@ -69,7 +62,6 @@ import com.google.inject.name.Named;
 import com.synflow.core.ICodeGenerator;
 import com.synflow.core.IFileWriter;
 import com.synflow.core.SynflowCore;
-import com.synflow.core.util.CoreUtil;
 import com.synflow.models.dpn.Entity;
 import com.synflow.models.ir.util.IrUtil;
 
@@ -80,30 +72,6 @@ import com.synflow.models.ir.util.IrUtil;
  * 
  */
 public class LaunchDelegateSimulation extends LaunchConfigurationDelegate {
-
-	private static class CachedResourceVisitor extends ModelResourceVisitor {
-
-		public CachedResourceVisitor(ResourceSet set) {
-			super(set, FILE_EXT_IR);
-		}
-
-		@Override
-		protected boolean shouldSkipFile(IFile irFile) {
-			// timestamp of .ir file
-			long tsIr = irFile.getLocalTimeStamp();
-
-			// timestamp of .java file
-			String name = "TODO"; //TODO
-			String fileName = IrUtil.getFile(name) + ".java";
-			IPath path = new Path(FOLDER_JAVA_GEN).append(fileName);
-			IFile javaFile = irFile.getProject().getFile(path);
-			long tsJava = javaFile.getLocalTimeStamp();
-
-			// skips if .java is more recent than .ir/.xdf
-			return tsIr <= tsJava;
-		}
-
-	}
 
 	/**
 	 * This class handles debug events, and when the JDT launch terminates, it terminates the dummy
@@ -285,12 +253,6 @@ public class LaunchDelegateSimulation extends LaunchConfigurationDelegate {
 		Map<IProject, List<Entity>> map = new HashMap<>();
 		ResourceSetImpl set = new ResourceSetImpl();
 		set.setURIResourceMap(new HashMap<URI, Resource>());
-
-		for (IProject proj : CoreUtil.getBuildPath(project)) {
-			CachedResourceVisitor visitor = new CachedResourceVisitor(set);
-			proj.getFolder(FOLDER_IR).accept(visitor);
-			map.put(proj, visitor.getEObjects());
-		}
 
 		return map;
 	}

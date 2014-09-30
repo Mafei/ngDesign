@@ -29,11 +29,6 @@ public interface ISynflowConstants {
 	String FOLDER_IR = ".ir";
 
 	/**
-	 * name of the folder with generated Java files
-	 */
-	String FOLDER_JAVA_GEN = "java-gen";
-
-	/**
 	 * name of the folder where simulation files are generated
 	 */
 	String FOLDER_SIM = "sim";

@@ -11,7 +11,6 @@
 package com.synflow.core.internal.builder;
 
 import static com.synflow.core.ISynflowConstants.FOLDER_IR;
-import static com.synflow.core.ISynflowConstants.FOLDER_JAVA_GEN;
 import static com.synflow.core.ISynflowConstants.FOLDER_TESTBENCH;
 
 import java.util.ArrayList;
@@ -25,20 +24,16 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 
-import com.synflow.core.BuildJob;
 import com.synflow.core.ICodeGenerator;
 import com.synflow.core.IFileWriter;
 import com.synflow.core.SynflowCore;
@@ -61,16 +56,6 @@ public class SynflowBuilder extends IncrementalProjectBuilder {
 	@Override
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) {
 		IProject project = getProject();
-
-		// check or create folders
-		boolean needRebuild = makeSureFolderExists(project, FOLDER_JAVA_GEN);
-		if (needRebuild) {
-			// schedule a build job
-			Job buildJob = new BuildJob(project);
-			IWorkspace workspace = ResourcesPlugin.getWorkspace();
-			buildJob.setRule(workspace.getRuleFactory().buildRule());
-			buildJob.schedule();
-		}
 
 		// clean markers that might be set if code generators are not configured properly
 		try {
@@ -126,7 +111,6 @@ public class SynflowBuilder extends IncrementalProjectBuilder {
 		deleteFiles(project, FOLDER_IR, subMonitor.newChild(1));
 
 		// clean up "-gen" folders
-		deleteFiles(project, FOLDER_JAVA_GEN, subMonitor.newChild(1));
 		deleteFiles(project, "verilog-gen", subMonitor.newChild(1));
 		deleteFiles(project, "vhdl-gen", subMonitor.newChild(1));
 		deleteFiles(project, FOLDER_TESTBENCH, subMonitor.newChild(1));
@@ -232,28 +216,6 @@ public class SynflowBuilder extends IncrementalProjectBuilder {
 		}
 
 		subMonitor.done();
-	}
-
-	/**
-	 * Checks if the folder with the given name exists. If it does not, creates it.
-	 * 
-	 * @param project
-	 *            project
-	 * @param name
-	 *            folder name
-	 * @return true if the folder did not exist and the project needs to be rebuilt
-	 */
-	private boolean makeSureFolderExists(IProject project, String name) {
-		IFolder folder = project.getFolder(name);
-		if (!folder.exists()) {
-			try {
-				folder.create(true, true, null);
-				return true;
-			} catch (CoreException e) {
-				SynflowCore.log(e);
-			}
-		}
-		return false;
 	}
 
 }
