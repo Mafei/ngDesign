@@ -46,6 +46,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import com.google.inject.Inject;
 import com.synflow.cx.CxUtil;
@@ -260,7 +261,8 @@ public class Typer extends CxSwitch<Type> {
 
 	@Override
 	public Type caseTypedef(Typedef typedef) {
-		return instantiator.getMapping(entity, typedef);
+		Type type = instantiator.getMapping(entity, typedef);
+		return EcoreUtil.copy(type);
 	}
 
 	@Override
