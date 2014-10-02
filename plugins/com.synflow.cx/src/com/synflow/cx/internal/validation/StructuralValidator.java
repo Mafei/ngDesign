@@ -47,6 +47,7 @@ import com.synflow.cx.cx.Module;
 import com.synflow.cx.cx.PortDef;
 import com.synflow.cx.cx.SinglePortDecl;
 import com.synflow.cx.cx.Statement;
+import com.synflow.cx.cx.StatementAssign;
 import com.synflow.cx.cx.StatementFence;
 import com.synflow.cx.cx.StatementIdle;
 import com.synflow.cx.cx.StatementIf;
@@ -120,6 +121,15 @@ public class StructuralValidator extends AbstractDeclarativeValidator {
 		// }
 		// }
 		// }
+	}
+
+	@Check
+	public void checkAssign(StatementAssign stmt) {
+		Variable variable = stmt.getTarget().getSource().getVariable();
+		if (CxUtil.isPort(variable) && stmt.getOp() != null) {
+			error("Port error: a port cannot be assigned. Use the write function instead.", stmt,
+					Literals.STATEMENT_ASSIGN__TARGET);
+		}
 	}
 
 	@Check
