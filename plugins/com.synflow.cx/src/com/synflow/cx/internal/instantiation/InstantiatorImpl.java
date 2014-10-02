@@ -271,8 +271,21 @@ public class InstantiatorImpl implements IInstantiator {
 				data = new InstantiatorData();
 				entities = loader.loadTopEntities(resourceSet);
 			} else {
-				Iterable<Bundle> bundles = loader.loadBundles(resourceSet, module.getEntities());
-				entities = Iterables.concat(bundles, module.getEntities());
+				List<CxEntity> entitiesList = new ArrayList<>();
+				for (CxEntity cxEntity : module.getEntities()) {
+					CxEntity oldEntity = data.getCxEntity(getURI(cxEntity));
+					if (cxEntity != oldEntity) {
+						entitiesList.add(cxEntity);
+					}
+				}
+
+				// if everything is up-to-date return
+				if (entitiesList.isEmpty()) {
+					return;
+				}
+
+				Iterable<Bundle> bundles = loader.loadBundles(resourceSet, entitiesList);
+				entities = Iterables.concat(bundles, entitiesList);
 			}
 
 			for (CxEntity cxEntity : entities) {
@@ -285,10 +298,6 @@ public class InstantiatorImpl implements IInstantiator {
 
 	private void updateEntity(CxEntity cxEntity) {
 		CxEntity oldEntity = data.getCxEntity(getURI(cxEntity));
-		if (cxEntity == oldEntity) {
-			// data is up to date
-			return;
-		}
 
 		// look up specialization info using previous entity
 		// do this now, before removeSpecialized removes the map
