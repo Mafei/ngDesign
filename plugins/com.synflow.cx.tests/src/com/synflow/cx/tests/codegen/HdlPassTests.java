@@ -22,13 +22,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
 
 import org.eclipse.xtext.junit4.InjectWith;
 import org.junit.Assert;
 
 import com.google.gson.JsonObject;
+import com.synflow.core.IExportConfiguration;
+import com.synflow.core.IExportConfiguration.Target;
 import com.synflow.core.util.CoreUtil;
 import com.synflow.cx.CxInjectorProvider;
 import com.synflow.models.dpn.DPN;
@@ -45,8 +45,6 @@ import com.synflow.models.ir.util.IrUtil;
  */
 @InjectWith(CxInjectorProvider.class)
 public abstract class HdlPassTests extends CodegenPassTests {
-
-	private List<String> files = Arrays.asList();
 
 	/**
 	 * Compiles the given object. If the object is a network, compiles all its children recursively.
@@ -123,14 +121,9 @@ public abstract class HdlPassTests extends CodegenPassTests {
 				compil);
 	}
 
-	protected Iterable<String> getLibraryFiles() {
-		return files;
-	}
+	protected abstract IExportConfiguration getConfiguration();
 
-	protected String getLibraryPath() {
-		String name = getCodeGenerator().getName().toLowerCase();
-		return "../../fragments/com.synflow.libraries/lib/" + name + "/src";
-	}
+	protected abstract String getLibraryPath();
 
 	protected abstract int runCompileCommand(File sim, String string) throws Exception;
 
@@ -196,8 +189,9 @@ public abstract class HdlPassTests extends CodegenPassTests {
 		String path = getLibraryPath();
 		String pathLib = new File(path).getCanonicalPath();
 		String fileExt = getCodeGenerator().getFileExtension();
-		for (String lib : getLibraryFiles()) {
-			int simul = runCompileCommand(sim, pathLib + "/" + lib + "." + fileExt);
+		for (String lib : getConfiguration().getRootDependencies(Target.SIMULATION)) {
+			String file = IrUtil.getFile(lib);
+			int simul = runCompileCommand(sim, pathLib + "/" + file + "." + fileExt);
 			Assert.assertEquals("expected code generation to be correct for libraries", 0, simul);
 		}
 	}

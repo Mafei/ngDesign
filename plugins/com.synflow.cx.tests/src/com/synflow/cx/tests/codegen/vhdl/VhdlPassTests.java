@@ -11,16 +11,17 @@
  *******************************************************************************/
 package com.synflow.cx.tests.codegen.vhdl;
 
+import static com.synflow.ngDesign.NgDesignModule.VHDL;
+
 import java.io.File;
-import java.util.Arrays;
 
 import org.eclipse.xtext.junit4.InjectWith;
 import org.junit.Test;
 
-import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.synflow.core.ICodeGenerator;
+import com.synflow.core.IExportConfiguration;
 import com.synflow.cx.tests.StreamCopier;
 import com.synflow.cx.tests.codegen.HdlPassTests;
 import com.synflow.models.dpn.Entity;
@@ -36,14 +37,18 @@ import com.synflow.models.dpn.Unit;
 @InjectWith(CxInjectorProviderVhdl.class)
 public class VhdlPassTests extends HdlPassTests {
 
+	@Inject
+	@Named(VHDL)
+	private IExportConfiguration configuration;
+
+	@Inject
+	@Named(VHDL)
+	private ICodeGenerator generator;
+
 	@Test
 	public void app_external() throws Exception {
 		// TODO make external app in VHDL testApp("External");
 	}
-
-	@Inject
-	@Named("VHDL")
-	private ICodeGenerator generator;
 
 	@Override
 	protected void compileAndSimulate(Entity entity) throws Exception {
@@ -61,9 +66,14 @@ public class VhdlPassTests extends HdlPassTests {
 	}
 
 	@Override
-	protected Iterable<String> getLibraryFiles() {
-		return Iterables.concat(Arrays.asList("com/synflow/lib/Helper_functions"),
-				super.getLibraryFiles(), Arrays.asList("com/synflow/lib/sim_package"));
+	protected IExportConfiguration getConfiguration() {
+		return configuration;
+	}
+
+	@Override
+	protected String getLibraryPath() {
+		String name = getCodeGenerator().getName().toLowerCase();
+		return "../../fragments/com.synflow.ngDesign.libraries/lib/" + name + "/src";
 	}
 
 	@Override
