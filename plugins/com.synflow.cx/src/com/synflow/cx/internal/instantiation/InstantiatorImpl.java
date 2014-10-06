@@ -25,7 +25,6 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.inject.Inject;
@@ -156,8 +155,15 @@ public class InstantiatorImpl implements IInstantiator {
 	 * @return a specialized IR entity
 	 */
 	private Entity instantiate(EntityInfo info, InstantiationContext ctx) {
-		// map entity and update mapping
 		CxEntity cxEntity = info.getCxEntity();
+
+		// load bundles first (if necessary)
+		Iterable<Bundle> bundles = loader.loadBundles(resourceSet, cxEntity);
+		for (Bundle bundle : bundles) {
+			updateEntity(bundle);
+		}
+
+		// map entity and update mapping
 		Entity entity = entityMapper.doSwitch(cxEntity);
 		if (entity == null) {
 			// happens with unresolved references to instantiable entities
@@ -271,21 +277,7 @@ public class InstantiatorImpl implements IInstantiator {
 				data = new InstantiatorData();
 				entities = loader.loadTopEntities(resourceSet);
 			} else {
-				List<CxEntity> entitiesList = new ArrayList<>();
-				for (CxEntity cxEntity : module.getEntities()) {
-					CxEntity oldEntity = data.getCxEntity(getURI(cxEntity));
-					if (cxEntity != oldEntity) {
-						entitiesList.add(cxEntity);
-					}
-				}
-
-				// if everything is up-to-date return
-				if (entitiesList.isEmpty()) {
-					return;
-				}
-
-				Iterable<Bundle> bundles = loader.loadBundles(resourceSet, entitiesList);
-				entities = Iterables.concat(bundles, entitiesList);
+				entities = module.getEntities();
 			}
 
 			for (CxEntity cxEntity : entities) {
@@ -298,6 +290,9 @@ public class InstantiatorImpl implements IInstantiator {
 
 	private void updateEntity(CxEntity cxEntity) {
 		CxEntity oldEntity = data.getCxEntity(getURI(cxEntity));
+		if (cxEntity == oldEntity) {
+			return;
+		}
 
 		// look up specialization info using previous entity
 		// do this now, before removeSpecialized removes the map
