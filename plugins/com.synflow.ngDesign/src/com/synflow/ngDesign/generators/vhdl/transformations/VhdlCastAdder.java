@@ -98,7 +98,9 @@ public class VhdlCastAdder extends AbstractExpressionTransformer {
 	@Override
 	public Expression caseExprTypeConv(ExprTypeConv typeConv) {
 		if (typeConv.getExpr().isExprInt()) {
-			typeConv.setTypeName(typeConv.getTypeName() + "'");
+			if (!typeConv.getTypeName().endsWith("'")) {
+				typeConv.setTypeName(typeConv.getTypeName() + "'");
+			}
 		}
 
 		return super.caseExprTypeConv(typeConv);
