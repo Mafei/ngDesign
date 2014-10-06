@@ -27,9 +27,11 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.EcoreUtil2;
 
 import com.google.common.collect.ImmutableSet;
+import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.CxEntity;
 import com.synflow.cx.cx.Inst;
 import com.synflow.cx.cx.Network;
+import com.synflow.cx.cx.Variable;
 import com.synflow.models.dpn.Entity;
 
 /**
@@ -143,6 +145,11 @@ public class InstantiatorData {
 		U irObj = basicGetMapping(entity, cxObj);
 		if (irObj == null) {
 			CxEntity cxEntity = EcoreUtil2.getContainerOfType(cxObj, CxEntity.class);
+			if (cxObj instanceof Variable && CxUtil.isPort((Variable) cxObj)) {
+				// must not look mapping for ports
+				return null;
+			}
+
 			// lookup in mapEntities, because Bundles are not specialized (yet)
 			entity = mapEntities.get(cxEntity);
 			if (entity != null) {
