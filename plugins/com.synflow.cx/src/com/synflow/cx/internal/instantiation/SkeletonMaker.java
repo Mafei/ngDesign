@@ -14,6 +14,7 @@ import static com.synflow.cx.internal.TransformerUtil.getStartLine;
 import static com.synflow.models.ir.IrFactory.eINSTANCE;
 import static com.synflow.models.util.SwitchUtil.DONE;
 
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.EcoreUtil2;
 
 import com.google.inject.Inject;
@@ -167,16 +168,27 @@ public class SkeletonMaker extends DpnSwitch<Void> {
 	}
 
 	private void translateStateVars(Entity entity, CxEntity cxEntity) {
+		DependencySolver solver = new DependencySolver();
+
 		// transform variables and constant functions
 		for (Variable variable : CxUtil.getStateVars(cxEntity.getDecls())) {
 			if (CxUtil.isConstant(variable) || !CxUtil.isFunction(variable)) {
-				transformVariable(entity, variable);
+				solver.add(variable);
 			}
 		}
 
-		for (Typedef typedef : cxEntity.getTypes()) {
-			Type type = typer.getType(entity, typedef.getType());
-			instantiator.putMapping(entity, typedef, type);
+		solver.addAll(cxEntity.getTypes());
+
+		solver.computeOrder();
+
+		for (EObject eObject : solver.getObjects()) {
+			if (eObject instanceof Variable) {
+				transformVariable(entity, (Variable) eObject);
+			} else if (eObject instanceof Typedef) {
+				Typedef typedef = (Typedef) eObject;
+				Type type = typer.getType(entity, typedef.getType());
+				instantiator.putMapping(entity, typedef, type);
+			}
 		}
 	}
 

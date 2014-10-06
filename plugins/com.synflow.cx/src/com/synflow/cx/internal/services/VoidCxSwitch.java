@@ -35,6 +35,8 @@ import com.synflow.cx.cx.StatementPrint;
 import com.synflow.cx.cx.StatementReturn;
 import com.synflow.cx.cx.StatementVariable;
 import com.synflow.cx.cx.StatementWrite;
+import com.synflow.cx.cx.TypeGen;
+import com.synflow.cx.cx.Typedef;
 import com.synflow.cx.cx.ValueExpr;
 import com.synflow.cx.cx.ValueList;
 import com.synflow.cx.cx.VarDecl;
@@ -153,6 +155,16 @@ public abstract class VoidCxSwitch extends CxSwitch<Void> {
 	@Override
 	public Void caseStatementWrite(StatementWrite write) {
 		return visit(this, write.getValue());
+	}
+
+	@Override
+	public Void caseTypedef(Typedef typedef) {
+		return visit(this, typedef.getType());
+	}
+
+	@Override
+	public Void caseTypeGen(TypeGen typeGen) {
+		return visit(this, typeGen.getSize());
 	}
 
 	@Override
