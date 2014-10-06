@@ -9,7 +9,7 @@
  *    Matthieu Wipliez
  *    Nicolas Siret
  *******************************************************************************/
-package com.synflow.test.pass.signed;
+package com.synflow.test.pass.signed_tests;
 
 task Add {
 	properties {
