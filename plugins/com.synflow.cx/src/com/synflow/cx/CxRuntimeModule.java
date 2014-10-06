@@ -17,6 +17,7 @@ import org.eclipse.xtext.conversion.IValueConverterService;
 import org.eclipse.xtext.debug.IStratumBreakpointSupport;
 import org.eclipse.xtext.formatting.IWhitespaceInformationProvider;
 import org.eclipse.xtext.generator.IGenerator;
+import org.eclipse.xtext.linking.impl.ImportedNamesAdapter;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.resource.IDefaultResourceDescriptionStrategy;
 import org.eclipse.xtext.resource.IResourceDescription;
@@ -24,11 +25,13 @@ import org.eclipse.xtext.scoping.IGlobalScopeProvider;
 import org.eclipse.xtext.scoping.IScopeProvider;
 
 import com.google.inject.Binder;
+import com.google.inject.Provider;
 import com.synflow.cx.conversion.CxValueConverter;
 import com.synflow.cx.debug.CxStratumBreakpointSupport;
 import com.synflow.cx.formatting.WhitespaceInfoProvider;
 import com.synflow.cx.generator.CxGenerator;
 import com.synflow.cx.internal.scoping.CxGlobalScopeProvider;
+import com.synflow.cx.internal.scoping.CxImportedNamesAdapterProvider;
 import com.synflow.cx.internal.scoping.CxImportedNamespaceScopeProvider;
 import com.synflow.cx.resource.CxResourceDescriptionManager;
 import com.synflow.cx.resource.CxResourceStrategy;
@@ -80,6 +83,10 @@ public class CxRuntimeModule extends AbstractCxRuntimeModule {
 	public void configureIScopeProviderDelegate(Binder binder) {
 		binder.bind(IScopeProvider.class).annotatedWith(named(NAMED_DELEGATE))
 				.to(CxImportedNamespaceScopeProvider.class);
+	}
+
+	public Provider<? extends ImportedNamesAdapter> provideImportedNamesAdapter() {
+		return new CxImportedNamesAdapterProvider();
 	}
 
 }
