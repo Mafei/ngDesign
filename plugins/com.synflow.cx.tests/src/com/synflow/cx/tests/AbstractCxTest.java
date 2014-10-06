@@ -97,7 +97,7 @@ public abstract class AbstractCxTest extends AbstractXtextTests {
 
 		// maps plugin URIs to absolute file URIs
 		map(CX_PLUGIN_ID, "../" + CX_PLUGIN_ID);
-		map(SynflowCore.PLUGIN_ID, "../../fragments/com.synflow.libraries");
+		map(SynflowCore.PLUGIN_ID, "../../fragments/com.synflow.ngDesign.libraries");
 	}
 
 	private static void map(String id, String relativePath) {
