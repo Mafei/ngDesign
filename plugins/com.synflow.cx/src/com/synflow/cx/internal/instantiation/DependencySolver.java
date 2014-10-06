@@ -15,13 +15,15 @@ import static com.synflow.models.util.SwitchUtil.visit;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
+import com.synflow.cx.CxUtil;
+import com.synflow.cx.cx.CType;
 import com.synflow.cx.cx.ExpressionVariable;
 import com.synflow.cx.cx.TypeRef;
 import com.synflow.cx.cx.Typedef;
@@ -46,9 +48,10 @@ public class DependencySolver extends VoidCxSwitch {
 
 	private static class VertexAdapter extends AdapterImpl {
 
-		private EObject contents;
+		private final EObject contents;
 
 		public VertexAdapter(EObject contents) {
+			Objects.requireNonNull(contents);
 			this.contents = contents;
 		}
 
@@ -62,6 +65,15 @@ public class DependencySolver extends VoidCxSwitch {
 			return type == getClass();
 		}
 
+		@Override
+		public String toString() {
+			return contents.toString();
+		}
+
+	}
+
+	private static VertexAdapter getVertexAdapter(EObject eObject) {
+		return (VertexAdapter) EcoreUtil.getAdapter(eObject.eAdapters(), VertexAdapter.class);
 	}
 
 	private Vertex declaration;
@@ -95,6 +107,13 @@ public class DependencySolver extends VoidCxSwitch {
 	}
 
 	@Override
+	public Void caseVariable(Variable variable) {
+		CType type = CxUtil.getType(variable);
+		visit(this, type);
+		return super.caseVariable(variable);
+	}
+
+	@Override
 	public Void caseVarRef(VarRef ref) {
 		Variable variable = ref.getVariable();
 		return handle(variable);
@@ -121,16 +140,19 @@ public class DependencySolver extends VoidCxSwitch {
 			dfs.visitPre(vertex);
 		}
 
-		Iterable<Vertex> vertices = dfs.getVertices();
-		return Iterables.transform(vertices, new Function<Vertex, EObject>() {
-			public EObject apply(Vertex vertex) {
-				return getVertexAdapter(vertex).getContent();
-			}
-		});
-	}
+		List<EObject> ordered = new ArrayList<>(dfs.getVertices().size());
+		for (Vertex vertex : dfs.getVertices()) {
+			ordered.add(getVertexAdapter(vertex).getContent());
+		}
 
-	private VertexAdapter getVertexAdapter(EObject eObject) {
-		return (VertexAdapter) EcoreUtil.getAdapter(eObject.eAdapters(), VertexAdapter.class);
+		// remove adapters from objects
+		// very important in the case of bundles, whose constants are used in many places
+		for (EObject eObject : eObjects) {
+			VertexAdapter adapter = getVertexAdapter(eObject);
+			eObject.eAdapters().remove(adapter);
+		}
+
+		return ordered;
 	}
 
 	private Void handle(EObject eObject) {
@@ -142,8 +164,8 @@ public class DependencySolver extends VoidCxSwitch {
 
 		Edge edge = GraphFactory.eINSTANCE.createEdge();
 
-		Vertex source = adapter.getContent();
-		edge.setSource(source);
+		Vertex vertex = adapter.getContent();
+		edge.setSource(vertex);
 		edge.setTarget(declaration);
 		graph.add(edge);
 		return DONE;
