@@ -110,7 +110,8 @@ public class DependencySolver extends VoidCxSwitch {
 	public Void caseVariable(Variable variable) {
 		CType type = CxUtil.getType(variable);
 		visit(this, type);
-		return super.caseVariable(variable);
+		visit(this, variable.getDimensions());
+		return visit(this, variable.getValue());
 	}
 
 	@Override
