@@ -27,7 +27,6 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.EcoreUtil2;
 
 import com.google.common.collect.ImmutableSet;
-import com.synflow.cx.cx.Bundle;
 import com.synflow.cx.cx.CxEntity;
 import com.synflow.cx.cx.Inst;
 import com.synflow.cx.cx.Network;
@@ -60,6 +59,16 @@ public class InstantiatorData {
 		mapEntities = new HashMap<>();
 		mapSpecialized = new HashMap<>();
 		uriMap = new HashMap<>();
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T extends EObject, U extends EObject> U basicGetMapping(Entity entity, T cxObj) {
+		Map<EObject, EObject> map = mapCxToIr.get(entity);
+		if (map == null) {
+			return null;
+		} else {
+			return (U) map.get(cxObj);
+		}
 	}
 
 	/**
@@ -128,26 +137,16 @@ public class InstantiatorData {
 		return mapEntities.get(instantiable);
 	}
 
-	@SuppressWarnings("unchecked")
 	public <T extends EObject, U extends EObject> U getMapping(Entity entity, T cxObj) {
 		Objects.requireNonNull(entity, "entity must not be null in getMapping");
 
-		Map<EObject, EObject> map = mapCxToIr.get(entity);
-		U irObj;
-		if (map == null) {
-			irObj = null;
-		} else {
-			irObj = (U) map.get(cxObj);
-		}
-	
+		U irObj = basicGetMapping(entity, cxObj);
 		if (irObj == null) {
 			CxEntity cxEntity = EcoreUtil2.getContainerOfType(cxObj, CxEntity.class);
-			if (cxEntity instanceof Bundle) {
-				// lookup in mapEntities, because Bundles are not specialized (yet)
-				entity = mapEntities.get(cxEntity);
-				if (entity != null) {
-					return getMapping(entity, cxObj);
-				}
+			// lookup in mapEntities, because Bundles are not specialized (yet)
+			entity = mapEntities.get(cxEntity);
+			if (entity != null) {
+				irObj = basicGetMapping(entity, cxObj);
 			}
 		}
 		return irObj;
