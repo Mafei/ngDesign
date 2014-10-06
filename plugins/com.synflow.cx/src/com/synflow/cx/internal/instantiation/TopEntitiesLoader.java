@@ -93,9 +93,11 @@ public class TopEntitiesLoader {
 		Resource resource = entity.eResource();
 		IResourceDescription resDesc = manager.getResourceDescription(resource);
 		IResourceDescriptions descs = provider.getResourceDescriptions(resourceSet);
+
+		// TODO handle imported names that only reference bundle's contents, not bundle itself
 		for (QualifiedName name : resDesc.getImportedNames()) {
 			Iterable<IEObjectDescription> objDescs;
-			objDescs = descs.getExportedObjects(Literals.BUNDLE, name, true);
+			objDescs = descs.getExportedObjects(Literals.BUNDLE, name, false);
 			for (IEObjectDescription objDesc : objDescs) {
 				bundleUris.add(objDesc.getEObjectURI());
 			}
