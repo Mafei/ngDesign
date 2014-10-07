@@ -34,8 +34,8 @@ task SynchronizerMux {
     clocks: ['din_clock', 'dout_clock'],
     implementation: {
       type: 'external',
-      file: '../../fragments/com.synflow.libraries/lib/verilog/src/std/lib/SynchronizerMux.v',
-      dependencies: ['../../fragments/com.synflow.libraries/lib/verilog/src/std/lib/SynchronizerFF.v']
+      file: '../../../synflow/ngDesignPro/fragments/com.synflow.ngDesignPro.libraries/lib/verilog/src/std/lib/SynchronizerMux.v',
+      dependencies: ['../../../synflow/ngDesignPro/fragments/com.synflow.ngDesignPro.libraries/lib/verilog/src/std/lib/SynchronizerFF.v']
     }
   }
 
