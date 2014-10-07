@@ -112,7 +112,7 @@ public class EntityMapper extends CxSwitch<Entity> {
 		CxEntity cxEntity = info.getCxEntity();
 
 		// set name
-		if (CoreUtil.isBuiltin(entity)) {
+		if (CoreUtil.isBuiltin(entity) || CoreUtil.isExternal(entity)) {
 			entity.setName(getName(cxEntity));
 		} else {
 			entity.setName(info.getName());
