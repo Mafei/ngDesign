@@ -44,10 +44,11 @@ class VhdlDfPrinter extends DpnSwitch<CharSequence> {
 
 	val irPrinter = new VhdlIrPrinter
 
-	val actionPrinter = new VhdlActionPrinter
+	val VhdlActionPrinter actionPrinter
 
 	new(Namer namer) {
 		this.namer = namer
+		actionPrinter = new VhdlActionPrinter(namer)
 	}
 
 	def private addMappings(List<CharSequence> mappings, DPN network, Instance instance) {

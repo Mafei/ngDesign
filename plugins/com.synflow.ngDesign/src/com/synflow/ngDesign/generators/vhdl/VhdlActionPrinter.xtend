@@ -11,6 +11,7 @@
  *******************************************************************************/
 package com.synflow.ngDesign.generators.vhdl
 
+import com.synflow.core.generators.Namer
 import com.synflow.models.dpn.Action
 import com.synflow.models.dpn.Actor
 import com.synflow.models.dpn.FSM
@@ -18,8 +19,12 @@ import com.synflow.models.dpn.Port
 import com.synflow.models.dpn.State
 import com.synflow.models.dpn.Transition
 import com.synflow.models.ir.TypeInt
+import java.util.ArrayList
 import java.util.List
 
+import static com.synflow.core.IProperties.*
+
+import static extension com.synflow.models.ir.util.IrUtil.*
 import static extension com.synflow.ngDesign.generators.vhdl.HdlGeneratorUtil.*
 
 /**
@@ -32,6 +37,12 @@ import static extension com.synflow.ngDesign.generators.vhdl.HdlGeneratorUtil.*
 class VhdlActionPrinter {
 	
 	val VhdlIrPrinter irPrinter = new VhdlIrPrinter
+
+	val Namer namer
+
+	new(Namer namer) {
+		this.namer = namer
+	}
 
 	def printActions(Actor actor)
 		'''
@@ -62,9 +73,7 @@ class VhdlActionPrinter {
 		«actor.simpleName»_comb : process («FOR port : actor.inputs SEPARATOR ", "»«port.name»«IF port.sync», «port.name»_send«ENDIF»«ENDFOR») is
 		  «printBodyVariables(actor)»
 		begin
-		  «FOR port : actor.outputs»
-		    «printPortInit(port)»
-		  «ENDFOR»
+		  «resetPorts(actor.outputs) /* we reset all outputs, this provides a "default" case */»
 		  «printSyncActions(actor.actions)»
 		end process «actor.simpleName»_comb;
 		'''
@@ -77,15 +86,6 @@ class VhdlActionPrinter {
 		«FOR variable : variables»
 		variable «irPrinter.doSwitch(variable)»;
 		«ENDFOR»
-		'''
-	}
-
-	def private printPortInit(Port port) {
-		'''
-		«port.name» <= «IF port.type.bool»'0'«ELSE»(others => '0')«ENDIF»;
-		«IF port.sync»
-		«port.name»_send <= '0';
-		«ENDIF»
 		'''
 	}
 
@@ -163,38 +163,117 @@ class VhdlActionPrinter {
 	 * Print the synchronous process which contains the body of the tasks
 	 */
 	def printSyncProcess(Actor actor) {
+		val sensitivity = new ArrayList<CharSequence>
+		val reset = actor.properties.get(PROP_RESET)
+		var asynchronousReset = false
+		var String resetName = null
+		var negateReset = false
+		var CharSequence resetCondition = null
+
+		val hasReset = reset != null && reset.jsonObject
+		if (hasReset) {
+			val resetObj = reset.asJsonObject
+
+			negateReset = ACTIVE_LOW.equals(resetObj.get(PROP_ACTIVE))
+			resetName = resetObj.getAsJsonPrimitive('name').asString
+			asynchronousReset = RESET_ASYNCHRONOUS.equals(resetObj.get(PROP_TYPE))
+			if (asynchronousReset) {
+				sensitivity.add(resetName)
+			}
+			resetCondition = '''«resetName»«IF negateReset» = '0'«ENDIF»'''
+		}
+
+		// only tasks with clocks use this method, so we know we have one clock
+		sensitivity.add(actor.properties.getAsJsonArray(PROP_CLOCKS).head.asString)
+
 		'''
-		«actor.simpleName»_execute : process (reset_n, clock) is
+		«actor.simpleName»_execute : process («sensitivity.join(', ')») is
 		  «printBodyVariables(actor)»
 		begin
-		  if reset_n = '0' then
-		    «FOR variable : actor.variables»
-		      «IF variable.assignable»
-		      «variable.name» <= «irPrinter.printInitialValue(variable)»;
-		      «ENDIF»
-		    «ENDFOR»
-		    «FOR port : actor.outputs»
-		      «printPortInit(port)»
-		    «ENDFOR»
-		    «IF actor.hasFsm»
-		      FSM    <= s_«actor.fsm.initialState.name»;
-		    «ENDIF»
+		  «IF asynchronousReset»
+		  if «resetCondition» then
+		    «resetActor(actor)»
 		  --
 		  elsif rising_edge(clock) then
-		    «FOR port : actor.outputs»
-		      «IF port.sync»
-		        «port.name»_send <= '0';
-		      «ENDIF»
-		    «ENDFOR»
-		    --
-		    «IF actor.hasFsm»
-		    «printSyncFsm(actor.fsm)»
+		    «printSynchronousStuff(actor)»
+		  end if;
+		  «ELSE»
+		  if rising_edge(clock) then
+		    «IF hasReset»
+		    if «resetCondition» then
+		      «resetActor(actor)»
+		    else
+		      «printSynchronousStuff(actor)»
+		    end if;
 		    «ELSE»
-		    «printSyncActions(actor.actionsOutsideFsm)»
+		    «printSynchronousStuff(actor)»
 		    «ENDIF»
 		  end if;
+		  «ENDIF»
 		end process «actor.simpleName»_execute;
 		'''
 	}
-	
+
+	def private printSynchronousStuff(Actor actor)
+		'''
+		«FOR port : actor.outputs.filter[port|port.sync] /* only resets sync ports. Normal ports keep their value. */»
+		«resetPortFlags(port)»
+		«ENDFOR»
+		--
+		«IF actor.hasFsm»
+			«printSyncFsm(actor.fsm)»
+		«ELSE»
+			«printSyncActions(actor.actionsOutsideFsm)»
+		«ENDIF»
+		'''
+
+	def private resetActor(Actor actor)
+		'''
+		«resetStateVars(actor)»
+		«resetPorts(actor.outputs)»
+		«IF actor.hasFsm»
+		FSM    <= s_«actor.fsm.initialState.name»;
+		«ENDIF»
+		'''
+
+	/**
+	 * Resets the given port. If the port is sync, resets data and any additional output signal.
+	 */
+	def private resetPort(Port port) {
+		'''
+		«namer.getName(port)» <= «IF port.type.bool»'0'«ELSE»(others => '0')«ENDIF»;
+		«resetPortFlags(port)»
+		'''
+	}
+
+	/**
+	 * Resets any additional output signals (if any) of the given port.
+	 */
+	def private resetPortFlags(Port port) {
+		'''
+		«FOR entry : port.interface.getOutputs(port.direction).entrySet»
+			«port.name»_«entry.key» <= «irPrinter.doSwitch(entry.value)»;
+		«ENDFOR»
+		'''
+	}
+
+	/**
+	 * Resets the given ports.
+	 */
+	def private resetPorts(Iterable<Port> ports)
+		'''
+		«FOR port : ports»
+			«resetPort(port)»
+		«ENDFOR»
+		'''
+
+	def private resetStateVars(Actor actor)
+		'''
+		«FOR variable : actor.variables»
+			«IF variable.assignable && !variable.type.array»
+				«namer.getName(variable)» <= «irPrinter.printInitialValue(variable)»;
+			«ENDIF»
+		«ENDFOR»
+		'''
+
 }
