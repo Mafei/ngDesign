@@ -63,7 +63,7 @@ public class EclipseFileWriter implements IFileWriter {
 		try {
 			file.delete(true, null);
 		} catch (CoreException e) {
-			e.printStackTrace();
+			SynflowCore.log(e);
 		}
 	}
 

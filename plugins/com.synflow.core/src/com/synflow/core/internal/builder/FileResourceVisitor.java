@@ -28,8 +28,7 @@ import org.eclipse.core.resources.IResourceVisitor;
  * @author Matthieu Wipliez
  * 
  */
-public class FileResourceVisitor implements IResourceVisitor,
-		IResourceDeltaVisitor {
+public class FileResourceVisitor implements IResourceVisitor, IResourceDeltaVisitor {
 
 	private final List<IFile> derived;
 
@@ -74,7 +73,7 @@ public class FileResourceVisitor implements IResourceVisitor,
 
 				if (fileExt != null) {
 					switch (fileExt) {
-					case FILE_EXT_CFLOW:
+					case FILE_EXT_IR:
 						removed.add(file);
 					}
 				}
@@ -85,8 +84,7 @@ public class FileResourceVisitor implements IResourceVisitor,
 	}
 
 	/**
-	 * Visits a resource and adds the given resource to the appropriate list (if
-	 * any).
+	 * Visits a resource and adds the given resource to the appropriate list (if any).
 	 * 
 	 * @param resource
 	 *            the resource being added/changed or visited

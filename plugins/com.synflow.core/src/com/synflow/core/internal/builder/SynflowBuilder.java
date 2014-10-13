@@ -26,6 +26,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
@@ -38,6 +39,7 @@ import com.synflow.core.ICodeGenerator;
 import com.synflow.core.IFileWriter;
 import com.synflow.core.SynflowCore;
 import com.synflow.core.internal.EclipseFileWriter;
+import com.synflow.core.util.CoreUtil;
 import com.synflow.models.dpn.Entity;
 import com.synflow.models.util.EcoreHelper;
 
@@ -184,13 +186,14 @@ public class SynflowBuilder extends IncrementalProjectBuilder {
 	 */
 	private void generateCode(ICodeGenerator generator, List<Entity> entities, List<IFile> removed,
 			IProgressMonitor monitor) {
-		// removes previous files
-		for (@SuppressWarnings("unused")
-		IFile file : removed) {
-			String qName = "TODO"; // TODO
-			if (qName != null) {
-				generator.remove(qName);
-			}
+		// removes .ir files
+		for (IFile file : removed) {
+			IProject project = file.getProject();
+			IFolder irFolder = project.getFolder(FOLDER_IR);
+			IPath path = CoreUtil.getRelative(irFolder, file);
+
+			String name = path.removeFileExtension().toString().replace('/', '.');
+			generator.remove(name);
 		}
 
 		final String taskName = "Generating " + generator.getName() + " ";
@@ -217,5 +220,4 @@ public class SynflowBuilder extends IncrementalProjectBuilder {
 
 		subMonitor.done();
 	}
-
 }
