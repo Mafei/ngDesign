@@ -139,8 +139,13 @@ public class ClockDomainComputer extends DpnSwitch<JsonObject> {
 		JsonObject domains = doSwitch(entity);
 
 		// translate entity clocks to instance clocks
-		JsonObject instClocks = instance.getProperties().getAsJsonObject(PROP_CLOCKS);
 		JsonObject instDomains = new JsonObject();
+		JsonElement properties = instance.getProperties().get(PROP_CLOCKS);
+		if (!properties.isJsonObject()) {
+			return instDomains;
+		}
+
+		JsonObject instClocks = properties.getAsJsonObject();
 		for (Entry<String, JsonElement> domain : domains.entrySet()) {
 			String port = domain.getKey();
 			JsonElement value = domain.getValue();
