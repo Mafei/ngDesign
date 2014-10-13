@@ -11,7 +11,7 @@
  *******************************************************************************/
 package com.synflow.ngDesign.generators.vhdl
 
-import com.google.common.collect.Iterables
+import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.synflow.core.generators.Namer
 import com.synflow.models.dpn.Actor
@@ -92,13 +92,18 @@ class VhdlDfPrinter extends DpnSwitch<CharSequence> {
 		}
 	}
 
-	def addPorts(Port port, String dirSend) {
-		var ports = new ArrayList<CharSequence>(3)
-		ports.add('''«port.name»       : «dirSend»«printPortType(port)»''')
-		if (port.sync) {
-			ports.addAll('''«port.name»_send  : «dirSend»std_logic''')
+	def private void addPorts(List<CharSequence> signals, Port port) {
+		val signalDir = if (IrUtil.isInput(port)) 'in' else 'out'
+
+		signals.add('''«namer.getName(port)» : «signalDir» «printPortType(port)»''')
+
+		for (signal : port.additionalInputs) {
+			signals.add('''«signal» : in std_logic''')
 		}
-		ports
+
+		for (signal : port.additionalOutputs) {
+			signals.add('''«signal» : out std_logic''')
+		}
 	}
 
 	/**
@@ -125,61 +130,11 @@ class VhdlDfPrinter extends DpnSwitch<CharSequence> {
 		'''
 	}
 
-	/**
-	 * If the port has a type and it is not boolean, prints "[size - 1 : 0]"
-	 */
-	def printPortTypeOld(Port port) {
-		if (port.type.bool) {
-			'''      : std_logic'''
-		} else {
-			'''      : std_logic_vector(«(port.type as TypeInt).size - 1» downto 0)'''			
-		}
-	}
-
 	override caseActor(Actor actor) {
-		var ports = Iterables.concat(
-			actor.inputs.map([p|addPorts(p,  "in ")]),
-			actor.outputs.map([p|addPorts(p,  "out ")])
-		).flatten
-
 		val combinational = actor.properties.getAsJsonArray(PROP_CLOCKS).empty
 
 		'''
-		-------------------------------------------------------------------------------
-		-- Title      : Generated from «actor.name» by Synflow ngDesign
-		-- Project    : «new Path(actor.fileName).segment(0)»
-		--
-		-- File       : «actor.simpleName».vhd
-		-- Author     : «System.getProperty("user.name")»
-		-- Standard   : VHDL'93
-		--
-		-------------------------------------------------------------------------------
-		-- Copyright (c) «Calendar.instance.get(Calendar.YEAR)»
-		-------------------------------------------------------------------------------
-		
-		-------------------------------------------------------------------------------
-		library ieee;
-		use ieee.std_logic_1164.all;
-		use ieee.numeric_std.all;
-		use ieee.std_logic_unsigned.all;
-		
-		library std;
-		use std.textio.all;
-
-		«printImports(actor)»
-
-		-------------------------------------------------------------------------------
-		entity «namer.getName(actor)» is
-		  port (
-		    «IF !combinational»
-		                                          -- Standard I/Os
-		    clock    : in  std_logic;
-		    reset_n  : in  std_logic;
-		    «ENDIF»
-		                                          -- Actor I/Os
-		    «ports.join(";\n")»);
-		end «namer.getName(actor)»;
-
+		«printModuleDeclaration(actor)»
 
 		-------------------------------------------------------------------------------
 		architecture rtl_«actor.simpleName» of «namer.getName(actor)» is
@@ -225,44 +180,9 @@ class VhdlDfPrinter extends DpnSwitch<CharSequence> {
 		'''
 	}
 
-	override caseDPN(DPN network) {
-		val project = new Path(network.fileName).segment(0)
-		val clocks = network.properties.getAsJsonArray(PROP_CLOCKS)
-
-		var ports = Iterables.concat(
-			network.inputs.map([p|addPorts(p,  "in ")]),
-			network.outputs.map([p|addPorts(p,  "out ")])
-		).flatten
-
+	override caseDPN(DPN network)
 		'''
-		-------------------------------------------------------------------------------
-		-- Title      : Generated from «network.name» by Synflow ngDesign
-		-- Project    : «project»
-		--
-		-- File       : «network.simpleName».vhd
-		-- Author     : «System.getProperty("user.name")»
-		-- Standard   : VHDL'93
-		--
-		-------------------------------------------------------------------------------
-		-- Copyright (c) «Calendar.instance.get(Calendar.YEAR)»
-		-------------------------------------------------------------------------------
-
-		-------------------------------------------------------------------------------
-		library ieee;
-		use ieee.std_logic_1164.all;
-		use ieee.numeric_std.all;
-
-		------------------------------------------------------------------------------
-		entity «network.simpleName» is
-		  port (
-		                                          -- Clock signal«IF clocks.size > 1»s«ENDIF»
-		  «FOR clock: clocks»
-		  «clock.asString»    : in  std_logic;
-		  «ENDFOR»
-
-		  reset_n  : in  std_logic«FOR port : ports»;
-		  «port»«ENDFOR»);
-		end «network.simpleName»;
+		«printModuleDeclaration(network)»
 
 		------------------------------------------------------------------------------
 		architecture rtl_«network.simpleName» of «network.simpleName» is
@@ -290,31 +210,10 @@ class VhdlDfPrinter extends DpnSwitch<CharSequence> {
 
 		end architecture rtl_«network.simpleName»;
 		'''
-	}
 
 	override caseUnit(Unit unit)
 		'''
-		-------------------------------------------------------------------------------
-		-- Title      : Generated from «unit.name» by Synflow ngDesign
-		-- Project    : «new Path(unit.fileName).segment(0)»
-		--
-		-- File       : «unit.simpleName».vhd
-		-- Author     : «System.getProperty("user.name")»
-		-- Standard   : VHDL'93
-		--
-		-------------------------------------------------------------------------------
-		-- Copyright (c) «Calendar.instance.get(Calendar.YEAR)»
-		-------------------------------------------------------------------------------
-
-		------------------------------------------------------------------------------
-		library ieee;
-		use ieee.std_logic_1164.all;
-		use ieee.numeric_std.all;
-
-		library std;
-		use std.textio.all;
-
-		«printImports(unit)»
+		«printHeader(unit)»
 
 		------------------------------------------------------------------------------
 		package «unit.simpleName» is
@@ -371,6 +270,66 @@ class VhdlDfPrinter extends DpnSwitch<CharSequence> {
 			'''
 		}
 	}
+	
+	def private printComment(JsonArray lines) {
+		'''
+		«FOR line : lines»
+		-- «line.asString»
+		«ENDFOR»
+		'''
+	}
+
+	def private printHeader(Entity entity) {
+		val project = new Path(entity.fileName).segment(0)
+		val copyright = entity.properties.getAsJsonArray(PROP_COPYRIGHT)
+		val javadoc = entity.properties.getAsJsonArray(PROP_JAVADOC)
+		
+		val header =
+			if (copyright == null && javadoc == null) {
+				'''
+				-------------------------------------------------------------------------------
+				-- Title      : Generated from «entity.name» by Synflow Studio
+				-- Project    : «project»
+				--
+				-- File       : «entity.name».v
+				-- Author     : «System.getProperty("user.name")»
+				-- Standard   : VHDL'93
+				--
+				-------------------------------------------------------------------------------
+				-- Copyright (c) «Calendar.instance.get(Calendar.YEAR)»
+				-------------------------------------------------------------------------------
+				'''
+			} else {
+				'''
+				«IF copyright != null»
+				-------------------------------------------------------------------------------
+				«copyright.printComment»
+				-------------------------------------------------------------------------------
+				«ENDIF»
+
+				«IF javadoc != null»
+				-------------------------------------------------------------------------------
+				«javadoc.printComment»
+				-------------------------------------------------------------------------------
+				«ENDIF»
+				'''
+			}
+
+		'''
+		«header»
+
+		-------------------------------------------------------------------------------
+		library ieee;
+		use ieee.std_logic_1164.all;
+		use ieee.numeric_std.all;
+		use ieee.std_logic_unsigned.all;
+		
+		library std;
+		use std.textio.all;
+
+		«printImports(entity)»
+		'''
+	}
 
 	def private printInstanceMapping(DPN network, Instance instance) {
 		val List<CharSequence> mappings = new ArrayList
@@ -404,7 +363,36 @@ class VhdlDfPrinter extends DpnSwitch<CharSequence> {
 		);
 		'''
 	}
-	
+
+	def private printModuleDeclaration(Entity entity) {
+		val signals = new ArrayList<CharSequence>
+
+		// clocks
+		val clocks = entity.properties.getAsJsonArray(PROP_CLOCKS)
+		clocks.forEach[clock|signals.add(clock.asString + ' : in std_logic')]
+
+		// reset
+		val reset = entity.properties.get(PROP_RESET)
+		if (reset != null && reset.jsonObject) {
+			val resetObj = reset.asJsonObject
+			val name = resetObj.getAsJsonPrimitive('name').asString
+			signals.add(name + ' : in std_logic')
+		}
+
+		// add ports
+		(entity.inputs + entity.outputs).forEach[p|addPorts(signals, p)]
+
+		'''
+		«printHeader(entity)»
+
+		-------------------------------------------------------------------------------
+		entity «namer.getName(entity)» is
+		  port (
+		    «signals.join(";\n")»);
+		end «namer.getName(entity)»;
+		'''
+	}
+
 	/**
 	 * Declares signals for each output port of the given instance when needed,
 	 * as determined by the isSignalNeeded function.
