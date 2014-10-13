@@ -56,7 +56,7 @@ class VhdlDfPrinter extends DpnSwitch<CharSequence> {
 			val signal = getSignal(namer, connection.sourceEndpoint)
 			val port = connection.targetPort
 
-			mappings.add('''«port.name»      => «signal»''')
+			mappings.add('''«port.name» => «signal»''')
 			if (port.sync) {
 				mappings.add('''«port.name»_send => «signal»_send''')
 			}
@@ -86,7 +86,7 @@ class VhdlDfPrinter extends DpnSwitch<CharSequence> {
 	 * The characteristics of the port are given by the "port" parameter
 	 */
 	def private addMappings(List<CharSequence> mappings, Port port, String signal) {
-		mappings.add('''«port.name»      => «signal»''')
+		mappings.add('''«port.name» => «signal»''')
 		if (port.sync) {
 			mappings.add('''«port.name»_send => «IF signal != null»«IF signal != "open"»«signal»_send«ELSE»open«ENDIF»«ENDIF»''')
 		}
@@ -352,15 +352,15 @@ class VhdlDfPrinter extends DpnSwitch<CharSequence> {
 
 		'''
 		«instance.name» : entity work.«entity.simpleName»
-		«IF !instance.arguments.empty»generic map(
-		  «FOR arg: instance.arguments SEPARATOR ","»
-		  «arg.variable.name»   => «new VhdlArgValuePrinter().doSwitch(arg.value)»
-		  «ENDFOR»
-		)
+		  «IF !instance.arguments.empty»generic map(
+		    «FOR arg: instance.arguments SEPARATOR ","»
+		    «arg.variable.name» => «new VhdlArgValuePrinter().doSwitch(arg.value)»
+		    «ENDFOR»
+		  )
 		«ENDIF»
-		port map (
-		  «mappings.join(",\n")»
-		);
+		  port map (
+		    «mappings.join(",\n")»
+		  );
 		'''
 	}
 
