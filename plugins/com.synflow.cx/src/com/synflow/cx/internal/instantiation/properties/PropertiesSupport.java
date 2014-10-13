@@ -34,11 +34,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import com.synflow.cx.cx.CxPackage.Literals;
 import com.synflow.cx.cx.Inst;
 import com.synflow.cx.cx.Instantiable;
 import com.synflow.cx.cx.Network;
 import com.synflow.cx.cx.Obj;
-import com.synflow.cx.cx.CxPackage.Literals;
 import com.synflow.cx.internal.ErrorMarker;
 import com.synflow.models.dpn.DPN;
 import com.synflow.models.dpn.Entity;
@@ -54,6 +54,11 @@ import com.synflow.models.dpn.Instance;
 public class PropertiesSupport implements IJsonErrorHandler {
 
 	private static final String NO_CLOCK = "<no clock>";
+
+	/**
+	 * {clock: 'name'} accepted as synonym for {clocks: ['name']}
+	 */
+	private static final String PROP_CLOCK = "clock";
 
 	private List<ErrorMarker> errors;
 
@@ -79,12 +84,12 @@ public class PropertiesSupport implements IJsonErrorHandler {
 		}
 	}
 
-	public PropertiesSupport(Instantiable entity) {
-		this(entity, Literals.INSTANTIABLE__PROPERTIES, entity.getErrors());
-	}
-
 	public PropertiesSupport(Inst inst) {
 		this(inst, Literals.INST__ARGUMENTS, ((Network) inst.eContainer()).getErrors());
+	}
+
+	public PropertiesSupport(Instantiable entity) {
+		this(entity, Literals.INSTANTIABLE__PROPERTIES, entity.getErrors());
 	}
 
 	@Override
@@ -97,6 +102,36 @@ public class PropertiesSupport implements IJsonErrorHandler {
 		}
 
 		errors.add(marker);
+	}
+
+	/**
+	 * If the given properties define {clock: 'name'}, and no 'clocks' property, transform to
+	 * {clocks: ['name']}.
+	 * 
+	 * @param properties
+	 */
+	private void applyClockShortcut(JsonObject properties) {
+		JsonElement clock = properties.get(PROP_CLOCK);
+		if (clock == null) {
+			// no clock property, return
+			return;
+		}
+
+		if (properties.has(PROP_CLOCKS)) {
+			// both 'clock' and 'clocks' exist, show error and ignore 'clock'
+			addError(clock, "'clock' and 'clocks' are mutually exclusive");
+			return;
+		}
+
+		if (clock.isJsonPrimitive() && clock.getAsJsonPrimitive().isString()) {
+			// clock is valid, {clock: name} becomes {clocks: [name]}
+			JsonArray clocksArray = new JsonArray();
+			clocksArray.add(clock);
+			properties.add(PROP_CLOCKS, clocksArray);
+		} else {
+			// clock not valid, ignore
+			addError(clock, "'clock' must be a valid clock name");
+		}
 	}
 
 	/**
@@ -122,16 +157,17 @@ public class PropertiesSupport implements IJsonErrorHandler {
 		}
 
 		if (!isValid) {
-			addError(clocks, "clocks must be an array of clock names");
+			addError(clocks, "'clocks' must be an array of clock names");
 		}
 		return isValid;
 	}
 
 	private void checkClocksDeclared(JsonObject properties) {
-		JsonElement clocks = properties.get(PROP_CLOCKS);
+		applyClockShortcut(properties);
 
+		// if there are no clocks, or if they are not valid, use default clock
+		JsonElement clocks = properties.get(PROP_CLOCKS);
 		if (clocks == null || !checkClockArray(clocks)) {
-			// if no clock, or properly sets default clock
 			JsonArray clocksArray = new JsonArray();
 			clocksArray.add(DEFAULT_CLOCK);
 			properties.add(PROP_CLOCKS, clocksArray);
@@ -281,6 +317,9 @@ public class PropertiesSupport implements IJsonErrorHandler {
 
 		Entity entity = instance.getEntity();
 		JsonArray entityClocks = entity.getProperties().getAsJsonArray(PROP_CLOCKS);
+
+		// use {clock: 'name'} as a shortcut for {clocks: ['name']}
+		applyClockShortcut(properties);
 
 		JsonElement clocks = properties.get(PROP_CLOCKS);
 		if (clocks == null) {
