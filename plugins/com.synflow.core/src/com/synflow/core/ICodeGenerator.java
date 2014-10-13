@@ -85,6 +85,12 @@ public interface ICodeGenerator {
 	 */
 	void printTestbench(Entity entity);
 
+	/**
+	 * Removes the file corresponding to the given qualified name.
+	 * 
+	 * @param name
+	 *            name
+	 */
 	void remove(String name);
 
 	/**
