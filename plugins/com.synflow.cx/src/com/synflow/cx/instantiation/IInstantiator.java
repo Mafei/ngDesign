@@ -74,7 +74,7 @@ public interface IInstantiator {
 	 *            a Cx object (entity, variable, port...)
 	 * @return the IR mapping
 	 */
-	<T extends EObject, U extends EObject> U getMapping(Entity entity, T cxObj);
+	<T extends EObject> T getMapping(Entity entity, Object cxObj);
 
 	/**
 	 * Returns the IR port that corresponds to the given reference.
@@ -106,7 +106,7 @@ public interface IInstantiator {
 	 * @param irObj
 	 *            the IR object that corresponds to <code>cxObj</code> in the given entity
 	 */
-	<T extends EObject, U extends EObject> void putMapping(Entity entity, T cxObj, U irObj);
+	void putMapping(Entity entity, Object cxObj, EObject irObj);
 
 	/**
 	 * Updates the instantiation tree with entities of the given module. Most of the time this

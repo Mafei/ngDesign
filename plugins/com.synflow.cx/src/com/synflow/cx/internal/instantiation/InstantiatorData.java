@@ -42,7 +42,7 @@ import com.synflow.models.dpn.Entity;
  */
 public class InstantiatorData {
 
-	private Map<Entity, Map<EObject, EObject>> mapCxToIr;
+	private Map<Entity, Map<Object, EObject>> mapCxToIr;
 
 	/**
 	 * map Cx entity -> IR entity
@@ -64,12 +64,12 @@ public class InstantiatorData {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T extends EObject, U extends EObject> U basicGetMapping(Entity entity, T cxObj) {
-		Map<EObject, EObject> map = mapCxToIr.get(entity);
+	private <T extends EObject> T basicGetMapping(Entity entity, Object cxObj) {
+		Map<Object, EObject> map = mapCxToIr.get(entity);
 		if (map == null) {
 			return null;
 		} else {
-			return (U) map.get(cxObj);
+			return (T) map.get(cxObj);
 		}
 	}
 
@@ -139,12 +139,16 @@ public class InstantiatorData {
 		return mapEntities.get(instantiable);
 	}
 
-	public <T extends EObject, U extends EObject> U getMapping(Entity entity, T cxObj) {
+	public <T extends EObject> T getMapping(Entity entity, Object cxObj) {
 		Objects.requireNonNull(entity, "entity must not be null in getMapping");
 
-		U irObj = basicGetMapping(entity, cxObj);
+		T irObj = basicGetMapping(entity, cxObj);
 		if (irObj == null) {
-			CxEntity cxEntity = EcoreUtil2.getContainerOfType(cxObj, CxEntity.class);
+			if (!(cxObj instanceof EObject)) {
+				return null;
+			}
+
+			CxEntity cxEntity = EcoreUtil2.getContainerOfType((EObject) cxObj, CxEntity.class);
 			if (cxObj instanceof Variable && CxUtil.isPort((Variable) cxObj)) {
 				// must not look mapping for ports
 				return null;
@@ -192,10 +196,10 @@ public class InstantiatorData {
 	 * @param irObj
 	 *            the IR object that corresponds to <code>cxObj</code> in the given entity
 	 */
-	public <T extends EObject, U extends EObject> void putMapping(Entity entity, T cxObj, U irObj) {
+	public void putMapping(Entity entity, Object cxObj, EObject irObj) {
 		Objects.requireNonNull(entity, "entity must not be null in putMapping");
 
-		Map<EObject, EObject> map = mapCxToIr.get(entity);
+		Map<Object, EObject> map = mapCxToIr.get(entity);
 		if (map == null) {
 			map = new HashMap<>();
 			mapCxToIr.put(entity, map);

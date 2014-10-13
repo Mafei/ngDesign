@@ -127,7 +127,7 @@ public class InstantiatorImpl implements IInstantiator {
 	}
 
 	@Override
-	public <T extends EObject, U extends EObject> U getMapping(Entity entity, T cxObj) {
+	public <T extends EObject> T getMapping(Entity entity, Object cxObj) {
 		return data.getMapping(entity, cxObj);
 	}
 
@@ -263,7 +263,7 @@ public class InstantiatorImpl implements IInstantiator {
 	}
 
 	@Override
-	public <T extends EObject, U extends EObject> void putMapping(Entity entity, T cxObj, U irObj) {
+	public void putMapping(Entity entity, Object cxObj, EObject irObj) {
 		data.putMapping(entity, cxObj, irObj);
 	}
 
