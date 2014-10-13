@@ -15,9 +15,9 @@ network Inner {
 
   properties {
     test: {
-      even: [ 0,    null, 2,    null, 4,    null ],
-      odd:  [ null, 1,    null, 3,    null, 5 ],
-      numbers: [ 0,    1,    2,    3,    4,    5 ]
+      even:    [    0, null,    2, null,    4, null, null ],
+      odd:     [ null,    1, null,    3, null,    5, null ],
+      numbers: [ null,    0,    1,    2,    3,    4,    5 ]
     }
   }
 
@@ -30,6 +30,10 @@ network Inner {
   oddTask.reads(odd);
 
   joinEvenOdd = new task {
+    void setup() {
+      // waits for one cycle initially
+    }
+
     void loop() {
       numbers.write(evenTask.dout.read());
       numbers.write(oddTask.dout.read());
