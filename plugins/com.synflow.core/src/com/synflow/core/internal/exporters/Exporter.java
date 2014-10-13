@@ -28,6 +28,7 @@ import java.util.Map;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature.Setting;
@@ -128,7 +129,7 @@ public abstract class Exporter implements IExporter {
 	private String computePath(IProject project, String name) {
 		String path = currentGenerator.computePath(IrUtil.getFile(name));
 		IFile target = project.getFile(path);
-		return CoreUtil.getRelative(folder, target);
+		return CoreUtil.getRelative(folder, target).toString();
 	}
 
 	/**
@@ -240,8 +241,8 @@ public abstract class Exporter implements IExporter {
 		List<String> paths = new ArrayList<>();
 		for (IProject project : projects) {
 			IFolder gen = project.getFolder(langLower + SUFFIX_GEN);
-			String path = CoreUtil.getRelative(folder, gen);
-			paths.add(path);
+			IPath path = CoreUtil.getRelative(folder, gen);
+			paths.add(path.toString());
 		}
 
 		return paths;

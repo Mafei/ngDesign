@@ -230,14 +230,14 @@ public class CoreUtil {
 	 *            source path
 	 * @param target
 	 *            target path
-	 * @return a string that represents the relative path from source to target
+	 * @return a path that represents the relative path from source to target
 	 */
-	public static String getRelative(IResource source, IResource target) {
+	public static IPath getRelative(IResource source, IResource target) {
 		java.nio.file.Path from = Paths.get(source.getLocation().toString());
 		java.nio.file.Path to = Paths.get(target.getLocation().toString());
 		String path = from.relativize(to).toString();
 		// make path portable so it can be used anywhere
-		return new Path(path).toString();
+		return new Path(path);
 	}
 
 	/**
