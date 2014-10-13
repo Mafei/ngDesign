@@ -46,6 +46,16 @@ public class Endpoint {
 		this.port = port;
 	}
 
+	@Override
+	public boolean equals(Object anObject) {
+		if (!(anObject instanceof Endpoint)) {
+			return false;
+		}
+
+		Endpoint endpoint = (Endpoint) anObject;
+		return Objects.equals(instance, endpoint.instance) && Objects.equals(port, endpoint.port);
+	}
+
 	public Instance getInstance() {
 		return instance;
 	}
@@ -61,6 +71,14 @@ public class Endpoint {
 		} else {
 			return instance;
 		}
+	}
+
+	@Override
+	public int hashCode() {
+		if (instance == null) {
+			return port.hashCode();
+		}
+		return instance.hashCode() ^ port.hashCode();
 	}
 
 	/**
