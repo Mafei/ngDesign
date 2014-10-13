@@ -37,6 +37,11 @@ public abstract class AbstractPassTests extends AbstractCxTest {
 	}
 
 	@Test
+	public void app_inner() throws Exception {
+		testApp("Inner");
+	}
+
+	@Test
 	public void app_simple() throws Exception {
 		testApp("Simple");
 	}
