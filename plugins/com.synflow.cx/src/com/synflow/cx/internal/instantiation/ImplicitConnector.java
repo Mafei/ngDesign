@@ -179,12 +179,11 @@ public class ImplicitConnector extends VoidCxSwitch {
 			final String link = NodeModelUtils.getTokenText(node);
 
 			Endpoint otherEndpoint = helper.getEndpoint(dpn, ref);
-			Port otherPort = otherEndpoint.getPort();
-			port = instantiator.getMapping(instance.getEntity(), otherPort);
+			port = instantiator.getMapping(instance.getEntity(), otherEndpoint);
 			if (port == null) {
 				// we add a port to this entity and connect it to the other instance
 				port = getConnectedPort(link, instance, otherEndpoint);
-				instantiator.putMapping(instance.getEntity(), otherPort, port);
+				instantiator.putMapping(instance.getEntity(), otherEndpoint, port);
 			}
 		}
 
