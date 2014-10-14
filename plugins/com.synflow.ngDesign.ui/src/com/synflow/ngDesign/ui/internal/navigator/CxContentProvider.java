@@ -69,8 +69,8 @@ import com.synflow.models.util.EcoreHelper;
  * @author Matthieu Wipliez
  * 
  */
-public class CxContentProvider implements IPipelinedTreeContentProvider2,
-		IResourceChangeListener, ITreeContentProvider {
+public class CxContentProvider implements IPipelinedTreeContentProvider2, IResourceChangeListener,
+		ITreeContentProvider {
 
 	private static class RefreshComputerVisitor implements IResourceDeltaVisitor {
 
@@ -110,11 +110,31 @@ public class CxContentProvider implements IPipelinedTreeContentProvider2,
 		if (parent instanceof IContainer) {
 			IJavaElement element = JavaCore.create((IContainer) parent);
 			if (element != null && element.exists()) {
-				// we don't convert the root
-				if (!(element instanceof IJavaModel) && !(element instanceof IJavaProject))
-					modification.setParent(element);
-				return convertToJavaElements(modification.getChildren());
+				boolean converted = convertToJavaElements(modification.getChildren());
+				if (converted) {
+					boolean packages = true;
+					for (Object obj : modification.getChildren()) {
+						if (obj instanceof IJavaElement) {
+							IJavaElement child = (IJavaElement) obj;
+							packages &= child.getElementType() == PACKAGE_FRAGMENT;
+						}
+					}
 
+					if (packages) {
+						IJavaElement javaParent = element;
+						while (element != null && element.exists()
+								&& !(element instanceof IJavaModel)
+								&& !(element instanceof IJavaProject)) {
+							javaParent = element;
+							element = element.getParent();
+						}
+						element = javaParent;
+					}
+				}
+
+				// we don't convert the root
+				modification.setParent(element);
+				return convertToJavaElements(modification.getChildren());
 			}
 		}
 		return false;
@@ -129,28 +149,47 @@ public class CxContentProvider implements IPipelinedTreeContentProvider2,
 	 * @return returns true if the conversion took place
 	 */
 	private boolean convertToJavaElements(Set<Object> currentChildren) {
-
 		LinkedHashSet<Object> convertedChildren = new LinkedHashSet<Object>();
-		IJavaElement newChild;
 		for (Iterator<Object> childrenItr = currentChildren.iterator(); childrenItr.hasNext();) {
 			Object child = childrenItr.next();
 			// only convert IFolders and IFiles
-			if (child instanceof IFolder || child instanceof IFile) {
-				if ((newChild = JavaCore.create((IResource) child)) != null && newChild.exists()) {
+			if (child instanceof IResource) {
+				if (convertToJavaElements(convertedChildren, (IResource) child)) {
 					childrenItr.remove();
-					convertedChildren.add(newChild);
 				}
 			} else if (child instanceof IJavaProject) {
 				childrenItr.remove();
 				convertedChildren.add(((IJavaProject) child).getProject());
 			}
 		}
+
 		if (!convertedChildren.isEmpty()) {
 			currentChildren.addAll(convertedChildren);
 			return true;
 		}
 		return false;
+	}
 
+	private boolean convertToJavaElements(Set<Object> currentChildren, IResource member) {
+		IJavaElement newChild = JavaCore.create(member);
+		boolean validChild = newChild != null && newChild.exists();
+		if (validChild) {
+			currentChildren.add(newChild);
+
+			if (member instanceof IFolder) {
+				IFolder folder = (IFolder) member;
+				try {
+					if (folder.exists()) {
+						for (IResource child : folder.members()) {
+							convertToJavaElements(currentChildren, child);
+						}
+					}
+				} catch (CoreException e) {
+					SynflowCore.log(e);
+				}
+			}
+		}
+		return validChild;
 	}
 
 	/**
@@ -311,15 +350,6 @@ public class CxContentProvider implements IPipelinedTreeContentProvider2,
 				IPackageFragment fragment = (IPackageFragment) input;
 				if (fragment.isDefaultPackage()) {
 					return false;
-				}
-
-				// do not show empty parent packages
-				try {
-					if (fragment.hasSubpackages() && SynflowCore.isEmpty(fragment)) {
-						return false;
-					}
-				} catch (JavaModelException e) {
-					SynflowCore.log(e);
 				}
 
 				return true;
