@@ -499,6 +499,20 @@
                 </test>
              </adapt></enablement>
        </commonWizard>
+       <dropAssistant
+             class="com.synflow.ngDesign.ui.internal.navigator.CxDropAdapterAssistant"
+             id="com.synflow.ngDesign.ui.navigator.dropAssistant">
+          <possibleDropTargets>
+             <or>
+                <adapt
+                   type="org.eclipse.core.resources.IResource">
+                </adapt>
+                <instanceof
+                      value="org.eclipse.jdt.core.IJavaElement">
+                </instanceof>
+             </or>
+          </possibleDropTargets>
+       </dropAssistant>
        <override
              policy="InvokeAlwaysRegardlessOfSuppressedExt"
              suppressedExtensionId="org.eclipse.ui.navigator.resourceContent">
