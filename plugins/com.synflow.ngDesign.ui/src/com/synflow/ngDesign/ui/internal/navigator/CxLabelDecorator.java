@@ -10,7 +10,7 @@
  *******************************************************************************/
 package com.synflow.ngDesign.ui.internal.navigator;
 
-import static com.synflow.core.ISynflowConstants.FILE_EXT_CFLOW;
+import static com.synflow.core.ISynflowConstants.FILE_EXT_CX;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -42,7 +42,7 @@ public class CxLabelDecorator implements ILightweightLabelDecorator {
 	public void decorate(Object element, IDecoration decoration) {
 		if (element instanceof IFile) {
 			IFile file = (IFile) element;
-			if (FILE_EXT_CFLOW.equals(file.getFileExtension())) {
+			if (FILE_EXT_CX.equals(file.getFileExtension())) {
 				ResourceSet set = new XtextResourceSet();
 				Module module = EcoreHelper.getEObject(set, file);
 				if (module != null) {

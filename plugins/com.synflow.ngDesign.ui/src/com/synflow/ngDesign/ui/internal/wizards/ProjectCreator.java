@@ -10,7 +10,7 @@
  *******************************************************************************/
 package com.synflow.ngDesign.ui.internal.wizards;
 
-import static com.synflow.core.ISynflowConstants.FILE_EXT_CFLOW;
+import static com.synflow.core.ISynflowConstants.FILE_EXT_CX;
 import static com.synflow.core.ISynflowConstants.FOLDER_IR;
 import static com.synflow.core.ISynflowConstants.FOLDER_SIM;
 import static com.synflow.core.ISynflowConstants.FOLDER_TESTBENCH;
@@ -46,10 +46,10 @@ import com.synflow.core.SynflowNature;
  */
 public class ProjectCreator {
 
-	private static final IPath[] CP_PATTERNS = { new Path("**/*." + FILE_EXT_CFLOW) };
+	private static final IPath[] CP_PATTERNS = { new Path("**/*." + FILE_EXT_CX) };
 
-	private static final String[] IGNORES = new String[] { FOLDER_IR, ".settings", "bin",
-			FOLDER_SIM, FOLDER_TESTBENCH, "verilog-gen", "vhdl-gen" };
+	private static final String[] IGNORES = new String[] { FOLDER_IR, FOLDER_SIM, FOLDER_TESTBENCH,
+			"verilog-gen", "vhdl-gen" };
 
 	/**
 	 * Synflow must be first for icon to appear correctly

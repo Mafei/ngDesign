@@ -92,16 +92,10 @@
                      ifEmpty="false">
                   <adapt
                         type="org.eclipse.core.resources.IResource">
-                     <or>
-                        <test
-                              property="org.eclipse.core.resources.extension"
-                              value="cf">
-                        </test>
-                        <test
-                              property="org.eclipse.core.resources.extension"
-                              value="design">
-                        </test>
-                     </or>
+                     <test
+                           property="org.eclipse.core.resources.extension"
+                           value="cx">
+                     </test>
                   </adapt>
                </iterate>
             </with>
@@ -226,7 +220,7 @@
        point="org.eclipse.debug.ui.launchShortcuts">
     <shortcut
           class="com.synflow.ngDesign.ui.internal.launching.LaunchShortcut"
-          icon="icons/cflow_app.gif"
+          icon="icons/cx_app.gif"
           id="com.synflow.ngDesign.ui.shortcutSimulation"
           label="Cx Simulation"
           modes="run,debug">
@@ -243,16 +237,10 @@
                       ifEmpty="false">
                    <adapt
                          type="org.eclipse.core.resources.IResource">
-                      <or>
-                         <test
+                      <test
                                property="org.eclipse.core.resources.extension"
-                               value="cf">
-                         </test>
-                         <test
-                               property="org.eclipse.core.resources.extension"
-                               value="design">
-                         </test>
-                      </or>
+                               value="cx">
+                      </test>
                    </adapt>
                 </iterate>
              </with>
@@ -267,16 +255,10 @@
                    ifEmpty="false">
                 <adapt
                       type="org.eclipse.core.resources.IResource">
-                   <or>
-                      <test
-                            property="org.eclipse.core.resources.extension"
-                            value="cf">
-                      </test>
-                      <test
-                            property="org.eclipse.core.resources.extension"
-                            value="design">
-                      </test>
-                   </or>
+                   <test
+                         property="org.eclipse.core.resources.extension"
+                         value="cx">
+                   </test>
                 </adapt>
              </iterate>
           </with>
@@ -305,7 +287,7 @@
        point="org.eclipse.debug.ui.launchConfigurationTypeImages">
     <launchConfigurationTypeImage
           configTypeID="com.synflow.ngDesign.ui.launchConfigurationSimulation"
-          icon="icons/cflow_app.gif"
+          icon="icons/cx_app.gif"
           id="com.synflow.ngDesign.ui.launchConfigurationTypeImage">
     </launchConfigurationTypeImage>
  </extension>
@@ -334,7 +316,7 @@
        point="org.eclipse.ltk.core.refactoring.renameParticipants">
     <renameParticipant
           class="com.synflow.ngDesign.ui.internal.refactoring.CxRenameParticipant"
-          id="com.synflow.ngDesign.ui.renameParticipantCf"
+          id="com.synflow.ngDesign.ui.renameParticipantCx"
           name="Rename Cx task">
        <enablement>
           <with variable="affectedNatures">
@@ -347,7 +329,7 @@
 	        <instanceof value="org.eclipse.core.resources.IFile"/>
 	        <test
                property="org.eclipse.core.resources.extension"
-               value="cf"/>
+               value="cx"/>
 	      </with>
        </enablement>
     </renameParticipant>
@@ -356,7 +338,7 @@
        point="org.eclipse.ltk.core.refactoring.moveParticipants">
     <moveParticipant
           class="com.synflow.ngDesign.ui.internal.refactoring.CxMoveParticipant"
-          id="com.synflow.ngDesign.ui.moveParticipantCf"
+          id="com.synflow.ngDesign.ui.moveParticipantCx"
           name="Move Cx task">
        <enablement>
           <with
@@ -375,7 +357,7 @@
              </instanceof>
              <test
                    property="org.eclipse.core.resources.extension"
-                   value="cf">
+                   value="cx">
              </test>
           </with></enablement>
     </moveParticipant>

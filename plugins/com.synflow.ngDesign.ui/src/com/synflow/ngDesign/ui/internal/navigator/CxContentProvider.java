@@ -11,7 +11,7 @@
  *******************************************************************************/
 package com.synflow.ngDesign.ui.internal.navigator;
 
-import static com.synflow.core.ISynflowConstants.FILE_EXT_CFLOW;
+import static com.synflow.core.ISynflowConstants.FILE_EXT_CX;
 import static org.eclipse.jdt.core.IJavaElement.PACKAGE_FRAGMENT;
 
 import java.util.ArrayList;
@@ -82,7 +82,7 @@ public class CxContentProvider implements IPipelinedTreeContentProvider2, IResou
 			IResource resource = delta.getResource();
 			if (kind == IResourceDelta.ADDED || kind == IResourceDelta.CHANGED) {
 				if (resource.getType() == IResource.FILE
-						&& FILE_EXT_CFLOW.equals(resource.getFileExtension())) {
+						&& FILE_EXT_CX.equals(resource.getFileExtension())) {
 					shouldRefresh = resource;
 				}
 			} else if (kind == IResourceDelta.REMOVED) {
@@ -294,7 +294,7 @@ public class CxContentProvider implements IPipelinedTreeContentProvider2, IResou
 			}
 		} else if (parentElement instanceof IFile) {
 			IFile file = (IFile) parentElement;
-			if (FILE_EXT_CFLOW.equals(file.getFileExtension())) {
+			if (FILE_EXT_CX.equals(file.getFileExtension())) {
 				ResourceSet set = new XtextResourceSet();
 				Module module = EcoreHelper.getEObject(set, file);
 				if (module != null) {

@@ -10,6 +10,17 @@
  *******************************************************************************/
 package com.synflow.ngDesign.ui.internal;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.core.resources.ICommand;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.ui.css.swt.theme.ITheme;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
@@ -20,6 +31,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
+
+import com.synflow.core.SynflowCore;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -62,16 +75,38 @@ public class NgDesignUi extends AbstractUIPlugin {
 	public NgDesignUi() {
 	}
 
-	@Override
-	public void start(BundleContext context) throws Exception {
-		super.start(context);
-		plugin = this;
-
-		// set default theme for Windows 8 (otherwise the product looks ugly)
-		ServiceReference<IThemeManager> reference;
-		reference = context.getServiceReference(IThemeManager.class);
+	private void renameCfFiles(IContainer container) {
 		try {
+			for (IResource member : container.members()) {
+				if (member.getType() == IResource.FILE) {
+					if ("cf".equals(member.getFileExtension())) {
+						IPath path = member.getFullPath();
+						IPath destination = path.removeFileExtension().addFileExtension("cx");
+						member.move(destination, true, null);
+					}
+				} else if (member.getType() == IResource.FOLDER) {
+					renameCfFiles((IFolder) member);
+				}
+			}
+		} catch (CoreException e) {
+			SynflowCore.log(e);
+		}
+	}
+
+	private void setDefaultTheme(BundleContext context) {
+		// set default theme for Windows 8 (otherwise the product looks ugly)
+		ServiceReference<IThemeManager> reference = null;
+		try {
+			reference = context.getServiceReference(IThemeManager.class);
+			if (reference == null) {
+				return;
+			}
+
 			IThemeManager manager = context.getService(reference);
+			if (manager == null) {
+				return;
+			}
+
 			Display display = PlatformUI.getWorkbench().getDisplay();
 			IThemeEngine engine = manager.getEngineForDisplay(display);
 			ITheme themeActive = engine.getActiveTheme();
@@ -88,15 +123,54 @@ public class NgDesignUi extends AbstractUIPlugin {
 					engine.setTheme("org.eclipse.e4.ui.css.theme.e4_default", true);
 				}
 			}
+		} catch (RuntimeException e) {
+			// ignore
 		} finally {
-			context.ungetService(reference);
+			if (reference != null) {
+				context.ungetService(reference);
+			}
 		}
+	}
+
+	@Override
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+		plugin = this;
+
+		updateProjects();
+		setDefaultTheme(context);
 	}
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);
+	}
+
+	private void updateProjects() {
+		for (IProject project : SynflowCore.getProjects()) {
+			try {
+				IProjectDescription description = project.getDescription();
+				ICommand[] commands = description.getBuildSpec();
+				List<ICommand> newCommands = new ArrayList<>(commands.length);
+				for (ICommand command : commands) {
+					if ("org.eclipse.jdt.core.javabuilder".equals(command.getBuilderName())) {
+						renameCfFiles(project);
+					} else {
+						newCommands.add(command);
+					}
+				}
+
+				int numCommands = newCommands.size();
+				if (numCommands != commands.length) {
+					description.setBuildSpec(newCommands.toArray(new ICommand[numCommands]));
+				}
+
+				project.setDescription(description, null);
+			} catch (CoreException e) {
+				SynflowCore.log(e);
+			}
+		}
 	}
 
 }

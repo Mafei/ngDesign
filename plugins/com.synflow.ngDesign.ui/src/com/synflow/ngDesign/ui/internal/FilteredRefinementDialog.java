@@ -38,7 +38,7 @@
  */
 package com.synflow.ngDesign.ui.internal;
 
-import static com.synflow.core.ISynflowConstants.FILE_EXT_CFLOW;
+import static com.synflow.core.ISynflowConstants.FILE_EXT_CX;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -144,7 +144,7 @@ public class FilteredRefinementDialog extends FilteredItemsSelectionDialog {
 		public boolean visit(IResource resource) throws CoreException {
 			if (resource.getType() == IResource.FILE) {
 				String fileExt = resource.getFileExtension();
-				if (FILE_EXT_CFLOW.equals(fileExt)) {
+				if (FILE_EXT_CX.equals(fileExt)) {
 					contentProvider.add(resource, itemsFilter);
 				}
 			}

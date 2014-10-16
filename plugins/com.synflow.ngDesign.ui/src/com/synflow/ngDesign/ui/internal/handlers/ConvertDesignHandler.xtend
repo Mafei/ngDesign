@@ -66,7 +66,7 @@ class ConvertDesignHandler extends CommonHandler {
 		val doc = DomUtil.parseDocument(is)
 
 		val seq = getNetwork(file, doc)
-		val path = file.fullPath.removeFirstSegments(1).removeFileExtension.addFileExtension(ISynflowConstants.FILE_EXT_CFLOW).toString
+		val path = file.fullPath.removeFirstSegments(1).removeFileExtension.addFileExtension(ISynflowConstants.FILE_EXT_CX).toString
 		writer.write(path, seq)
 
 		null
