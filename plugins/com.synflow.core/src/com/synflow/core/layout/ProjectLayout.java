@@ -22,6 +22,12 @@ import org.eclipse.core.runtime.CoreException;
 import com.synflow.core.SynflowCore;
 import com.synflow.core.SynflowNature;
 
+/**
+ * This class defines helper methods to get the layout of a project.
+ * 
+ * @author Matthieu Wipliez
+ *
+ */
 public class ProjectLayout {
 
 	public static final String FOLDER_SRC = "src";
@@ -50,6 +56,13 @@ public class ProjectLayout {
 		return children.toArray();
 	}
 
+	/**
+	 * Returns the source folder of the given project, or <code>null</code>.
+	 * 
+	 * @param project
+	 *            a project
+	 * @return a source folder, may be <code>null</code> if not accessible or does not exist
+	 */
 	public static SourceFolder getSourceFolder(IProject project) {
 		try {
 			if (project.isAccessible() && project.hasNature(SynflowNature.NATURE_ID)) {

@@ -20,4 +20,6 @@ public interface ITreeElement {
 
 	boolean isSourceFolder();
 
+	String getName();
+
 }
