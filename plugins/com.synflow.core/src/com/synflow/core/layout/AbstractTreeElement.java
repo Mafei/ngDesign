@@ -11,13 +11,29 @@
 package com.synflow.core.layout;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.PlatformObject;
 
-public abstract class AbstractTreeElement implements ITreeElement {
+/**
+ * This class defines an abstract tree element, adaptable to IResource.
+ * 
+ * @author Matthieu Wipliez
+ *
+ */
+public abstract class AbstractTreeElement extends PlatformObject implements ITreeElement {
 
 	private IResource resource;
 
 	public AbstractTreeElement(IResource resource) {
 		this.resource = resource;
+	}
+
+	@Override
+	@SuppressWarnings("rawtypes")
+	public Object getAdapter(Class adapter) {
+		if (IResource.class.isAssignableFrom(adapter)) {
+			return getResource();
+		}
+		return super.getAdapter(adapter);
 	}
 
 	@Override
