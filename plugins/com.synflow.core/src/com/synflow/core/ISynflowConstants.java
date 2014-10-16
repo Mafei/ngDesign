@@ -19,7 +19,7 @@ package com.synflow.core;
  */
 public interface ISynflowConstants {
 
-	String FILE_EXT_CFLOW = "cf";
+	String FILE_EXT_CX = "cx";
 
 	String FILE_EXT_IR = "ir";
 

@@ -6,12 +6,13 @@
     <extension
             point="org.eclipse.ui.editors">
         <editor
-            class="com.synflow.cx.ui.CxExecutableExtensionFactory:org.eclipse.xtext.ui.editor.XtextEditor"
-            contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
-            default="true"
-            extensions="cx,cf"
-            id="com.synflow.cx.Cx"
-            name="Cx Editor">
+              class="com.synflow.cx.ui.CxExecutableExtensionFactory:org.eclipse.xtext.ui.editor.XtextEditor"
+              contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
+              default="true"
+              extensions="cx"
+              icon="icons/cx_obj.gif"
+              id="com.synflow.cx.Cx"
+              name="Cx Editor">
         </editor>
     </extension>
     <extension
@@ -223,20 +224,6 @@
         </resourceServiceProvider>
     </extension>
 
-	<extension
-		point="org.eclipse.emf.ecore.extension_parser">
-		<parser
-			class="com.synflow.cx.ui.CxExecutableExtensionFactory:org.eclipse.xtext.resource.IResourceFactory"
-			type="cf">
-		</parser>
-	</extension>
-	<extension point="org.eclipse.xtext.extension_resourceServiceProvider">
-        <resourceServiceProvider
-            class="com.synflow.cx.ui.CxExecutableExtensionFactory:org.eclipse.xtext.ui.resource.IResourceUIServiceProvider"
-            uriExtension="cf">
-        </resourceServiceProvider>
-    </extension>
-
 
     <!-- marker definitions for com.synflow.cx.Cx -->
     <extension
@@ -265,7 +252,7 @@
          point="org.eclipse.xtext.builder.participant">
       <participant
             class="com.synflow.cx.ui.CxExecutableExtensionFactory:org.eclipse.xtext.builder.IXtextBuilderParticipant"
-            fileExtensions="cx,cf"
+            fileExtensions="cx"
             >
       </participant>
    </extension>
@@ -393,19 +380,19 @@
   <extension point="org.eclipse.compare.contentViewers">
     <viewer id="com.synflow.cx.Cx.compare.contentViewers"
             class="com.synflow.cx.ui.CxExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
-            extensions="cx,cf">
+            extensions="cx">
     </viewer>
   </extension>
   <extension point="org.eclipse.compare.contentMergeViewers">
     <viewer id="com.synflow.cx.Cx.compare.contentMergeViewers"
             class="com.synflow.cx.ui.CxExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
-            extensions="cx,cf" label="Cx Compare">
+            extensions="cx" label="Cx Compare">
      </viewer>
   </extension>
   <extension point="org.eclipse.ui.editors.documentProviders">
     <provider id="com.synflow.cx.Cx.editors.documentProviders"
             class="com.synflow.cx.ui.CxExecutableExtensionFactory:org.eclipse.xtext.ui.editor.model.XtextDocumentProvider"
-            extensions="cx,cf">
+            extensions="cx">
     </provider>
   </extension>
   <extension

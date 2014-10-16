@@ -10,7 +10,7 @@
  *******************************************************************************/
 package com.synflow.cx.ui.views;
 
-import static com.synflow.core.ISynflowConstants.FILE_EXT_CFLOW;
+import static com.synflow.core.ISynflowConstants.FILE_EXT_CX;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -246,7 +246,7 @@ public abstract class AbstractGefView extends ViewPart implements IPartListener,
 			if (input instanceof IFileEditorInput) {
 				IFileEditorInput fileInput = (IFileEditorInput) input;
 				IFile file = fileInput.getFile();
-				if (FILE_EXT_CFLOW.equals(file.getFileExtension())) {
+				if (FILE_EXT_CX.equals(file.getFileExtension())) {
 					// set xtextDocument field
 					xtextDocument = xtextEditor.getDocument();
 

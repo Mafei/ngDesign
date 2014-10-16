@@ -14,7 +14,7 @@ import org.eclipse.emf.mwe.utils.*
 import org.eclipse.xtext.generator.*
 import org.eclipse.xtext.ui.generator.*
 
-var fileExtensions = "cx,cf"
+var fileExtensions = "cx"
 var projectName = "com.synflow.cx"
 
 // grammarURI has to be platform:/resource as it is not on the classpath

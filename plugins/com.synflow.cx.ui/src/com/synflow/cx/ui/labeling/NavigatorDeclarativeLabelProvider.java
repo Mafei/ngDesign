@@ -10,7 +10,7 @@
  *******************************************************************************/
 package com.synflow.cx.ui.labeling;
 
-import static com.synflow.core.ISynflowConstants.FILE_EXT_CFLOW;
+import static com.synflow.core.ISynflowConstants.FILE_EXT_CX;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -41,8 +41,8 @@ public class NavigatorDeclarativeLabelProvider extends DeclarativeLabelProvider 
 	}
 
 	public String image(IFile file) {
-		if (FILE_EXT_CFLOW.equals(file.getFileExtension())) {
-			return "cflow_obj.gif";
+		if (FILE_EXT_CX.equals(file.getFileExtension())) {
+			return "cx_obj.gif";
 		}
 		return null;
 	}

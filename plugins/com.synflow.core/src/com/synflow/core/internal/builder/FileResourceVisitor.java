@@ -10,7 +10,7 @@
  *******************************************************************************/
 package com.synflow.core.internal.builder;
 
-import static com.synflow.core.ISynflowConstants.FILE_EXT_CFLOW;
+import static com.synflow.core.ISynflowConstants.FILE_EXT_CX;
 import static com.synflow.core.ISynflowConstants.FILE_EXT_IR;
 
 import java.util.ArrayList;
@@ -96,7 +96,7 @@ public class FileResourceVisitor implements IResourceVisitor, IResourceDeltaVisi
 
 			if (fileExt != null) {
 				switch (fileExt) {
-				case FILE_EXT_CFLOW:
+				case FILE_EXT_CX:
 					sources.add(file);
 					break;
 				case FILE_EXT_IR:
