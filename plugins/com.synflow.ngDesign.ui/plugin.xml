@@ -553,4 +553,13 @@
           state="true">
     </decorator>
  </extension>
+ <extension
+       point="org.eclipse.core.runtime.adapters">
+    <factory
+          adaptableType="com.synflow.core.layout.ITreeElement"
+          class="com.synflow.ngDesign.ui.internal.AdapterFactory">
+       <adapter type="org.eclipse.core.resources.IResource"/>
+       <adapter type="org.eclipse.ui.IContributorResourceAdapter"/>
+    </factory>
+ </extension>
 </plugin>

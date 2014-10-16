@@ -11,15 +11,22 @@
 package com.synflow.core.layout;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IAdaptable;
 
-public interface ITreeElement {
+/**
+ * This interface defines an element of a project tree.
+ * 
+ * @author Matthieu Wipliez
+ *
+ */
+public interface ITreeElement extends IAdaptable {
+
+	String getName();
 
 	IResource getResource();
 
 	boolean isPackage();
 
 	boolean isSourceFolder();
-
-	String getName();
 
 }
