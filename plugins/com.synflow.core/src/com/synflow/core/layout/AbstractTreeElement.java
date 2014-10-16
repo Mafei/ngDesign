@@ -28,17 +28,26 @@ public abstract class AbstractTreeElement extends PlatformObject implements ITre
 	}
 
 	@Override
-	@SuppressWarnings("rawtypes")
-	public Object getAdapter(Class adapter) {
-		if (IResource.class.isAssignableFrom(adapter)) {
-			return getResource();
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
 		}
-		return super.getAdapter(adapter);
+
+		if (!(obj instanceof AbstractTreeElement)) {
+			return false;
+		}
+		AbstractTreeElement other = (AbstractTreeElement) obj;
+		return resource.equals(other.resource);
 	}
 
 	@Override
 	public IResource getResource() {
 		return resource;
+	}
+
+	@Override
+	public int hashCode() {
+		return resource.hashCode();
 	}
 
 	@Override
