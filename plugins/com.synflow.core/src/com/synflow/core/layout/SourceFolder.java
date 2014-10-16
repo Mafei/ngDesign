@@ -89,4 +89,9 @@ public class SourceFolder extends AbstractTreeElement {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "source folder \"" + getName() + "\"";
+	}
+
 }

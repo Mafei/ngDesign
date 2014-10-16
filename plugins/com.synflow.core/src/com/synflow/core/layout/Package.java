@@ -10,6 +10,8 @@
  *******************************************************************************/
 package com.synflow.core.layout;
 
+import static com.synflow.core.ISynflowConstants.FILE_EXT_CX;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,7 +68,13 @@ public class Package extends AbstractTreeElement {
 	}
 
 	public boolean isEmpty() {
-		return getFiles().length > 0;
+		for (Object obj : getFiles()) {
+			IFile file = (IFile) obj;
+			if (FILE_EXT_CX.equals(file.getFileExtension())) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Override
@@ -76,7 +84,7 @@ public class Package extends AbstractTreeElement {
 
 	@Override
 	public String toString() {
-		return getName();
+		return "package " + getName();
 	}
 
 }
