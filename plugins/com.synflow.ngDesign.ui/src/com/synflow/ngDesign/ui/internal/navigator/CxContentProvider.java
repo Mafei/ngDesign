@@ -12,9 +12,7 @@
 package com.synflow.ngDesign.ui.internal.navigator;
 
 import static com.synflow.core.ISynflowConstants.FILE_EXT_CX;
-import static org.eclipse.jdt.core.IJavaElement.PACKAGE_FRAGMENT;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -36,14 +34,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaModel;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -55,9 +45,11 @@ import org.eclipse.ui.navigator.PipelinedShapeModification;
 import org.eclipse.ui.navigator.PipelinedViewerUpdate;
 import org.eclipse.xtext.resource.XtextResourceSet;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 import com.synflow.core.SynflowCore;
+import com.synflow.core.layout.ITreeElement;
+import com.synflow.core.layout.ProjectLayout;
+import com.synflow.core.layout.Package;
+import com.synflow.core.layout.SourceFolder;
 import com.synflow.cx.cx.Module;
 import com.synflow.models.util.EcoreHelper;
 
@@ -108,27 +100,27 @@ public class CxContentProvider implements IPipelinedTreeContentProvider2, IResou
 		Object parent = modification.getParent();
 		// As of 3.3, we no longer re-parent additions to IProject.
 		if (parent instanceof IContainer) {
-			IJavaElement element = JavaCore.create((IContainer) parent);
-			if (element != null && element.exists()) {
+			ITreeElement element = ProjectLayout.getTreeElement((IResource) parent);
+			if (element != null) {
 				boolean converted = convertToJavaElements(modification.getChildren());
 				if (converted) {
 					boolean packages = true;
 					for (Object obj : modification.getChildren()) {
-						if (obj instanceof IJavaElement) {
-							IJavaElement child = (IJavaElement) obj;
-							packages &= child.getElementType() == PACKAGE_FRAGMENT;
+						if (obj instanceof ITreeElement) {
+							ITreeElement child = (ITreeElement) obj;
+							packages &= child.isPackage();
 						}
 					}
 
 					if (packages) {
-						IJavaElement javaParent = element;
-						while (element != null && element.exists()
-								&& !(element instanceof IJavaModel)
-								&& !(element instanceof IJavaProject)) {
-							javaParent = element;
-							element = element.getParent();
-						}
-						element = javaParent;
+//						ITreeElement javaParent = element;
+//						while (element != null && element.exists()
+//								&& !(element instanceof IJavaModel)
+//								&& !(element instanceof IJavaProject)) {
+//							javaParent = element;
+//							element = element.getParent();
+//						}
+//						element = javaParent;
 					}
 				}
 
@@ -157,9 +149,6 @@ public class CxContentProvider implements IPipelinedTreeContentProvider2, IResou
 				if (convertToJavaElements(convertedChildren, (IResource) child)) {
 					childrenItr.remove();
 				}
-			} else if (child instanceof IJavaProject) {
-				childrenItr.remove();
-				convertedChildren.add(((IJavaProject) child).getProject());
 			}
 		}
 
@@ -171,8 +160,8 @@ public class CxContentProvider implements IPipelinedTreeContentProvider2, IResou
 	}
 
 	private boolean convertToJavaElements(Set<Object> currentChildren, IResource member) {
-		IJavaElement newChild = JavaCore.create(member);
-		boolean validChild = newChild != null && newChild.exists();
+		ITreeElement newChild = ProjectLayout.getTreeElement(member);
+		boolean validChild = newChild != null;
 		if (validChild) {
 			currentChildren.add(newChild);
 
@@ -219,8 +208,8 @@ public class CxContentProvider implements IPipelinedTreeContentProvider2, IResou
 		}
 		for (int i = 0; i < javaElements.length; i++) {
 			Object element = javaElements[i];
-			if (element instanceof IJavaElement) {
-				IJavaElement cElement = (IJavaElement) element;
+			if (element instanceof ITreeElement) {
+				ITreeElement cElement = (ITreeElement) element;
 				IResource resource = cElement.getResource();
 				if (resource != null) {
 					proposedChildren.remove(resource);
@@ -230,20 +219,6 @@ public class CxContentProvider implements IPipelinedTreeContentProvider2, IResou
 				proposedChildren.add(element);
 			}
 		}
-	}
-
-	@SuppressWarnings("unchecked")
-	private void deconvertJavaProjects(PipelinedShapeModification modification) {
-		Set<IProject> convertedChildren = new LinkedHashSet<IProject>();
-		for (Iterator<IAdaptable> iterator = modification.getChildren().iterator(); iterator
-				.hasNext();) {
-			Object added = iterator.next();
-			if (added instanceof IJavaProject) {
-				iterator.remove();
-				convertedChildren.add(((IJavaProject) added).getProject());
-			}
-		}
-		modification.getChildren().addAll(convertedChildren);
 	}
 
 	@Override
@@ -256,33 +231,17 @@ public class CxContentProvider implements IPipelinedTreeContentProvider2, IResou
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof IProject) {
 			IProject project = (IProject) parentElement;
-			if (!project.isAccessible()) {
-				return new Object[0];
-			}
-
-			try {
-				return getPackageFragmentRoots(JavaCore.create(project));
-			} catch (CoreException e) {
-				SynflowCore.log(e);
-			}
+			return ProjectLayout.getChildren(project);
 		}
 
-		if (parentElement instanceof IPackageFragmentRoot) {
-			IPackageFragmentRoot root = (IPackageFragmentRoot) parentElement;
-			try {
-				return getPackageFragments(root);
-			} catch (CoreException e) {
-				SynflowCore.log(e);
-			}
+		if (parentElement instanceof SourceFolder) {
+			SourceFolder root = (SourceFolder) parentElement;
+			return root.getPackages();
 		}
 
-		if (parentElement instanceof IPackageFragment) {
-			IPackageFragment fragment = (IPackageFragment) parentElement;
-			try {
-				return fragment.getNonJavaResources();
-			} catch (CoreException e) {
-				SynflowCore.log(e);
-			}
+		if (parentElement instanceof Package) {
+			Package package_ = (Package) parentElement;
+			return package_.getFiles();
 		}
 
 		if (parentElement instanceof IFolder) {
@@ -317,46 +276,6 @@ public class CxContentProvider implements IPipelinedTreeContentProvider2, IResou
 		return new Object[0];
 	}
 
-	private Object[] getPackageFragmentRoots(IJavaProject project) throws JavaModelException {
-		List<Object> result = new ArrayList<Object>();
-
-		IPackageFragmentRoot[] roots = project.getPackageFragmentRoots();
-		for (int i = 0; i < roots.length; i++) {
-			IPackageFragmentRoot root = roots[i];
-			IClasspathEntry classpathEntry = root.getRawClasspathEntry();
-			int entryKind = classpathEntry.getEntryKind();
-			if (entryKind == IClasspathEntry.CPE_SOURCE) {
-				result.add(root);
-			}
-		}
-
-		Object[] resources = project.getNonJavaResources();
-		result.addAll(Arrays.asList(resources));
-		return result.toArray();
-	}
-
-	private Object[] getPackageFragments(IPackageFragmentRoot root) throws JavaModelException {
-		IJavaElement[] children = root.getChildren();
-		Iterable<IJavaElement> iterable;
-		iterable = Iterables.filter(Arrays.asList(children), new Predicate<IJavaElement>() {
-			@Override
-			public boolean apply(IJavaElement input) {
-				// no filters on other elements
-				if (input.getElementType() != PACKAGE_FRAGMENT) {
-					return true;
-				}
-
-				// don't show default package
-				IPackageFragment fragment = (IPackageFragment) input;
-				if (fragment.isDefaultPackage()) {
-					return false;
-				}
-
-				return true;
-			}
-		});
-		return Iterables.toArray(iterable, Object.class);
-	}
 
 	@Override
 	public Object getParent(Object element) {
@@ -372,22 +291,17 @@ public class CxContentProvider implements IPipelinedTreeContentProvider2, IResou
 				return parent;
 			}
 
-			// http://bugs.eclipse.org/bugs/show_bug.cgi?id=31374
-			IJavaElement jParent = JavaCore.create(parent);
-			if (jParent != null && jParent.exists()) {
-				return jParent;
+			ITreeElement tree = ProjectLayout.getTreeElement(parent);
+			if (tree != null) {
+				return tree;
 			}
 			return parent;
-		} else if (element instanceof IJavaElement) {
-			IJavaElement jElement = (IJavaElement) element;
-			if (jElement.exists()) {
-				if (element instanceof IPackageFragmentRoot) {
-					IPackageFragmentRoot root = (IPackageFragmentRoot) element;
-					return root.getJavaProject().getProject();
-				}
-
-				return jElement.getParent();
-			}
+		} else if (element instanceof Package) {
+			Package package_ = (Package) element;
+			return package_.getParent();
+		} else if (element instanceof SourceFolder) {
+			SourceFolder folder = (SourceFolder) element;
+			return folder.getProject();
 		}
 
 		return null;
@@ -444,16 +358,6 @@ public class CxContentProvider implements IPipelinedTreeContentProvider2, IResou
 
 	@Override
 	public PipelinedShapeModification interceptAdd(PipelinedShapeModification addModification) {
-		Object parent = addModification.getParent();
-
-		if (parent instanceof IJavaProject) {
-			addModification.setParent(((IJavaProject) parent).getProject());
-		}
-
-		if (parent instanceof IWorkspaceRoot) {
-			deconvertJavaProjects(addModification);
-		}
-
 		convertToJavaElements(addModification);
 		return addModification;
 	}
@@ -467,7 +371,6 @@ public class CxContentProvider implements IPipelinedTreeContentProvider2, IResou
 	@Override
 	@SuppressWarnings("unchecked")
 	public PipelinedShapeModification interceptRemove(PipelinedShapeModification removeModification) {
-		deconvertJavaProjects(removeModification);
 		convertToJavaElements(removeModification.getChildren());
 		return removeModification;
 	}

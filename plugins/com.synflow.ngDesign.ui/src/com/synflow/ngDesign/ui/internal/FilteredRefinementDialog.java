@@ -48,15 +48,10 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -65,6 +60,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.FilteredItemsSelectionDialog;
 import org.eclipse.ui.dialogs.SearchPattern;
+
+import com.synflow.core.SynflowCore;
+import com.synflow.core.layout.ProjectLayout;
+import com.synflow.core.layout.SourceFolder;
 
 /**
  * This class defines a custom filtered items selection dialog.
@@ -162,59 +161,24 @@ public class FilteredRefinementDialog extends FilteredItemsSelectionDialog {
 	 * @param project
 	 *            a project
 	 * @return a list of absolute workspace paths
-	 * @throws CoreException
 	 */
 	public static List<IFolder> getAllSourceFolders(IProject project) {
 		List<IFolder> srcFolders = new ArrayList<IFolder>();
-
-		IJavaProject javaProject = JavaCore.create(project);
-		if (!javaProject.exists()) {
-			return srcFolders;
-		}
-
-		// add source folders of this project
-		srcFolders.addAll(getSourceFolders(project));
-
-		// add source folders of required projects
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		try {
-			for (String name : javaProject.getRequiredProjectNames()) {
-				IProject refProject = root.getProject(name);
-				srcFolders.addAll(getAllSourceFolders(refProject));
+		if (project.isAccessible()) {
+			// add source folders of this project
+			SourceFolder sourceFolder = ProjectLayout.getSourceFolder(project);
+			if (sourceFolder != null) {
+				srcFolders.add(sourceFolder.getResource());
 			}
-		} catch (CoreException e) {
-			e.printStackTrace();
-		}
 
-		return srcFolders;
-	}
-
-	/**
-	 * Returns the list of source folders of the given project as a list of absolute workspace
-	 * paths.
-	 * 
-	 * @param project
-	 *            a project
-	 * @return a list of absolute workspace paths
-	 */
-	public static List<IFolder> getSourceFolders(IProject project) {
-		List<IFolder> srcFolders = new ArrayList<IFolder>();
-
-		IJavaProject javaProject = JavaCore.create(project);
-		if (!javaProject.exists()) {
-			return srcFolders;
-		}
-
-		// iterate over package roots
-		try {
-			for (IPackageFragmentRoot root : javaProject.getPackageFragmentRoots()) {
-				IResource resource = root.getCorrespondingResource();
-				if (resource != null && resource.getType() == IResource.FOLDER) {
-					srcFolders.add((IFolder) resource);
+			// add source folders of required projects
+			try {
+				for (IProject required : project.getReferencedProjects()) {
+					srcFolders.addAll(getAllSourceFolders(required));
 				}
+			} catch (CoreException e) {
+				SynflowCore.log(e);
 			}
-		} catch (CoreException e) {
-			e.printStackTrace();
 		}
 
 		return srcFolders;

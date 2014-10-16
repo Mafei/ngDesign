@@ -13,12 +13,11 @@ package com.synflow.ngDesign.ui.internal.navigator;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 
+import com.synflow.core.layout.Package;
+import com.synflow.core.layout.SourceFolder;
 import com.synflow.cx.cx.CxEntity;
 
 /**
@@ -45,9 +44,9 @@ public class CxComparator extends ViewerComparator {
 	public int category(Object element) {
 		if (element instanceof IProject) {
 			return PROJECTS;
-		} else if (element instanceof IPackageFragmentRoot) {
+		} else if (element instanceof SourceFolder) {
 			return PACKAGEFRAGMENTROOTS;
-		} else if (element instanceof IPackageFragment) {
+		} else if (element instanceof Package) {
 			return PACKAGEFRAGMENT;
 		} else if (element instanceof IContainer) {
 			return RESOURCEFOLDERS;
@@ -76,9 +75,7 @@ public class CxComparator extends ViewerComparator {
 	}
 
 	private String getElementName(Object element) {
-		if (element instanceof IJavaElement) {
-			return ((IJavaElement) element).getElementName();
-		} else if (element instanceof CxEntity) {
+		if (element instanceof CxEntity) {
 			return ((CxEntity) element).getName();
 		} else {
 			return element.toString();

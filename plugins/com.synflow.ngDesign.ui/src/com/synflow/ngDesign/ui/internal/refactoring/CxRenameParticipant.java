@@ -10,7 +10,7 @@
  *******************************************************************************/
 package com.synflow.ngDesign.ui.internal.refactoring;
 
-import static org.eclipse.jdt.core.JavaCore.VERSION_1_7;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -19,13 +19,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 import org.eclipse.ltk.core.refactoring.participants.RenameArguments;
 import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
 
+import com.google.common.collect.ImmutableSet;
 import com.synflow.core.SynflowCore;
 
 /**
@@ -36,13 +36,14 @@ import com.synflow.core.SynflowCore;
  */
 public class CxRenameParticipant extends RenameParticipant {
 
+	private static final Set<String> keywords = ImmutableSet.of("bundle", "network", "task");
+
 	public static IStatus validateIdentifier(String id) {
-		IStatus status = JavaConventions.validateIdentifier(id, VERSION_1_7, VERSION_1_7);
-		if (!status.isOK()) {
+		if (keywords.contains(id)) {
 			String message = "'" + id + "' is not a valid identifier";
-			status = new Status(IStatus.ERROR, SynflowCore.PLUGIN_ID, message);
+			return new Status(IStatus.ERROR, SynflowCore.PLUGIN_ID, message);
 		}
-		return status;
+		return Status.OK_STATUS;
 	}
 
 	@Override
