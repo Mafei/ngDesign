@@ -47,8 +47,8 @@ import org.eclipse.xtext.resource.XtextResourceSet;
 
 import com.synflow.core.SynflowCore;
 import com.synflow.core.layout.ITreeElement;
-import com.synflow.core.layout.ProjectLayout;
 import com.synflow.core.layout.Package;
+import com.synflow.core.layout.ProjectLayout;
 import com.synflow.core.layout.SourceFolder;
 import com.synflow.cx.cx.Module;
 import com.synflow.models.util.EcoreHelper;
@@ -109,18 +109,13 @@ public class CxContentProvider implements IPipelinedTreeContentProvider2, IResou
 						if (obj instanceof ITreeElement) {
 							ITreeElement child = (ITreeElement) obj;
 							packages &= child.isPackage();
+						} else {
+							packages = false;
 						}
 					}
 
 					if (packages) {
-						// ITreeElement javaParent = element;
-						// while (element != null && element.exists()
-						// && !(element instanceof IJavaModel)
-						// && !(element instanceof IJavaProject)) {
-						// javaParent = element;
-						// element = element.getParent();
-						// }
-						// element = javaParent;
+						element = ProjectLayout.getSourceFolder(element.getResource().getProject());
 					}
 				}
 
