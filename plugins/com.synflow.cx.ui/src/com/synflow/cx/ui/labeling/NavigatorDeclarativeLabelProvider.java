@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.xtext.ui.label.DeclarativeLabelProvider;
 
 import com.google.inject.Inject;
@@ -26,14 +27,23 @@ import com.synflow.core.SynflowCore;
 import com.synflow.core.SynflowNature;
 
 /**
- * This class defines a declarative label provider that extends {@link CxLabelProvider} with
- * images for projects, Cx files, Java source folders and packages, and text for resources and Java
+ * This class defines a declarative label provider that extends {@link CxLabelProvider} with images
+ * for projects, Cx files, Java source folders and packages, and text for resources and Java
  * elements.
  * 
  * @author Matthieu Wipliez
  * 
  */
 public class NavigatorDeclarativeLabelProvider extends DeclarativeLabelProvider {
+
+	public static boolean isEmpty(IPackageFragment fragment) {
+		try {
+			return !fragment.hasChildren() && fragment.getNonJavaResources().length == 0;
+		} catch (JavaModelException e) {
+			SynflowCore.log(e);
+			return true;
+		}
+	}
 
 	@Inject
 	public NavigatorDeclarativeLabelProvider(CxLabelProvider delegate) {
@@ -48,7 +58,7 @@ public class NavigatorDeclarativeLabelProvider extends DeclarativeLabelProvider 
 	}
 
 	public String image(IPackageFragment fragment) {
-		if (SynflowCore.isEmpty(fragment)) {
+		if (isEmpty(fragment)) {
 			return "empty_pack_obj.gif";
 		}
 		return "package_obj.gif";

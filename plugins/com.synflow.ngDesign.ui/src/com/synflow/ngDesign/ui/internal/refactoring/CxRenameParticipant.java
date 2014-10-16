@@ -10,12 +10,16 @@
  *******************************************************************************/
 package com.synflow.ngDesign.ui.internal.refactoring;
 
+import static org.eclipse.jdt.core.JavaCore.VERSION_1_7;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
@@ -32,6 +36,15 @@ import com.synflow.core.SynflowCore;
  */
 public class CxRenameParticipant extends RenameParticipant {
 
+	public static IStatus validateIdentifier(String id) {
+		IStatus status = JavaConventions.validateIdentifier(id, VERSION_1_7, VERSION_1_7);
+		if (!status.isOK()) {
+			String message = "'" + id + "' is not a valid identifier";
+			status = new Status(IStatus.ERROR, SynflowCore.PLUGIN_ID, message);
+		}
+		return status;
+	}
+
 	@Override
 	public RefactoringStatus checkConditions(IProgressMonitor pm, CheckConditionsContext context)
 			throws OperationCanceledException {
@@ -39,7 +52,7 @@ public class CxRenameParticipant extends RenameParticipant {
 		RenameArguments args = getArguments();
 		String newName = args.getNewName();
 		IPath path = new Path(newName).removeFileExtension();
-		IStatus status = SynflowCore.validateIdentifier(path.lastSegment());
+		IStatus status = validateIdentifier(path.lastSegment());
 		return RefactoringStatus.create(status);
 	}
 

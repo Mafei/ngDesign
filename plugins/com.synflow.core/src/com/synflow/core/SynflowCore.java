@@ -11,7 +11,6 @@
 package com.synflow.core;
 
 import static org.eclipse.core.runtime.Platform.getPreferencesService;
-import static org.eclipse.jdt.core.JavaCore.VERSION_1_7;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,9 +31,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.JavaConventions;
-import org.eclipse.jdt.core.JavaModelException;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -204,15 +200,6 @@ public class SynflowCore implements BundleActivator {
 		return projects.toArray(new IProject[projects.size()]);
 	}
 
-	public static boolean isEmpty(IPackageFragment fragment) {
-		try {
-			return !fragment.hasChildren() && fragment.getNonJavaResources().length == 0;
-		} catch (JavaModelException e) {
-			SynflowCore.log(e);
-			return true;
-		}
-	}
-
 	/**
 	 * Returns true if this plug-in is loaded.
 	 * 
@@ -260,15 +247,6 @@ public class SynflowCore implements BundleActivator {
 	 */
 	public static void setPreference(String key, String value) {
 		getPreferencesService().getRootNode().node(PLUGIN_ID).put(key, value);
-	}
-
-	public static IStatus validateIdentifier(String id) {
-		IStatus status = JavaConventions.validateIdentifier(id, VERSION_1_7, VERSION_1_7);
-		if (!status.isOK()) {
-			String message = "'" + id + "' is not a valid identifier";
-			status = new Status(IStatus.ERROR, PLUGIN_ID, message);
-		}
-		return status;
 	}
 
 	private Injector injector;

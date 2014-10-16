@@ -21,13 +21,16 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.ecore.EObject;
@@ -57,6 +60,32 @@ import com.synflow.models.ir.util.IrUtil;
  * 
  */
 public abstract class Exporter implements IExporter {
+
+	/**
+	 * Returns the list of projects that are in the build path of this project (includes this
+	 * project).
+	 * 
+	 * @param project
+	 *            a project
+	 * @return list of projects
+	 */
+	public static Collection<IProject> getBuildPath(IProject project) {
+		Set<IProject> projects = new LinkedHashSet<>();
+		getBuildPath(projects, project);
+		return projects;
+	}
+
+	private static void getBuildPath(Set<IProject> projects, IProject project) {
+		try {
+			for (IProject required : project.getReferencedProjects()) {
+				getBuildPath(projects, required);
+			}
+		} catch (CoreException e) {
+			SynflowCore.log(e);
+		}
+
+		projects.add(project);
+	}
 
 	private ICodeGenerator currentGenerator;
 
@@ -237,7 +266,7 @@ public abstract class Exporter implements IExporter {
 	 * @return a list of strings
 	 */
 	protected List<String> getIncludePath() {
-		Collection<IProject> projects = CoreUtil.getBuildPath(project);
+		Collection<IProject> projects = getBuildPath(project);
 		List<String> paths = new ArrayList<>();
 		for (IProject project : projects) {
 			IFolder gen = project.getFolder(langLower + SUFFIX_GEN);

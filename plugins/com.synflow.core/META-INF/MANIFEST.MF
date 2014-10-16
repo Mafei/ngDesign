@@ -14,8 +14,7 @@ Require-Bundle: org.eclipse.core.expressions;bundle-version="3.4.500",
  com.google.guava,
  org.eclipse.core.runtime,
  org.eclipse.emf.ecore;visibility:=reexport,
- com.synflow.models;bundle-version="0.11.2";visibility:=reexport,
- org.eclipse.jdt.core;bundle-version="3.9.0"
+ com.synflow.models;bundle-version="0.11.2";visibility:=reexport
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Export-Package: com.synflow.core,

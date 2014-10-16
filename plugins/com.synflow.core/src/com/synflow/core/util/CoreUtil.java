@@ -21,9 +21,6 @@ import static com.synflow.core.ISynflowConstants.FOLDER_IR;
 
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
@@ -35,9 +32,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
@@ -80,38 +74,6 @@ public class CoreUtil {
 			}
 		} catch (CoreException e) {
 			SynflowCore.log(e);
-		}
-	}
-
-	/**
-	 * Returns the list of projects that are in the build path of this project (includes this
-	 * project).
-	 * 
-	 * @param project
-	 *            a project
-	 * @return list of projects
-	 */
-	public static Collection<IProject> getBuildPath(IProject project) {
-		Set<IProject> projects = new LinkedHashSet<>();
-		getBuildPath(projects, project);
-		return projects;
-	}
-
-	private static void getBuildPath(Set<IProject> projects, IProject project) {
-		projects.add(project);
-
-		IJavaProject javaProject = JavaCore.create(project);
-		if (javaProject.exists()) {
-			try {
-				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-				String[] projectNames = javaProject.getRequiredProjectNames();
-				for (int i = 0; i < projectNames.length; i++) {
-					IProject requiredProject = root.getProject(projectNames[i]);
-					getBuildPath(projects, requiredProject);
-				}
-			} catch (JavaModelException e) {
-				SynflowCore.log(e);
-			}
 		}
 	}
 
