@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 
+import com.synflow.core.layout.ITreeElement;
 import com.synflow.core.layout.Package;
 import com.synflow.core.layout.SourceFolder;
 import com.synflow.cx.cx.CxEntity;
@@ -77,6 +78,8 @@ public class CxComparator extends ViewerComparator {
 	private String getElementName(Object element) {
 		if (element instanceof CxEntity) {
 			return ((CxEntity) element).getName();
+		} else if (element instanceof ITreeElement) {
+			return ((ITreeElement) element).getName();
 		} else {
 			return element.toString();
 		}

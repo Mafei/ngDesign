@@ -16,15 +16,14 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.xtext.ui.label.DeclarativeLabelProvider;
 
 import com.google.inject.Inject;
 import com.synflow.core.SynflowCore;
 import com.synflow.core.SynflowNature;
+import com.synflow.core.layout.ITreeElement;
+import com.synflow.core.layout.Package;
+import com.synflow.core.layout.SourceFolder;
 
 /**
  * This class defines a declarative label provider that extends {@link CxLabelProvider} with images
@@ -35,15 +34,6 @@ import com.synflow.core.SynflowNature;
  * 
  */
 public class NavigatorDeclarativeLabelProvider extends DeclarativeLabelProvider {
-
-	public static boolean isEmpty(IPackageFragment fragment) {
-		try {
-			return !fragment.hasChildren() && fragment.getNonJavaResources().length == 0;
-		} catch (JavaModelException e) {
-			SynflowCore.log(e);
-			return true;
-		}
-	}
 
 	@Inject
 	public NavigatorDeclarativeLabelProvider(CxLabelProvider delegate) {
@@ -57,17 +47,6 @@ public class NavigatorDeclarativeLabelProvider extends DeclarativeLabelProvider 
 		return null;
 	}
 
-	public String image(IPackageFragment fragment) {
-		if (isEmpty(fragment)) {
-			return "empty_pack_obj.gif";
-		}
-		return "package_obj.gif";
-	}
-
-	public String image(IPackageFragmentRoot fragment) {
-		return "packagefolder_obj.gif";
-	}
-
 	public String image(IProject project) {
 		try {
 			if (project.isAccessible() && project.hasNature(SynflowNature.NATURE_ID)) {
@@ -79,12 +58,23 @@ public class NavigatorDeclarativeLabelProvider extends DeclarativeLabelProvider 
 		return null;
 	}
 
-	public String text(IJavaElement element) {
-		return element.getElementName();
+	public String image(Package package_) {
+		if (package_.isEmpty()) {
+			return "empty_pack_obj.gif";
+		}
+		return "package_obj.gif";
+	}
+
+	public String image(SourceFolder folder) {
+		return "packagefolder_obj.gif";
 	}
 
 	public String text(IResource resource) {
 		return resource.getName();
+	}
+
+	public String text(ITreeElement element) {
+		return element.getName();
 	}
 
 }

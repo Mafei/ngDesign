@@ -113,14 +113,14 @@ public class CxContentProvider implements IPipelinedTreeContentProvider2, IResou
 					}
 
 					if (packages) {
-//						ITreeElement javaParent = element;
-//						while (element != null && element.exists()
-//								&& !(element instanceof IJavaModel)
-//								&& !(element instanceof IJavaProject)) {
-//							javaParent = element;
-//							element = element.getParent();
-//						}
-//						element = javaParent;
+						// ITreeElement javaParent = element;
+						// while (element != null && element.exists()
+						// && !(element instanceof IJavaModel)
+						// && !(element instanceof IJavaProject)) {
+						// javaParent = element;
+						// element = element.getParent();
+						// }
+						// element = javaParent;
 					}
 				}
 
@@ -276,7 +276,6 @@ public class CxContentProvider implements IPipelinedTreeContentProvider2, IResou
 		return new Object[0];
 	}
 
-
 	@Override
 	public Object getParent(Object element) {
 		// copied and modified from JDT
@@ -287,8 +286,8 @@ public class CxContentProvider implements IPipelinedTreeContentProvider2, IResou
 		// try to map resources to the containing package fragment
 		if (element instanceof IResource) {
 			IResource parent = ((IResource) element).getParent();
-			if (element instanceof IProject) {
-				return parent;
+			if (parent == null) {
+				return null;
 			}
 
 			ITreeElement tree = ProjectLayout.getTreeElement(parent);
@@ -298,7 +297,7 @@ public class CxContentProvider implements IPipelinedTreeContentProvider2, IResou
 			return parent;
 		} else if (element instanceof Package) {
 			Package package_ = (Package) element;
-			return package_.getParent();
+			return package_.getSourceFolder();
 		} else if (element instanceof SourceFolder) {
 			SourceFolder folder = (SourceFolder) element;
 			return folder.getProject();
