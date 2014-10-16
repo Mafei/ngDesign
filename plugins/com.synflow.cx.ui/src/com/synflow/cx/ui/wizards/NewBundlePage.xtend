@@ -11,6 +11,7 @@
 package com.synflow.cx.ui.wizards
 
 import org.eclipse.jface.viewers.IStructuredSelection
+import com.synflow.core.ISynflowConstants
 
 /**
  * This class provides a page to create a new Cx bundle.
@@ -20,7 +21,7 @@ import org.eclipse.jface.viewers.IStructuredSelection
 class NewBundlePage extends NewFilePage {
 
 	new(String pageName, IStructuredSelection selection) {
-		super(pageName, "cf", selection);
+		super(pageName, ISynflowConstants.FILE_EXT_CX, selection);
 	}
 
 	override getStringContents(String author, int year)
