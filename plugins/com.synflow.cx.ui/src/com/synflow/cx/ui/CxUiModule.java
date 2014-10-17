@@ -13,17 +13,24 @@ package com.synflow.cx.ui;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.formatting.IWhitespaceInformationProvider;
 import org.eclipse.xtext.linking.ILinkingDiagnosticMessageProvider;
+import org.eclipse.xtext.resource.containers.IAllContainersState;
 import org.eclipse.xtext.ui.editor.XtextSourceViewer.Factory;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
+import org.eclipse.xtext.ui.editor.model.IResourceForEditorInputFactory;
+import org.eclipse.xtext.ui.editor.model.ResourceForIEditorInputFactory;
 import org.eclipse.xtext.ui.editor.outline.impl.OutlineFilterAndSorter.IComparator;
 import org.eclipse.xtext.ui.editor.preferences.IPreferenceStoreInitializer;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.AbstractAntlrTokenToAttributeIdMapper;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;
+import org.eclipse.xtext.ui.resource.IResourceSetProvider;
+import org.eclipse.xtext.ui.resource.SimpleResourceSetProvider;
+import org.eclipse.xtext.ui.shared.Access;
 
 import com.google.inject.Binder;
+import com.google.inject.Provider;
 import com.synflow.cx.formatting.WhitespaceInfoProvider;
-import com.synflow.cx.ui.AbstractCxUiModule;
+import com.synflow.cx.ui.containers.CxProjectsState;
 import com.synflow.cx.ui.editor.syntaxhighlighting.CxHighlightingConfiguration;
 import com.synflow.cx.ui.editor.syntaxhighlighting.CxSemanticHighlightingCalculator;
 import com.synflow.cx.ui.editor.syntaxhighlighting.CxTokenToIdMapper;
@@ -56,6 +63,16 @@ public class CxUiModule extends AbstractCxUiModule {
 		return CxLinkingDiagnosticMessageProvider.class;
 	}
 
+	@Override
+	public Class<? extends IResourceForEditorInputFactory> bindIResourceForEditorInputFactory() {
+		return ResourceForIEditorInputFactory.class;
+	}
+
+	@Override
+	public Class<? extends IResourceSetProvider> bindIResourceSetProvider() {
+		return SimpleResourceSetProvider.class;
+	}
+
 	public Class<? extends ISemanticHighlightingCalculator> bindISemanticHighlightingCalculator() {
 		return CxSemanticHighlightingCalculator.class;
 	}
@@ -77,6 +94,11 @@ public class CxUiModule extends AbstractCxUiModule {
 	@Override
 	public void configureBuilderPreferenceStoreInitializer(Binder binder) {
 		binder.bind(IPreferenceStoreInitializer.class).to(Initializer.class);
+	}
+
+	@Override
+	public Provider<IAllContainersState> provideIAllContainersState() {
+		return Access.<IAllContainersState> provider(CxProjectsState.class);
 	}
 
 }
