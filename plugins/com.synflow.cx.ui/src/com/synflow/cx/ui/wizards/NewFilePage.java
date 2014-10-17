@@ -15,16 +15,15 @@ import java.io.InputStream;
 import java.util.Calendar;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 
 import com.synflow.core.SynflowCore;
+import com.synflow.core.layout.ITreeElement;
+import com.synflow.core.layout.ProjectLayout;
 
 /**
  * This class provides a page to create a new text file.
@@ -86,21 +85,17 @@ public abstract class NewFilePage extends WizardNewFileCreationPage {
 		// check file is in project
 		IPath path = getContainerFullPath();
 		IFile file = createFileHandle(path.append(getFileName()));
-		IJavaProject project = JavaCore.create(file.getProject());
-		if (project == null) {
+		IProject project = file.getProject();
+		if (ProjectLayout.getSourceFolder(project) == null) {
 			setErrorMessage("The file must be located in a Synflow project");
 			return false;
 		}
 
 		// check file is in package
-		try {
-			IPackageFragment fragment = project.findPackageFragment(path);
-			if (fragment == null) {
-				setErrorMessage("The container must be a package");
-				return false;
-			}
-		} catch (JavaModelException e) {
-			e.printStackTrace();
+		ITreeElement element = ProjectLayout.getTreeElement(file.getParent());
+		if (element == null || !element.isPackage()) {
+			setErrorMessage("The container must be a package");
+			return false;
 		}
 
 		setErrorMessage(null);
