@@ -22,7 +22,7 @@ import com.synflow.core.SynflowCore;
 import com.synflow.models.dpn.Entity;
 
 /**
- * This class defines a handler for commands that generate a testbench/unit test for a .cf file.
+ * This class defines a handler for commands that generate a testbench/unit test for a .cx file.
  * 
  * @author Matthieu Wipliez
  * 

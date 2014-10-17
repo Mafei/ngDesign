@@ -217,7 +217,7 @@ public abstract class AbstractCxTest extends AbstractXtextTests {
 	 * Parses, validates, and generates code for the entity defined in the file whose name is given.
 	 * 
 	 * @param name
-	 *            name of a .cf file that contains an entity
+	 *            name of a .cx file that contains an entity
 	 * @return an IR actor if the file could be parsed, validated, and translated to IR, otherwise
 	 *         <code>null</code>
 	 */

@@ -18,7 +18,7 @@ import org.eclipse.emf.ecore.resource.impl.ExtensibleURIConverterImpl;
 
 /**
  * This class describes a special URI mapper that returns a valid absolute URI to a target .ir file
- * from a .cf URI.
+ * from a .cx URI.
  * 
  * @author Matthieu Wipliez
  * 
@@ -39,7 +39,7 @@ public class UriComputer extends ExtensibleURIConverterImpl {
 	 * @param name
 	 *            name of the entity
 	 * @param uri
-	 *            uri of a .cf resource
+	 *            uri of a .cx resource
 	 * @param context
 	 *            URI to a module (may be <code>null</code>)
 	 * @return a new absolute URI

@@ -209,7 +209,7 @@ public class SimulationTab extends AbstractLaunchConfigurationTab {
 
 	@Override
 	public Image getImage() {
-		return NgDesignUi.getImageDescriptor("icons/cflow_app.gif")
+		return NgDesignUi.getImageDescriptor("icons/cx_app.gif")
 				.createImage();
 	}
 

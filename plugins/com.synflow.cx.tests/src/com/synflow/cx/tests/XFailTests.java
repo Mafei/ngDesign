@@ -94,226 +94,226 @@ public class XFailTests extends AbstractCxTest {
 
 	@Test
 	public void checkAvailable1() throws Exception {
-		assertError(getModule("com/synflow/test/xfail/Available1.cf"), IssueCodes.ERR_AVAILABLE);
+		assertError(getModule("com/synflow/test/xfail/Available1.cx"), IssueCodes.ERR_AVAILABLE);
 	}
 
 	@Test
 	public void checkAvailable2() throws Exception {
-		assertError(getModule("com/synflow/test/xfail/Available2.cf"), IssueCodes.ERR_AVAILABLE);
+		assertError(getModule("com/synflow/test/xfail/Available2.cx"), IssueCodes.ERR_AVAILABLE);
 	}
 
 	@Test
 	public void checkAvailable3() throws Exception {
-		assertError(getModule("com/synflow/test/xfail/Available3.cf"), IssueCodes.ERR_AVAILABLE);
+		assertError(getModule("com/synflow/test/xfail/Available3.cx"), IssueCodes.ERR_AVAILABLE);
 	}
 
 	@Test
 	public void checkAvailable4() throws Exception {
-		assertError(getModule("com/synflow/test/xfail/Available4.cf"), IssueCodes.ERR_AVAILABLE);
+		assertError(getModule("com/synflow/test/xfail/Available4.cx"), IssueCodes.ERR_AVAILABLE);
 	}
 
 	@Test
 	public void checkCompareAlwaysFalse1() throws Exception {
-		assertError(getModule("com/synflow/test/xfail/CompareAlwaysFalse1.cf"),
+		assertError(getModule("com/synflow/test/xfail/CompareAlwaysFalse1.cx"),
 				ERR_CMP_ALWAYS_FALSE);
 	}
 
 	@Test
 	public void checkCompareAlwaysFalse2() throws Exception {
-		assertError(getModule("com/synflow/test/xfail/CompareAlwaysFalse2.cf"),
+		assertError(getModule("com/synflow/test/xfail/CompareAlwaysFalse2.cx"),
 				ERR_CMP_ALWAYS_FALSE);
 	}
 
 	@Test
 	public void checkCompareAlwaysTrue1() throws Exception {
-		assertError(getModule("com/synflow/test/xfail/CompareAlwaysTrue1.cf"), ERR_CMP_ALWAYS_TRUE);
+		assertError(getModule("com/synflow/test/xfail/CompareAlwaysTrue1.cx"), ERR_CMP_ALWAYS_TRUE);
 	}
 
 	@Test
 	public void checkCompareAlwaysTrue2() throws Exception {
-		assertError(getModule("com/synflow/test/xfail/CompareAlwaysTrue2.cf"), ERR_CMP_ALWAYS_TRUE);
+		assertError(getModule("com/synflow/test/xfail/CompareAlwaysTrue2.cx"), ERR_CMP_ALWAYS_TRUE);
 	}
 
 	@Test
 	public void checkConst1() throws Exception {
-		assertError(getModule("com/synflow/test/xfail/Const1.cf"), ERR_VAR_DECL);
+		assertError(getModule("com/synflow/test/xfail/Const1.cx"), ERR_VAR_DECL);
 	}
 
 	@Test
 	public void checkConst3() throws Exception {
-		assertError(getModule("com/synflow/test/xfail/Const3.cf"), ERR_CANNOT_ASSIGN_CONST);
+		assertError(getModule("com/synflow/test/xfail/Const3.cx"), ERR_CANNOT_ASSIGN_CONST);
 	}
 
 	@Test
 	public void checkConst4() throws Exception {
-		assertError(getModule("com/synflow/test/xfail/Const4.cf"), ERR_CANNOT_ASSIGN_CONST);
+		assertError(getModule("com/synflow/test/xfail/Const4.cx"), ERR_CANNOT_ASSIGN_CONST);
 	}
 
 	@Test
 	public void checkDivByNonConst() throws Exception {
-		assertError(getModule("com/synflow/test/xfail/DivByNonConst.cf"),
+		assertError(getModule("com/synflow/test/xfail/DivByNonConst.cx"),
 				ERR_DIV_MOD_NOT_CONST_POW_Of_TWO);
 	}
 
 	@Test
 	public void checkDivByNonPowerOfTwo() throws Exception {
-		assertError(getModule("com/synflow/test/xfail/DivByNonPowerOfTwo.cf"),
+		assertError(getModule("com/synflow/test/xfail/DivByNonPowerOfTwo.cx"),
 				ERR_DIV_MOD_NOT_CONST_POW_Of_TWO);
 	}
 
 	@Test
 	public void checkDuplicate1() throws Exception {
-		assertError(getModule("com/synflow/test/xfail/Duplicate1.cf"),
+		assertError(getModule("com/synflow/test/xfail/Duplicate1.cx"),
 				IssueCodes.ERR_DUPLICATE_DECLARATIONS);
 	}
 
 	@Test
 	public void checkDuplicate2() throws Exception {
-		assertError(getModule("com/synflow/test/xfail/Duplicate2.cf"),
+		assertError(getModule("com/synflow/test/xfail/Duplicate2.cx"),
 				IssueCodes.ERR_DUPLICATE_DECLARATIONS);
 	}
 
 	@Test
 	public void checkDuplicate3() throws Exception {
-		assertError(getModule("com/synflow/test/xfail/Duplicate3.cf"),
+		assertError(getModule("com/synflow/test/xfail/Duplicate3.cx"),
 				IssueCodes.ERR_DUPLICATE_DECLARATIONS);
 	}
 
 	@Test
 	public void checkExpectedConstantIdle() throws Exception {
-		assertError(getModule("com/synflow/test/xfail/ExpectedConstantIdle.cf"), ERR_EXPECTED_CONST);
+		assertError(getModule("com/synflow/test/xfail/ExpectedConstantIdle.cx"), ERR_EXPECTED_CONST);
 	}
 
 	@Test
 	public void checkExpectedConstantIdle2() throws Exception {
-		assertError(getModule("com/synflow/test/xfail/ExpectedConstantIdle2.cf"),
+		assertError(getModule("com/synflow/test/xfail/ExpectedConstantIdle2.cx"),
 				ERR_EXPECTED_CONST);
 	}
 
 	@Test
 	public void checkExpectedConstantInitValue() throws Exception {
-		assertError(getModule("com/synflow/test/xfail/ExpectedConstantInitValue.cf"),
+		assertError(getModule("com/synflow/test/xfail/ExpectedConstantInitValue.cx"),
 				ERR_EXPECTED_CONST);
 	}
 
 	@Test
 	public void checkExpectedConstantShift() throws Exception {
-		assertError(getModule("com/synflow/test/xfail/ExpectedConstantShift.cf"),
+		assertError(getModule("com/synflow/test/xfail/ExpectedConstantShift.cx"),
 				ERR_EXPECTED_CONST);
 	}
 
 	@Test
 	public void checkFunctionCall1() throws Exception {
-		assertError(getModule("com/synflow/test/xfail/FunctionCall1.cf"), ERR_TYPE_MISMATCH);
+		assertError(getModule("com/synflow/test/xfail/FunctionCall1.cx"), ERR_TYPE_MISMATCH);
 	}
 
 	@Test
 	public void checkFunctionCall2() throws Exception {
-		assertError(getModule("com/synflow/test/xfail/FunctionCall1.cf"), ERR_TYPE_MISMATCH);
+		assertError(getModule("com/synflow/test/xfail/FunctionCall1.cx"), ERR_TYPE_MISMATCH);
 	}
 
 	@Test
 	public void checkIllegalFence1() throws Exception {
-		assertError(getModule("com/synflow/test/xfail/IllegalFence1.cf"), ERR_ILLEGAL_FENCE);
+		assertError(getModule("com/synflow/test/xfail/IllegalFence1.cx"), ERR_ILLEGAL_FENCE);
 	}
 
 	@Test
 	public void checkIllegalFence2() throws Exception {
-		assertError(getModule("com/synflow/test/xfail/IllegalFence2.cf"), ERR_ILLEGAL_FENCE);
+		assertError(getModule("com/synflow/test/xfail/IllegalFence2.cx"), ERR_ILLEGAL_FENCE);
 	}
 
 	@Test
 	public void checkIllegalFence3() throws Exception {
-		assertError(getModule("com/synflow/test/xfail/IllegalFence3.cf"), ERR_ILLEGAL_FENCE);
+		assertError(getModule("com/synflow/test/xfail/IllegalFence3.cx"), ERR_ILLEGAL_FENCE);
 	}
 
 	@Test
 	public void checkIllegalFence4() throws Exception {
-		assertError(getModule("com/synflow/test/xfail/IllegalFence4.cf"), ERR_ILLEGAL_FENCE);
+		assertError(getModule("com/synflow/test/xfail/IllegalFence4.cx"), ERR_ILLEGAL_FENCE);
 	}
 
 	@Test
 	public void checkMainFunctionIncorrectType() throws Exception {
-		assertError(getModule("com/synflow/test/xfail/MainFunctionIncorrectType.cf"),
+		assertError(getModule("com/synflow/test/xfail/MainFunctionIncorrectType.cx"),
 				ERR_ENTRY_FUNCTION_BAD_TYPE);
 	}
 
 	@Test
 	public void checkModByNonConst() throws Exception {
-		assertError(getModule("com/synflow/test/xfail/ModByNonConst.cf"),
+		assertError(getModule("com/synflow/test/xfail/ModByNonConst.cx"),
 				ERR_DIV_MOD_NOT_CONST_POW_Of_TWO);
 	}
 
 	@Test
 	public void checkModByNonPowerOfTwo() throws Exception {
-		assertError(getModule("com/synflow/test/xfail/ModByNonPowerOfTwo.cf"),
+		assertError(getModule("com/synflow/test/xfail/ModByNonPowerOfTwo.cx"),
 				ERR_DIV_MOD_NOT_CONST_POW_Of_TWO);
 	}
 
 	@Test
 	public void checkMultipleReads() throws Exception {
-		assertError(getModule("com/synflow/test/xfail/MultipleReads.cf"), ERR_MULTIPLE_READS);
+		assertError(getModule("com/synflow/test/xfail/MultipleReads.cx"), ERR_MULTIPLE_READS);
 	}
 
 	@Test
 	public void checkMultipleReads2() throws Exception {
-		assertError(getModule("com/synflow/test/xfail/MultipleReads2.cf"), ERR_MULTIPLE_READS);
+		assertError(getModule("com/synflow/test/xfail/MultipleReads2.cx"), ERR_MULTIPLE_READS);
 	}
 
 	@Test
 	public void checkMultipleReads3() throws Exception {
-		assertError(getModule("com/synflow/test/xfail/MultipleReads3.cf"), ERR_MULTIPLE_READS);
+		assertError(getModule("com/synflow/test/xfail/MultipleReads3.cx"), ERR_MULTIPLE_READS);
 	}
 
 	@Test
 	public void checkNonPowerOfTwoMultiDimensionalArray() throws Exception {
-		assertError(getModule("com/synflow/test/xfail/NonPowerOfTwoMultiDimensionalArray.cf"),
+		assertError(getModule("com/synflow/test/xfail/NonPowerOfTwoMultiDimensionalArray.cx"),
 				IssueCodes.ERR_ARRAY_MULTI_NON_POWER_OF_TWO);
 	}
 
 	@Test
 	public void checkNoSideEffectCallFunction() throws Exception {
-		assertError(getModule("com/synflow/test/xfail/NoSideEffectCallFunction.cf"),
+		assertError(getModule("com/synflow/test/xfail/NoSideEffectCallFunction.cx"),
 				IssueCodes.ERR_NO_SIDE_EFFECTS);
 	}
 
 	@Test
 	public void checkNoSideEffectCallFunction2() throws Exception {
-		assertError(getModule("com/synflow/test/xfail/NoSideEffectCallFunction2.cf"),
+		assertError(getModule("com/synflow/test/xfail/NoSideEffectCallFunction2.cx"),
 				IssueCodes.ERR_NO_SIDE_EFFECTS);
 	}
 
 	@Test
 	public void checkNoSideEffectFunction1() throws Exception {
-		assertError(getModule("com/synflow/test/xfail/NoSideEffectFunction1.cf"),
+		assertError(getModule("com/synflow/test/xfail/NoSideEffectFunction1.cx"),
 				ERR_SIDE_EFFECTS_FUNCTION);
 	}
 
 	@Test
 	public void checkNoSideEffectFunction2() throws Exception {
-		assertError(getModule("com/synflow/test/xfail/NoSideEffectFunction2.cf"),
+		assertError(getModule("com/synflow/test/xfail/NoSideEffectFunction2.cx"),
 				ERR_SIDE_EFFECTS_FUNCTION);
 	}
 
 	@Test
 	public void checkNoSideEffectFunction3() throws Exception {
-		assertError(getModule("com/synflow/test/xfail/NoSideEffectFunction3.cf"),
+		assertError(getModule("com/synflow/test/xfail/NoSideEffectFunction3.cx"),
 				ERR_SIDE_EFFECTS_FUNCTION);
 	}
 
 	@Test
 	public void checkNoType_i1() throws Exception {
-		assertError(getModule("com/synflow/test/xfail/NoType_i1.cf"), IssueCodes.ERR_TYPE_ONE_BIT);
+		assertError(getModule("com/synflow/test/xfail/NoType_i1.cx"), IssueCodes.ERR_TYPE_ONE_BIT);
 	}
 
 	@Test
 	public void checkNoType_u1() throws Exception {
-		assertError(getModule("com/synflow/test/xfail/NoType_u1.cf"), IssueCodes.ERR_TYPE_ONE_BIT);
+		assertError(getModule("com/synflow/test/xfail/NoType_u1.cx"), IssueCodes.ERR_TYPE_ONE_BIT);
 	}
 
 	@Test
 	public void checkSyntaxErrorPort() throws Exception {
-		assertHasParseErrors(getModule("com/synflow/test/xfail/FailSyntaxPort.cf"));
+		assertHasParseErrors(getModule("com/synflow/test/xfail/FailSyntaxPort.cx"));
 	}
 
 	@Test
@@ -323,13 +323,13 @@ public class XFailTests extends AbstractCxTest {
 
 	@Test
 	public void intepreterReallyChecks() throws Exception {
-		// checkExecution("com/synflow/test/xfail/XfailBadCounter.cf", false);
+		// checkExecution("com/synflow/test/xfail/XfailBadCounter.cx", false);
 	}
 
 	private void test(String pack, String code, String... tests) throws Exception {
 		int failed = 0;
 		for (String test : tests) {
-			String name = "com/synflow/test/xfail/" + pack + "/" + test + ".cf";
+			String name = "com/synflow/test/xfail/" + pack + "/" + test + ".cx";
 			System.out.println("testing " + name);
 			try {
 				assertError(getModule(name), code);

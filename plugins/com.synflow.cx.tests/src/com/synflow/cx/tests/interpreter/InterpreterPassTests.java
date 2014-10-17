@@ -27,7 +27,7 @@ public class InterpreterPassTests extends AbstractPassTests {
 	 * given. The input/output ports must have "stimulus" and "expected" attributes.
 	 * 
 	 * @param name
-	 *            name of a .cf file that contains an entity
+	 *            name of a .cx file that contains an entity
 	 * @param expected
 	 *            expected outcome of the execution: <code>true</code> if pass is expected,
 	 *            <code>false</code> if fail is expected

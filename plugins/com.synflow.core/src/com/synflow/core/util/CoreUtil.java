@@ -44,8 +44,8 @@ import com.synflow.models.dpn.Entity;
 import com.synflow.models.ir.util.IrUtil;
 
 /**
- * This class defines utility methods to find .cf/.ir files from qualified class names (as well as
- * the other way around).
+ * This class defines utility methods to find .ir files from qualified class names (as well as the
+ * other way around).
  * 
  * @author Matthieu Wipliez
  * 

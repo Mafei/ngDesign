@@ -218,7 +218,7 @@ public abstract class AbstractGefView extends ViewPart implements IPartListener,
 			}
 		}
 
-		// if .cf file valid and header or task with no FSM clear viewer
+		// if .cx file valid and header or task with no FSM clear viewer
 		reset();
 		clearViewer();
 	}

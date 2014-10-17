@@ -33,7 +33,6 @@ import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 
 import com.google.inject.Inject;
 import com.synflow.core.SynflowCore;
-import com.synflow.cx.ui.CxExecutableExtensionFactory;
 import com.synflow.models.dpn.Transition;
 
 /**
@@ -45,12 +44,11 @@ import com.synflow.models.dpn.Transition;
 @SuppressWarnings("restriction")
 public class CxEditorCreator {
 
-	private class CflowEditedResourceProvider implements
-			IEditedResourceProvider {
+	private class CxEditedResourceProvider implements IEditedResourceProvider {
 
 		private final IFile file;
 
-		public CflowEditedResourceProvider(IFile file) {
+		public CxEditedResourceProvider(IFile file) {
 			this.file = file;
 		}
 
@@ -75,8 +73,7 @@ public class CxEditorCreator {
 		if (instance == null) {
 			CxExecutableExtensionFactory factory = new CxExecutableExtensionFactory();
 			try {
-				factory.setInitializationData(null, null,
-						CxEditorCreator.class.getName());
+				factory.setInitializationData(null, null, CxEditorCreator.class.getName());
 				instance = (CxEditorCreator) factory.create();
 			} catch (CoreException e) {
 				SynflowCore.log(e);
@@ -106,9 +103,8 @@ public class CxEditorCreator {
 	 */
 	public Control createEditor(IFile file, Transition transition, Composite parent) {
 		SourceViewerFactory.style = SWT.NONE;
-		EmbeddedEditor embeddedEditor = editorFactory
-				.newEditor(new CflowEditedResourceProvider(file)).readOnly()
-				.withParent(parent);
+		EmbeddedEditor embeddedEditor = editorFactory.newEditor(new CxEditedResourceProvider(file))
+				.readOnly().withParent(parent);
 		SourceViewerFactory.style = null;
 
 		String content = "";

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package com.synflow.cx.tests;
 
+import static com.synflow.core.ISynflowConstants.FILE_EXT_CX;
+
 import org.junit.Test;
 
 import com.synflow.models.dpn.Entity;
@@ -130,7 +132,7 @@ public abstract class AbstractPassTests extends AbstractCxTest {
 
 	private void test(String pack, String name) throws Exception {
 		int failed = 0;
-		String fileName = "com/synflow/test/" + pack + "/" + name + ".cf";
+		String fileName = "com/synflow/test/" + pack + "/" + name + "." + FILE_EXT_CX;
 		System.out.println("testing " + fileName);
 
 		// initialize to '1' in case compileFile fails
