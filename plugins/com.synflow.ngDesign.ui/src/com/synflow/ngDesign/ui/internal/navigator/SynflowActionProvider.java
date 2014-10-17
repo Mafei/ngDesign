@@ -33,6 +33,7 @@ import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
 
 import com.synflow.core.layout.ITreeElement;
+import com.synflow.ngDesign.ui.internal.navigator.actions.PasteAction;
 
 /**
  * This class describes an action provider with only the CCP action group from JDT.

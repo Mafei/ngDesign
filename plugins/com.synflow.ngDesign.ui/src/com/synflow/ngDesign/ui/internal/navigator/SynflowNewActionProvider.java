@@ -27,6 +27,8 @@ import org.eclipse.ui.navigator.WizardActionGroup;
 import org.eclipse.ui.wizards.IWizardCategory;
 import org.eclipse.ui.wizards.IWizardRegistry;
 
+import com.synflow.ngDesign.ui.internal.navigator.actions.NewSynflowProjectAction;
+
 /**
  * This class defines an action provider for new items based on
  * org.eclipse.ui.internal.navigator.resources.actions.NewActionProvider. The differences are:

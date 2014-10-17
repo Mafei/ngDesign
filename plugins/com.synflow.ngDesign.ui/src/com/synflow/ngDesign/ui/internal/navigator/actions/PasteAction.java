@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package com.synflow.ngDesign.ui.internal.navigator;
+package com.synflow.ngDesign.ui.internal.navigator.actions;
 
 import java.util.List;
 

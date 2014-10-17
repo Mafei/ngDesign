@@ -9,7 +9,7 @@
  *    IBM Corporation - initial API and implementation
  *    Matthieu Wipliez - modified
  *******************************************************************************/
-package com.synflow.ngDesign.ui.internal.navigator;
+package com.synflow.ngDesign.ui.internal.navigator.actions;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ISelection;
