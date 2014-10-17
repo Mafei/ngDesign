@@ -26,6 +26,18 @@
           <dependency-resolution>
             <optionalDependencies>ignore</optionalDependencies>
           </dependency-resolution>
+
+          <!-- filter out unwanted bundles -->
+          <filters>
+            <filter><type>eclipse-plugin</type><id>org.eclipse.jdt.core</id><removeAll/></filter>
+
+            <filter><type>eclipse-plugin</type><id>org.eclipse.xtend</id><removeAll/></filter>
+
+            <filter><type>eclipse-plugin</type><id>org.eclipse.xtext.common.types</id><removeAll/></filter>
+            <filter><type>eclipse-plugin</type><id>org.eclipse.xtext.ecore</id><removeAll/></filter>
+            <filter><type>eclipse-plugin</type><id>org.eclipse.xtext.generator</id><removeAll/></filter>
+            <filter><type>eclipse-plugin</type><id>org.eclipse.xtext.smap</id><removeAll/></filter>
+          </filters>
         </configuration>
       </plugin>
 
