@@ -10,6 +10,7 @@
  *******************************************************************************/
 package com.synflow.cx.internal.scoping;
 
+import static com.synflow.core.ISynflowConstants.FILE_EXT_CX;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 
@@ -53,7 +54,8 @@ public class ComponentScope extends AbstractScope {
 	}
 
 	private static URI createURI(String name, int index) {
-		URI uri = URI.createPlatformPluginURI("com.synflow.cx/model/" + name + ".cf", true);
+		String pathName = "com.synflow.cx/model/" + name + "." + FILE_EXT_CX;
+		URI uri = URI.createPlatformPluginURI(pathName, true);
 		return uri.appendFragment("//@entities." + index);
 	}
 
