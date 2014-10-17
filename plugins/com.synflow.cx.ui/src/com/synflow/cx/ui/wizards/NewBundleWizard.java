@@ -10,7 +10,6 @@
  *******************************************************************************/
 package com.synflow.cx.ui.wizards;
 
-
 /**
  * This class provides a wizard to create a new Cx bundle.
  * 
