@@ -21,6 +21,14 @@
             Create a Synflow project
          </description>
       </wizard>
+      <wizard
+            category="com.synflow.ngDesign.ui.categorySynflow"
+            class="com.synflow.ngDesign.ui.internal.wizards.NewPackageWizard"
+            hasPages="true"
+            icon="icons/package.gif"
+            id="com.synflow.ngDesign.ui.wizards.newPackage"
+            name="Package">
+      </wizard>
    </extension>
    <extension
          point="org.eclipse.ui.propertyPages">
@@ -426,7 +434,7 @@
        </commonSorter>
        <commonWizard
              type="new"
-             wizardId="org.eclipse.jdt.ui.wizards.NewPackageCreationWizard">
+             wizardId="com.synflow.ngDesign.ui.wizards.newPackage">
           <enablement>
              <or>
                 <adapt
