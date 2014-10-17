@@ -10,7 +10,7 @@
  *******************************************************************************/
 package com.synflow.ngDesign.ui.internal;
 
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.ICommand;
@@ -32,6 +32,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
+import com.google.common.collect.Lists;
 import com.synflow.core.SynflowCore;
 
 /**
@@ -75,6 +76,30 @@ public class NgDesignUi extends AbstractUIPlugin {
 	public NgDesignUi() {
 	}
 
+	/**
+	 * Removes Java builder manually, because if JDT is not available then the nature is not
+	 * deconfigured.
+	 * 
+	 * @param description
+	 */
+	private void removeJavaBuilder(IProjectDescription description) {
+		List<ICommand> commands = Lists.newArrayList(description.getBuildSpec());
+		Iterator<ICommand> it = commands.iterator();
+		while (it.hasNext()) {
+			String name = it.next().getBuilderName();
+			if ("org.eclipse.jdt.core.javabuilder".equals(name)) {
+				it.remove();
+			}
+		}
+
+		description.setBuildSpec(commands.toArray(new ICommand[commands.size()]));
+	}
+
+	/**
+	 * Renames all files with the .cf extension to .cx.
+	 * 
+	 * @param container
+	 */
 	private void renameCfFiles(IContainer container) {
 		try {
 			for (IResource member : container.members()) {
@@ -151,22 +176,22 @@ public class NgDesignUi extends AbstractUIPlugin {
 		for (IProject project : SynflowCore.getProjects()) {
 			try {
 				IProjectDescription description = project.getDescription();
-				ICommand[] commands = description.getBuildSpec();
-				List<ICommand> newCommands = new ArrayList<>(commands.length);
-				for (ICommand command : commands) {
-					if ("org.eclipse.jdt.core.javabuilder".equals(command.getBuilderName())) {
-						renameCfFiles(project);
-					} else {
-						newCommands.add(command);
-					}
-				}
+				final String javaNature = "org.eclipse.jdt.core.javanature";
+				if (description.hasNature(javaNature)) {
+					renameCfFiles(project);
+					removeJavaBuilder(description);
 
-				int numCommands = newCommands.size();
-				if (numCommands != commands.length) {
-					description.setBuildSpec(newCommands.toArray(new ICommand[numCommands]));
-				}
+					// remove Java nature
+					List<String> natures = Lists.newArrayList(description.getNatureIds());
+					natures.remove(javaNature);
+					description.setNatureIds(natures.toArray(new String[natures.size()]));
 
-				project.setDescription(description, null);
+					// set description
+					project.setDescription(description, null);
+
+					// remove .classpath
+					project.getFile(".classpath").delete(true, null);
+				}
 			} catch (CoreException e) {
 				SynflowCore.log(e);
 			}
