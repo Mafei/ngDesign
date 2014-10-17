@@ -24,7 +24,6 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.actions.CopyResourceAction;
 import org.eclipse.ui.actions.DeleteResourceAction;
 import org.eclipse.ui.actions.RenameResourceAction;
 import org.eclipse.ui.actions.TextActionHandler;
@@ -33,6 +32,7 @@ import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
 
 import com.synflow.core.layout.ITreeElement;
+import com.synflow.ngDesign.ui.internal.navigator.actions.CopyAction;
 import com.synflow.ngDesign.ui.internal.navigator.actions.PasteAction;
 
 /**
@@ -45,7 +45,7 @@ public class SynflowActionProvider extends CommonActionProvider {
 
 	private Clipboard clipboard;
 
-	private CopyResourceAction copyAction;
+	private CopyAction copyAction;
 
 	private DeleteResourceAction deleteAction;
 
@@ -90,13 +90,20 @@ public class SynflowActionProvider extends CommonActionProvider {
 	public void fillContextMenu(IMenuManager menu) {
 		IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
 
-		boolean canCopy = true;
+		boolean canCopy = true, canDelete = true, canRename = true;
 		Iterator<?> it = selection.iterator();
 		while (it.hasNext()) {
 			Object obj = it.next();
 			if (obj instanceof ITreeElement) {
 				// cannot copy a package or source folder
 				canCopy = false;
+
+				// cannot delete or rename source folder
+				ITreeElement element = (ITreeElement) obj;
+				if (element.isSourceFolder()) {
+					canDelete = false;
+					canRename = false;
+				}
 			}
 		}
 
@@ -108,11 +115,15 @@ public class SynflowActionProvider extends CommonActionProvider {
 		pasteAction.selectionChanged(selection);
 		menu.appendToGroup(ICommonMenuConstants.GROUP_EDIT, pasteAction);
 
-		deleteAction.selectionChanged(selection);
-		menu.appendToGroup(ICommonMenuConstants.GROUP_EDIT, deleteAction);
+		if (canDelete) {
+			deleteAction.selectionChanged(selection);
+			menu.appendToGroup(ICommonMenuConstants.GROUP_EDIT, deleteAction);
+		}
 
-		renameAction.selectionChanged(selection);
-		menu.appendToGroup(ICommonMenuConstants.GROUP_REORGANIZE, renameAction);
+		if (canRename) {
+			renameAction.selectionChanged(selection);
+			menu.appendToGroup(ICommonMenuConstants.GROUP_REORGANIZE, renameAction);
+		}
 	}
 
 	@Override
@@ -135,7 +146,7 @@ public class SynflowActionProvider extends CommonActionProvider {
 			}
 		};
 
-		copyAction = new CopyResourceAction(sp);
+		copyAction = new CopyAction(shell, clipboard);
 		copyAction.setDisabledImageDescriptor(images
 				.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
 		copyAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
