@@ -10,16 +10,13 @@
  *******************************************************************************/
 package com.synflow.ngDesign.ui.internal.wizards;
 
-import static com.synflow.core.ISynflowConstants.FILE_EXT_CX;
 import static com.synflow.core.ISynflowConstants.FOLDER_IR;
 import static com.synflow.core.ISynflowConstants.FOLDER_SIM;
 import static com.synflow.core.ISynflowConstants.FOLDER_TESTBENCH;
-import static org.eclipse.jdt.core.JavaCore.newSourceEntry;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.Arrays;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -28,12 +25,6 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.xtext.ui.XtextProjectHelper;
 
 import com.synflow.core.SynflowNature;
@@ -46,16 +37,13 @@ import com.synflow.core.SynflowNature;
  */
 public class ProjectCreator {
 
-	private static final IPath[] CP_PATTERNS = { new Path("**/*." + FILE_EXT_CX) };
-
 	private static final String[] IGNORES = new String[] { FOLDER_IR, FOLDER_SIM, FOLDER_TESTBENCH,
 			"verilog-gen", "vhdl-gen" };
 
 	/**
 	 * Synflow must be first for icon to appear correctly
 	 */
-	private static final String[] NATURES = { SynflowNature.NATURE_ID, JavaCore.NATURE_ID,
-			XtextProjectHelper.NATURE_ID };
+	private static final String[] NATURES = { SynflowNature.NATURE_ID, XtextProjectHelper.NATURE_ID };
 
 	/**
 	 * Creates the .gitignore file.
@@ -109,17 +97,6 @@ public class ProjectCreator {
 		if (!src.exists()) {
 			src.create(true, true, null);
 		}
-
-		// add "src" source entry
-		// default JRE
-		IClasspathEntry[] jre = { JavaRuntime.getDefaultJREContainerEntry() };
-		int n = jre.length;
-		IClasspathEntry[] entries = Arrays.copyOf(jre, n + 1);
-		entries[n] = newSourceEntry(src.getFullPath(), CP_PATTERNS);
-
-		// create Java project and set entries
-		IJavaProject javaProject = JavaCore.create(project);
-		javaProject.setRawClasspath(entries, null);
 	}
 
 	/**
