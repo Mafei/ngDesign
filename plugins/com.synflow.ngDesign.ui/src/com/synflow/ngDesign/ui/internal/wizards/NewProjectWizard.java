@@ -29,20 +29,13 @@ import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
  * @author Matthieu Wipliez
  * 
  */
-public class NewProjectWizard extends Wizard implements IExecutableExtension,
-		INewWizard {
+public class NewProjectWizard extends Wizard implements IExecutableExtension, INewWizard {
 
 	public static final String WIZARD_ID = "com.synflow.ngDesign.ui.wizards.newProject";
 
 	private IConfigurationElement fConfigElement;
 
 	private WizardNewProjectCreationPage mainPage;
-
-	@SuppressWarnings("unused")
-	private IStructuredSelection selection;
-
-	@SuppressWarnings("unused")
-	private IWorkbench workbench;
 
 	@Override
 	public void addPages() {
@@ -54,8 +47,6 @@ public class NewProjectWizard extends Wizard implements IExecutableExtension,
 
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		this.workbench = workbench;
-		this.selection = selection;
 	}
 
 	@Override
@@ -78,11 +69,10 @@ public class NewProjectWizard extends Wizard implements IExecutableExtension,
 	}
 
 	/**
-	 * Stores the configuration element for the wizard. The config element will
-	 * be used in <code>performFinish</code> to set the result perspective.
+	 * Stores the configuration element for the wizard. The config element will be used in
+	 * <code>performFinish</code> to set the result perspective.
 	 */
-	public void setInitializationData(IConfigurationElement cfig,
-			String propertyName, Object data) {
+	public void setInitializationData(IConfigurationElement cfig, String propertyName, Object data) {
 		fConfigElement = cfig;
 	}
 
