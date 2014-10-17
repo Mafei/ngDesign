@@ -10,7 +10,6 @@
  *******************************************************************************/
 package com.synflow.cx.ui.labeling;
 
-import org.eclipse.jdt.ui.ProblemsLabelDecorator;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -23,7 +22,7 @@ import com.google.inject.Inject;
 
 /**
  * This class defines a label provider for the Cx navigator (Project Explorer). This delegates calls
- * to the {@link NavigatorDeclarativeLabelProvider}, and decorates images and text with JDT's
+ * to the {@link NavigatorDeclarativeLabelProvider}, and decorates images and text with the
  * {@link ProblemsLabelDecorator}.
  * 
  * @author Matthieu Wipliez
