@@ -24,8 +24,6 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.actions.DeleteResourceAction;
-import org.eclipse.ui.actions.RenameResourceAction;
 import org.eclipse.ui.actions.TextActionHandler;
 import org.eclipse.ui.navigator.CommonActionProvider;
 import org.eclipse.ui.navigator.ICommonActionExtensionSite;
@@ -33,7 +31,9 @@ import org.eclipse.ui.navigator.ICommonMenuConstants;
 
 import com.synflow.core.layout.ITreeElement;
 import com.synflow.ngDesign.ui.internal.navigator.actions.CopyAction;
+import com.synflow.ngDesign.ui.internal.navigator.actions.DeleteAction;
 import com.synflow.ngDesign.ui.internal.navigator.actions.PasteAction;
+import com.synflow.ngDesign.ui.internal.navigator.actions.RenameAction;
 
 /**
  * This class describes an action provider with only the CCP action group from JDT.
@@ -47,11 +47,11 @@ public class SynflowActionProvider extends CommonActionProvider {
 
 	private CopyAction copyAction;
 
-	private DeleteResourceAction deleteAction;
+	private DeleteAction deleteAction;
 
 	private PasteAction pasteAction;
 
-	private RenameResourceAction renameAction;
+	private RenameAction renameAction;
 
 	private Shell shell;
 
@@ -90,7 +90,7 @@ public class SynflowActionProvider extends CommonActionProvider {
 	public void fillContextMenu(IMenuManager menu) {
 		IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
 
-		boolean canCopy = true, canDelete = true, canRename = true;
+		boolean canCopy = true, canPaste = true, canDelete = true, canRename = true;
 		Iterator<?> it = selection.iterator();
 		while (it.hasNext()) {
 			Object obj = it.next();
@@ -98,11 +98,10 @@ public class SynflowActionProvider extends CommonActionProvider {
 				// cannot copy a package or source folder
 				canCopy = false;
 
-				// cannot delete or rename source folder
+				// cannot paste, delete, or rename source folder
 				ITreeElement element = (ITreeElement) obj;
 				if (element.isSourceFolder()) {
-					canDelete = false;
-					canRename = false;
+					canPaste = canDelete = canRename = false;
 				}
 			}
 		}
@@ -112,8 +111,10 @@ public class SynflowActionProvider extends CommonActionProvider {
 			menu.appendToGroup(ICommonMenuConstants.GROUP_EDIT, copyAction);
 		}
 
-		pasteAction.selectionChanged(selection);
-		menu.appendToGroup(ICommonMenuConstants.GROUP_EDIT, pasteAction);
+		if (canPaste) {
+			pasteAction.selectionChanged(selection);
+			menu.appendToGroup(ICommonMenuConstants.GROUP_EDIT, pasteAction);
+		}
 
 		if (canDelete) {
 			deleteAction.selectionChanged(selection);
@@ -158,13 +159,13 @@ public class SynflowActionProvider extends CommonActionProvider {
 		pasteAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
 		pasteAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_PASTE);
 
-		deleteAction = new DeleteResourceAction(sp);
+		deleteAction = new DeleteAction(sp);
 		deleteAction.setDisabledImageDescriptor(images
 				.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
 		deleteAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
 		deleteAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_DELETE);
 
-		renameAction = new RenameResourceAction(sp, tree);
+		renameAction = new RenameAction(sp, tree);
 		renameAction.setActionDefinitionId(IWorkbenchCommandConstants.FILE_RENAME);
 	}
 
