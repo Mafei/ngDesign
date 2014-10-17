@@ -10,7 +10,6 @@
  *******************************************************************************/
 package com.synflow.ngDesign.ui.internal.navigator.actions;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
@@ -29,8 +28,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionListenerAction;
 import org.eclipse.ui.part.ResourceTransfer;
-
-import com.synflow.core.layout.ITreeElement;
 
 /**
  * Standard action for copying the currently selected resources to the clipboard.
@@ -108,13 +105,7 @@ public class CopyAction extends SelectionListenerAction {
 		List<IResource> selectedResources = getSelectedResources();
 
 		// cannot copy packages/source folder
-		for (Iterator<?> e = getStructuredSelection().iterator(); e.hasNext();) {
-			Object next = e.next();
-			if (next instanceof ITreeElement) {
-				ITreeElement element = (ITreeElement) next;
-				selectedResources.remove(element.getAdapter(IResource.class));
-			}
-		}
+		SelectionUtil.discardTreeElements(selectedResources, getStructuredSelection());
 
 		IResource[] resources = selectedResources.toArray(new IResource[selectedResources.size()]);
 

@@ -33,6 +33,8 @@ import org.eclipse.ui.navigator.CommonDropAdapter;
 import org.eclipse.ui.navigator.CommonDropAdapterAssistant;
 import org.eclipse.ui.part.ResourceTransfer;
 
+import com.synflow.core.layout.ITreeElement;
+
 /**
  * This class defines a very simple drop adapter assistant. It is loosely based on
  * {@link org.eclipse.ui.navigator.resources.ResourceDropAdapterAssistant}, but kept as simple as
@@ -171,6 +173,14 @@ public class CxDropAdapterAssistant extends CommonDropAdapterAssistant {
 		IResource resource = getResource(target);
 		if (resource == null) {
 			return Status.CANCEL_STATUS;
+		}
+
+		// cannot drop directly into source folders (must be package)
+		if (target instanceof ITreeElement) {
+			ITreeElement element = (ITreeElement) target;
+			if (element.isSourceFolder()) {
+				return Status.CANCEL_STATUS;
+			}
 		}
 
 		if (LocalSelectionTransfer.getTransfer().isSupportedType(transferType)) {

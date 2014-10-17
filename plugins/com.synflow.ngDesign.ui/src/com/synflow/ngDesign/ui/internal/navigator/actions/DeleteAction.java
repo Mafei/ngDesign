@@ -10,13 +10,11 @@
  *******************************************************************************/
 package com.synflow.ngDesign.ui.internal.navigator.actions;
 
-import java.util.Iterator;
+import static com.synflow.ngDesign.ui.internal.navigator.actions.SelectionUtil.containsSourceFolder;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.ui.actions.DeleteResourceAction;
-
-import com.synflow.core.layout.ITreeElement;
 
 /**
  * This class defines a delete action that cannot delete source folders.
@@ -30,24 +28,9 @@ public class DeleteAction extends DeleteResourceAction {
 		super(provider);
 	}
 
-	private boolean canDelete(IStructuredSelection selection) {
-		// cannot delete source folder
-		for (Iterator<?> e = getStructuredSelection().iterator(); e.hasNext();) {
-			Object next = e.next();
-			if (next instanceof ITreeElement) {
-				ITreeElement element = (ITreeElement) next;
-				if (element.isSourceFolder()) {
-					return false;
-				}
-			}
-		}
-
-		return true;
-	}
-
 	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
-		return super.updateSelection(selection) && canDelete(selection);
+		return super.updateSelection(selection) && !containsSourceFolder(selection);
 	}
 
 }

@@ -419,9 +419,19 @@
           </enablement>
        </actionProvider>
        <actionProvider
-             class="com.synflow.ngDesign.ui.internal.navigator.SynflowActionProvider"
+             class="com.synflow.ngDesign.ui.internal.navigator.EditActionProvider"
              id="com.synflow.ngDesign.ui.navigator.actions.EditActions"
              overrides="org.eclipse.ui.navigator.resources.actions.EditActions">
+          <enablement>
+             <adapt
+                   type="org.eclipse.core.resources.IResource">
+             </adapt>
+          </enablement>
+       </actionProvider>
+       <actionProvider
+             class="com.synflow.ngDesign.ui.internal.navigator.RefactorActionProvider"
+             id="org.eclipse.ui.navigator.resources.actions.RefactorActions"
+             overrides="org.eclipse.ui.navigator.resources.actions.RefactorActions">
           <enablement>
              <adapt
                    type="org.eclipse.core.resources.IResource">
@@ -545,9 +555,12 @@
           <actionExtension
                 pattern="org.eclipse.ui.navigator.resources.NewActions">
           </actionExtension>
-          <contentExtension
+          <actionExtension
                 pattern="org.eclipse.ui.navigator.resources.actions.EditActions">
-          </contentExtension>
+          </actionExtension>
+          <actionExtension
+                pattern="org.eclipse.ui.navigator.resources.actions.RefactorActions">
+          </actionExtension>
        </excludes>
     </viewerActionBinding>
  </extension>

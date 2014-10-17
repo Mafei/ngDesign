@@ -228,6 +228,12 @@ public class PasteAction extends SelectionListenerAction {
 				}
 			}
 		}
+
+		// cannot paste directly into source folder (must paste in package)
+		if (SelectionUtil.containsSourceFolder(selection)) {
+			return false;
+		}
+
 		if (resourceData != null) {
 			// linked resources can only be pasted into projects
 			if (isLinked(resourceData) && targetResource.getType() != IResource.PROJECT
