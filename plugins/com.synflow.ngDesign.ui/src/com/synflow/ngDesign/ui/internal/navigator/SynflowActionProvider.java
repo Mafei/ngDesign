@@ -11,14 +11,28 @@
  *******************************************************************************/
 package com.synflow.ngDesign.ui.internal.navigator;
 
-import org.eclipse.jdt.ui.actions.CCPActionGroup;
+import java.util.Iterator;
+
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.IShellProvider;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.actions.ActionContext;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbenchCommandConstants;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.actions.CopyResourceAction;
+import org.eclipse.ui.actions.DeleteResourceAction;
+import org.eclipse.ui.actions.RenameResourceAction;
+import org.eclipse.ui.actions.TextActionHandler;
 import org.eclipse.ui.navigator.CommonActionProvider;
 import org.eclipse.ui.navigator.ICommonActionExtensionSite;
-import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
+import org.eclipse.ui.navigator.ICommonMenuConstants;
+
+import com.synflow.core.layout.ITreeElement;
 
 /**
  * This class describes an action provider with only the CCP action group from JDT.
@@ -28,55 +42,128 @@ import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
  */
 public class SynflowActionProvider extends CommonActionProvider {
 
-	private CCPActionGroup fCCPGroup;
+	private Clipboard clipboard;
 
-	private boolean fInViewPart = false;
+	private CopyResourceAction copyAction;
+
+	private DeleteResourceAction deleteAction;
+
+	private PasteAction pasteAction;
+
+	private RenameResourceAction renameAction;
+
+	private Shell shell;
+
+	private TextActionHandler textActionHandler;
+
+	private Tree tree;
 
 	@Override
 	public void dispose() {
-		if (fInViewPart) {
-			fCCPGroup.dispose();
+		if (clipboard != null) {
+			clipboard.dispose();
+			clipboard = null;
 		}
+
 		super.dispose();
 	}
 
 	@Override
 	public void fillActionBars(IActionBars actionBars) {
-		if (fInViewPart) {
-			fCCPGroup.fillActionBars(actionBars);
+		if (textActionHandler == null) {
+			textActionHandler = new TextActionHandler(actionBars); // hook handlers
 		}
+
+		textActionHandler.setCopyAction(copyAction);
+		textActionHandler.setPasteAction(pasteAction);
+		textActionHandler.setDeleteAction(deleteAction);
+
+		updateActionBars();
+
+		actionBars.setGlobalActionHandler(ActionFactory.RENAME.getId(), renameAction);
+
+		textActionHandler.updateActionBars();
 	}
 
 	@Override
 	public void fillContextMenu(IMenuManager menu) {
-		if (fInViewPart) {
-			fCCPGroup.fillContextMenu(menu);
+		IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
+
+		boolean canCopy = true;
+		Iterator<?> it = selection.iterator();
+		while (it.hasNext()) {
+			Object obj = it.next();
+			if (obj instanceof ITreeElement) {
+				// cannot copy a package or source folder
+				canCopy = false;
+			}
 		}
+
+		if (canCopy) {
+			copyAction.selectionChanged(selection);
+			menu.appendToGroup(ICommonMenuConstants.GROUP_EDIT, copyAction);
+		}
+
+		pasteAction.selectionChanged(selection);
+		menu.appendToGroup(ICommonMenuConstants.GROUP_EDIT, pasteAction);
+
+		deleteAction.selectionChanged(selection);
+		menu.appendToGroup(ICommonMenuConstants.GROUP_EDIT, deleteAction);
+
+		renameAction.selectionChanged(selection);
+		menu.appendToGroup(ICommonMenuConstants.GROUP_REORGANIZE, renameAction);
 	}
 
 	@Override
 	public void init(ICommonActionExtensionSite site) {
-		ICommonViewerWorkbenchSite workbenchSite = null;
-		if (site.getViewSite() instanceof ICommonViewerWorkbenchSite)
-			workbenchSite = (ICommonViewerWorkbenchSite) site.getViewSite();
+		shell = site.getViewSite().getShell();
+		tree = (Tree) site.getStructuredViewer().getControl();
 
-		if (workbenchSite != null) {
-			if (workbenchSite.getPart() != null && workbenchSite.getPart() instanceof IViewPart) {
-				IViewPart viewPart = (IViewPart) workbenchSite.getPart();
+		makeActions();
+	}
 
-				fCCPGroup = new CCPActionGroup(viewPart);
+	protected void makeActions() {
+		clipboard = new Clipboard(shell.getDisplay());
 
-				fInViewPart = true;
+		ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
+
+		IShellProvider sp = new IShellProvider() {
+			@Override
+			public Shell getShell() {
+				return shell;
 			}
-		}
+		};
+
+		copyAction = new CopyResourceAction(sp);
+		copyAction.setDisabledImageDescriptor(images
+				.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
+		copyAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
+		copyAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_COPY);
+
+		pasteAction = new PasteAction(shell, clipboard);
+		pasteAction.setDisabledImageDescriptor(images
+				.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_DISABLED));
+		pasteAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
+		pasteAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_PASTE);
+
+		deleteAction = new DeleteResourceAction(sp);
+		deleteAction.setDisabledImageDescriptor(images
+				.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
+		deleteAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
+		deleteAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_DELETE);
+
+		renameAction = new RenameResourceAction(sp, tree);
+		renameAction.setActionDefinitionId(IWorkbenchCommandConstants.FILE_RENAME);
 	}
 
 	@Override
-	public void setContext(ActionContext context) {
-		super.setContext(context);
-		if (fInViewPart) {
-			fCCPGroup.setContext(context);
-		}
+	public void updateActionBars() {
+		IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
+
+		copyAction.selectionChanged(selection);
+		pasteAction.selectionChanged(selection);
+		deleteAction.selectionChanged(selection);
+		renameAction.selectionChanged(selection);
 	}
 
 }
