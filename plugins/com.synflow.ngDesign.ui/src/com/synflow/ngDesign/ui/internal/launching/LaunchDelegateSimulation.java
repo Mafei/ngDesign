@@ -14,21 +14,13 @@ import static com.synflow.core.ISynflowConstants.FOLDER_SIM;
 import static com.synflow.ngDesign.ui.internal.launching.ILaunchConfigurationConstants.CHECK_PORTS;
 import static com.synflow.ngDesign.ui.internal.launching.ILaunchConfigurationConstants.CLASS;
 import static com.synflow.ngDesign.ui.internal.launching.ILaunchConfigurationConstants.CREATE_VCD;
-import static com.synflow.ngDesign.ui.internal.launching.ILaunchConfigurationConstants.DEFAULT_ASSERT;
 import static com.synflow.ngDesign.ui.internal.launching.ILaunchConfigurationConstants.DEFAULT_CHECK_PORTS;
 import static com.synflow.ngDesign.ui.internal.launching.ILaunchConfigurationConstants.DEFAULT_CREATE_VCD;
 import static com.synflow.ngDesign.ui.internal.launching.ILaunchConfigurationConstants.DEFAULT_NUM_CYCLES;
 import static com.synflow.ngDesign.ui.internal.launching.ILaunchConfigurationConstants.DEFAULT_PRINT_CYCLES;
-import static com.synflow.ngDesign.ui.internal.launching.ILaunchConfigurationConstants.ENABLE_ASSERTIONS;
 import static com.synflow.ngDesign.ui.internal.launching.ILaunchConfigurationConstants.NUM_CYCLES;
 import static com.synflow.ngDesign.ui.internal.launching.ILaunchConfigurationConstants.PRINT_CYCLES;
 import static com.synflow.ngDesign.ui.internal.launching.ILaunchConfigurationConstants.PROJECT;
-import static org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME;
-import static org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS;
-import static org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME;
-import static org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS;
-import static org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY;
-import static org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION;
 
 import java.util.HashMap;
 import java.util.List;
@@ -161,25 +153,21 @@ public class LaunchDelegateSimulation extends LaunchConfigurationDelegate {
 		String projectName = config.getAttribute(PROJECT, "");
 		String className = config.getAttribute(CLASS, "");
 
+		// TODO contribute a ngDesign launch configuration
 		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
-		ILaunchConfigurationType type = manager.getLaunchConfigurationType(ID_JAVA_APPLICATION);
+		ILaunchConfigurationType type = manager.getLaunchConfigurationType("ID_JAVA_APPLICATION");
 
 		// create working copy
 		ILaunchConfigurationWorkingCopy workingCopy = type.newInstance(null,
 				IrUtil.getSimpleName(className));
 
 		// set mandatory attributes
-		workingCopy.setAttribute(ATTR_PROJECT_NAME, projectName);
-		workingCopy.setAttribute(ATTR_MAIN_TYPE_NAME, className);
+		workingCopy.setAttribute("ATTR_PROJECT_NAME", projectName);
+		workingCopy.setAttribute("ATTR_MAIN_TYPE_NAME", className);
 
 		// set working directory
 		String dir = "${workspace_loc:" + projectName + "/sim}";
-		workingCopy.setAttribute(ATTR_WORKING_DIRECTORY, dir);
-
-		// enable assertions
-		if (config.getAttribute(ENABLE_ASSERTIONS, DEFAULT_ASSERT)) {
-			workingCopy.setAttribute(ATTR_VM_ARGUMENTS, "-ea");
-		}
+		workingCopy.setAttribute("ATTR_WORKING_DIRECTORY", dir);
 
 		// set main arguments
 		StringBuilder builder = new StringBuilder("-n ");
@@ -193,7 +181,7 @@ public class LaunchDelegateSimulation extends LaunchConfigurationDelegate {
 		if (config.getAttribute(PRINT_CYCLES, DEFAULT_PRINT_CYCLES)) {
 			builder.append(" -print-cycles");
 		}
-		workingCopy.setAttribute(ATTR_PROGRAM_ARGUMENTS, builder.toString());
+		workingCopy.setAttribute("ATTR_PROGRAM_ARGUMENTS", builder.toString());
 
 		return workingCopy.doSave();
 	}
