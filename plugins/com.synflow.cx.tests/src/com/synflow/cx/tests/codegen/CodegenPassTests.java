@@ -27,6 +27,7 @@ import com.synflow.core.IFileWriter;
 import com.synflow.cx.CxInjectorProvider;
 import com.synflow.cx.tests.AbstractPassTests;
 import com.synflow.cx.tests.StreamCopier;
+import com.synflow.models.dpn.Actor;
 import com.synflow.models.dpn.DPN;
 import com.synflow.models.dpn.Entity;
 import com.synflow.models.dpn.Instance;
@@ -66,6 +67,9 @@ public abstract class CodegenPassTests extends AbstractPassTests {
 
 	@Override
 	protected final void checkEntity(Entity entity, boolean expected) throws Exception {
+		if (entity instanceof Actor) {
+			checkProperties((Actor) entity);
+		}
 		generateCode(entity);
 		compileAndSimulate(entity);
 	}
