@@ -100,7 +100,7 @@ public abstract class AbstractCxTest extends AbstractXtextTests {
 		map(SynflowCore.PLUGIN_ID, "../../fragments/com.synflow.ngDesign.libraries");
 	}
 
-	private static void map(String id, String relativePath) {
+	protected static void map(String id, String relativePath) {
 		// from platform:/plugin/id URI
 		String name = "/" + id + "/";
 		URI from = URI.createPlatformPluginURI(name, true);
