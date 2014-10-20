@@ -48,7 +48,7 @@ task Call1 {
 
 task Call2 {
 	properties {
-		num_states: 1, num_transitions: 1,
+		num_states: 0, num_transitions: 1,
 		test: {bitt: [ false, false, true ], outp: [ false, true, false ] }
 	}
 
@@ -104,7 +104,7 @@ task Call3 {
 
 task Invoke1 {
 	properties {
-		num_states: 1, num_transitions: 1,
+		num_states: 0, num_transitions: 1,
 		test: {i: [ 1, 2, 3 ], o: [ 1, 2, 3 ] }
 	}
 
@@ -149,7 +149,7 @@ task Invoke2 {
 
 task Invoke3 {
 	properties {
-		num_states: 1, num_transitions: 2,
+		num_states: 0, num_transitions: 2,
 		test: {
 			c: [ 1,    1,      -1,    1,   -1, -1 ],
 			i: [ 1,    2,       3,    4,    5, 6 ],

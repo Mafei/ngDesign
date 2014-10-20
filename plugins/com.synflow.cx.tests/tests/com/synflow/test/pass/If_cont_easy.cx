@@ -31,8 +31,7 @@ task Available1 {
 
 task ComputationalIf {
 	properties {
-		// check that really there is only one state created!
-		num_states: 1, num_transitions: 1,
+		num_states: 0, num_transitions: 1,
 		test: {i: [ 5, 6 ], resultj: [ 5, 7 ] }
 	}
 
@@ -60,7 +59,7 @@ task ComputationalIf {
 
 task ConditionedDualPortsWrite {
 	properties {
-		num_states: 1, num_transitions: 2,
+		num_states: 0, num_transitions: 2,
 		test: {
 			in1: [ true, false, true, false, false ],
 			result1: [ true,  true, true,  true, true ],
@@ -83,7 +82,7 @@ task ConditionedDualPortsWrite {
 
 task ConditionedWrite {
 	properties {
-		num_states: 1, num_transitions: 2,
+		num_states: 0, num_transitions: 2,
 		test: {in1: [ true, false, true, false, false ], result1: [ false, true, false, true, true ] }
 	}
 
@@ -127,7 +126,7 @@ task IfAfterFiring {
 
 task IfBasic {
 	properties {
-		num_states: 1, num_transitions: 1,
+		num_states: 0, num_transitions: 1,
 		test: {inp: [ 5, 0, 8, 1024, 16894 ], result1: [ 510, 765, 1020, 892, 764 ] }
 	}
 
@@ -148,7 +147,7 @@ task IfBasic {
 
 task IfBitSelect {
 	properties {
-		num_states: 1, num_transitions: 2,
+		num_states: 0, num_transitions: 2,
 		test: {
 			a: [ false, null, true, null ],
 			b: [  true, null, true, null ],
@@ -172,7 +171,7 @@ task IfBitSelect {
 
 task IfCount {
 	properties {
-		num_states: 1, num_transitions: 1,
+		num_states: 0, num_transitions: 1,
 		test: {condition: [ true, true, false, false, true ], result: [ 1, 2, 1, 0, 1 ] }
 	}
 
@@ -194,7 +193,7 @@ task IfCount {
 
 task IfElseIf {
 	properties {
-		num_states: 1, num_transitions: 4,
+		num_states: 0, num_transitions: 4,
 		test: {
 			cond: [ 2,    1,       2,    2,    2,    1,   3 ],
 			a: [ null, 1,    null, null, null,    8, null ],
@@ -257,7 +256,7 @@ task IfElseIf2 {
 
 task IfElseIf3 {
 	properties {
-		num_states: 1, num_transitions: 3,
+		num_states: 0, num_transitions: 3,
 		test: {
 			Ready: [ false, false, true, true, true, true, true ],
 			Word: [     2,     2,    2,    0,    0,    1,    1 ],
@@ -291,7 +290,7 @@ task IfElseIf3 {
 
 task IfElseIfStateVar1 {
 	properties {
-		num_states: 1, num_transitions: 4,
+		num_states: 0, num_transitions: 4,
 		test: {
 			cond: [    2,    1,    2,    2,    2,    1, 3 ],
 			a: [ null,    1, null, null, null,    8, null ],
@@ -321,7 +320,7 @@ task IfElseIfStateVar1 {
 
 task IfElseIfStateVar2 {
 	properties {
-		num_states: 1, num_transitions: 4,
+		num_states: 0, num_transitions: 4,
 		test: {
 			cond: [    0,    2,    1,    2,    2,    2,    1,    3 ],
 			a: [ null, null,    1, null, null, null,    8, null ],
@@ -408,7 +407,7 @@ task IfNoElse {
 
 task IfReading {
 	properties {
-		num_states: 1, num_transitions: 2,
+		num_states: 0, num_transitions: 2,
 		test: {
 			in1: [ true, true, true, false, false ],
 			in2: [ 2048, 1024, 512, null, null ],

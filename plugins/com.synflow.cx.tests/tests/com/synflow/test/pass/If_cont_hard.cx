@@ -13,7 +13,7 @@ package com.synflow.test.pass.if_cont_hard;
 
 task ManyIfs1 {
 	properties {
-		num_states: 1, num_transitions: 6,
+		num_states: 0, num_transitions: 6,
 		test: {
 			a: [   -1,    0,     1 ],
 			b: [    5,   -1,    -2 ],
@@ -41,7 +41,7 @@ task ManyIfs1 {
 
 task ManyIfs2 {
 	properties {
-		num_states: 1, num_transitions: 16,
+		num_states: 0, num_transitions: 16,
 		test: {
 			a: [ true, true, null, null, null, true, null, true ],
 			b: [ null, true, null, null, true, null, null, true ],
@@ -68,7 +68,7 @@ task ManyIfs2 {
 
 task ManyNested1 {
 	properties {
-		num_states: 1, num_transitions: 15,
+		num_states: 0, num_transitions: 15,
 		test: {
 			a2: [ false, false, false, false,  true,  true,  true, true ],
 			a1: [ false, false,  true,  true, false, false,  true, true ],
@@ -130,7 +130,7 @@ task ManyNested1 {
 
 task NestedIfs1 {
 	properties {
-		num_states: 1, num_transitions: 5,
+		num_states: 0, num_transitions: 5,
 		test: {
 			we: [ true, true, false, true, false, true ],
 			o1: [   13,   14,  null,   16,  null, null ],
@@ -169,7 +169,7 @@ task NestedIfs1 {
 
 task NestedIfs2 {
 	properties {
-		num_states: 1, num_transitions: 8,
+		num_states: 0, num_transitions: 8,
 		test: {
 			a2: [ false, false, false, false,  true,  true,  true, true ],
 			a1: [ false, false,  true,  true, false, false,  true, true ],
@@ -217,7 +217,7 @@ task NestedIfs2 {
 
 task NestedIfs3 {
 	properties {
-		num_states: 1, num_transitions: 4,
+		num_states: 0, num_transitions: 4,
 		test: {
 			a2: [ false, false, false, false,  true,  true,  true, true ],
 			a1: [ false, false,  true,  true, false, false,  true, true ],
@@ -243,7 +243,7 @@ task NestedIfs3 {
 
 task NestedIfs4 {
 	properties {
-		num_states: 1, num_transitions: 4,
+		num_states: 0, num_transitions: 4,
 		test: {
 			a2: [ false, false, false, false,  true,  true,  true, true ],
 			a1: [ false, false,  true,  true, false, false,  true, true ],

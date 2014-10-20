@@ -43,7 +43,7 @@ task CopyingOut {
 
 task EmptyTask {
 	properties {
-		num_states: 1, num_transitions: 0,
+		num_states: 0, num_transitions: 0,
 		test: {in1: [ ], in2: [ ], outp: [ ] }
 	}
 

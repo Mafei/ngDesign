@@ -36,7 +36,7 @@ task BarrelShifter {
 
 task Combinational1 {
 	properties {
-		num_states: 1, num_transitions: 1,
+		num_states: 0, num_transitions: 1,
 		type: "combinational",
 		test: {
 			op1: [ 1024,  0x7FFF_FFFF ], op2: [ 1,     1 ], doAdd: [ false, true ],
@@ -71,7 +71,7 @@ task Combinational1 {
 
 task Combinational2 {
 	properties {
-		num_states: 1, num_transitions: 3,
+		num_states: 0, num_transitions: 3,
 		type: "combinational",
 		test: {
 			s: [ true, true, false ],
@@ -94,8 +94,7 @@ task Combinational2 {
 
 task ComputationForLoop {
 	properties {
-		// check that really there is only one state created!
-		num_states: 1, num_transitions: 1,
+		num_states: 0, num_transitions: 1,
 		test: {p: [ true ], resulti: [ 16 ], resultj: [ 64 ] }
 	}
 

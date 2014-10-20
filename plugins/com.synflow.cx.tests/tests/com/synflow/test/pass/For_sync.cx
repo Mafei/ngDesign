@@ -399,7 +399,7 @@ task WhileLoopIf {
 
 task WhileLoopIf2 {
 	properties {
-		num_states: 1, num_transitions: 3,
+		num_states: 0, num_transitions: 3,
 		test: {
 			bytes: [    1,    2,    3,             4 ],
 			res: [ null, null, null, 0x01_02_03_04 ]

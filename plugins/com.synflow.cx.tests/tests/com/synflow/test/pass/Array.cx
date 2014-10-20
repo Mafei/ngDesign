@@ -32,7 +32,7 @@ task ArrayTest1 {
 
 task ArrayTest2 {
 	properties {
-		num_states: 1, num_transitions: 1,
+		num_states: 0, num_transitions: 1,
 		test: {inp: [ 1, 2, 3, 4, 0, 1, 2, 3, 4 ], outp: [ 0, 0, 0, 0, 1, 2, 3, 4, 0 ] }
 	}
 
