@@ -50,9 +50,12 @@ task EmptyTask {
 	in u16 in1, in2; out u16 outp;
 }
 
+/**
+ * should be equivalent to EmptyTask (empty setup and empty loop)
+ */
 task EmptyTask2 {
 	properties {
-		num_states: 2, num_transitions: 1,
+		num_states: 0, num_transitions: 0,
 		test: {in1: [ ], in2: [ ], outp: [ ] }
 	}
 
@@ -76,16 +79,19 @@ task EmptyTask3 {
 	void setup() {
 		outp.write((u16) (in1.read() + in2.read()));
 	}
+	
+	// no loop is equivalent to empty loop
 }
 
 task EmptyTask4 {
 	properties {
-		num_states: 2, num_transitions: 2,
-		test: {in1: [ 0, 0 ], in2: [ 0, 255 ], outp: [ 0, 255 ] }
+		num_states: 0, num_transitions: 1,
+		test: {in1: [ 0 ], in2: [ 255 ], outp: [ 255 ] }
 	}
 
-	in u16 in1, in2; out u16 outp;
+	in sync u16 in1, sync in2; out sync u16 outp;
 
+	// empty setup is equivalent to no setup
 	void setup() {
 	}
 

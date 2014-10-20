@@ -152,36 +152,39 @@ public final class CycleScheduler extends AbstractCycleScheduler {
 		// visit setup
 		if (setup != null) {
 			doSwitch(setup);
-			schedule.startNewCycle();
+			if (!isEmptyTransition()) {
+				// only starts a new cycle if needed
+				schedule.startNewCycle();
+			}
 		}
 
 		// visit loop
-		State mainInitial = schedule.getTransition().getSource();
+		State loopInitial = schedule.getTransition().getSource();
 		if (loop != null) {
 			doSwitch(loop);
 		}
 
 		// cleans last transition
 		FSM fsm = schedule.getFsm();
-		if (schedule.hasMultipleTransitions() || !isEmptyTransition()) {
-			// make FSM loop
-			schedule.mergeTransitions(mainInitial);
+		if (!isEmptyTransition()) {
+			// make FSM loop back to loop's initial state
+			schedule.mergeTransitions(loopInitial);
 		} else {
-			Transition mainTransition = schedule.getTransition();
-			State last = mainTransition.getSource();
-			remove(mainTransition);
+			Transition lastTransition = schedule.getTransition();
+			State lastState = lastTransition.getSource();
+			remove(lastTransition);
 
 			// if necessary make FSM loop
 			// if last == mainInitial, there is exactly one transition already looping
-			if (last != mainInitial) {
+			if (lastState != loopInitial) {
 				// update the target state of incoming transitions of last state
-				List<Edge> edges = new ArrayList<Edge>(last.getIncoming());
+				List<Edge> edges = new ArrayList<Edge>(lastState.getIncoming());
 				for (Edge edge : edges) {
-					edge.setTarget(mainInitial);
+					edge.setTarget(loopInitial);
 				}
 
 				// remove previous last state
-				fsm.remove(last);
+				fsm.remove(lastState);
 			}
 		}
 	}

@@ -59,6 +59,23 @@ task Idle2 {
 
 task Idle3 {
 	properties {
+		num_states: 2, num_transitions: 2,
+		test: {in1: [ 0, 0 ], in2: [ 0, 255 ], outp: [ 0, 255 ] }
+	}
+
+	in u16 in1, in2; out u16 outp;
+
+	void setup() {
+		idle(1);
+	}
+
+	void loop() {
+		outp.write((u16) (in1.read() + in2.read()));
+	}
+}
+
+task Idle4 {
+	properties {
 		num_states: 3, num_transitions: 3,
 		test: {outp: [ 0 ] }
 	}
@@ -75,7 +92,7 @@ task Idle3 {
 	}
 }
 
-task Idle4 {
+task Idle5 {
 	properties {
 		num_states: 4, num_transitions: 5,
 		test: {
@@ -97,7 +114,7 @@ task Idle4 {
 	}
 }
 
-task Idle5 {
+task Idle6 {
 	properties {
 		num_states: 6, num_transitions: 8,
 		test: {inp: [ false, null, null, null, true ], outp: [ 4, null, null, null, 5 ] }
@@ -119,28 +136,6 @@ task Idle5 {
 		}
 		idle(1);
 	}
-}
-
-task IdleMultipleTransitions {
-	properties {
-		num_states: 5, num_transitions: 6
-	}
-
-	in u5 a;
-	
-	void loop() {
-		if (a.read > 5) {
-			print('tata');
-			a.read;
-			a.read;
-			a.read;
-		} else {
-			print('tata');
-		}
-		idle(1);
-		print('toto');
-	}
-
 }
 
 task MultipleReads {
