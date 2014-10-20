@@ -18,7 +18,7 @@ task Assert {
 
 	in sync u32 in1, sync in2; out sync bool outp;
 
-	void run() {
+	void loop() {
 	  assert(in1.read + in2.read - 1 == 0xFFFF_FFFF);
 	  outp.write(true);
 	}
@@ -31,7 +31,7 @@ task Call1 {
 
 	in sync u4 i; out sync u4 o;
 
-	void run() {
+	void loop() {
 		u4 a = i.read();
 		u4 b = i.read();
 		o.write((u4) (g() * f(a, b)));
@@ -60,7 +60,7 @@ task Call2 {
 	u4 TAB[4] = [ 0, 3, 2, 1 ];
 	u5 count = 1;
 
-	void run() {
+	void loop() {
 		bool b = isOk(bitt.read);
 		if (!b) {
 			TAB[1] = 2;
@@ -85,7 +85,7 @@ task Call3 {
 	in sync u8 Stim;
 	out sync u16 Res;
 
-	void run() {
+	void loop() {
 		u16 x = Stim.read();
 		Res.write(isA(x) ? 1 : (isB(x) ? 2 : 42));
 	}
@@ -110,7 +110,7 @@ task Invoke1 {
 
 	in sync u16 i; out sync u16 o;
 
-	void run() {
+	void loop() {
 		f();
 	}
 
@@ -133,7 +133,7 @@ task Invoke2 {
 		in u16 i; out u16 o, o2;
 	}
 
-	void run() {
+	void loop() {
 		f();
 		g();
 	}
@@ -163,7 +163,7 @@ task Invoke3 {
 		out i16 o, o2;
 	}
 
-	void run() {
+	void loop() {
 		if (c.read() > 0) {
 			f();
 		} else {
@@ -195,7 +195,7 @@ task Invoke4 {
 	u16 n, c;
 	bool cond = true;
 
-	void run() {
+	void loop() {
 		for (n = 0; n < 2; n++) {
 			c = i.read();
 		}
@@ -223,7 +223,7 @@ task Invoke5 {
 
 	in u16 i; out u16 o;
 
-	void run() {
+	void loop() {
 		f();
 		f();
 	}
@@ -247,7 +247,7 @@ task Invoke6 {
 
 	u2 count;
 
-	void run() {
+	void loop() {
 		for (count = 0; count < 3; count++) {
 			f();
 		}
@@ -273,7 +273,7 @@ task Invoke7 {
 
 	u16 result;
 
-	void run() {
+	void loop() {
 		result = 1;
 		if (cond.read()) {
 			f();
@@ -295,7 +295,7 @@ task PrintStmt {
 
 	in sync u32 in1, sync in2; out sync bool outp;
 
-	void run() {
+	void loop() {
 	  bool justAbool = false;
 	  print("sum = ", (in1.read + in2.read + 58) & 0x1_FFFF_FFFF, " and writing ", true, justAbool);
 	  outp.write(true);
@@ -309,7 +309,7 @@ task SubWord {
 
 	in sync uchar inw; out sync ushort outw;
 
-	void run() {
+	void loop() {
 		uchar first = inw.read;
 		outw.write(f(first, inw.read));
 	}

@@ -22,7 +22,7 @@ task BitSelect1 {
 
 	ushort w;
 
-	void run() {
+	void loop() {
 		ushort v = inp.read();
 		outp.write(v[15]);
 	
@@ -40,7 +40,7 @@ task BitSelect2 {
 		in u8 inp; out u8 outp;
 	}
 
-	void run() {
+	void loop() {
 		ushort v = inp.read();
 		v[0] = false;
 		v[7] = true;
@@ -59,7 +59,7 @@ task BitSelect3 {
 
 	const unsigned int x = 5000;
 
-	void run() {
+	void loop() {
 		ushort v = inp.read();
 		bool az = false, aze = true;
 		bool azef = az ^ (az | (aze & az));
@@ -125,7 +125,7 @@ task BitSelect4 {
 		return newCrc;
 	}
 
-	void run() {
+	void loop() {
 		u32 crc = 0xFFFF_FFFF;
 		crc = compute_crc(crc, inp.read);
 		crc = compute_crc(crc, inp.read);
@@ -141,7 +141,7 @@ task BitwiseNeg {
 
 	in u16 din; out u16 dout;
 
-	void run() {
+	void loop() {
 		u31 a = 0x4000_0000;
 		u31 b = ~a;
 		assert(b == 0x3FFF_FFFF);
@@ -175,7 +175,7 @@ task CounterIncrement {
 
 	u2 cnt;
 
-	void run() {
+	void loop() {
 		count.write(cnt);
 		cnt++;
 	}
@@ -188,7 +188,7 @@ task Mask {
 
 	in u16 inp; out u9 outp;
 
-	void run() {
+	void loop() {
 		outp.write(inp.read() & 511);
 	}
 }
@@ -205,7 +205,7 @@ task OverflowUnsigned {
 	u4 dummy;
 	u3 icount;
 
-	void run() {
+	void loop() {
 		dummy = stim.read();
 		icount++;
 		count.write(icount);
@@ -219,7 +219,7 @@ task OverflowUnsigned2 {
 
 	in u3 stim; out u3 count;
 
-	void run() {
+	void loop() {
 		u3 dummy = stim.read();
 		dummy = (u3) 15;
 		count.write(dummy);
@@ -233,7 +233,7 @@ task Resize {
 
 	in u16 inp; out u9 outp;
 
-	void run() {
+	void loop() {
 		outp.write((u9) inp.read());
 	}
 }
@@ -245,7 +245,7 @@ task ShiftMask {
 
 	in sync u16 inp; out sync u8 outp;
 
-	void run() {
+	void loop() {
 		outp.write((inp.read() & 511) >> 1);
 		outp.write((u8) ((inp.read() & 3) << 7));
 	}

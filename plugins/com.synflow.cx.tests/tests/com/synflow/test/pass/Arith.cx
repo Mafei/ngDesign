@@ -18,7 +18,7 @@ task Add {
 
 	in u16 in1, in2; out u16 outp;
 
-	void run() {
+	void loop() {
 		outp.write((in1.read() + in2.read()) & 0xFFFF);
 	}
 }
@@ -34,7 +34,7 @@ task AddCarry {
 
 	in u16 a, b; out u16 o;
 
-	void run() {
+	void loop() {
 		u17 res = (a.read + b.read) * 2 >> 2;
 		o.write((u16) res);
 	}
@@ -51,7 +51,7 @@ task AddMinusOne {
 
 	in u16 in1, in2; out u16 outp;
 
-	void run() {
+	void loop() {
 		u16 a = in1.read();
 		u16 b = in2.read();
 		outp.write((u16) (a + (-b) + -1));
@@ -71,7 +71,7 @@ task Arith_128 {
 
 	u128 temp;
 
-	void run() {
+	void loop() {
 		u32 w0 = w0p.read, w1 = w1p.read, w2 = w2p.read, w3 = w3p.read;
 
 		temp = w0 << 96 | temp >> 32;
@@ -98,7 +98,7 @@ task Arith_32 {
 	
 	u32 a, b;
 
-	void run() {
+	void loop() {
 	  a = in1.read;
 	  b = in2.read;
 	  outp.write((u32) (a + b));
@@ -119,7 +119,7 @@ task Arith_64_Clipped {
 	u64 a;
 	u32 b;
 
-	void run() {
+	void loop() {
 	  a = in1.read;
 	  b = in2.read;
 	  outp.write((u32) (a + b));
@@ -141,7 +141,7 @@ task Arith_64 {
 
 	u64 a, b;
 
-	void run() {
+	void loop() {
 	  a = in1.read;
 	  b = in2.read;
 	  outp.write((u64) (a + b));
@@ -156,7 +156,7 @@ task DivTwo {
 
 	in u8 inp; out u8 outp;
 
-	void run() {
+	void loop() {
 		outp.write(inp.read() / 2);
 	}
 }
@@ -168,7 +168,7 @@ task Modulo {
 
 	in u8 inp; out u8 outp;
 
-	void run() {
+	void loop() {
 		outp.write(inp.read() % 16);
 	}
 }
@@ -181,7 +181,7 @@ task MulAndShift {
 
 	in u3 a, b; out u2 o;
 
-	void run() {
+	void loop() {
 		u3 a = a.read, b = b.read;
 		u2 high = (a * b) >> 4;
 		o.write(high);
@@ -195,7 +195,7 @@ task Mult {
 
 	in u16 in1, in2; out u16 outp;
 
-	void run() {
+	void loop() {
 		outp.write((in1.read() * in2.read()) & 65535);
 	}
 }
@@ -207,7 +207,7 @@ task Negative {
 
 	in sync u33 in1;
 
-	void run() {
+	void loop() {
 		assert(in1.read() == 0);
 		assert(in1.read() == -1);
 	}
@@ -220,7 +220,7 @@ task Operators {
 
 	in u16 in1, in2; out u16 outp;
 
-	void run() {
+	void loop() {
 		u16 inp;
 		inp = in1.read();
 		inp += 15;
@@ -239,7 +239,7 @@ task ShiftLeft {
 
 	in u3 in1; out u16 outp;
 
-	void run() {
+	void loop() {
 		outp.write(in1.read() << 4);
 	}
 }
@@ -252,7 +252,7 @@ task ShiftRight {
 
 	in sync u16 in1; out sync u3 outp;
 
-	void run() {
+	void loop() {
 		outp.write((u3) (in1.read() >> 4));
 		outp.write((u3) (in1.read() >> 4));
 		outp.write((u3) (in1.read() >> 4));
@@ -269,7 +269,7 @@ task Sub {
 
 	in u16 in1, in2; out u16 outp;
 
-	void run() {
+	void loop() {
 		outp.write((u16) (in1.read() - in2.read()));
 	}
 }
@@ -284,7 +284,7 @@ task UnaryMinus {
 
 	in i32 in1; out i33 out1;
 
-	void run() {
+	void loop() {
 		out1.write(-in1.read);
 
 		u4 x = 15;

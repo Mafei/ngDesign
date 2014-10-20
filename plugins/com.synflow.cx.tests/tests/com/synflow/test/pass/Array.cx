@@ -22,7 +22,7 @@ task ArrayTest1 {
 	u8 tab[4];
 	u2 i;
 
-	void run() {
+	void loop() {
 		u3 d = inp.read();
 		tab[i + 1] = d;
 		outp.write(tab[i]);
@@ -41,7 +41,7 @@ task ArrayTest2 {
 	u8 tab[4];
 	u2 i;
 
-	void run() {
+	void loop() {
 		outp.write(tab[i]);
 		tab[i] = inp.read();
 		i++;
@@ -58,7 +58,7 @@ task ArrayTest3 {
 
 	u8 tab[4] = [ 1, 2, 3, 4 ];
 
-	void run() {
+	void loop() {
 		uchar x = (uchar) (inp.read() + tab[0] + tab[1] + tab[2] + tab[3]);
 		outp.write(x);
 	}
@@ -78,7 +78,7 @@ task ArrayTest4 {
 
 	u2 i;
 
-	void run() {
+	void loop() {
 		u8 tab[4];
 	
 		tab[0] = inp.read();
@@ -117,7 +117,7 @@ task ArrayTest5 {
 	
 	u7 sum;
 
-	void run() {
+	void loop() {
 		sum += tab[i.read][j.read];
 		sum += tab[i.read][j.read];
 		sum += tab[i.read][j.read];
@@ -149,7 +149,7 @@ task ArrayTest6 {
 	
 	u7 sum;
 
-	void run() {
+	void loop() {
 		sum += tab[i.read][j.read][k.read];
 		sum += tab[i.read][j.read][k.read];
 		sum += tab[i.read][j.read][k.read];
@@ -165,7 +165,7 @@ task ArrayTest7 {
 
 	out sync u8 outp;
 
-	void run() {
+	void loop() {
 		u8 tab[4];
 		tab[0] = 1;
 		tab[1] = 2;
@@ -186,7 +186,7 @@ task ArrayTest8 {
 
 	u8 tab[4] = [ 5, 3, 2, 1 ];
 
-	void run() {
+	void loop() {
 		outp.write(tab[inp.read]);
 	}
 }

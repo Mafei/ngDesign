@@ -21,7 +21,7 @@ task Fence {
 
 	u16 temp;
 
-	void run() {
+	void loop() {
 		outp.write(temp);
 		fence;
 		temp = inp.read();
@@ -37,7 +37,7 @@ task Idle1 {
 
 	in sync u16 inp; out sync u16 outp;
 
-	void run() {
+	void loop() {
 		idle(1);
 		outp.write((u16) (inp.read + 1));
 	}
@@ -51,7 +51,7 @@ task Idle2 {
 
 	in u16 inp; out u16 outp;
 
-	void run() {
+	void loop() {
 		idle(1);
 		idle(1);
 	}
@@ -65,7 +65,7 @@ task Idle3 {
 
 	out u16 outp;
 
-	void run() {
+	void loop() {
 		outp.write(0);
 		f();
 	}
@@ -87,7 +87,7 @@ task Idle4 {
 	in sync bool inp;
 	out sync u16 outp;
 
-	void run() {
+	void loop() {
 		idle(3);
 		if (inp.read) {
 			outp.write(5);
@@ -105,7 +105,7 @@ task Idle5 {
 
 	in sync bool inp; out sync u16 outp;
 
-	void run() {
+	void loop() {
 		if (inp.read) {
 			outp.write(5);
 		} else {
@@ -129,7 +129,7 @@ task MultipleReads {
 
 	in sync i18 data; out sync i18 o;
 
-	void run() {
+	void loop() {
 		i18 dummy = data.read();
 		dummy = data.read();
 		o.write(data.read());
@@ -144,7 +144,7 @@ task MultipleReads2 {
 
 	in sync i18 data; out sync i18 o;
 
-	void run() {
+	void loop() {
 		data.read();
 		data.read();
 		o.write(data.read());
@@ -159,7 +159,7 @@ task MultipleWrites {
 
 	in sync i18 i; out sync i18 o;
 
-	void run() {
+	void loop() {
 		o.write(i.read());
 		o.write(2);
 		o.write(3);
@@ -175,7 +175,7 @@ task MultipleWrites2 {
 
 	in sync i18 i; out sync i18 o;
 
-	void run() {
+	void loop() {
 		uchar count = (uchar) i.read();
 		o.write(1);
 		count++;

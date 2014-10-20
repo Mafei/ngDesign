@@ -20,7 +20,7 @@ task Available2 {
 
 	u5 x = 2;
 
-	void run() {
+	void loop() {
 		o.write(data.read);
 	
 		while (data.available) {
@@ -39,7 +39,7 @@ task BasicForLoop {
 	in u3 count;
 	out sync u8 resulti;
 
-	void run() {
+	void loop() {
 		u3 i, n = count.read();
 		for (i = 0; i < 4; i++) {
 			resulti.write(i << 1);
@@ -60,7 +60,7 @@ task BasicForLoopAndRead {
 	in u4 inp;
 	out sync u8 resulti, sync resultj;
 
-	void init() {
+	void setup() {
 		u4 i, j, max = inp.read();
 		for (i = 0; i != max; i++) {
 			resulti.write(i);
@@ -82,7 +82,7 @@ task BasicForLoopSeries {
 
 	in u3 count; out sync u8 resulti, sync resultj;
 
-	void run() {
+	void loop() {
 		u3 i, j, n = count.read();
 		for (i = 0; i < n; i++) {
 			resulti.write(i << 1);
@@ -108,7 +108,7 @@ task ConditionedBasicForLoop {
 	
 	u3 i, j;
 
-	void run() {
+	void loop() {
 		if (inp.read()) {
 			for (i = 0; i < 4; i++) {
 				resulti.write(i);
@@ -140,11 +140,11 @@ task ForAndReadAfter {
 	u8 d, d_ref = 6; // reference value
 	u15 i = 1;
 
-	void init() {
+	void setup() {
 	  d_ref = data.read();
 	}
 
-	void run() {
+	void loop() {
 	  for (; d_ref == data.read() && i < 32767; i++) {
 	  }
 	
@@ -166,7 +166,7 @@ task ForLoopEmpty {
 
 	u16 i, temp;
 
-	void run() {
+	void loop() {
 		outp.write(temp);
 		for (i = 0; i < 2; i++) {
 		}
@@ -185,7 +185,7 @@ task ForLoopNoInitNoAfter {
 
 	u2 i = 3;
 
-	void init() {
+	void setup() {
 		for (; i > 0;) {
 			resulti.write(i << 1);
 			i--;
@@ -217,7 +217,7 @@ task InvokeAndWhileLoop {
 	bool error = false;
 	u8 count;
 	
-	void init() {
+	void setup() {
 		startSend();
 		continueSend();
 	}
@@ -250,7 +250,7 @@ task MultipleTasksAndLoop {
 	u16 count;
 	u16 status;
 
-	void init() {
+	void setup() {
 		Task3();
 	
 		while (!status[2]) {
@@ -263,7 +263,7 @@ task MultipleTasksAndLoop {
 		}
 	}
 
-	void run() {
+	void loop() {
 	}
 
 	void Task3() {
@@ -294,7 +294,7 @@ task NestedLoops {
 	in bool RxEn;
 	out sync u4 o;
 
-	void run() {
+	void loop() {
 		u4 j;
 		for (j = 2; j != 0; j--) {
 			while (RxEn.read()) {
@@ -318,7 +318,7 @@ task NestedLoops2 {
 
 	u8 count;
 
-	void run() {
+	void loop() {
 		u3 j = 3; u3 i;
 		for (i = 5; i != 0; i--) {
 			for (; j != 0; j--) {
@@ -341,7 +341,7 @@ task WhileLoop {
 
 	u2 i;
 
-	void init() {
+	void setup() {
 		resulti.write(i << 1);
 		i++;
 		while (i != 0) {
@@ -363,7 +363,7 @@ task WhileLoopEmpty {
 	in sync bool cond;
 	out sync u16 outp;
 
-	void run() {
+	void loop() {
 		u16 result = 1;
 		while (cond.read()) {
 		}
@@ -383,7 +383,7 @@ task WhileLoopIf {
 	in sync bool cond;
 	out sync u16 outp;
 
-	void run() {
+	void loop() {
 		u16 i = 0;
 		while (i < 4) {
 			bool c = cond.read();
@@ -412,7 +412,7 @@ task WhileLoopIf2 {
 	u3 count;
 	u32 fourBytes;
 
-	void run() {
+	void loop() {
 		while (bytes.available) {
 			if (count == 3) {
 				fourBytes = (fourBytes << 8) & 0xFFFFFFFF | bytes.read;
@@ -441,7 +441,7 @@ task WhileLoopIf3 {
 
 	u5 i;
 
-	void run() {
+	void loop() {
 		start.read();
 		while (i < 16) {
 			u3 imod4 = i % 4;
@@ -467,7 +467,7 @@ task WhileLoopRead {
 	in sync bool cond;
 	out sync u16 outp;
 
-	void run() {
+	void loop() {
 		u16 result = 1;
 		while (cond.read()) {
 			result <<= 1;
@@ -486,7 +486,7 @@ task WhileLoopSeries {
 	
 	u2 i;
 	
-	void init() {
+	void setup() {
 		resulti.write(i << 1);
 		i++;
 		while (i != 0) {
@@ -520,7 +520,7 @@ task WhileReg {
 	u3 j;
 	u8 DataBuffer[8];
 
-	void run() {
+	void loop() {
 		while (Incoming.read()) {
 			// Store in buffer
 			DataBuffer[j] = Data.read();

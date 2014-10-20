@@ -26,7 +26,7 @@ task ManyIfs1 {
 
 	bool a_ok, b_ok, c_ok;
 
-	void run() {
+	void loop() {
 	  if (a.read > 0) {
 	  	oa.write(false);
 	  } else if (a.read < 0) {
@@ -54,7 +54,7 @@ task ManyIfs2 {
 
 	bool a_ok, b_ok, c_ok;
 
-	void run() {
+	void loop() {
 	  if (a.available) { a_ok = true; }
 	  if (b.available) { b_ok = true; }
 	  if (c.available) { c_ok = true; }
@@ -87,7 +87,7 @@ task ManyNested1 {
 		out u3 o, o2;
 	}
 
-	void run() {
+	void loop() {
 	  if (a2.read) {
 	    u3 o;
 	    if (a1.read) {
@@ -146,7 +146,7 @@ task NestedIfs1 {
 
 	u8 adr = 13;
 
-	void run() {
+	void loop() {
 	  if (we.read) {
 	    if (adr == 13) {
 	      print("hello 13");
@@ -182,7 +182,7 @@ task NestedIfs2 {
 
 	u8 adr = 13;
 
-	void run() {
+	void loop() {
 	  if (a2.read) {
 	    if (a1.read) {
 	      if (a0.read) {
@@ -230,7 +230,7 @@ task NestedIfs3 {
 
 	u8 adr = 13;
 
-	void run() {
+	void loop() {
 	  if (a2.read) {
 	    if (a1.read) {
 	      if (a0.read) {
@@ -256,7 +256,7 @@ task NestedIfs4 {
 
 	u8 adr = 13;
 
-	void run() {
+	void loop() {
 	  if (a2.read) {
 	    print("ignoring 1xx");
 	  } else {

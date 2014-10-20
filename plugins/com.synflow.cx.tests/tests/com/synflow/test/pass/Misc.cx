@@ -23,7 +23,7 @@ task ConstUse {
 
 	u5 idx;
 
-	void run() {
+	void loop() {
 		O.write((u8) (I.read + MY_CONST + MY_ROM[idx]));
 		idx++;
 	}
@@ -36,7 +36,7 @@ task CopyingOut {
 
 	in u8 inp; out u8 outp;
 
-	void run() {
+	void loop() {
 		outp.write(inp.read());
 	}
 }
@@ -58,10 +58,10 @@ task EmptyTask2 {
 
 	in u16 in1, in2; out u16 outp;
 
-	void init() {
+	void setup() {
 	}
 
-	void run() {
+	void loop() {
 	}
 }
 
@@ -73,7 +73,7 @@ task EmptyTask3 {
 
 	in sync u16 in1, sync in2; out sync u16 outp;
 
-	void init() {
+	void setup() {
 		outp.write((u16) (in1.read() + in2.read()));
 	}
 }
@@ -86,10 +86,10 @@ task EmptyTask4 {
 
 	in u16 in1, in2; out u16 outp;
 
-	void init() {
+	void setup() {
 	}
 
-	void run() {
+	void loop() {
 		outp.write((u16) (in1.read() + in2.read()));
 	}
 }
@@ -117,7 +117,7 @@ task InterModuleUser {
 	in sync u8 Stim;
 	out u16 Res;
 	
-	void run() {
+	void loop() {
 		u16 x = Stim.read();
 		Res.write((u16) (InterModuleDefinitions.A + InterModuleDefinitions.CONST_ARRAY[3]));
 		Res.write(InterModuleDefinitions.B);
@@ -132,7 +132,7 @@ task NumberSeparator {
 
 	in u16 inp; out u16 outp;
 	
-	void run() {
+	void loop() {
 		outp.write(inp.read());
 	}
 }
@@ -145,7 +145,7 @@ task PortDecls {
 	in u16 in1, u8 in2, in3;
 	out u16 outp;
 
-	void run() {
+	void loop() {
 		outp.write((u16) (in1.read() + in2.read() + in3.read));
 	}
 }
@@ -158,7 +158,7 @@ task PortDeclsBig {
 	in u128 in1, u8 in2, in3;
 	out u256 outp;
 
-	void run() {
+	void loop() {
 		outp.write(in1.read() + in2.read() + in3.read);
 	}
 }
@@ -172,7 +172,7 @@ task PragmaOnce {
 	
 	u16 dummy;
 	
-	void init() {
+	void setup() {
 		if (dummy == 1) {
 			outp.write(53);
 		} else {
@@ -190,7 +190,7 @@ task TernaryConditionalAndRead {
 
 	u4 result;
 
-	void run() {
+	void loop() {
 		test();
 		o.write(result);
 	}

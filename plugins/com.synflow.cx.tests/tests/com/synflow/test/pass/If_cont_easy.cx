@@ -18,7 +18,7 @@ task Available1 {
 
 	in sync u8 data; out sync u8 o;
 
-	void run() {
+	void loop() {
 		o.write(data.read);
 		fence;
 		if (data.available) {
@@ -39,7 +39,7 @@ task ComputationalIf {
 	in u8 i;
 	out u8 resultj;
 
-	void run() {
+	void loop() {
 		u8 x = i.read();
 		
 		// if no-else
@@ -72,7 +72,7 @@ task ConditionedDualPortsWrite {
 
 	u16 count;
 
-	void run() {
+	void loop() {
 		if (in1.read) {
 			result1.write(true);
 		} else {
@@ -91,7 +91,7 @@ task ConditionedWrite {
 
 	u16 count;
 
-	void run() {
+	void loop() {
 		if (in1.read()) {
 			result1.write(false);
 		} else {
@@ -116,7 +116,7 @@ task IfAfterFiring {
 	
 	// this creates two firings: one for the "count++"
 	// and one for the "if"
-	void run() {
+	void loop() {
 		count++;
 		fence;
 		if (cond.read() > count) {
@@ -135,7 +135,7 @@ task IfBasic {
 
 	u16 result = 255;
 
-	void run() {
+	void loop() {
 		u16 v = inp.read();
 		if (v <= 15) {
 			result += 255;
@@ -158,7 +158,7 @@ task IfBitSelect {
 
 	in sync bool a, sync b; out sync u2 o;
 
-	void run() {
+	void loop() {
 	  u8 d = 0b1100;
 	  d[0] = a.read;
 	  d[1] = b.read;
@@ -181,7 +181,7 @@ task IfCount {
 
 	u3 count;
 
-	void run() {
+	void loop() {
 		bool c = condition.read();
 		if (c) {
 			count++;
@@ -210,7 +210,7 @@ task IfElseIf {
 		out u16 o;
 	}
 
-	void run() {
+	void loop() {
 		if (cond.read == 1) {
 			o.write(a.read);
 		} else if (cond.read == 2) {
@@ -225,7 +225,7 @@ task IfElseIf2 {
 	properties {
 		num_states: 2, num_transitions: 3,
 		test: {
-			data: [ 6,    5,    5, 4,    4,    4, 3,    3,    3,    3, 2 ],
+			data:  [    6, 5,    5, 4,    4,    4, 3,    3,    3,    3, 2 ],
 			value: [ null, 6, null, 5, null, null, 4, null, null, null, 3 ],
 			count: [ null, 1, null, 2, null, null, 3, null, null, null, 4 ]
 		}
@@ -238,11 +238,11 @@ task IfElseIf2 {
 	u8 d_ref = 6; // reference value
 	u15 i = 1;
 
-	void init() {
+	void setup() {
 	  d_ref = data.read();
 	}
 
-	void run() {
+	void loop() {
 		u8 d = data.read();
 		if (d_ref == d && i < 32767) {
 			i++;
@@ -269,7 +269,7 @@ task IfElseIf3 {
 		in bool Ready, u3 Word; out u8 resulti;
 	}
 
-	void run() {
+	void loop() {
 		bool r = Ready.read;
 		u3 w = Word.read;
 	
@@ -307,7 +307,7 @@ task IfElseIfStateVar1 {
 	// fibonacci
 	out sync u16 o;
 
-	void run() {
+	void loop() {
 		u2 n = cond.read;
 		if (n == 1) {
 			o.write(a.read());
@@ -341,7 +341,7 @@ task IfElseIfStateVar2 {
 
 	uchar count = 254;
 
-	void run() {
+	void loop() {
 		u2 cc = cond.read();
 		count++;
 		if (cc == 1 && count != 255) {
@@ -367,9 +367,9 @@ task IfElseIfStateVar3 {
 		}
 	}
 
-	in sync u2 cond, sync u16 a, sync b; out sync u16 o;
+	sync { in u2 cond, u16 a, b; out u16 o; }
 
-	void run() {
+	void loop() {
 		u8 count = 0;
 		cond.read();
 	
@@ -398,7 +398,7 @@ task IfNoElse {
 
 	u16 count;
 
-	void run() {
+	void loop() {
 		if (cond.read()) {
 			result.write(a.read());
 		}
@@ -424,7 +424,7 @@ task IfReading {
 
 	u16 count;
 
-	void run() {
+	void loop() {
 		if (in1.read()) {
 			result.write(in2.read());
 		} else {

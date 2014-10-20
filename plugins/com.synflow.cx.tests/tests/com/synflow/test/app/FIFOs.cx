@@ -35,7 +35,7 @@ task Fib {
 	/**
 	 * Fibonacci
 	 */
-	void init() {
+	void setup() {
 		for (count = 0 ; count != 11 ; count++) {
 			u8 old_n = n;
 			n += n_1;
@@ -67,7 +67,7 @@ task Sink {
 
 	u8 i;
 
-	void init() {
+	void setup() {
 		for (; i < 15; i++) {
 		}
 	

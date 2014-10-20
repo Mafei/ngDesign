@@ -23,7 +23,7 @@ task LoadStore1 {
 
 	bool phyDetected;
 
-	void run() {
+	void loop() {
 		if (data.read() != 0xFFFF) {
 			phyDetected = true;
 		}
@@ -39,7 +39,7 @@ task Reserved {
 
 	in u4 inp; out u4 outp;
 
-	void run() {
+	void loop() {
 		u4 _x = inp.read();
 		u4 y_ = (u4) (_x + 1);
 		u4 x__y = (u4) (y_ - 1);
@@ -63,7 +63,7 @@ task SchedExpr {
 
 	in sync u4 inp; out sync bool outp;
 
-	void run() {
+	void loop() {
 		if (!(inp.read < 4)) {
 			outp.write(true);
 		} else {
@@ -92,7 +92,7 @@ task ShiftRows {
 	/**
 	 * This function defines the ShiftRows step.
 	 */
-	void run() {
+	void loop() {
 		dout.write(shift(din.read));
 	}
 	
@@ -127,7 +127,7 @@ task Stupid {
 
 	in sync u8 din; out u8 dout;
 
-	void run() {
+	void loop() {
 		if (5 != 6) {
 			dout.write((u8) (din.read + 1));
 		}

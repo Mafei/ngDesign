@@ -22,7 +22,7 @@ task Add {
 
 	in i16 in1, in2; out i16 outp;
 	
-	void run() {
+	void loop() {
 		outp.write((i16) (in1.read() + in2.read()));
 	}
 }
@@ -39,7 +39,7 @@ task Cast1 {
 	// unsigned 16-bit to signed 8-bit
 	in u16 in1, in2; out i16 outp;
 	
-	void run() {
+	void loop() {
 		outp.write((i8) in1.read * (i8) in2.read);
 		if ((i8) in1.read < (u8) in2.read) {
 			// signed with unsigned comparison
@@ -61,7 +61,7 @@ task Compare1 {
 
 	in i8 count, clip; out bool result;
 	
-	void run() {
+	void loop() {
 		result.write(count.read() > clip.read());
 	}
 }
@@ -73,7 +73,7 @@ task Compare2 {
 
 	in i8 count, clip; out bool result;
 
-	void run() {
+	void loop() {
 		result.write(count.read() < clip.read());
 	}
 }
@@ -88,7 +88,7 @@ task Compare3 {
 
 	in i8 count; out bool result;
 
-	void run() {
+	void loop() {
 		char n = count.read();
 		result.write((n < 0 && n > -128) || (n > 53));
 	}
@@ -103,7 +103,7 @@ task CounterIncrement {
 
 	i3 cnt;
 
-	void run() {
+	void loop() {
 		count.write(cnt);
 		cnt++;
 	}
@@ -116,7 +116,7 @@ task Mask {
 
 	in i16 inp; out i12 outp;
 
-	void run() {
+	void loop() {
 		outp.write(inp.read() & 511);
 	}
 }
@@ -128,7 +128,7 @@ task Mult {
 
 	in i24 in1, in2; out i48 outp;
 
-	void run() {
+	void loop() {
 		outp.write(in1.read * in2.read);
 	}
 }
@@ -145,7 +145,7 @@ task OverflowSigned {
 	u4 dummy;
 	i4 icount = -2;
 
-	void run() {
+	void loop() {
 		dummy = stim.read();
 		icount++;
 		count.write(icount);
@@ -159,7 +159,7 @@ task OverflowSigned2 {
 
 	in i3 stim; out i3 count;
 
-	void run() {
+	void loop() {
 		i3 dummy = stim.read();
 		dummy = (i3) -15;
 		count.write(dummy);
@@ -173,7 +173,7 @@ task ShiftRight {
 
 	in sync i9 in1; out sync i6 outp;
 
-	void run() {
+	void loop() {
 		outp.write((i6) (in1.read() >> 1));
 		outp.write((i6) (in1.read() >> 2));
 		outp.write((i6) (in1.read() >> 3));
@@ -190,7 +190,7 @@ task SignConvert {
 
 	out u48 res;
 
-	void init() {
+	void setup() {
 		u3 un1 = 0b100; // no sign extension (source unsigned)
 		res.write(un1); // expect 4
 		i8 sn1 = un1;   // no sign extension (source unsigned)
@@ -228,7 +228,7 @@ task SignExtend {
 	in i48 in1;
 	out i80 outp;
 
-	void run() {
+	void loop() {
 		outp.write(in1.read); // check sign extension
 	}
 }
@@ -240,7 +240,7 @@ task Sub {
 
 	in i16 in1, in2; out i16 outp;
 
-	void run() {
+	void loop() {
 		outp.write((i16) (in1.read() - in2.read()));
 	}
 }

@@ -20,7 +20,7 @@ network TestSinglePortRam {
 	readerWriter = new task {
 		addr_t i = 2;
 
-		void run() {
+		void loop() {
 			i = 2;
 			ram.address.write(i);
 			ram.data.write(i << 1);
@@ -54,7 +54,7 @@ task Controller {
 
 	addr_t i = 2;
 
-	void run() {
+	void loop() {
 		i = 2;
 		addr.write(i);
 		dout.write(i << 1);
@@ -98,7 +98,7 @@ network TestPseudoDualPortRam {
 		u16 x;
 		u4 i = 15;
 
-		void init() {
+		void setup() {
 			// 15 cycles waiting
 			for (i = 0; i < 15; i++) {
 			}
@@ -111,7 +111,7 @@ network TestPseudoDualPortRam {
 			i++;
 		}
 
-		void run() {
+		void loop() {
 			x = din.read;
 			assert(x == ((i - 2) & 0b1111) << 1);
 			dout.write(x);
@@ -128,7 +128,7 @@ network TestPseudoDualPortRam {
 
 		u4 i;
 
-		void init() {
+		void setup() {
 			i = 15;
 			address.write(i);
 			dout.write(i << 1);

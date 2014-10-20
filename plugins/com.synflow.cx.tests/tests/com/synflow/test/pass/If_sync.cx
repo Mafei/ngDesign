@@ -20,7 +20,7 @@ task IfElseIfWithRead {
 	in sync u3 cond;
 	out sync uchar o;
 
-	void run() {
+	void loop() {
 		u3 c = cond.read;
 		if (c == 1) {
 			o.write(cond.read);
@@ -46,7 +46,7 @@ task IfSeries {
 
 	u16 count;
 
-	void run() {
+	void loop() {
 		if (cond.read()) {
 			o.write(a.read());
 		} else {
@@ -74,7 +74,7 @@ task IfSeries2 {
 
 	in sync bool cond, sync u16 a; out sync u16 o, sync o2;
 
-	void run() {
+	void loop() {
 		if (cond.read()) {
 			o.write(a.read());
 		}
@@ -97,7 +97,7 @@ task IfSeries3 {
 
 	u16 count;
 
-	void run() {
+	void loop() {
 		bool c = cond.read();
 		if (c) {
 			count++;
@@ -117,7 +117,7 @@ task InitIfReading {
 
 	in sync u9 I; out sync u6 O;
 
-	void init() {
+	void setup() {
 		if (I.read > 0) {
 			
 		} else {
@@ -125,7 +125,7 @@ task InitIfReading {
 		}
 	}
 
-	void run() {
+	void loop() {
 		u9 local = I.read();
 		O.write(local > 63 ? 63 : (u6) local);
 	}
@@ -145,7 +145,7 @@ task IfNoLostCycle {
 
 	u8 count;
 
-	void run() {
+	void loop() {
 		while (din.read < 5) {
 			print("ignoring din = ", din.read, " < 5");
 			if (is100M.read) {
@@ -180,7 +180,7 @@ task IfNested {
 
 	u3 i;
 
-	void run() {
+	void loop() {
 		uchar htype = din.read;
 		uchar proto = din.read;
 

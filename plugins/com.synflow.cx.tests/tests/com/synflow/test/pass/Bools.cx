@@ -18,7 +18,7 @@ task BoolTest1 {
 
 	in sync bool in1;
 
-	void run() {
+	void loop() {
 		assert(in1.read() == true);
 	}
 }
@@ -30,7 +30,7 @@ task BoolTest2 {
 
 	out sync bool outp;
 
-	void run() {
+	void loop() {
 		bool x = 0;
 		outp.write(x);
 		x = 1;
@@ -57,7 +57,7 @@ task Clip {
 	/* 
 	 * writes the input clipped to [0..255]
 	 */
-	void run() {
+	void loop() {
 		i10 local = I.read();
 		O.write(local > 255 ? 255 : (local < 0 ? 0 : (i9) local));
 	}
@@ -70,7 +70,7 @@ task Compare {
 
 	in u9 count, clip; out bool result;
 
-	void run() {
+	void loop() {
 		result.write(count.read() == clip.read());
 	}
 }
@@ -82,7 +82,7 @@ task Compare2 {
 
 	in u8 count, u8 clip; out bool result;
 
-	void run() {
+	void loop() {
 		result.write(count.read() > clip.read());
 	}
 }

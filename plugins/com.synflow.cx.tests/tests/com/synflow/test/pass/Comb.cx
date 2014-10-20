@@ -18,7 +18,7 @@ task BarrelShifter {
 
 	in sync u32 inn, sync u8 inp; out sync u32 outp;
 
-	void run() {
+	void loop() {
 		outp.write(barrelShifter(inn.read(), inp.read()));
 	}
 
@@ -49,7 +49,7 @@ task Combinational1 {
 	in u32 op1, op2, bool doAdd;
 	out u32 res, bool o, c;
 
-	void run() {
+	void loop() {
 		u32 oper1 = op1.read;
 		u32 oper2 = op2.read;
 	
@@ -83,7 +83,7 @@ task Combinational2 {
 
 	in bool s, sync u8 din1, sync u8 din2; out sync u8 dout;
 
-	void run() {
+	void loop() {
 		if (s.read) {
 			dout.write(din1.read);
 		} else if (!s.read) {
@@ -103,7 +103,7 @@ task ComputationForLoop {
 	out sync u8 resulti;
 	out sync u8 resultj;
 
-	void run() {
+	void loop() {
 		p.read();
 		u8 i = compute_i();
 		resulti.write(i);
