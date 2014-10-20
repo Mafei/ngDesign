@@ -32,6 +32,7 @@ network Inner {
   joinEvenOdd = new task {
     void setup() {
       // waits for one cycle initially
+      idle(1);
     }
 
     void loop() {
