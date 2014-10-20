@@ -286,12 +286,20 @@ public abstract class AbstractCycleScheduler extends VoidCxSwitch {
 	}
 
 	/**
-	 * Returns <code>true</code> if the current transition is empty.
+	 * Returns <code>true</code> if the current transition and its children (if any) are empty.
 	 * 
-	 * @return a boolean indicating whether the current transition is empty
+	 * @return a boolean indicating whether the current transition and its children are empty
 	 */
 	protected final boolean isEmptyTransition() {
-		Transition transition = schedule.getTransition();
+		for (Transition transition : schedule.getTransitions()) {
+			if (!isEmptyTransition(transition)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private boolean isEmptyTransition(Transition transition) {
 		Iterable<EObject> iterable = concat(transition.getScheduler(), transition.getBody());
 
 		// returns true if iterable is empty or it just contains Enter/Leave instances

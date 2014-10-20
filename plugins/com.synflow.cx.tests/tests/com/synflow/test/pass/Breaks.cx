@@ -121,6 +121,28 @@ task Idle5 {
 	}
 }
 
+task IdleMultipleTransitions {
+	properties {
+		num_states: 5, num_transitions: 6
+	}
+
+	in u5 a;
+	
+	void loop() {
+		if (a.read > 5) {
+			print('tata');
+			a.read;
+			a.read;
+			a.read;
+		} else {
+			print('tata');
+		}
+		idle(1);
+		print('toto');
+	}
+
+}
+
 task MultipleReads {
 	properties {
 		num_states: 3, num_transitions: 3,
