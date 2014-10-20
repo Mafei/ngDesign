@@ -270,7 +270,7 @@ class VhdlActionPrinter {
 	def private resetStateVars(Actor actor)
 		'''
 		«FOR variable : actor.variables»
-			«IF variable.assignable && !variable.type.array»
+			«IF variable.assignable»
 				«namer.getName(variable)» <= «irPrinter.printInitialValue(variable)»;
 			«ENDIF»
 		«ENDFOR»
