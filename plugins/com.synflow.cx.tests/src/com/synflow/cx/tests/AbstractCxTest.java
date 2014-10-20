@@ -196,7 +196,7 @@ public abstract class AbstractCxTest extends AbstractXtextTests {
 		JsonPrimitive primitive = actor.getProperties().getAsJsonPrimitive("num_states");
 		if (primitive != null) {
 			int numberOfStates = primitive.getAsInt();
-			int actual = actor.hasFsm() ? actor.getFsm().getStates().size() : 1;
+			int actual = actor.hasFsm() ? actor.getFsm().getStates().size() : 0;
 			assertEquals(actor.getName(), numberOfStates, actual);
 		}
 
