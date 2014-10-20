@@ -49,6 +49,11 @@ public class NewPackageWizard extends Wizard implements INewWizard {
 	}
 
 	@Override
+	public boolean isHelpAvailable() {
+		return false;
+	}
+
+	@Override
 	public boolean performFinish() {
 		NewPackagePage page = (NewPackagePage) getPages()[0];
 		IFolder folder = page.createNewFolder();
