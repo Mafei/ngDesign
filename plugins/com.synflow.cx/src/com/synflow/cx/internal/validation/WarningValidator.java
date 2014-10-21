@@ -120,6 +120,16 @@ public class WarningValidator extends AbstractDeclarativeValidator {
 		}
 	}
 
+	private void checkEmptySetupOrLoop(Variable function) {
+		String name = function.getName();
+		if (NAME_SETUP.equals(name) || NAME_LOOP.equals(name)) {
+			if (function.getBody().getStmts().isEmpty()) {
+				warning("The function '" + name + "' does not contain any statements.", function,
+						Literals.VARIABLE__NAME);
+			}
+		}
+	}
+
 	private void checkUnusedFunction(Variable function) {
 		String name = function.getName();
 		if (NAME_SETUP.equals(name) || NAME_LOOP.equals(name)) {
@@ -202,6 +212,7 @@ public class WarningValidator extends AbstractDeclarativeValidator {
 		if (CxUtil.isFunction(variable)) {
 			checkDeprecatedFunction(variable);
 			checkUnusedFunction(variable);
+			checkEmptySetupOrLoop(variable);
 		} else {
 			checkUnusedVariable(variable);
 		}
