@@ -13,11 +13,11 @@ package com.synflow.core.layout;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 
 import com.synflow.core.SynflowCore;
 import com.synflow.core.SynflowNature;
@@ -89,28 +89,19 @@ public class ProjectLayout {
 			return null;
 		}
 
-		IContainer folder = (IContainer) resource;
-		IContainer container = folder.getParent();
-		while (container != null && container.getType() != IResource.PROJECT) {
-			folder = container;
-			container = folder.getParent();
+		IProject project = resource.getProject();
+		SourceFolder sourceFolder = getSourceFolder(project);
+		if (sourceFolder == null) {
+			// project is not accessible, is not Synflow, or has no existing source folder
+			return null;
 		}
 
-		IProject project = (IProject) container;
-		try {
-			// Synflow project
-			if (project.isAccessible() && project.hasNature(SynflowNature.NATURE_ID)) {
-				// "src" folder
-				if (folder.getName().equals(FOLDER_SRC)) {
-					if (folder == resource) {
-						return new SourceFolder(resource);
-					} else {
-						return new Package(resource);
-					}
-				}
-			}
-		} catch (CoreException e) {
-			SynflowCore.log(e);
+		// if root folder is the source folder, we can return a valid tree element
+		IPath path = resource.getFullPath();
+		boolean isRootFolder = path.segmentCount() == 2;
+		IResource rootFolder = isRootFolder ? resource : project.getFolder(path.segment(1));
+		if (rootFolder.equals(sourceFolder.getResource())) {
+			return isRootFolder ? sourceFolder : new Package(resource);
 		}
 
 		return null;
