@@ -164,6 +164,7 @@ public class NewPackagePage extends WizardPage implements ModifyListener {
 	 * Initializes this page's controls.
 	 */
 	protected void initializePage() {
+		boolean valid = false;
 		Iterator<?> it = selection.iterator();
 		if (it.hasNext()) {
 			Object next = it.next();
@@ -179,6 +180,7 @@ public class NewPackagePage extends WizardPage implements ModifyListener {
 					if (folder.getPackages().length == 0) {
 						// if no packages exist, suggest project name as initial package
 						resourceNameField.setText(project.getName().toLowerCase());
+						valid = true;
 					}
 				}
 			}
@@ -187,7 +189,7 @@ public class NewPackagePage extends WizardPage implements ModifyListener {
 		// move cursor at the end
 		resourceNameField.setSelection(resourceNameField.getCharCount());
 
-		setPageComplete(false);
+		setPageComplete(valid);
 	}
 
 	@Override
