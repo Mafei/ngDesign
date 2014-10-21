@@ -14,7 +14,7 @@ import static com.synflow.cx.CxConstants.NAME_LOOP;
 import static com.synflow.cx.CxConstants.NAME_LOOP_DEPRECATED;
 import static com.synflow.cx.CxConstants.NAME_SETUP;
 import static com.synflow.cx.CxConstants.NAME_SETUP_DEPRECATED;
-import static com.synflow.cx.validation.IssueCodes.WARN_SHOULD_REPLACE_NAME;
+import static com.synflow.cx.validation.IssueCodes.SHOULD_REPLACE_NAME;
 import static org.eclipse.xtext.EcoreUtil2.getContainerOfType;
 
 import java.util.Collection;
@@ -63,7 +63,7 @@ public class WarningValidator extends AbstractDeclarativeValidator {
 					warning("This entity should be named '" + fileName
 							+ "' because it is the only entity declared by '" + path.lastSegment()
 							+ "'", entity, Literals.CX_ENTITY__NAME, INSIGNIFICANT_INDEX,
-							WARN_SHOULD_REPLACE_NAME, name, fileName);
+							SHOULD_REPLACE_NAME, name, fileName);
 					return;
 				}
 			}
@@ -73,7 +73,7 @@ public class WarningValidator extends AbstractDeclarativeValidator {
 			String nameUpper = name.substring(0, 1).toUpperCase() + name.substring(1);
 			warning("The entity '" + name
 					+ "' should have a name that starts with an uppercase letter", entity,
-					Literals.CX_ENTITY__NAME, INSIGNIFICANT_INDEX, WARN_SHOULD_REPLACE_NAME, name,
+					Literals.CX_ENTITY__NAME, INSIGNIFICANT_INDEX, SHOULD_REPLACE_NAME, name,
 					nameUpper);
 		}
 	}
@@ -85,7 +85,7 @@ public class WarningValidator extends AbstractDeclarativeValidator {
 			String nameLower = name.substring(0, 1).toLowerCase() + name.substring(1);
 			warning("The instance '" + name
 					+ "' should have a name that starts with a lowercase letter", inst,
-					Literals.INST__NAME, INSIGNIFICANT_INDEX, WARN_SHOULD_REPLACE_NAME, name,
+					Literals.INST__NAME, INSIGNIFICANT_INDEX, SHOULD_REPLACE_NAME, name,
 					nameLower);
 		}
 	}
@@ -102,7 +102,7 @@ public class WarningValidator extends AbstractDeclarativeValidator {
 			String nameLower = name.substring(0, 1).toLowerCase() + name.substring(1);
 			warning("The port '" + name
 					+ "' should have a name that starts with a lowercase letter", variable,
-					Literals.VARIABLE__NAME, INSIGNIFICANT_INDEX, WARN_SHOULD_REPLACE_NAME, name,
+					Literals.VARIABLE__NAME, INSIGNIFICANT_INDEX, SHOULD_REPLACE_NAME, name,
 					nameLower);
 		}
 	}
@@ -111,11 +111,11 @@ public class WarningValidator extends AbstractDeclarativeValidator {
 		String name = function.getName();
 		if (NAME_SETUP_DEPRECATED.equals(name)) {
 			warning("The function '" + name + "' should be named 'setup'", function,
-					Literals.VARIABLE__NAME, INSIGNIFICANT_INDEX, WARN_SHOULD_REPLACE_NAME, name,
+					Literals.VARIABLE__NAME, INSIGNIFICANT_INDEX, SHOULD_REPLACE_NAME, name,
 					"setup");
 		} else if (NAME_LOOP_DEPRECATED.equals(name) || "main".equals(name)) {
 			warning("The function '" + name + "' should be named 'loop'", function,
-					Literals.VARIABLE__NAME, INSIGNIFICANT_INDEX, WARN_SHOULD_REPLACE_NAME, name,
+					Literals.VARIABLE__NAME, INSIGNIFICANT_INDEX, SHOULD_REPLACE_NAME, name,
 					"loop");
 		}
 	}

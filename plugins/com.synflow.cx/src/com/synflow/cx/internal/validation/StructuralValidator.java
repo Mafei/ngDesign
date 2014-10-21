@@ -21,10 +21,15 @@ import static com.synflow.cx.validation.IssueCodes.ERR_ILLEGAL_FENCE;
 import static com.synflow.cx.validation.IssueCodes.ERR_SIDE_EFFECTS_FUNCTION;
 import static com.synflow.cx.validation.IssueCodes.ERR_TYPE_ONE_BIT;
 import static com.synflow.cx.validation.IssueCodes.ERR_VAR_DECL;
+import static com.synflow.cx.validation.IssueCodes.SHOULD_REPLACE_NAME;
 import static java.math.BigInteger.ZERO;
 
 import java.util.List;
 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.naming.QualifiedName;
@@ -37,6 +42,8 @@ import org.eclipse.xtext.validation.EValidatorRegistrar;
 
 import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
+import com.synflow.core.layout.ITreeElement;
+import com.synflow.core.layout.ProjectLayout;
 import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.Block;
 import com.synflow.cx.cx.CExpression;
@@ -210,6 +217,26 @@ public class StructuralValidator extends AbstractDeclarativeValidator {
 		} else if (!ValueUtil.isTrue(ValueUtil.gt(value, ZERO))) {
 			error("Illegal idle: the number of cycles must be greater than zero", numCycles, null,
 					ERR_EXPECTED_CONST);
+		}
+	}
+
+	@Check
+	public void checkPackage(Module module) {
+		String packageName = module.getPackage();
+		URI uri = module.eResource().getURI();
+		if (uri.isPlatform()) {
+			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+			IResource resource = workspace.getRoot().findMember(uri.toPlatformString(true));
+			ITreeElement element = ProjectLayout.getTreeElement(resource.getParent());
+			if (element != null && element.isPackage()) {
+				String expected = element.getName();
+				if (!packageName.equals(expected)) {
+					error("The declared package \"" + packageName
+							+ "\" does not match the expected package \"" + expected + "\"",
+							module, Literals.MODULE__PACKAGE, INSIGNIFICANT_INDEX,
+							SHOULD_REPLACE_NAME, packageName, expected);
+				}
+			}
 		}
 	}
 

@@ -65,6 +65,6 @@ public interface IssueCodes {
 
 	String ERR_VAR_DECL = "errVariableDeclaration";
 
-	String WARN_SHOULD_REPLACE_NAME = "warnShouldReplaceName";
+	String SHOULD_REPLACE_NAME = "shouldReplaceName";
 
 }

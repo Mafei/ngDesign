@@ -12,11 +12,12 @@ package com.synflow.cx.ui.quickfix;
 
 import static com.synflow.cx.validation.IssueCodes.ERR_ENTRY_FUNCTION_BAD_TYPE;
 import static com.synflow.cx.validation.IssueCodes.ERR_UNRESOLVED_FUNCTION;
-import static com.synflow.cx.validation.IssueCodes.WARN_SHOULD_REPLACE_NAME;
+import static com.synflow.cx.validation.IssueCodes.SHOULD_REPLACE_NAME;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.xtext.EcoreUtil2;
+import org.eclipse.xtext.diagnostics.Severity;
 import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
@@ -75,22 +76,27 @@ public class CxQuickfixProvider extends DefaultQuickfixProvider {
 		createLinkingIssueResolutions(issue, acceptor);
 	}
 
-	@Fix(WARN_SHOULD_REPLACE_NAME)
+	@Fix(SHOULD_REPLACE_NAME)
 	public void replaceName(final Issue issue, IssueResolutionAcceptor acceptor) {
 		final String name = issue.getData()[0];
 		final String replacement = issue.getData()[1];
 		final int offset = issue.getOffset();
 		final int length = issue.getLength();
 
-		acceptor.accept(issue, "Replace '" + name + "' by '" + replacement + "'",
-				"Updates the name to respect the recommended coding style.", null,
-				new IModification() {
+		String description;
+		if (issue.getSeverity() == Severity.ERROR) {
+			description = "Updates the name to correct the error.";
+		} else {
+			description = "Updates the name to respect the recommended coding style.";
+		}
+
+		acceptor.accept(issue, "Replace '" + name + "' by '" + replacement + "'", description,
+				null, new IModification() {
 					public void apply(IModificationContext context) throws BadLocationException {
 						IXtextDocument document = context.getXtextDocument();
 						document.replace(offset, length, replacement);
 					}
 				});
-
 	}
 
 }
