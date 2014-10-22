@@ -430,7 +430,7 @@
        </actionProvider>
        <actionProvider
              class="com.synflow.ngDesign.ui.internal.navigator.RefactorActionProvider"
-             id="org.eclipse.ui.navigator.resources.actions.RefactorActions"
+             id="com.synflow.ngDesign.ui.navigator.actions.RefactorActions"
              overrides="org.eclipse.ui.navigator.resources.actions.RefactorActions">
           <enablement>
              <adapt
