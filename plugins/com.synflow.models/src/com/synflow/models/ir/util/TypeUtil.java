@@ -443,16 +443,32 @@ public class TypeUtil {
 			return TypeUtil.getLargestPlus1(t1, t2);
 
 		case EQ:
+		case NE:
+			// can compare (in)equality of any two compatible types
+			if (getLargest(t1, t2) != null) {
+				return IrFactory.eINSTANCE.createTypeBool();
+			}
+			return null;
+
 		case GE:
 		case GT:
 		case LE:
-		case LT:
-		case NE:
-			return IrFactory.eINSTANCE.createTypeBool();
+		case LT: {
+			// can compare any two compatible types (except bool)
+			Type largest = getLargest(t1, t2);
+			if (largest != null && !largest.isBool()) {
+				return IrFactory.eINSTANCE.createTypeBool();
+			}
+			return null;
+		}
 
 		case LOGIC_AND:
 		case LOGIC_OR:
-			return IrFactory.eINSTANCE.createTypeBool();
+			// operands must be booleans
+			if (t1.isBool() && t2.isBool()) {
+				return IrFactory.eINSTANCE.createTypeBool();
+			}
+			return null;
 
 		default:
 			// shifts, div, mod are typed by tryGetPreciseType
