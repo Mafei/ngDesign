@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="ngDesign" uid="ngDesign" id="com.synflow.ngDesign.product" version="0.11.2" useFeatures="true" includeLaunchers="true">
+<product name="ngDesign" uid="ngDesign" id="com.synflow.ngDesign.product" version="0.11.3" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
       <image path="icons/about.png"/>
