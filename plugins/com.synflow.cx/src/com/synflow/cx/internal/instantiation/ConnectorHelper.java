@@ -72,7 +72,7 @@ public class ConnectorHelper {
 	 *            a port reference
 	 * @return an instance
 	 */
-	public Instance getInstance(DPN dpn, VarRef ref) {
+	public Inst getInst(VarRef ref) {
 		String link = NodeModelUtils.getTokenText(NodeModelUtils.getNode(ref));
 		QualifiedName name = converter.toQualifiedName(link);
 		if (name.getSegmentCount() == 1) {
@@ -83,7 +83,21 @@ public class ConnectorHelper {
 		QualifiedName qualifiedLinkName = converter.toQualifiedName(name.getFirstSegment());
 		IEObjectDescription eObjectDescription = scope.getSingleElement(qualifiedLinkName);
 
-		Inst inst = (Inst) eObjectDescription.getEObjectOrProxy();
+		return (Inst) eObjectDescription.getEObjectOrProxy();
+	}
+
+	/**
+	 * If the given port reference refers to a port in an instance, returns that instance.
+	 * Otherwise, if the reference is that of a simple port (no instance), returns null.
+	 * 
+	 * @param dpn
+	 *            dpn
+	 * @param ref
+	 *            a port reference
+	 * @return an instance
+	 */
+	public Instance getInstance(DPN dpn, VarRef ref) {
+		Inst inst = getInst(ref);
 		return instantiator.getMapping(dpn, inst);
 	}
 

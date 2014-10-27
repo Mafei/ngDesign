@@ -15,6 +15,7 @@ import static org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider.NA
 
 import org.eclipse.xtext.conversion.IValueConverterService;
 import org.eclipse.xtext.debug.IStratumBreakpointSupport;
+import org.eclipse.xtext.findReferences.IReferenceFinder;
 import org.eclipse.xtext.formatting.IWhitespaceInformationProvider;
 import org.eclipse.xtext.generator.IGenerator;
 import org.eclipse.xtext.linking.impl.ImportedNamesAdapter;
@@ -33,6 +34,7 @@ import com.synflow.cx.generator.CxGenerator;
 import com.synflow.cx.internal.scoping.CxGlobalScopeProvider;
 import com.synflow.cx.internal.scoping.CxImportedNamesAdapterProvider;
 import com.synflow.cx.internal.scoping.CxImportedNamespaceScopeProvider;
+import com.synflow.cx.references.CxReferenceFinder;
 import com.synflow.cx.resource.CxResourceDescriptionManager;
 import com.synflow.cx.resource.CxResourceStrategy;
 import com.synflow.cx.services.CxQualifiedNameProvider;
@@ -47,7 +49,7 @@ public class CxRuntimeModule extends AbstractCxRuntimeModule {
 	public Class<? extends IDefaultResourceDescriptionStrategy> bindIDefaultResourceDescriptionStrategy() {
 		return CxResourceStrategy.class;
 	}
-
+	
 	public Class<? extends IGenerator> bindIGenerator() {
 		return CxGenerator.class;
 	}
@@ -60,6 +62,10 @@ public class CxRuntimeModule extends AbstractCxRuntimeModule {
 	@Override
 	public Class<? extends IQualifiedNameProvider> bindIQualifiedNameProvider() {
 		return CxQualifiedNameProvider.class;
+	}
+
+	public Class<? extends IReferenceFinder> bindIReferenceFinder() {
+		return CxReferenceFinder.class;
 	}
 
 	public Class<? extends IResourceDescription.Manager> bindIResourceDescription$Manager() {
