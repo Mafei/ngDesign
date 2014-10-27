@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2013 Synflow SAS.
+ * Copyright (c) 2012-2014 Synflow SAS.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,8 +15,6 @@ import static com.synflow.models.util.SwitchUtil.DONE;
 import java.util.Collection;
 import java.util.List;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import com.synflow.core.transformations.ProcedureTransformation;
@@ -25,35 +23,20 @@ import com.synflow.models.ir.InstLoad;
 import com.synflow.models.ir.InstStore;
 import com.synflow.models.ir.Procedure;
 import com.synflow.models.ir.Var;
+import com.synflow.models.ir.transform.UniqueNameComputer;
 import com.synflow.models.ir.util.AbstractIrVisitor;
 import com.synflow.models.util.Void;
 
 /**
- * This class visits all references to local variables, and each local variable
- * which is found to be used across more than one procedure is promoted to a
- * state variable.
+ * This class visits all references to local variables, and each local variable which is found to be
+ * used across more than one procedure is promoted to a state variable.
  * 
  * @author Matthieu Wipliez
  * 
  */
 public class VariablePromoter extends AbstractIrVisitor {
 
-	private static class VarNamePredicate implements Predicate<Var> {
-
-		private String name;
-
-		@Override
-		public boolean apply(Var var) {
-			return var.getName().equals(name);
-		}
-
-		public void setName(String name) {
-			this.name = name;
-		}
-
-	}
-
-	private final VarNamePredicate predName = new VarNamePredicate();
+	private final UniqueNameComputer nameComputer;
 
 	private final Multimap<Var, Procedure> procMap;
 
@@ -61,6 +44,7 @@ public class VariablePromoter extends AbstractIrVisitor {
 
 	public VariablePromoter(List<Var> stateVars) {
 		this.stateVars = stateVars;
+		nameComputer = new UniqueNameComputer(stateVars);
 		procMap = LinkedHashMultimap.create();
 	}
 
@@ -85,26 +69,8 @@ public class VariablePromoter extends AbstractIrVisitor {
 	}
 
 	/**
-	 * Returns a unique name based on the given name.
-	 * 
-	 * @param name
-	 *            name
-	 * @return a unique name based on the given name
-	 */
-	public String getUniqueName(String name) {
-		String uniqueName = name;
-		int i = 1;
-		predName.setName(uniqueName);
-		while (Iterables.any(stateVars, predName)) {
-			uniqueName = name + "_" + i++;
-			predName.setName(uniqueName);
-		}
-		return uniqueName;
-	}
-
-	/**
-	 * Visits the given actor, and promotes any local variable that is
-	 * defined/used across more than one procedure.
+	 * Visits the given actor, and promotes any local variable that is defined/used across more than
+	 * one procedure.
 	 * 
 	 * @param actor
 	 *            an actor
@@ -118,7 +84,7 @@ public class VariablePromoter extends AbstractIrVisitor {
 				// change name
 				String procName = procedures.iterator().next().getName();
 				String name = procName + "_" + variable.getName();
-				variable.setName(getUniqueName(name));
+				variable.setName(nameComputer.getUniqueName(name));
 
 				// promotes to state variable
 				stateVars.add(variable);
