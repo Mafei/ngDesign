@@ -36,7 +36,7 @@
  * WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.synflow.ngDesign.ui.internal;
+package com.synflow.ngDesign.ui;
 
 import static com.synflow.core.ISynflowConstants.FILE_EXT_CX;
 
@@ -64,6 +64,7 @@ import org.eclipse.ui.dialogs.SearchPattern;
 import com.synflow.core.SynflowCore;
 import com.synflow.core.layout.ProjectLayout;
 import com.synflow.core.layout.SourceFolder;
+import com.synflow.ngDesign.ui.internal.NgDesignUi;
 
 /**
  * This class defines a custom filtered items selection dialog.

@@ -21,4 +21,5 @@ Require-Bundle: org.eclipse.core.expressions,
  org.eclipse.e4.ui.css.swt.theme
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
+Export-Package: com.synflow.ngDesign.ui
 
