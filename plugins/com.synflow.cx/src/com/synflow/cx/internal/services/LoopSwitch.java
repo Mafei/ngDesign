@@ -47,7 +47,14 @@ public class LoopSwitch extends ScheduleModifierSwitch {
 						}
 					}
 				} else if (init instanceof StatementVariable) {
-					// TODO handle statement variable
+					StatementVariable stmtVar = (StatementVariable) init;
+					for (Variable variable : stmtVar.getVariables()) {
+						Object value = Evaluator.getValue(variable.getValue());
+						if (value == null || checkBounds(variable, value, stmt.getCondition())) {
+							return true;
+						}
+					}
+					return false;
 				}
 			}
 		}
