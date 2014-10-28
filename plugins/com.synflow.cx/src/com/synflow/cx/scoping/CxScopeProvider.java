@@ -48,6 +48,7 @@ import com.synflow.cx.cx.Module;
 import com.synflow.cx.cx.Network;
 import com.synflow.cx.cx.PortDecl;
 import com.synflow.cx.cx.Statement;
+import com.synflow.cx.cx.StatementLoop;
 import com.synflow.cx.cx.StatementVariable;
 import com.synflow.cx.cx.Task;
 import com.synflow.cx.cx.VarRef;
@@ -78,17 +79,6 @@ public class CxScopeProvider extends AbstractDeclarativeScopeProvider {
 		return descriptions;
 	}
 
-	private Iterable<IEObjectDescription> getPortDescs(Instantiable entity, String direction) {
-		Iterable<Variable> ports = CxUtil.getPorts(entity.getPortDecls(), direction);
-		return Iterables.transform(ports, new Function<Variable, IEObjectDescription>() {
-			@Override
-			public IEObjectDescription apply(Variable port) {
-				QualifiedName name = QualifiedName.create(port.getName());
-				return new EObjectDescription(name, port, null);
-			}
-		});
-	}
-
 	private Iterable<? extends IEObjectDescription> getPortDescs(final Inst inst, String direction) {
 		Iterable<PortDecl> portDecls;
 		Task task = inst.getTask();
@@ -108,6 +98,17 @@ public class CxScopeProvider extends AbstractDeclarativeScopeProvider {
 			@Override
 			public IEObjectDescription apply(Variable port) {
 				QualifiedName name = QualifiedName.create(inst.getName(), port.getName());
+				return new EObjectDescription(name, port, null);
+			}
+		});
+	}
+
+	private Iterable<IEObjectDescription> getPortDescs(Instantiable entity, String direction) {
+		Iterable<Variable> ports = CxUtil.getPorts(entity.getPortDecls(), direction);
+		return Iterables.transform(ports, new Function<Variable, IEObjectDescription>() {
+			@Override
+			public IEObjectDescription apply(Variable port) {
+				QualifiedName name = QualifiedName.create(port.getName());
 				return new EObjectDescription(name, port, null);
 			}
 		});
@@ -164,40 +165,48 @@ public class CxScopeProvider extends AbstractDeclarativeScopeProvider {
 		// finds all variables declared (from inner to outer)
 		List<Variable> variables = new ArrayList<Variable>();
 
-		EObject cter = statement;
-		while (cter != null) {
-			EObject last = cter;
-			cter = cter.eContainer();
-
-			if (cter instanceof Block) {
-				Block block = (Block) cter;
-				List<Statement> stmts = block.getStmts();
-				int upto = ECollections.indexOf(stmts, last, 0);
-				ListIterator<Statement> it = stmts.listIterator(upto);
-				while (it.hasPrevious()) {
-					Statement stmt = it.previous();
-					if (stmt instanceof StatementVariable) {
-						StatementVariable stmtVar = (StatementVariable) stmt;
+		EObject cter = statement.eContainer();
+		if (cter instanceof Block) {
+			Block block = (Block) cter;
+			List<Statement> stmts = block.getStmts();
+			int upto = ECollections.indexOf(stmts, statement, 0);
+			ListIterator<Statement> it = stmts.listIterator(upto);
+			while (it.hasPrevious()) {
+				Statement stmt = it.previous();
+				if (stmt instanceof StatementVariable) {
+					StatementVariable stmtVar = (StatementVariable) stmt;
+					addLocalVars(variables, stmtVar.getVariables());
+				} else if (stmt instanceof StatementLoop) {
+					StatementLoop loop = (StatementLoop) stmt;
+					Statement init = loop.getInit();
+					if (init instanceof StatementVariable) {
+						StatementVariable stmtVar = (StatementVariable) init;
 						addLocalVars(variables, stmtVar.getVariables());
 					}
 				}
-			} else if (cter instanceof Variable) {
-				break;
 			}
 		}
 
-		// add parameters
-		Variable function = (Variable) cter;
-		for (Variable variable : function.getParameters()) {
-			variables.add(variable);
-		}
-
 		// build scope (from outer to inner)
-		IScope outer = getScope(function.eContainer(), reference);
+		IScope outer = getScope(statement.eContainer(), reference);
 		ListIterator<Variable> it = variables.listIterator(variables.size());
 		while (it.hasPrevious()) {
 			Variable inner = it.previous();
 			outer = Scopes.scopeFor(Collections.singleton(inner), outer);
+		}
+		return outer;
+	}
+
+	/**
+	 * Returns the scope for a variable referenced inside a statement.
+	 */
+	public IScope scope_VarRef_variable(StatementLoop loop, EReference reference) {
+		IScope outer = getScope(loop.eContainer(), reference);
+
+		Statement init = loop.getInit();
+		if (init instanceof StatementVariable) {
+			StatementVariable stmtVar = (StatementVariable) init;
+			return Scopes.scopeFor(stmtVar.getVariables(), outer);
 		}
 		return outer;
 	}
@@ -210,6 +219,14 @@ public class CxScopeProvider extends AbstractDeclarativeScopeProvider {
 		Iterable<Variable> variables = CxUtil.getStateVars(task.getDecls());
 		IScope outer = delegateGetScope(task, reference);
 		return Scopes.scopeFor(variables, outer);
+	}
+
+	/**
+	 * Returns the scope for a variable referenced inside a statement.
+	 */
+	public IScope scope_VarRef_variable(Variable function, EReference reference) {
+		IScope outer = getScope(function.eContainer(), reference);
+		return Scopes.scopeFor(function.getParameters(), outer);
 	}
 
 	/**

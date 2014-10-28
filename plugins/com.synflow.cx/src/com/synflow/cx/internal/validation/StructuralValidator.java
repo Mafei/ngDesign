@@ -152,10 +152,10 @@ public class StructuralValidator extends AbstractDeclarativeValidator {
 		Iterable<IEObjectDescription> it = scope.getElements(name);
 		int n = Iterables.size(it);
 
-		if (n > 1) {
-			error("Duplicate variable declaration '" + variable.getName() + "'", variable,
-					Literals.VARIABLE__NAME, ERR_DUPLICATE_DECLARATIONS);
-		}
+//		if (n > 1) {
+//			error("Duplicate variable declaration '" + variable.getName() + "'", variable,
+//					Literals.VARIABLE__NAME, ERR_DUPLICATE_DECLARATIONS);
+//		}
 	}
 
 	@Check
