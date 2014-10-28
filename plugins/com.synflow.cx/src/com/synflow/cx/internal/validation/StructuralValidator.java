@@ -30,6 +30,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.naming.QualifiedName;
@@ -59,6 +60,7 @@ import com.synflow.cx.cx.StatementFence;
 import com.synflow.cx.cx.StatementIdle;
 import com.synflow.cx.cx.StatementIf;
 import com.synflow.cx.cx.StatementLoop;
+import com.synflow.cx.cx.StatementVariable;
 import com.synflow.cx.cx.Task;
 import com.synflow.cx.cx.TypeDecl;
 import com.synflow.cx.cx.Value;
@@ -140,22 +142,31 @@ public class StructuralValidator extends AbstractDeclarativeValidator {
 	}
 
 	@Check
-	public void checkDuplicateDeclaration(Variable variable) {
-		Module module = EcoreUtil2.getContainerOfType(variable, Module.class);
-		QualifiedName name = nameProvider.getFullyQualifiedName(variable);
-		if (name == null) {
+	public void checkDuplicateDeclarations(Variable variable) {
+		if (variable.getName() == null) {
 			// name is null when the variable declaration is incomplete
 			return;
 		}
 
-		IScope scope = scopeProvider.getScope(module, Literals.VAR_REF__VARIABLE);
+		EObject context = variable.eContainer();
+		QualifiedName name;
+		if (context instanceof StatementVariable) {
+			// local variable
+			name = QualifiedName.create(variable.getName());
+		} else {
+			// not a local variable
+			context = EcoreUtil2.getContainerOfType(variable, Module.class);
+			name = nameProvider.getFullyQualifiedName(variable);
+		}
+
+		IScope scope = scopeProvider.getScope(context, Literals.VAR_REF__VARIABLE);
 		Iterable<IEObjectDescription> it = scope.getElements(name);
 		int n = Iterables.size(it);
 
-//		if (n > 1) {
-//			error("Duplicate variable declaration '" + variable.getName() + "'", variable,
-//					Literals.VARIABLE__NAME, ERR_DUPLICATE_DECLARATIONS);
-//		}
+		if (n > 1) {
+			error("Duplicate variable declaration '" + variable.getName() + "'", variable,
+					Literals.VARIABLE__NAME, ERR_DUPLICATE_DECLARATIONS);
+		}
 	}
 
 	@Check
