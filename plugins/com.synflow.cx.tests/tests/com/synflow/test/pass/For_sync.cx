@@ -40,8 +40,8 @@ task BasicForLoop {
 	out sync u8 resulti;
 
 	void loop() {
-		u3 i, n = count.read();
-		for (i = 0; i < 4; i++) {
+		u3 n = count.read();
+		for (u3 i = 0; i < 4; i++) {
 			resulti.write(i << 1);
 		}
 	}
@@ -61,12 +61,12 @@ task BasicForLoopAndRead {
 	out sync u8 resulti, sync resultj;
 
 	void setup() {
-		u4 i, j, max = inp.read();
-		for (i = 0; i != max; i++) {
+		u4 max = inp.read();
+		for (u4 i = 0; i != max; i++) {
 			resulti.write(i);
 		}
 	
-		for (j = max; j > 0; j--) {
+		for (u4 j = max; j > 0; j--) {
 			resultj.write(j);
 		}
 	}
@@ -83,12 +83,12 @@ task BasicForLoopSeries {
 	in u3 count; out sync u8 resulti, sync resultj;
 
 	void loop() {
-		u3 i, j, n = count.read();
-		for (i = 0; i < n; i++) {
+		u3 n = count.read();
+		for (u3 i = 0; i < n; i++) {
 			resulti.write(i << 1);
 		}
 		
-		for (j = 3; j != 0; j--) {
+		for (u3 j = 3; j != 0; j--) {
 			resultj.write(j << 1);
 		}
 	}
@@ -319,8 +319,8 @@ task NestedLoops2 {
 	u8 count;
 
 	void loop() {
-		u3 j = 3; u3 i;
-		for (i = 5; i != 0; i--) {
+		u3 j = 3;
+		for (u3 i = 5; i != 0; i--) {
 			for (; j != 0; j--) {
 				count++;
 			}
