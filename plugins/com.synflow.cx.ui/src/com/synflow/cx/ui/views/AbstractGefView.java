@@ -296,7 +296,7 @@ public abstract class AbstractGefView extends ViewPart implements IPartListener,
 	}
 
 	protected void selectLine(StyledText text, int offset) {
-		if (resource != null) {
+		if (resource != null && !resource.getContents().isEmpty()) {
 			Module module = (Module) resource.getContents().get(0);
 
 			String className = getClassName(module, offset);
