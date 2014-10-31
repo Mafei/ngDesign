@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Synflow SAS.
+ * Copyright (c) 2012-2014 Synflow SAS.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,19 +33,20 @@ public class InjectableExtensionFactory implements IExecutableExtension,
 
 	@Override
 	public Object create() throws CoreException {
-		Object result = null;
-
 		try {
 			Class<?> clazz = getBundle().loadClass(clazzName);
-			result = SynflowCore.getDefault().getInstance(clazz);
-		} catch (Exception e) {
-			e.printStackTrace();
+
+			// if class found, inject and return result
+			Object result = SynflowCore.getDefault().getInstance(clazz);
+			if (result instanceof IExecutableExtension) {
+				((IExecutableExtension) result).setInitializationData(config, null, null);
+			}
+			return result;
+		} catch (ClassNotFoundException e) {
 		}
-		if (result instanceof IExecutableExtension) {
-			((IExecutableExtension) result).setInitializationData(config, null,
-					null);
-		}
-		return result;
+
+		// could not find class in this bundle, return null
+		return null;
 	}
 
 	/**
@@ -59,8 +60,8 @@ public class InjectableExtensionFactory implements IExecutableExtension,
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public void setInitializationData(IConfigurationElement config,
-			String propertyName, Object data) throws CoreException {
+	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
+			throws CoreException {
 		if (data instanceof String) {
 			clazzName = (String) data;
 		} else if (data instanceof Map<?, ?>) {
