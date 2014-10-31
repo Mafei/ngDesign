@@ -99,8 +99,10 @@ Pair:
 ;
 
 Element:
-	Primitive | Obj | Array
+	Primitive | Obj | Array | VariableArgument
 ;
+
+VariableArgument: value = ValidID;
 
 Primitive: value=(Literal | Null);
 Null: {Null} 'null';

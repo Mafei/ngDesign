@@ -10,6 +10,8 @@
  *******************************************************************************/
 package com.synflow.cx.internal.instantiation;
 
+import static com.synflow.cx.cx.CxFactory.eINSTANCE;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -22,12 +24,16 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.synflow.cx.cx.CExpression;
 import com.synflow.cx.cx.Element;
+import com.synflow.cx.cx.ExpressionInteger;
 import com.synflow.cx.cx.Inst;
 import com.synflow.cx.cx.Null;
 import com.synflow.cx.cx.Obj;
 import com.synflow.cx.cx.Pair;
 import com.synflow.cx.cx.Primitive;
+import com.synflow.cx.cx.VariableArgument;
 import com.synflow.models.dpn.Instance;
+import com.synflow.models.ir.ExprInt;
+import com.synflow.models.ir.Var;
 import com.synflow.models.node.Node;
 
 /**
@@ -71,7 +77,7 @@ public class InstantiationContext extends Node {
 				String key = pair.getKey();
 				Element element = pair.getValue();
 
-				// only support primitive values for now
+				// support for primitive values or const globals
 				if (element instanceof Primitive) {
 					Primitive primitive = (Primitive) element;
 					EObject value = primitive.getValue();
@@ -79,6 +85,43 @@ public class InstantiationContext extends Node {
 						properties.put(key, (CExpression) value);
 					} else if (value instanceof Null) {
 						properties.put(key, null);
+					}
+				} else if (element instanceof VariableArgument) { // The value of a key in json arguments for this instantiation has text that looks like a variable name
+					VariableArgument varArgument = (VariableArgument) element;
+					String variableName = varArgument.getValue();
+					
+					// flag
+					Boolean foundVariable = false;
+					
+					// look through variables in context to find one matching by name
+					for (Var var : instance.getDPN().getVariables()) {
+						
+						// compare names
+						if (var != null && var.getName().equals(variableName)) {
+							System.out.println(var);
+							
+							if( var.isAssignable() )
+							{
+								// compiler error: var must be const   (is there a better way to check for const than isAssignable?)
+								break;
+							}
+							
+							// Is there a better way to convert into something properties will accept?
+							ExprInt intVal = (ExprInt)var.getInitialValue();
+							ExpressionInteger epp = eINSTANCE.createExpressionInteger();
+							epp.setValue(intVal.getValue());
+							
+							// add property
+							properties.put(key, epp);
+							
+							foundVariable = true;
+							break;
+						}
+					}
+					
+					if(!foundVariable)
+					{
+						// compiler error: 
 					}
 				}
 			}
