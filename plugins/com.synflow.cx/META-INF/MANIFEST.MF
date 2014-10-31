@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Cx Language Support
 Bundle-Vendor: Synflow SAS
-Bundle-Version: 0.11.3.qualifier
+Bundle-Version: 0.12.0.qualifier
 Bundle-SymbolicName: com.synflow.cx;singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.xtext;bundle-version="2.7.1";visibility:=reexport,
@@ -12,10 +12,10 @@ Require-Bundle: org.eclipse.xtext;bundle-version="2.7.1";visibility:=reexport,
  org.eclipse.emf.common,
  org.eclipse.emf.ecore,
  org.eclipse.emf.mwe2.launch;bundle-version="2.6.0";resolution:=optional,
- com.synflow.core;bundle-version="0.11.3";visibility:=reexport,
+ com.synflow.core;bundle-version="0.12.0";visibility:=reexport,
  org.antlr.runtime,
  com.google.gson;bundle-version="2.1.0",
- com.synflow.cx.postprocessor;bundle-version="0.11.3";resolution:=optional
+ com.synflow.cx.postprocessor;bundle-version="0.12.0";resolution:=optional
 Import-Package: org.apache.commons.logging,
  org.apache.log4j,
  org.eclipse.xtext.xbase.lib

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: com.synflow.core;singleton:=true
-Bundle-Version: 0.11.3.qualifier
+Bundle-Version: 0.12.0.qualifier
 Bundle-ClassPath: .
 Bundle-Activator: com.synflow.core.SynflowCore
 Bundle-Vendor: %providerName
@@ -14,7 +14,7 @@ Require-Bundle: org.eclipse.core.expressions;bundle-version="3.4.500",
  com.google.guava,
  org.eclipse.core.runtime,
  org.eclipse.emf.ecore;visibility:=reexport,
- com.synflow.models;bundle-version="0.11.3";visibility:=reexport
+ com.synflow.models;bundle-version="0.12.0";visibility:=reexport
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Export-Package: com.synflow.core,

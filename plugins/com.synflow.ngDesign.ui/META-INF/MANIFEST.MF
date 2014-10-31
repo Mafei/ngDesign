@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Synflow ngDesign UI
 Bundle-SymbolicName: com.synflow.ngDesign.ui;singleton:=true
-Bundle-Version: 0.11.3.qualifier
+Bundle-Version: 0.12.0.qualifier
 Bundle-Activator: com.synflow.ngDesign.ui.internal.NgDesignUi
 Bundle-Vendor: Synflow SAS
 Require-Bundle: org.eclipse.core.expressions,
@@ -11,9 +11,9 @@ Require-Bundle: org.eclipse.core.expressions,
  org.eclipse.xtend.lib;bundle-version="2.4.3",
  org.eclipse.xtext.ui;bundle-version="2.4.0",
  org.eclipse.ui.console,
- com.synflow.core;bundle-version="0.11.3",
- com.synflow.cx;bundle-version="0.11.3",
- com.synflow.cx.ui;bundle-version="0.11.3",
+ com.synflow.core;bundle-version="0.12.0",
+ com.synflow.cx;bundle-version="0.12.0",
+ com.synflow.cx.ui;bundle-version="0.12.0",
  org.eclipse.egit.ui;bundle-version="2.3.1",
  org.eclipse.ui.views.log;bundle-version="1.0.400",
  org.eclipse.ui.navigator;bundle-version="3.5.300",
