@@ -13,6 +13,7 @@ package com.synflow.ngDesign.ui.internal.wizards;
 import static com.synflow.core.ISynflowConstants.FOLDER_IR;
 import static com.synflow.core.ISynflowConstants.FOLDER_SIM;
 import static com.synflow.core.ISynflowConstants.FOLDER_TESTBENCH;
+import static com.synflow.core.SynflowCore.PROP_GENERATOR;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -25,8 +26,11 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.xtext.ui.XtextProjectHelper;
+import org.osgi.service.prefs.BackingStoreException;
 
+import com.synflow.core.SynflowCore;
 import com.synflow.core.SynflowNature;
 
 /**
@@ -109,7 +113,7 @@ public class ProjectCreator {
 	 * @throws CoreException
 	 *             if something goes wrong
 	 */
-	public void createProject(IProject handle, URI location) throws CoreException {
+	public void createProject(IProject handle, URI location, String generator) throws CoreException {
 		// create description
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IProjectDescription description = workspace.newProjectDescription(handle.getName());
@@ -117,6 +121,15 @@ public class ProjectCreator {
 
 		configureDescription(handle, description);
 		addGitIgnore(handle);
+
+		// sets generator in preferences and saves
+		IEclipsePreferences prefs = SynflowCore.getProjectPreferences(handle);
+		prefs.put(PROP_GENERATOR, generator);
+		try {
+			prefs.flush();
+		} catch (BackingStoreException e) {
+			SynflowCore.log(e);
+		}
 	}
 
 }

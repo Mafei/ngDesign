@@ -20,8 +20,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
+
+import com.synflow.core.SynflowCore;
 
 /**
  * This class defines a new project wizard.
@@ -35,11 +36,11 @@ public class NewProjectWizard extends Wizard implements IExecutableExtension, IN
 
 	private IConfigurationElement fConfigElement;
 
-	private WizardNewProjectCreationPage mainPage;
+	private NewProjectPage mainPage;
 
 	@Override
 	public void addPages() {
-		mainPage = new WizardNewProjectCreationPage("new project");
+		mainPage = new NewProjectPage("new project");
 		mainPage.setDescription("Creates a new project");
 		mainPage.setTitle("New Project");
 		addPage(mainPage);
@@ -58,9 +59,9 @@ public class NewProjectWizard extends Wizard implements IExecutableExtension, IN
 		URI uri = mainPage.useDefaults() ? null : mainPage.getLocationURI();
 
 		try {
-			new ProjectCreator().createProject(project, uri);
+			new ProjectCreator().createProject(project, uri, mainPage.getGenerator());
 		} catch (CoreException e) {
-			e.printStackTrace();
+			SynflowCore.log(e);
 		}
 
 		BasicNewProjectResourceWizard.updatePerspective(fConfigElement);
