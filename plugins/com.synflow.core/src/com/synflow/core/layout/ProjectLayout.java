@@ -40,6 +40,10 @@ public class ProjectLayout {
 	 * @return an array of objects
 	 */
 	public static Object[] getChildren(IProject project) {
+		if (!project.isAccessible()) {
+			return new Object[0];
+		}
+
 		List<Object> children = new ArrayList<>();
 		try {
 			for (IResource resource : project.members()) {
