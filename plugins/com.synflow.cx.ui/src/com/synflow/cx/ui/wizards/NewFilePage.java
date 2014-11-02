@@ -230,8 +230,16 @@ public class NewFilePage extends WizardPage implements ModifyListener {
 			return false;
 		}
 
+		// check first letter is uppercase
+		char first = text.charAt(0);
+		if (!Character.isUpperCase(first)) {
+			setErrorMessage("A " + type + " name must begin with a uppercase letter");
+			return false;
+		}
+
 		if (!id.matcher(text).matches()) {
-			setErrorMessage("Invalid " + type + " name: '" + text + "' is not a valid identifier.");
+			setErrorMessage("Invalid " + type + " name: '" + text
+					+ "' is not a valid identifier. Must match \"" + id.toString() + "\".");
 			return false;
 		}
 
