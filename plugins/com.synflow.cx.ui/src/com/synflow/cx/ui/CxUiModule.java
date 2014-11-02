@@ -15,6 +15,7 @@ import org.eclipse.xtext.formatting.IWhitespaceInformationProvider;
 import org.eclipse.xtext.linking.ILinkingDiagnosticMessageProvider;
 import org.eclipse.xtext.resource.containers.IAllContainersState;
 import org.eclipse.xtext.ui.editor.XtextSourceViewer.Factory;
+import org.eclipse.xtext.ui.editor.contentassist.ITemplateProposalProvider;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
 import org.eclipse.xtext.ui.editor.model.IResourceForEditorInputFactory;
 import org.eclipse.xtext.ui.editor.model.ResourceForIEditorInputFactory;
@@ -31,6 +32,7 @@ import com.google.inject.Binder;
 import com.google.inject.Provider;
 import com.synflow.cx.formatting.WhitespaceInfoProvider;
 import com.synflow.cx.ui.containers.CxProjectsState;
+import com.synflow.cx.ui.contentassist.CxTemplateProposalProvider;
 import com.synflow.cx.ui.editor.syntaxhighlighting.CxHighlightingConfiguration;
 import com.synflow.cx.ui.editor.syntaxhighlighting.CxSemanticHighlightingCalculator;
 import com.synflow.cx.ui.editor.syntaxhighlighting.CxTokenToIdMapper;
@@ -75,6 +77,11 @@ public class CxUiModule extends AbstractCxUiModule {
 
 	public Class<? extends ISemanticHighlightingCalculator> bindISemanticHighlightingCalculator() {
 		return CxSemanticHighlightingCalculator.class;
+	}
+
+	@Override
+	public Class<? extends ITemplateProposalProvider> bindITemplateProposalProvider() {
+		return CxTemplateProposalProvider.class;
 	}
 
 	@Override
