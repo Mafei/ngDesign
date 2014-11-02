@@ -50,13 +50,15 @@ import com.synflow.core.layout.Package;
  */
 public class NewFilePage extends WizardPage implements ModifyListener {
 
+	private static Pattern id = Pattern.compile("[A-Z][a-zA-Z0-9_]*");
+
 	private static final int SIZING_TEXT_FIELD_WIDTH = 250;
 
+	private static String getTypeUpper(String type) {
+		return type.substring(0, 1).toUpperCase() + type.substring(1);
+	}
+
 	private Package containingPackage;
-
-	private String entityName;
-
-	private Pattern id = Pattern.compile("[A-Z][a-zA-Z0-9_]*");
 
 	private Label labelPackage;
 
@@ -64,12 +66,15 @@ public class NewFilePage extends WizardPage implements ModifyListener {
 
 	private IStructuredSelection selection;
 
+	private final String type;
+
 	public NewFilePage(String type, IStructuredSelection selection) {
-		super("New" + type);
+		super("New" + getTypeUpper(type));
 		this.selection = selection;
 
 		setTitle("New Cx " + type);
 		setDescription("Creates a new Cx " + type + ".");
+		this.type = type;
 	}
 
 	@Override
@@ -91,7 +96,7 @@ public class NewFilePage extends WizardPage implements ModifyListener {
 		labelPackage.setFont(this.getFont());
 
 		Label label2 = new Label(composite, SWT.WRAP);
-		label2.setText("Name:");
+		label2.setText(getTypeUpper(type) + " name:");
 		label2.setFont(this.getFont());
 
 		// resource name entry field
@@ -99,6 +104,7 @@ public class NewFilePage extends WizardPage implements ModifyListener {
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 		data.widthHint = SIZING_TEXT_FIELD_WIDTH;
 		resourceNameField.setLayoutData(data);
+		resourceNameField.setFont(this.getFont());
 
 		initializePage();
 
@@ -140,12 +146,12 @@ public class NewFilePage extends WizardPage implements ModifyListener {
 						public void run() {
 							if (e.getCause() instanceof CoreException) {
 								ErrorDialog.openError(getContainer().getShell(),
-										"Could not create entity", null,
+										"Could not create " + type, null,
 										((CoreException) e.getCause()).getStatus());
 							} else {
 								SynflowCore.log(e.getCause());
 								MessageDialog.openError(getContainer().getShell(),
-										"Could not create entity",
+										"Could not create " + type,
 										NLS.bind("Internal error: {0}", e.getCause().getMessage()));
 							}
 						}
@@ -162,11 +168,9 @@ public class NewFilePage extends WizardPage implements ModifyListener {
 			// ExecutionExceptions are handled above, but unexpected runtime
 			// exceptions and errors may still occur.
 			SynflowCore.log(e.getTargetException());
-			MessageDialog
-					.open(MessageDialog.ERROR, getContainer().getShell(),
-							"Could not create entity",
-							NLS.bind("Internal error: {0}", e.getTargetException().getMessage()),
-							SWT.SHEET);
+			MessageDialog.open(MessageDialog.ERROR, getContainer().getShell(), "Could not create "
+					+ type, NLS.bind("Internal error: {0}", e.getTargetException().getMessage()),
+					SWT.SHEET);
 			return null;
 		}
 
@@ -174,7 +178,7 @@ public class NewFilePage extends WizardPage implements ModifyListener {
 	}
 
 	protected final String getEntityName() {
-		return entityName;
+		return resourceNameField.getText();
 	}
 
 	private IFile getFile() {
@@ -222,12 +226,12 @@ public class NewFilePage extends WizardPage implements ModifyListener {
 	protected boolean validatePage() {
 		String text = resourceNameField.getText();
 		if (text.isEmpty()) {
-			setErrorMessage("Enter a name.");
+			setErrorMessage("Enter a " + type + " name.");
 			return false;
 		}
 
 		if (!id.matcher(text).matches()) {
-			setErrorMessage("Invalid name: '" + text + "' is not a valid identifier.");
+			setErrorMessage("Invalid " + type + " name: '" + text + "' is not a valid identifier.");
 			return false;
 		}
 
