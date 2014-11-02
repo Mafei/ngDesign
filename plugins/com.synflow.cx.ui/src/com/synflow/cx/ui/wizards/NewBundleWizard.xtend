@@ -8,36 +8,38 @@
  * Contributors:
  *    Matthieu Wipliez - initial API and implementation and/or initial documentation
  *******************************************************************************/
-package com.synflow.cx.ui.wizards
-
-import org.eclipse.jface.viewers.IStructuredSelection
+package com.synflow.cx.ui.wizards;
 
 /**
- * This class provides a page to create a new Cx task.
+ * This class provides a wizard to create a new Cx bundle.
  * 
  * @author Matthieu Wipliez
- * @author Nicolas Siret
  */
-class NewTaskPage extends NewFilePage {
+public class NewBundleWizard extends NewFileWizard {
 
-	new(IStructuredSelection selection) {
-		super("NewTask", selection);
+	public static val WIZARD_ID = "com.synflow.cx.ui.wizards.newBundle"
+
+	override getType() {
+		"bundle"
 	}
 
-	override getStringContents(String author, int year)
+	override getStringContents(String author, int year, String package_, String entityName)
 		'''
 		/*
 		 * Copyright (c) «year» «author»
 		 * All rights reserved.
 		 */
-		package «package»;
+		package «package_»;
 
-		task «entityName» {
-			in u8 a, sync b; out u16 c;
+		bundle «entityName» {
 
-			void loop() {
-				// TODO insert code here
+			/** current year. Switch to u12 in year 2048 */
+			u11 YEAR = «year»;
+
+			int increment(int x) {
+				return (int) (x + 1);
 			}
+
 		}
 		'''
 

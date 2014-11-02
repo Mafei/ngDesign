@@ -38,6 +38,10 @@
  */
 package com.synflow.cx.ui.wizards;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.Calendar;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -55,11 +59,39 @@ import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
  * 
  * @author Matthieu Wipliez
  */
-public class NewFileWizard extends Wizard implements INewWizard {
+public abstract class NewFileWizard extends Wizard implements INewWizard {
+
+	private NewFilePage newFilePage;
 
 	protected IStructuredSelection selection;
 
 	private IWorkbench workbench;
+
+	@Override
+	public void addPages() {
+		newFilePage = new NewFilePage(getType(), selection);
+		addPage(newFilePage);
+	}
+
+	/**
+	 * Returns a stream containing the initial contents to be given to new file resource instances.
+	 * 
+	 * @return initial contents to be given to new file resource instances
+	 */
+	private InputStream getInitialContents() {
+		final String author = System.getProperty("user.name");
+		final int year = Calendar.getInstance().get(Calendar.YEAR);
+		String pack = newFilePage.getPackage();
+		String entityName = newFilePage.getEntityName();
+
+		CharSequence charSeq = getStringContents(author, year, pack, entityName);
+		return new ByteArrayInputStream(charSeq.toString().getBytes());
+	}
+
+	abstract protected CharSequence getStringContents(String author, int year, String package_,
+			String entityName);
+
+	protected abstract String getType();
 
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
@@ -67,12 +99,13 @@ public class NewFileWizard extends Wizard implements INewWizard {
 		this.workbench = workbench;
 
 		setNeedsProgressMonitor(true);
+		setWindowTitle("New Cx " + getType());
 	}
 
 	@Override
 	public boolean performFinish() {
 		NewFilePage page = (NewFilePage) getPages()[0];
-		IFile file = page.createNewFile();
+		IFile file = page.createNewFile(getInitialContents());
 		if (file == null) {
 			return false;
 		}

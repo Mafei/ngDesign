@@ -10,29 +10,34 @@
  *******************************************************************************/
 package com.synflow.cx.ui.wizards;
 
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IWorkbench;
-
 /**
- * This class provides a wizard to create a new Cx bundle.
+ * This class provides a wizard to create a new Cx task.
  * 
  * @author Matthieu Wipliez
  */
-public class NewBundleWizard extends NewFileWizard {
+public class NewTaskWizard extends NewFileWizard {
 
-	public static final String WIZARD_ID = "com.synflow.cx.ui.wizards.newBundle";
+	public static val WIZARD_ID = "com.synflow.cx.ui.wizards.newTask"
 
-	@Override
-	public void addPages() {
-		NewFilePage page = new NewBundlePage(selection);
-		page.setDescription("Creates a new Cx bundle.");
-		addPage(page);
+	override getType() {
+		"task"
 	}
 
-	@Override
-	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		super.init(workbench, selection);
-		setWindowTitle("New Cx bundle");
-	}
+	override getStringContents(String author, int year, String package_, String entityName)
+		'''
+		/*
+		 * Copyright (c) «year» «author»
+		 * All rights reserved.
+		 */
+		package «package_»;
+
+		task «entityName» {
+			in u8 a, sync b; out u16 c;
+
+			void loop() {
+				// TODO insert code here
+			}
+		}
+		'''
 
 }

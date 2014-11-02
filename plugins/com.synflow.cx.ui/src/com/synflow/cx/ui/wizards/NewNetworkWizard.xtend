@@ -10,29 +10,40 @@
  *******************************************************************************/
 package com.synflow.cx.ui.wizards;
 
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IWorkbench;
-
 /**
  * This class provides a wizard to create a new network design.
  * 
  * @author Matthieu Wipliez
  */
-public class NewNetworkWizard extends NewFileWizard {
+class NewNetworkWizard extends NewFileWizard {
 
-	public static final String WIZARD_ID = "com.synflow.cx.ui.wizards.newNetwork";
+	public static val WIZARD_ID = "com.synflow.cx.ui.wizards.newNetwork"
 
-	@Override
-	public void addPages() {
-		NewFilePage page = new NewNetworkPage(selection);
-		page.setDescription("Creates a new Cx network.");
-		addPage(page);
+	override getType() {
+		"network"
 	}
 
-	@Override
-	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		super.init(workbench, selection);
-		setWindowTitle("New Cx network");
-	}
+	override getStringContents(String author, int year, String package_, String entityName)
+		'''
+		/*
+		 * Copyright (c) «year» «author»
+		 * All rights reserved.
+		 */
+		package «package_»;
+
+		network «entityName» {
+			in u8 a, sync b; out u16 c;
+
+			// instantiate task/network A
+			// x = new A();
+
+			// instantiate inner task
+			// y  = new task {
+			// 	void loop() {
+			//		x.result.read();
+			//	}
+			// };
+		}
+		'''
 
 }

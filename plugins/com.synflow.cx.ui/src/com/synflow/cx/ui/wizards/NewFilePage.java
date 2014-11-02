@@ -10,15 +10,24 @@
  *******************************************************************************/
 package com.synflow.cx.ui.wizards;
 
-import java.io.ByteArrayInputStream;
+import static com.synflow.core.ISynflowConstants.FILE_EXT_CX;
+
 import java.io.InputStream;
-import java.util.Calendar;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.regex.Pattern;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -27,19 +36,23 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.ide.undo.CreateFileOperation;
+import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 
+import com.synflow.core.SynflowCore;
 import com.synflow.core.layout.ITreeElement;
+import com.synflow.core.layout.Package;
 
 /**
  * This class provides a page to create a new text file.
  * 
  * @author Matthieu Wipliez
  */
-public abstract class NewFilePage extends WizardPage implements ModifyListener {
+public class NewFilePage extends WizardPage implements ModifyListener {
 
 	private static final int SIZING_TEXT_FIELD_WIDTH = 250;
 
-	private String containingPackage;
+	private Package containingPackage;
 
 	private String entityName;
 
@@ -51,11 +64,12 @@ public abstract class NewFilePage extends WizardPage implements ModifyListener {
 
 	private IStructuredSelection selection;
 
-	public NewFilePage(String pageName, IStructuredSelection selection) {
-		super(pageName);
+	public NewFilePage(String type, IStructuredSelection selection) {
+		super("New" + type);
 		this.selection = selection;
 
-		setDescription("Create a new package (for example: com.acme.anvil)");
+		setTitle("New Cx " + type);
+		setDescription("Creates a new Cx " + type + ".");
 	}
 
 	@Override
@@ -96,27 +110,86 @@ public abstract class NewFilePage extends WizardPage implements ModifyListener {
 		setControl(composite);
 	}
 
-	public IFile createNewFile() {
-		// TODO Auto-generated method stub
-		return null;
+	/**
+	 * Creates a new file resource in the selected container and with the selected name. Creates any
+	 * missing resource containers along the path; does nothing if the container resources already
+	 * exist.
+	 * 
+	 * @param initialContents
+	 *            initial contents of the file
+	 * 
+	 * @return the created file resource, or <code>null</code> if the file was not created
+	 */
+	public IFile createNewFile(final InputStream initialContents) {
+		final IFile newFileHandle = getFile();
+
+		IRunnableWithProgress op = new IRunnableWithProgress() {
+			@Override
+			public void run(IProgressMonitor monitor) {
+				CreateFileOperation op = new CreateFileOperation(newFileHandle, null,
+						initialContents, getTitle());
+				try {
+					// see bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=219901
+					// directly execute the operation so that the undo state is
+					// not preserved. Making this undoable resulted in too many
+					// accidental file deletions.
+					op.execute(monitor, WorkspaceUndoUtil.getUIInfoAdapter(getShell()));
+				} catch (final ExecutionException e) {
+					getContainer().getShell().getDisplay().syncExec(new Runnable() {
+						@Override
+						public void run() {
+							if (e.getCause() instanceof CoreException) {
+								ErrorDialog.openError(getContainer().getShell(),
+										"Could not create entity", null,
+										((CoreException) e.getCause()).getStatus());
+							} else {
+								SynflowCore.log(e.getCause());
+								MessageDialog.openError(getContainer().getShell(),
+										"Could not create entity",
+										NLS.bind("Internal error: {0}", e.getCause().getMessage()));
+							}
+						}
+					});
+				}
+			}
+		};
+
+		try {
+			getContainer().run(true, true, op);
+		} catch (InterruptedException e) {
+			return null;
+		} catch (InvocationTargetException e) {
+			// ExecutionExceptions are handled above, but unexpected runtime
+			// exceptions and errors may still occur.
+			SynflowCore.log(e.getTargetException());
+			MessageDialog
+					.open(MessageDialog.ERROR, getContainer().getShell(),
+							"Could not create entity",
+							NLS.bind("Internal error: {0}", e.getTargetException().getMessage()),
+							SWT.SHEET);
+			return null;
+		}
+
+		return newFileHandle;
 	}
 
 	protected final String getEntityName() {
 		return entityName;
 	}
 
-	public InputStream getInitialContents() {
-		final String author = System.getProperty("user.name");
-		final int year = Calendar.getInstance().get(Calendar.YEAR);
-
-		return new ByteArrayInputStream(getStringContents(author, year).toString().getBytes());
+	private IFile getFile() {
+		String fileName = resourceNameField.getText() + "." + FILE_EXT_CX;
+		IFolder folder = (IFolder) containingPackage.getResource();
+		return folder.getFile(fileName);
 	}
 
 	protected final String getPackage() {
-		return containingPackage;
+		return containingPackage.getName();
 	}
 
-	protected abstract CharSequence getStringContents(String author, int year);
+	protected CharSequence getStringContents(String author, int year) {
+		return null;
+	}
 
 	/**
 	 * Initializes this page's controls.
@@ -127,8 +200,10 @@ public abstract class NewFilePage extends WizardPage implements ModifyListener {
 			Object next = it.next();
 			if (next instanceof ITreeElement) {
 				ITreeElement element = (ITreeElement) next;
-				containingPackage = element.getName();
-				labelPackage.setText(containingPackage);
+				if (element.isPackage()) {
+					containingPackage = (Package) element;
+					labelPackage.setText(containingPackage.getName());
+				}
 			}
 		}
 	}
@@ -153,6 +228,12 @@ public abstract class NewFilePage extends WizardPage implements ModifyListener {
 
 		if (!id.matcher(text).matches()) {
 			setErrorMessage("Invalid name: '" + text + "' is not a valid identifier.");
+			return false;
+		}
+
+		IFile file = getFile();
+		if (file.exists()) {
+			setErrorMessage("An entity with the same name already exists.");
 			return false;
 		}
 
