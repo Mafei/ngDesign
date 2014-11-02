@@ -53,9 +53,9 @@ import com.synflow.models.ir.util.IrUtil;
  */
 public class NewPackagePage extends WizardPage implements ModifyListener {
 
-	private static final int SIZING_TEXT_FIELD_WIDTH = 250;
+	private static Pattern id = Pattern.compile("[a-zA-Z_][a-zA-Z0-9_]*");
 
-	private Pattern id = Pattern.compile("[a-zA-Z_][a-zA-Z0-9_]*");
+	private static final int SIZING_TEXT_FIELD_WIDTH = 250;
 
 	private IProject project;
 
@@ -223,7 +223,7 @@ public class NewPackagePage extends WizardPage implements ModifyListener {
 
 			if (!id.matcher(segment).matches()) {
 				setErrorMessage("Invalid package name. '" + segment
-						+ "' is not a valid identifier.");
+						+ "' is not a valid identifier. Must match \"" + id.toString() + "\"");
 				return false;
 			}
 		}
