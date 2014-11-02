@@ -61,17 +61,12 @@ public class NewFileWizard extends Wizard implements INewWizard {
 
 	private IWorkbench workbench;
 
-	/**
-	 * Creates a new wizard.
-	 */
-	public NewFileWizard() {
-		setNeedsProgressMonitor(true);
-	}
-
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		this.selection = selection;
 		this.workbench = workbench;
+
+		setNeedsProgressMonitor(true);
 	}
 
 	@Override

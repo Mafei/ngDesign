@@ -10,6 +10,9 @@
  *******************************************************************************/
 package com.synflow.cx.ui.wizards;
 
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IWorkbench;
+
 /**
  * This class provides a wizard to create a new network design.
  * 
@@ -19,19 +22,17 @@ public class NewNetworkWizard extends NewFileWizard {
 
 	public static final String WIZARD_ID = "com.synflow.cx.ui.wizards.newNetwork";
 
-	/**
-	 * Creates a new wizard.
-	 */
-	public NewNetworkWizard() {
-		setWindowTitle("New Cx network");
-	}
-
 	@Override
 	public void addPages() {
 		NewFilePage page = new NewNetworkPage("NewNetwork", selection);
-		page.setFileName("NewNetwork");
 		page.setDescription("Creates a new Cx network.");
 		addPage(page);
+	}
+
+	@Override
+	public void init(IWorkbench workbench, IStructuredSelection selection) {
+		super.init(workbench, selection);
+		setWindowTitle("New Cx network");
 	}
 
 }

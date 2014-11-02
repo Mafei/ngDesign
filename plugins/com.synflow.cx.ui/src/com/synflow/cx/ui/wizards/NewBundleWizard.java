@@ -10,6 +10,9 @@
  *******************************************************************************/
 package com.synflow.cx.ui.wizards;
 
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IWorkbench;
+
 /**
  * This class provides a wizard to create a new Cx bundle.
  * 
@@ -19,16 +22,17 @@ public class NewBundleWizard extends NewFileWizard {
 
 	public static final String WIZARD_ID = "com.synflow.cx.ui.wizards.newBundle";
 
-	public NewBundleWizard() {
-		setWindowTitle("New Cx bundle");
-	}
-
 	@Override
 	public void addPages() {
 		NewFilePage page = new NewBundlePage("NewBundle", selection);
-		page.setFileName("NewBundle");
 		page.setDescription("Creates a new Cx bundle.");
 		addPage(page);
+	}
+
+	@Override
+	public void init(IWorkbench workbench, IStructuredSelection selection) {
+		super.init(workbench, selection);
+		setWindowTitle("New Cx bundle");
 	}
 
 }

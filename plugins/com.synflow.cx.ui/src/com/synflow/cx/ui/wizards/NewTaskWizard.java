@@ -10,6 +10,9 @@
  *******************************************************************************/
 package com.synflow.cx.ui.wizards;
 
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IWorkbench;
+
 /**
  * This class provides a wizard to create a new Cx task.
  * 
@@ -19,16 +22,18 @@ public class NewTaskWizard extends NewFileWizard {
 
 	public static final String WIZARD_ID = "com.synflow.cx.ui.wizards.newTask";
 
-	public NewTaskWizard() {
-		setWindowTitle("New Cx task");
-	}
-
 	@Override
 	public void addPages() {
 		NewFilePage page = new NewTaskPage("NewTask", selection);
-		page.setFileName("NewTask");
+		page.setTitle("New Cx task");
 		page.setDescription("Creates a new Cx task.");
 		addPage(page);
+	}
+
+	@Override
+	public void init(IWorkbench workbench, IStructuredSelection selection) {
+		super.init(workbench, selection);
+		setWindowTitle("New Cx task");
 	}
 
 }

@@ -31,10 +31,6 @@ public class NewPackageWizard extends Wizard implements INewWizard {
 
 	private IWorkbench workbench;
 
-	public NewPackageWizard() {
-		setWindowTitle("New package");
-	}
-
 	@Override
 	public void addPages() {
 		NewPackagePage page = new NewPackagePage(selection);
@@ -46,6 +42,9 @@ public class NewPackageWizard extends Wizard implements INewWizard {
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		this.workbench = workbench;
 		this.selection = selection;
+
+		setNeedsProgressMonitor(true);
+		setWindowTitle("New package");
 	}
 
 	@Override
