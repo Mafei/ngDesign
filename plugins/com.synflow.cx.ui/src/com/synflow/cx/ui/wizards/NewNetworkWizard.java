@@ -24,7 +24,7 @@ public class NewNetworkWizard extends NewFileWizard {
 
 	@Override
 	public void addPages() {
-		NewFilePage page = new NewNetworkPage("NewNetwork", selection);
+		NewFilePage page = new NewNetworkPage(selection);
 		page.setDescription("Creates a new Cx network.");
 		addPage(page);
 	}

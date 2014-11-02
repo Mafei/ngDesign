@@ -24,7 +24,7 @@ public class NewTaskWizard extends NewFileWizard {
 
 	@Override
 	public void addPages() {
-		NewFilePage page = new NewTaskPage("NewTask", selection);
+		NewFilePage page = new NewTaskPage(selection);
 		page.setTitle("New Cx task");
 		page.setDescription("Creates a new Cx task.");
 		addPage(page);

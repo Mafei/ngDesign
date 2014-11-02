@@ -10,7 +10,6 @@
  *******************************************************************************/
 package com.synflow.cx.ui.wizards
 
-import com.synflow.core.ISynflowConstants
 import org.eclipse.jface.viewers.IStructuredSelection
 
 /**
@@ -21,8 +20,8 @@ import org.eclipse.jface.viewers.IStructuredSelection
  */
 class NewTaskPage extends NewFilePage {
 
-	new(String pageName, IStructuredSelection selection) {
-		super(pageName, ISynflowConstants.FILE_EXT_CX, selection);
+	new(IStructuredSelection selection) {
+		super("NewTask", selection);
 	}
 
 	override getStringContents(String author, int year)

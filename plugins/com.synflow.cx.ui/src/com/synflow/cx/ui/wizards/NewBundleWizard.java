@@ -24,7 +24,7 @@ public class NewBundleWizard extends NewFileWizard {
 
 	@Override
 	public void addPages() {
-		NewFilePage page = new NewBundlePage("NewBundle", selection);
+		NewFilePage page = new NewBundlePage(selection);
 		page.setDescription("Creates a new Cx bundle.");
 		addPage(page);
 	}
