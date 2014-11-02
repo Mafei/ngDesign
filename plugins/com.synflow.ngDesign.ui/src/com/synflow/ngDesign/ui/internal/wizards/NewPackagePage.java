@@ -15,7 +15,6 @@ import java.util.Iterator;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -107,8 +106,8 @@ public class NewPackagePage extends WizardPage implements ModifyListener {
 		final IFolder newFolderHandle = getFolder();
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
-				AbstractOperation op;
-				op = new CreateFolderOperation(newFolderHandle, null, "New Package");
+				CreateFolderOperation op = new CreateFolderOperation(newFolderHandle, null,
+						"New Package");
 				try {
 					// see bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=219901
 					// directly execute the operation so that the undo state is
