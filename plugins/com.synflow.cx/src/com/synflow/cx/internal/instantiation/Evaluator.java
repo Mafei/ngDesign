@@ -39,12 +39,14 @@
 package com.synflow.cx.internal.instantiation;
 
 import java.lang.reflect.Array;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import org.eclipse.emf.ecore.EObject;
 
 import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.CExpression;
+import com.synflow.cx.cx.CxFactory;
 import com.synflow.cx.cx.ExpressionBinary;
 import com.synflow.cx.cx.ExpressionBoolean;
 import com.synflow.cx.cx.ExpressionFloat;
@@ -72,6 +74,50 @@ import com.synflow.models.ir.util.ValueUtil;
  * 
  */
 public class Evaluator extends CxSwitch<Object> {
+
+	/**
+	 * Returns the Cx value that matches the given runtime value. Value is expected to be one of
+	 * Boolean, BigDecimal, BigInteger, String, or Array.
+	 * 
+	 * @param value
+	 *            a runtime value
+	 * @return a Cx value (ValueExpr or ValueList)
+	 */
+	public static CExpression getCxExpression(Object value) {
+		if (ValueUtil.isBool(value)) {
+			ExpressionBoolean expr = CxFactory.eINSTANCE.createExpressionBoolean();
+			expr.setValue((Boolean) value);
+			return expr;
+		} else if (ValueUtil.isFloat(value)) {
+			ExpressionFloat expr = CxFactory.eINSTANCE.createExpressionFloat();
+			expr.setValue((BigDecimal) value);
+			return expr;
+		} else if (ValueUtil.isInt(value)) {
+			ExpressionInteger expr = CxFactory.eINSTANCE.createExpressionInteger();
+			expr.setValue((BigInteger) value);
+			return expr;
+		} else if (ValueUtil.isString(value)) {
+			ExpressionString expr = CxFactory.eINSTANCE.createExpressionString();
+			expr.setValue((String) value);
+			return expr;
+		} else if (ValueUtil.isList(value)) {
+			ValueList list = CxFactory.eINSTANCE.createValueList();
+			int length = Array.getLength(value);
+			for (int i = 0; i < length; i++) {
+				list.getValues().add(wrapExprInValue(getCxExpression(Array.get(value, i))));
+			}
+			// TODO implement list
+			return null;
+		} else {
+			return null;
+		}
+	}
+
+	private static Value wrapExprInValue(CExpression expr) {
+		ValueExpr valueExpr = CxFactory.eINSTANCE.createValueExpr();
+		valueExpr.setExpression(expr);
+		return valueExpr;
+	}
 
 	private Entity entity;
 
@@ -150,9 +196,12 @@ public class Evaluator extends CxSwitch<Object> {
 		if (CxUtil.isConstant(variable)) {
 			// only returns the value for constants
 			// no cross-variable initializations
-			value = doSwitch(variable.getValue());
-			// TODO Var var = instantiator.getMapping(entity, variable);
-			// value = var.getValue();
+			Var var = instantiator.getMapping(entity, variable);
+			if (var == null) {
+				value = doSwitch(variable.getValue());
+			} else {
+				value = ValueUtil.getValue(var.getInitialValue());
+			}
 		} else {
 			return null;
 		}
