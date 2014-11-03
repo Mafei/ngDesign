@@ -27,6 +27,7 @@ import com.synflow.cx.cx.Null;
 import com.synflow.cx.cx.Obj;
 import com.synflow.cx.cx.Pair;
 import com.synflow.cx.cx.Primitive;
+import com.synflow.cx.instantiation.IInstantiator;
 import com.synflow.models.dpn.Instance;
 import com.synflow.models.node.Node;
 
@@ -53,7 +54,8 @@ public class InstantiationContext extends Node {
 	 * @param name
 	 *            name of an instance
 	 */
-	public InstantiationContext(InstantiationContext parent, Inst inst, Instance instance) {
+	public InstantiationContext(IInstantiator instantiator, InstantiationContext parent, Inst inst,
+			Instance instance) {
 		super(parent, inst.getName());
 		this.inst = inst;
 		this.instance = instance;
@@ -76,7 +78,8 @@ public class InstantiationContext extends Node {
 					Primitive primitive = (Primitive) element;
 					EObject value = primitive.getValue();
 					if (value instanceof CExpression) {
-						properties.put(key, (CExpression) value);
+						Object val = instantiator.evaluate(instance.getDPN(), value);
+						properties.put(key, Evaluator.getCxExpression(val));
 					} else if (value instanceof Null) {
 						properties.put(key, null);
 					}

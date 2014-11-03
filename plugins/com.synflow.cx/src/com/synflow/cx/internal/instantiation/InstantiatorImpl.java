@@ -227,7 +227,7 @@ public class InstantiatorImpl implements IInstantiator {
 			data.putMapping(dpn, inst, instance);
 			dpn.add(instance);
 
-			InstantiationContext subCtx = new InstantiationContext(ctx, inst, instance);
+			InstantiationContext subCtx = new InstantiationContext(this, ctx, inst, instance);
 			EntityInfo info = entityMapper.createEntityInfo(subCtx);
 
 			Entity subEntity;
@@ -334,7 +334,7 @@ public class InstantiatorImpl implements IInstantiator {
 
 			Inst inst = ctx.getInst();
 			Instance instance = ctx.getInstance();
-			InstantiationContext newCtx = new InstantiationContext(parent, inst, instance);
+			InstantiationContext newCtx = new InstantiationContext(this, parent, inst, instance);
 
 			// update inst's entity to the latest version
 			inst.setEntity((Instantiable) cxEntity);
