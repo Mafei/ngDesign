@@ -144,10 +144,9 @@ StateVar returns Variable:
 Parameter returns Variable: type = TypeNoGen name = ValidID;
 
 // initial value
-Value: ValueList | ValueExpr;
-ValueExpr: expression = CxExpression;
-ValueList:
-	{ValueList} '[' (values += Value (',' values += Value)* )? ']';
+Value returns CxExpression: ExpressionList | CxExpression;
+ExpressionList:
+	{ExpressionList} '[' (values += Value (',' values += Value)* )? ']';
 
 ///////////////////////////////////////////////////////////////////////////////
 // statements
@@ -239,7 +238,7 @@ Statement:
 // expressions
 ///////////////////////////////////////////////////////////////////////////////
 
-CxExpression returns CxExpression:
+CxExpression:
 	ExpressionOr ({ExpressionIf.condition=current} operator='?' then=CxExpression ':' else=CxExpression)?;
 ExpressionOr returns CxExpression:
 	ExpressionAnd ({ExpressionBinary.left=current} operator='||' right=ExpressionAnd)*;

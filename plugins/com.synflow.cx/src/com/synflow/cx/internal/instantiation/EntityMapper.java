@@ -131,7 +131,7 @@ public class EntityMapper extends CxSwitch<Entity> {
 		if (ctx == null) {
 			skeletonMaker.createSkeleton(cxEntity, entity);
 		} else {
-			Map<Variable, EObject> values = setValues(cxEntity, ctx);
+			Map<Variable, CxExpression> values = setValues(cxEntity, ctx);
 			try {
 				skeletonMaker.createSkeleton(cxEntity, entity);
 			} finally {
@@ -192,7 +192,7 @@ public class EntityMapper extends CxSwitch<Entity> {
 		Instantiable cxEntity = specialized ? inst.getTask() : inst.getEntity();
 
 		// if the instance depends on parent's properties, it is specialized
-		Map<Variable, EObject> values = getVariablesMap(cxEntity, ctx);
+		Map<Variable, CxExpression> values = getVariablesMap(cxEntity, ctx);
 		specialized |= !values.isEmpty();
 
 		return createEntityInfo(cxEntity, inst, specialized ? ctx.getName() : null);
@@ -223,7 +223,7 @@ public class EntityMapper extends CxSwitch<Entity> {
 	 *            instantiation context
 	 * @return a map
 	 */
-	private Map<Variable, EObject> getVariablesMap(CxEntity cxEntity, InstantiationContext ctx) {
+	private Map<Variable, CxExpression> getVariablesMap(CxEntity cxEntity, InstantiationContext ctx) {
 		return visitProperties(cxEntity, ctx, false);
 	}
 
@@ -233,8 +233,8 @@ public class EntityMapper extends CxSwitch<Entity> {
 	 * @param values
 	 *            a map variable to value
 	 */
-	private void restoreValues(Map<Variable, EObject> values) {
-		for (Entry<Variable, EObject> binding : values.entrySet()) {
+	private void restoreValues(Map<Variable, CxExpression> values) {
+		for (Entry<Variable, CxExpression> binding : values.entrySet()) {
 			binding.getKey().setValue(binding.getValue());
 		}
 	}
@@ -249,7 +249,7 @@ public class EntityMapper extends CxSwitch<Entity> {
 	 *            instantiation context
 	 * @return a map of variable - value association
 	 */
-	private Map<Variable, EObject> setValues(CxEntity cxEntity, InstantiationContext ctx) {
+	private Map<Variable, CxExpression> setValues(CxEntity cxEntity, InstantiationContext ctx) {
 		return visitProperties(cxEntity, ctx, true);
 	}
 
@@ -266,9 +266,9 @@ public class EntityMapper extends CxSwitch<Entity> {
 	 *            if true, update the value of affected variables
 	 * @return a map
 	 */
-	private Map<Variable, EObject> visitProperties(CxEntity cxEntity, InstantiationContext ctx,
+	private Map<Variable, CxExpression> visitProperties(CxEntity cxEntity, InstantiationContext ctx,
 			boolean set) {
-		Map<Variable, EObject> previous = new HashMap<>();
+		Map<Variable, CxExpression> previous = new HashMap<>();
 		if (ctx.getProperties().isEmpty()) {
 			return Collections.emptyMap();
 		}

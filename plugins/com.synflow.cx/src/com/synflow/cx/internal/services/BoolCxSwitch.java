@@ -18,6 +18,7 @@ import com.synflow.cx.cx.Branch;
 import com.synflow.cx.cx.CxExpression;
 import com.synflow.cx.cx.ExpressionBinary;
 import com.synflow.cx.cx.ExpressionIf;
+import com.synflow.cx.cx.ExpressionList;
 import com.synflow.cx.cx.ExpressionUnary;
 import com.synflow.cx.cx.ExpressionVariable;
 import com.synflow.cx.cx.Statement;
@@ -30,8 +31,6 @@ import com.synflow.cx.cx.StatementPrint;
 import com.synflow.cx.cx.StatementReturn;
 import com.synflow.cx.cx.StatementVariable;
 import com.synflow.cx.cx.StatementWrite;
-import com.synflow.cx.cx.ValueExpr;
-import com.synflow.cx.cx.ValueList;
 import com.synflow.cx.cx.Variable;
 import com.synflow.cx.cx.util.CxSwitch;
 
@@ -66,6 +65,11 @@ public class BoolCxSwitch extends CxSwitch<Boolean> {
 	@Override
 	public Boolean caseExpressionIf(ExpressionIf expr) {
 		return check(this, expr.getCondition(), expr.getThen(), expr.getElse());
+	}
+
+	@Override
+	public Boolean caseExpressionList(ExpressionList list) {
+		return check(this, list.getValues());
 	}
 
 	@Override
@@ -126,16 +130,6 @@ public class BoolCxSwitch extends CxSwitch<Boolean> {
 	@Override
 	public Boolean caseStatementWrite(StatementWrite write) {
 		return doSwitch(write.getValue());
-	}
-
-	@Override
-	public Boolean caseValueExpr(ValueExpr value) {
-		return doSwitch(value.getExpression());
-	}
-
-	@Override
-	public Boolean caseValueList(ValueList list) {
-		return check(this, list.getValues());
 	}
 
 	@Override

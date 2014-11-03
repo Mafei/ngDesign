@@ -52,12 +52,10 @@ import com.synflow.cx.cx.ExpressionBoolean;
 import com.synflow.cx.cx.ExpressionFloat;
 import com.synflow.cx.cx.ExpressionIf;
 import com.synflow.cx.cx.ExpressionInteger;
+import com.synflow.cx.cx.ExpressionList;
 import com.synflow.cx.cx.ExpressionString;
 import com.synflow.cx.cx.ExpressionUnary;
 import com.synflow.cx.cx.ExpressionVariable;
-import com.synflow.cx.cx.Value;
-import com.synflow.cx.cx.ValueExpr;
-import com.synflow.cx.cx.ValueList;
 import com.synflow.cx.cx.Variable;
 import com.synflow.cx.cx.util.CxSwitch;
 import com.synflow.cx.instantiation.IInstantiator;
@@ -101,22 +99,15 @@ public class Evaluator extends CxSwitch<Object> {
 			expr.setValue((String) value);
 			return expr;
 		} else if (ValueUtil.isList(value)) {
-			ValueList list = CxFactory.eINSTANCE.createValueList();
+			ExpressionList list = CxFactory.eINSTANCE.createExpressionList();
 			int length = Array.getLength(value);
 			for (int i = 0; i < length; i++) {
-				list.getValues().add(wrapExprInValue(getCxExpression(Array.get(value, i))));
+				list.getValues().add(getCxExpression(Array.get(value, i)));
 			}
-			// TODO implement list
-			return null;
+			return list;
 		} else {
 			return null;
 		}
-	}
-
-	private static Value wrapExprInValue(CxExpression expr) {
-		ValueExpr valueExpr = CxFactory.eINSTANCE.createValueExpr();
-		valueExpr.setExpression(expr);
-		return valueExpr;
 	}
 
 	private Entity entity;
@@ -163,6 +154,18 @@ public class Evaluator extends CxSwitch<Object> {
 	@Override
 	public Object caseExpressionInteger(ExpressionInteger expression) {
 		return expression.getValue();
+	}
+
+	@Override
+	public Object caseExpressionList(ExpressionList valueList) {
+		int size = valueList.getValues().size();
+		Object[] objects = new Object[size];
+		int i = 0;
+		for (CxExpression value : valueList.getValues()) {
+			objects[i] = doSwitch(value);
+			i++;
+		}
+		return objects;
 	}
 
 	@Override
@@ -221,23 +224,6 @@ public class Evaluator extends CxSwitch<Object> {
 		}
 
 		return value;
-	}
-
-	@Override
-	public Object caseValueExpr(ValueExpr value) {
-		return doSwitch(value.getExpression());
-	}
-
-	@Override
-	public Object caseValueList(ValueList valueList) {
-		int size = valueList.getValues().size();
-		Object[] objects = new Object[size];
-		int i = 0;
-		for (Value value : valueList.getValues()) {
-			objects[i] = doSwitch(value);
-			i++;
-		}
-		return objects;
 	}
 
 	@Override

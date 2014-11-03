@@ -28,6 +28,7 @@ import com.synflow.cx.cx.ExpressionCast;
 import com.synflow.cx.cx.ExpressionFloat;
 import com.synflow.cx.cx.ExpressionIf;
 import com.synflow.cx.cx.ExpressionInteger;
+import com.synflow.cx.cx.ExpressionList;
 import com.synflow.cx.cx.ExpressionString;
 import com.synflow.cx.cx.ExpressionUnary;
 import com.synflow.cx.cx.ExpressionVariable;
@@ -38,9 +39,6 @@ import com.synflow.cx.cx.Primitive;
 import com.synflow.cx.cx.TypeDecl;
 import com.synflow.cx.cx.TypeGen;
 import com.synflow.cx.cx.TypeRef;
-import com.synflow.cx.cx.Value;
-import com.synflow.cx.cx.ValueExpr;
-import com.synflow.cx.cx.ValueList;
 import com.synflow.cx.cx.VarRef;
 import com.synflow.cx.cx.Variable;
 import com.synflow.cx.cx.util.CxSwitch;
@@ -130,6 +128,21 @@ public class CxPrinter extends CxSwitch<Void> {
 	@Override
 	public Void caseExpressionInteger(ExpressionInteger expr) {
 		builder.append(expr.getValue());
+		return DONE;
+	}
+
+	@Override
+	public Void caseExpressionList(ExpressionList expr) {
+		builder.append('[');
+		Iterator<CxExpression> it = expr.getValues().iterator();
+		if (it.hasNext()) {
+			doSwitch(it.next());
+			while (it.hasNext()) {
+				builder.append(',');
+				doSwitch(it.next());
+			}
+		}
+		builder.append(']');
 		return DONE;
 	}
 
@@ -266,27 +279,6 @@ public class CxPrinter extends CxSwitch<Void> {
 	@Override
 	public Void caseTypeRef(TypeRef ref) {
 		builder.append(getTokenText(getNode(ref)));
-		return DONE;
-	}
-
-	@Override
-	public Void caseValueExpr(ValueExpr value) {
-		doSwitch(value.getExpression());
-		return DONE;
-	}
-
-	@Override
-	public Void caseValueList(ValueList value) {
-		builder.append('{');
-		Iterator<Value> it = value.getValues().iterator();
-		if (it.hasNext()) {
-			doSwitch(it.next());
-			while (it.hasNext()) {
-				builder.append(',');
-				doSwitch(it.next());
-			}
-		}
-		builder.append('}');
 		return DONE;
 	}
 

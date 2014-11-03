@@ -58,6 +58,7 @@ import com.synflow.cx.cx.ExpressionCast;
 import com.synflow.cx.cx.ExpressionFloat;
 import com.synflow.cx.cx.ExpressionIf;
 import com.synflow.cx.cx.ExpressionInteger;
+import com.synflow.cx.cx.ExpressionList;
 import com.synflow.cx.cx.ExpressionString;
 import com.synflow.cx.cx.ExpressionUnary;
 import com.synflow.cx.cx.ExpressionVariable;
@@ -65,9 +66,6 @@ import com.synflow.cx.cx.TypeDecl;
 import com.synflow.cx.cx.TypeGen;
 import com.synflow.cx.cx.TypeRef;
 import com.synflow.cx.cx.Typedef;
-import com.synflow.cx.cx.Value;
-import com.synflow.cx.cx.ValueExpr;
-import com.synflow.cx.cx.ValueList;
 import com.synflow.cx.cx.VarRef;
 import com.synflow.cx.cx.Variable;
 import com.synflow.cx.cx.util.CxSwitch;
@@ -151,6 +149,16 @@ public class Typer extends CxSwitch<Type> {
 	public Type caseExpressionInteger(ExpressionInteger expression) {
 		BigInteger value = expression.getValue();
 		return IrFactory.eINSTANCE.createTypeIntOrUint(value);
+	}
+
+	@Override
+	public Type caseExpressionList(ExpressionList list) {
+		List<CxExpression> values = list.getValues();
+		int size = values.size();
+
+		// compute the LUB of all expressions
+		Type type = getType(values);
+		return IrFactory.eINSTANCE.createTypeArray(type, size);
 	}
 
 	@Override
@@ -275,21 +283,6 @@ public class Typer extends CxSwitch<Type> {
 	@Override
 	public Type caseTypeRef(TypeRef type) {
 		return doSwitch(type.getTypeDef());
-	}
-
-	@Override
-	public Type caseValueExpr(ValueExpr value) {
-		return doSwitch(value.getExpression());
-	}
-
-	@Override
-	public Type caseValueList(ValueList list) {
-		List<Value> values = list.getValues();
-		int size = values.size();
-
-		// compute the LUB of all expressions
-		Type type = getType(values);
-		return IrFactory.eINSTANCE.createTypeArray(type, size);
 	}
 
 	@Override

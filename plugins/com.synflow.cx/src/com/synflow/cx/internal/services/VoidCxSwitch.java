@@ -20,6 +20,7 @@ import com.synflow.cx.cx.CxExpression;
 import com.synflow.cx.cx.ExpressionBinary;
 import com.synflow.cx.cx.ExpressionCast;
 import com.synflow.cx.cx.ExpressionIf;
+import com.synflow.cx.cx.ExpressionList;
 import com.synflow.cx.cx.ExpressionUnary;
 import com.synflow.cx.cx.ExpressionVariable;
 import com.synflow.cx.cx.Inst;
@@ -37,8 +38,6 @@ import com.synflow.cx.cx.StatementVariable;
 import com.synflow.cx.cx.StatementWrite;
 import com.synflow.cx.cx.TypeGen;
 import com.synflow.cx.cx.Typedef;
-import com.synflow.cx.cx.ValueExpr;
-import com.synflow.cx.cx.ValueList;
 import com.synflow.cx.cx.VarDecl;
 import com.synflow.cx.cx.Variable;
 import com.synflow.cx.cx.util.CxSwitch;
@@ -80,6 +79,11 @@ public abstract class VoidCxSwitch extends CxSwitch<Void> {
 	@Override
 	public Void caseExpressionIf(ExpressionIf expr) {
 		return visit(this, expr.getCondition(), expr.getThen(), expr.getElse());
+	}
+
+	@Override
+	public Void caseExpressionList(ExpressionList list) {
+		return visit(this, list.getValues());
 	}
 
 	@Override
@@ -165,16 +169,6 @@ public abstract class VoidCxSwitch extends CxSwitch<Void> {
 	@Override
 	public Void caseTypeGen(TypeGen typeGen) {
 		return visit(this, typeGen.getSize());
-	}
-
-	@Override
-	public Void caseValueExpr(ValueExpr value) {
-		return visit(this, value.getExpression());
-	}
-
-	@Override
-	public Void caseValueList(ValueList list) {
-		return visit(this, list.getValues());
 	}
 
 	@Override

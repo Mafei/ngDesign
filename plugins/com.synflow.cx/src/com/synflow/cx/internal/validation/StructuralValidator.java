@@ -62,7 +62,6 @@ import com.synflow.cx.cx.StatementLoop;
 import com.synflow.cx.cx.StatementVariable;
 import com.synflow.cx.cx.Task;
 import com.synflow.cx.cx.TypeDecl;
-import com.synflow.cx.cx.Value;
 import com.synflow.cx.cx.Variable;
 import com.synflow.cx.internal.services.BoolCxSwitch;
 
@@ -280,7 +279,7 @@ public class StructuralValidator extends AbstractDeclarativeValidator {
 	}
 
 	private boolean checkStateVarValue(boolean isActor, Variable variable) {
-		Value value = (Value) variable.getValue();
+		CxExpression value = variable.getValue();
 		if (value == null) {
 			if (!isActor) {
 				// in a header, a state variable must have an initial value
