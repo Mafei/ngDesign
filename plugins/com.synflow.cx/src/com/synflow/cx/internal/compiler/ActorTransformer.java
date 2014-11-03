@@ -22,7 +22,7 @@ import java.util.List;
 import org.eclipse.emf.ecore.EObject;
 
 import com.synflow.cx.CxUtil;
-import com.synflow.cx.cx.CExpression;
+import com.synflow.cx.cx.CxExpression;
 import com.synflow.cx.cx.Enter;
 import com.synflow.cx.cx.ExpressionVariable;
 import com.synflow.cx.cx.Leave;
@@ -75,14 +75,14 @@ public class ActorTransformer extends FunctionTransformer {
 		}
 
 		// transform arguments
-		List<CExpression> arguments = enter.getParameters();
-		Iterator<CExpression> it = arguments.iterator();
+		List<CxExpression> arguments = enter.getParameters();
+		Iterator<CxExpression> it = arguments.iterator();
 		for (Variable variable : function.getParameters()) {
 			Type type = typer.getType(builder.entity, variable);
 			Var var = builder.createVar(lineNumber, type, variable.getName());
 			builder.put(variable, var);
 
-			CExpression value = it.next();
+			CxExpression value = it.next();
 			builder.storeExpr(getBuilder().line, var, null, value);
 		}
 

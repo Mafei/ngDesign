@@ -139,13 +139,13 @@ Function returns Variable:
 ;
 
 StateVar returns Variable:
-	name = ValidID ('[' dimensions += CExpression ']')* ('=' value=Value)?;
+	name = ValidID ('[' dimensions += CxExpression ']')* ('=' value=Value)?;
 
 Parameter returns Variable: type = TypeNoGen name = ValidID;
 
 // initial value
 Value: ValueList | ValueExpr;
-ValueExpr: expression = CExpression;
+ValueExpr: expression = CxExpression;
 ValueList:
 	{ValueList} '[' (values += Value (',' values += Value)* )? ']';
 
@@ -158,7 +158,7 @@ VarRef: variable=[Variable|QualifiedName];
 StatementAssign:
 	target=ExpressionVariable
 		(	(op='++' | op='--')
-		|	((op='=' | op=ASSIGN_OP) value=CExpression))?;
+		|	((op='=' | op=ASSIGN_OP) value=CxExpression))?;
 
 terminal ASSIGN_OP:
 	'&=' | '|=' | '^=' |
@@ -168,7 +168,7 @@ terminal ASSIGN_OP:
 ;
 
 StatementAssert:
-	'assert' '(' condition = CExpression ')' ';';
+	'assert' '(' condition = CxExpression ')' ';';
 
 Block: {Block}
 	'{'
@@ -179,10 +179,10 @@ Block: {Block}
 StatementFence: {StatementFence} 'fence' ';';
 
 StatementFor returns StatementLoop:
-	'for' '(' init = (StatementAssign | StatementVariable)? ';' condition=CExpression ';' after=StatementAssign? ')'
+	'for' '(' init = (StatementAssign | StatementVariable)? ';' condition=CxExpression ';' after=StatementAssign? ')'
 		body = Block;
 
-StatementIdle: {StatementIdle} 'idle' '(' numCycles=CExpression ')' ';';
+StatementIdle: {StatementIdle} 'idle' '(' numCycles=CxExpression ')' ';';
 
 StatementIf:
 	branches += Branch
@@ -190,7 +190,7 @@ StatementIf:
 	('else' branches += BranchElse)?;
 
 Branch:
-	'if' '(' condition = CExpression ')'
+	'if' '(' condition = CxExpression ')'
 		body = Block;
 
 BranchElse returns Branch:
@@ -199,10 +199,10 @@ BranchElse returns Branch:
 StatementLabeled: label=ID ':' stmt=Statement;
 
 StatementPrint:
-	{StatementPrint} 'print' '(' (args += CExpression (',' args += CExpression)*)? ')' ';';
+	{StatementPrint} 'print' '(' (args += CxExpression (',' args += CxExpression)*)? ')' ';';
 
 StatementReturn:
-	{StatementReturn} 'return' value = CExpression? ';'
+	{StatementReturn} 'return' value = CxExpression? ';'
 ;
 
 StatementVariable:
@@ -211,14 +211,14 @@ StatementVariable:
 	variables += LocalVar (',' variables += LocalVar)*;
 
 LocalVar returns Variable:
-	name = ValidID ('[' dimensions += CExpression ']')* ('=' value=CExpression)?;
+	name = ValidID ('[' dimensions += CxExpression ']')* ('=' value=CxExpression)?;
 
 StatementWhile returns StatementLoop:
-	'while' '(' condition=CExpression ')'
+	'while' '(' condition=CxExpression ')'
 		body = Block;
 
 StatementWrite:
-	port=VarRef '.' 'write' '(' value=CExpression ')' ';'
+	port=VarRef '.' 'write' '(' value=CxExpression ')' ';'
 ;
 
 Statement:
@@ -239,35 +239,35 @@ Statement:
 // expressions
 ///////////////////////////////////////////////////////////////////////////////
 
-CExpression returns CExpression:
-	ExpressionOr ({ExpressionIf.condition=current} operator='?' then=CExpression ':' else=CExpression)?;
-ExpressionOr returns CExpression:
+CxExpression returns CxExpression:
+	ExpressionOr ({ExpressionIf.condition=current} operator='?' then=CxExpression ':' else=CxExpression)?;
+ExpressionOr returns CxExpression:
 	ExpressionAnd ({ExpressionBinary.left=current} operator='||' right=ExpressionAnd)*;
-ExpressionAnd returns CExpression:
+ExpressionAnd returns CxExpression:
 	ExpressionBitor ({ExpressionBinary.left=current} operator='&&' right=ExpressionBitor)*;
-ExpressionBitor returns CExpression:
+ExpressionBitor returns CxExpression:
 	ExpressionBitxor ({ExpressionBinary.left=current} operator='|' right=ExpressionBitxor)*;
-ExpressionBitxor returns CExpression:
+ExpressionBitxor returns CxExpression:
 	ExpressionBitand ({ExpressionBinary.left=current} operator='^' right=ExpressionBitand)*;
-ExpressionBitand returns CExpression:
+ExpressionBitand returns CxExpression:
 	ExpressionEq ({ExpressionBinary.left=current} operator='&' right=ExpressionEq)*;
-ExpressionEq returns CExpression:
+ExpressionEq returns CxExpression:
 	ExpressionRelational ({ExpressionBinary.left=current} operator=('==' | '!=') right=ExpressionRelational)*;
-ExpressionRelational returns CExpression:
+ExpressionRelational returns CxExpression:
 	ExpressionShift ({ExpressionBinary.left=current} operator=('<' | '<=' | '>' | '>=') right=ExpressionShift)*;
-ExpressionShift returns CExpression:
+ExpressionShift returns CxExpression:
 	ExpressionAdditive ({ExpressionBinary.left=current} operator=('<<' | '>>') right=ExpressionAdditive)*;
-ExpressionAdditive returns CExpression:
+ExpressionAdditive returns CxExpression:
 	ExpressionMultiplicative ({ExpressionBinary.left=current} operator=('+' | '-') right=ExpressionMultiplicative)*;
-ExpressionMultiplicative returns CExpression:
+ExpressionMultiplicative returns CxExpression:
 	ExpressionUnary ({ExpressionBinary.left=current} operator=('*' | '/' | '%') right=ExpressionUnary)*;
 
-ExpressionUnary returns CExpression:
+ExpressionUnary returns CxExpression:
 	{ExpressionUnary} unaryOperator=('~' | '!' | '-') expression=ExpressionPostfix
 	| ExpressionPostfix
 ;
 
-ExpressionPostfix returns CExpression:
+ExpressionPostfix returns CxExpression:
 	=> ExpressionCast
     | ExpressionVariable
 	| Primary
@@ -278,14 +278,14 @@ ExpressionCast:
 ;
 
 ExpressionVariable:
-	source=VarRef ('[' indexes += CExpression ']')* ('.' property=(ValidID | 'available' | 'read'))? ('(' (parameters += CExpression (',' parameters += CExpression)*)? ')')?;
+	source=VarRef ('[' indexes += CxExpression ']')* ('.' property=(ValidID | 'available' | 'read'))? ('(' (parameters += CxExpression (',' parameters += CxExpression)*)? ')')?;
 
-Primary returns CExpression:
+Primary returns CxExpression:
 	Literal
-	| => '(' CExpression ')'
+	| => '(' CxExpression ')'
 ;
 
-Literal returns CExpression:
+Literal returns CxExpression:
       ExpressionBoolean
 	| ExpressionInteger
     | ExpressionFloat
@@ -385,24 +385,24 @@ TypeDecl:
 // type expressions
 ///////////////////////////////////////////////////////////////////////////////
 
-TExpr returns CExpression:
+TExpr returns CxExpression:
 	TExprBitxor ({ExpressionBinary.left=current} operator='|' right=TExprBitxor)*;
-TExprBitxor returns CExpression:
+TExprBitxor returns CxExpression:
 	TExprBitand ({ExpressionBinary.left=current} operator='^' right=TExprBitand)*;
-TExprBitand returns CExpression:
+TExprBitand returns CxExpression:
 	TExprShift ({ExpressionBinary.left=current} operator='&' right=TExprShift)*;
-TExprShift returns CExpression:
+TExprShift returns CxExpression:
 	TExprAdd ({ExpressionBinary.left=current} operator=('<<' | '>>') right=TExprAdd)*;
-TExprAdd returns CExpression:
+TExprAdd returns CxExpression:
 	TExprMul ({ExpressionBinary.left=current} operator=('+' | '-') right=TExprMul)*;
-TExprMul returns CExpression:
+TExprMul returns CxExpression:
 	TExprUn ({ExpressionBinary.left=current} operator=('*' | '/' | '%') right=TExprUn)*;
 
-TExprUn returns CExpression:
+TExprUn returns CxExpression:
 	{ExpressionUnary} unaryOperator=('~' | '-') expression=ExpressionPostfix
 	| TExprPostfix;
 
-TExprPostfix returns CExpression:
+TExprPostfix returns CxExpression:
     ExpressionInteger
     | '(' TExpr ')'
     | ExpressionVariable

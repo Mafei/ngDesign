@@ -21,7 +21,7 @@ import java.util.List;
 import org.eclipse.emf.ecore.EObject;
 
 import com.synflow.cx.cx.Branch;
-import com.synflow.cx.cx.CExpression;
+import com.synflow.cx.cx.CxExpression;
 import com.synflow.cx.cx.StatementIf;
 import com.synflow.cx.cx.Variable;
 import com.synflow.cx.instantiation.IInstantiator;
@@ -117,7 +117,7 @@ public final class CycleScheduler extends AbstractCycleScheduler {
 
 		List<Branch> branches = stmtIf.getBranches();
 		for (Branch branch : branches) {
-			CExpression condition = branch.getCondition();
+			CxExpression condition = branch.getCondition();
 			if (condition != null) {
 				if (new CycleDetector(schedule).hasCycleBreaks(condition)) {
 					return true;
@@ -214,7 +214,7 @@ public final class CycleScheduler extends AbstractCycleScheduler {
 		Node forkNode = behavior.fork();
 
 		// visits all branches
-		List<CExpression> previousConditions = new ArrayList<>();
+		List<CxExpression> previousConditions = new ArrayList<>();
 		for (Branch branch : stmtIf.getBranches()) {
 			behavior.startBranch(forkNode);
 			Transition transition = schedule.getTransition();
@@ -224,8 +224,8 @@ public final class CycleScheduler extends AbstractCycleScheduler {
 			}
 
 			// reverse previous conditions
-			CExpression condition = exprTrue();
-			for (CExpression previous : previousConditions) {
+			CxExpression condition = exprTrue();
+			for (CxExpression previous : previousConditions) {
 				// visit each previous condition as if it were reversed
 				// to properly update peek patterns
 				visitNotCondition(previous);

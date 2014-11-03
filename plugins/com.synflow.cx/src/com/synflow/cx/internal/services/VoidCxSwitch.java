@@ -16,7 +16,7 @@ import static com.synflow.models.util.SwitchUtil.visit;
 import com.google.common.collect.Iterables;
 import com.synflow.cx.cx.Block;
 import com.synflow.cx.cx.Branch;
-import com.synflow.cx.cx.CExpression;
+import com.synflow.cx.cx.CxExpression;
 import com.synflow.cx.cx.ExpressionBinary;
 import com.synflow.cx.cx.ExpressionCast;
 import com.synflow.cx.cx.ExpressionIf;
@@ -63,7 +63,7 @@ public abstract class VoidCxSwitch extends CxSwitch<Void> {
 	}
 
 	@Override
-	public Void caseCExpression(CExpression expr) {
+	public Void caseCxExpression(CxExpression expr) {
 		return DONE;
 	}
 

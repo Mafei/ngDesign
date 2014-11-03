@@ -50,8 +50,8 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import com.google.inject.Inject;
 import com.synflow.cx.CxUtil;
-import com.synflow.cx.cx.CExpression;
 import com.synflow.cx.cx.CType;
+import com.synflow.cx.cx.CxExpression;
 import com.synflow.cx.cx.ExpressionBinary;
 import com.synflow.cx.cx.ExpressionBoolean;
 import com.synflow.cx.cx.ExpressionCast;
@@ -120,7 +120,7 @@ public class Typer extends CxSwitch<Type> {
 		Type t1 = doSwitch(expression.getLeft());
 		Type t2 = doSwitch(expression.getRight());
 
-		CExpression right = expression.getRight();
+		CxExpression right = expression.getRight();
 		Object amount = instantiator.evaluate(entity, right);
 		return TypeUtil.getTypeBinary(op, t1, t2, amount);
 	}
@@ -155,7 +155,7 @@ public class Typer extends CxSwitch<Type> {
 
 	@Override
 	public Type caseExpressionString(ExpressionString expression) {
-		if (expression.eContainer() instanceof CExpression) {
+		if (expression.eContainer() instanceof CxExpression) {
 			BigInteger value = (BigInteger) instantiator.evaluate(entity, expression);
 			return IrFactory.eINSTANCE.createTypeIntOrUint(value);
 		}
@@ -164,7 +164,7 @@ public class Typer extends CxSwitch<Type> {
 
 	@Override
 	public Type caseExpressionUnary(ExpressionUnary expression) {
-		CExpression subExpr = expression.getExpression();
+		CxExpression subExpr = expression.getExpression();
 		OpUnary op = OpUnary.getOperator(expression.getUnaryOperator());
 
 		Type type = doSwitch(subExpr);
@@ -190,7 +190,7 @@ public class Typer extends CxSwitch<Type> {
 		}
 
 		int numDims = getNumDimensions(type);
-		List<CExpression> indexes = expression.getIndexes();
+		List<CxExpression> indexes = expression.getIndexes();
 		if (indexes.isEmpty()) {
 			return type;
 		} else if (indexes.size() > numDims + 1) {
@@ -301,7 +301,7 @@ public class Typer extends CxSwitch<Type> {
 		CType varType = CxUtil.getType(variable);
 
 		Type type = doSwitch(varType);
-		List<CExpression> dimensions = variable.getDimensions();
+		List<CxExpression> dimensions = variable.getDimensions();
 		if (dimensions.isEmpty()) {
 			return type;
 		}
@@ -309,7 +309,7 @@ public class Typer extends CxSwitch<Type> {
 		TypeArray array = IrFactory.eINSTANCE.createTypeArray();
 		array.setElementType(type);
 
-		for (CExpression dimension : dimensions) {
+		for (CxExpression dimension : dimensions) {
 			Object value = instantiator.evaluate(entity, dimension);
 			if (ValueUtil.isInt(value)) {
 				array.getDimensions().add(((BigInteger) value).intValue());

@@ -24,8 +24,8 @@ import org.eclipse.xtext.util.IAcceptor;
 
 import com.google.common.collect.ImmutableMap;
 import com.synflow.cx.CxUtil;
-import com.synflow.cx.cx.CExpression;
 import com.synflow.cx.cx.CType;
+import com.synflow.cx.cx.CxExpression;
 import com.synflow.cx.cx.Inst;
 import com.synflow.cx.cx.Obj;
 import com.synflow.cx.cx.Task;
@@ -110,7 +110,7 @@ public class CxResourceStrategy extends DefaultResourceDescriptionStrategy {
 		}
 		getType(builder, variable);
 
-		for (CExpression dim : variable.getDimensions()) {
+		for (CxExpression dim : variable.getDimensions()) {
 			builder.append('[');
 			new CxPrinter(builder).doSwitch(dim);
 			builder.append(']');

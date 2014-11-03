@@ -46,7 +46,7 @@ import com.synflow.core.layout.ITreeElement;
 import com.synflow.core.layout.ProjectLayout;
 import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.Block;
-import com.synflow.cx.cx.CExpression;
+import com.synflow.cx.cx.CxExpression;
 import com.synflow.cx.cx.CxPackage.Literals;
 import com.synflow.cx.cx.ExpressionVariable;
 import com.synflow.cx.cx.Instantiable;
@@ -254,7 +254,7 @@ public class StructuralValidator extends AbstractDeclarativeValidator {
 		}
 
 		// check dimensions
-		for (CExpression dim : variable.getDimensions()) {
+		for (CxExpression dim : variable.getDimensions()) {
 			boolean hasSideEffects = new ValueVisitor().doSwitch(dim);
 			if (hasSideEffects) {
 				error("This expression is not a compile-time constant", dim, null,

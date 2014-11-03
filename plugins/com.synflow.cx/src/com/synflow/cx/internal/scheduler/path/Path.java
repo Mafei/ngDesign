@@ -18,7 +18,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
 import com.synflow.cx.cx.Branch;
-import com.synflow.cx.cx.CExpression;
+import com.synflow.cx.cx.CxExpression;
 import com.synflow.cx.services.CxPrinter;
 import com.synflow.models.node.Node;
 
@@ -63,7 +63,7 @@ public class Path {
 		return Joiner.on(", ").join(Iterables.transform(conds, new Function<Branch, String>() {
 			@Override
 			public String apply(Branch cond) {
-				CExpression condition = cond.getCondition();
+				CxExpression condition = cond.getCondition();
 				if (condition == null) {
 					return "(else)";
 				} else {

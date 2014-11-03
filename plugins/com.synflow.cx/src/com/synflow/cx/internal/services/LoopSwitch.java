@@ -11,7 +11,7 @@
 package com.synflow.cx.internal.services;
 
 import com.synflow.cx.CxUtil;
-import com.synflow.cx.cx.CExpression;
+import com.synflow.cx.cx.CxExpression;
 import com.synflow.cx.cx.ExpressionBinary;
 import com.synflow.cx.cx.ExpressionVariable;
 import com.synflow.cx.cx.Statement;
@@ -72,11 +72,11 @@ public class LoopSwitch extends ScheduleModifierSwitch {
 		return true;
 	}
 
-	private boolean checkBounds(Variable variable, Object init, CExpression condition) {
+	private boolean checkBounds(Variable variable, Object init, CxExpression condition) {
 		if (condition instanceof ExpressionBinary) {
 			ExpressionBinary exprBin = (ExpressionBinary) condition;
-			CExpression left = exprBin.getLeft();
-			CExpression right = exprBin.getRight();
+			CxExpression left = exprBin.getLeft();
+			CxExpression right = exprBin.getRight();
 
 			if (left instanceof ExpressionVariable) {
 				ExpressionVariable exprVar = (ExpressionVariable) left;

@@ -15,7 +15,7 @@ import static com.synflow.models.util.SwitchUtil.visit;
 import org.eclipse.emf.ecore.util.Switch;
 
 import com.synflow.cx.cx.Branch;
-import com.synflow.cx.cx.CExpression;
+import com.synflow.cx.cx.CxExpression;
 import com.synflow.cx.cx.StatementWrite;
 import com.synflow.cx.cx.VarRef;
 import com.synflow.cx.instantiation.IInstantiator;
@@ -192,9 +192,9 @@ public class Schedule {
 	 * @param voidSwitch
 	 *            an EMF Void Switch
 	 * @param condition
-	 *            a CExpression (may be <code>null</code>)
+	 *            a CxExpression (may be <code>null</code>)
 	 */
-	public void visitCondition(Switch<Void> voidSwitch, CExpression condition) {
+	public void visitCondition(Switch<Void> voidSwitch, CxExpression condition) {
 		if (condition != null) {
 			// condition may be absent (for else statements)
 			usePeek = true;

@@ -32,8 +32,8 @@ import com.synflow.core.util.CoreUtil;
 import com.synflow.cx.CxUtil;
 import com.synflow.cx.UriComputer;
 import com.synflow.cx.cx.Bundle;
-import com.synflow.cx.cx.CExpression;
 import com.synflow.cx.cx.CxEntity;
+import com.synflow.cx.cx.CxExpression;
 import com.synflow.cx.cx.CxPackage.Literals;
 import com.synflow.cx.cx.Inst;
 import com.synflow.cx.cx.Instantiable;
@@ -274,7 +274,7 @@ public class EntityMapper extends CxSwitch<Entity> {
 		}
 
 		IScope scope = scopeProvider.getScope(cxEntity, Literals.VAR_REF__VARIABLE);
-		for (Entry<String, CExpression> entry : ctx.getProperties().entrySet()) {
+		for (Entry<String, CxExpression> entry : ctx.getProperties().entrySet()) {
 			String varName = entry.getKey();
 			QualifiedName qName = converter.toQualifiedName(varName);
 			IEObjectDescription objDesc = scope.getSingleElement(qName);

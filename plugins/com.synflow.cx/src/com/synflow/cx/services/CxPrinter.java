@@ -20,7 +20,7 @@ import org.eclipse.emf.ecore.EObject;
 
 import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.Array;
-import com.synflow.cx.cx.CExpression;
+import com.synflow.cx.cx.CxExpression;
 import com.synflow.cx.cx.Element;
 import com.synflow.cx.cx.ExpressionBinary;
 import com.synflow.cx.cx.ExpressionBoolean;
@@ -152,7 +152,7 @@ public class CxPrinter extends CxSwitch<Void> {
 	public Void caseExpressionVariable(ExpressionVariable expr) {
 		doSwitch(expr.getSource());
 
-		for (CExpression index : expr.getIndexes()) {
+		for (CxExpression index : expr.getIndexes()) {
 			builder.append('[');
 			doSwitch(index);
 			builder.append(']');
@@ -164,7 +164,7 @@ public class CxPrinter extends CxSwitch<Void> {
 			builder.append(property);
 		}
 
-		Iterator<CExpression> it = expr.getParameters().iterator();
+		Iterator<CxExpression> it = expr.getParameters().iterator();
 		if (it.hasNext()) {
 			builder.append('(');
 			doSwitch(it.next());
@@ -254,7 +254,7 @@ public class CxPrinter extends CxSwitch<Void> {
 	@Override
 	public Void caseTypeGen(TypeGen type) {
 		doSwitch(type.getSpec());
-		CExpression size = type.getSize();
+		CxExpression size = type.getSize();
 		if (size != null) {
 			builder.append('<');
 			doSwitch(size);

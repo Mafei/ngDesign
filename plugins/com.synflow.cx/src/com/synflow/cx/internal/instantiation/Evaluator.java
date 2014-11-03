@@ -45,7 +45,7 @@ import java.math.BigInteger;
 import org.eclipse.emf.ecore.EObject;
 
 import com.synflow.cx.CxUtil;
-import com.synflow.cx.cx.CExpression;
+import com.synflow.cx.cx.CxExpression;
 import com.synflow.cx.cx.CxFactory;
 import com.synflow.cx.cx.ExpressionBinary;
 import com.synflow.cx.cx.ExpressionBoolean;
@@ -83,7 +83,7 @@ public class Evaluator extends CxSwitch<Object> {
 	 *            a runtime value
 	 * @return a Cx value (ValueExpr or ValueList)
 	 */
-	public static CExpression getCxExpression(Object value) {
+	public static CxExpression getCxExpression(Object value) {
 		if (ValueUtil.isBool(value)) {
 			ExpressionBoolean expr = CxFactory.eINSTANCE.createExpressionBoolean();
 			expr.setValue((Boolean) value);
@@ -113,7 +113,7 @@ public class Evaluator extends CxSwitch<Object> {
 		}
 	}
 
-	private static Value wrapExprInValue(CExpression expr) {
+	private static Value wrapExprInValue(CxExpression expr) {
 		ValueExpr valueExpr = CxFactory.eINSTANCE.createValueExpr();
 		valueExpr.setExpression(expr);
 		return valueExpr;
@@ -206,7 +206,7 @@ public class Evaluator extends CxSwitch<Object> {
 			return null;
 		}
 
-		for (CExpression index : expression.getIndexes()) {
+		for (CxExpression index : expression.getIndexes()) {
 			Object indexValue = doSwitch(index);
 			if (ValueUtil.isList(value)) {
 				if (ValueUtil.isInt(indexValue)) {

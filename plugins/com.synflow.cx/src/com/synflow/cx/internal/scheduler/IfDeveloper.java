@@ -21,7 +21,7 @@ import org.eclipse.emf.ecore.EObject;
 
 import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.Branch;
-import com.synflow.cx.cx.CExpression;
+import com.synflow.cx.cx.CxExpression;
 import com.synflow.cx.cx.Enter;
 import com.synflow.cx.cx.Leave;
 import com.synflow.cx.cx.StatementIf;
@@ -81,7 +81,7 @@ public class IfDeveloper extends AbstractCycleScheduler {
 
 		Branch chosen = path.getNext();
 		List<Branch> branches = stmt.getBranches();
-		CExpression condition = exprTrue();
+		CxExpression condition = exprTrue();
 		for (Branch branch : branches) {
 			if (branch == chosen) {
 				break;

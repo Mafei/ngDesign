@@ -12,7 +12,7 @@ package com.synflow.cx.internal.compiler;
 
 import org.eclipse.emf.ecore.EObject;
 
-import com.synflow.cx.cx.CExpression;
+import com.synflow.cx.cx.CxExpression;
 import com.synflow.models.ir.Expression;
 
 /**
@@ -33,6 +33,6 @@ public interface Transformer {
 	 *            an AST expression
 	 * @return an IR expression
 	 */
-	Expression transformExpr(CExpression expression);
+	Expression transformExpr(CxExpression expression);
 
 }

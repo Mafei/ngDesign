@@ -25,8 +25,8 @@ import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
 import com.synflow.cx.CxUtil;
-import com.synflow.cx.cx.CExpression;
 import com.synflow.cx.cx.CType;
+import com.synflow.cx.cx.CxExpression;
 import com.synflow.cx.cx.ExpressionInteger;
 import com.synflow.cx.cx.Inst;
 import com.synflow.cx.cx.Instantiable;
@@ -165,7 +165,7 @@ public class CxEObjectHoverProvider extends DefaultEObjectHoverProvider {
 				builder.append(')');
 			} else {
 				// dimensions
-				for (CExpression value : variable.getDimensions()) {
+				for (CxExpression value : variable.getDimensions()) {
 					builder.append('[');
 					builder.append(new CxPrinter().toString(value));
 					builder.append(']');

@@ -34,7 +34,7 @@ import com.google.common.collect.Multiset.Entry;
 import com.google.inject.Inject;
 import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.Branch;
-import com.synflow.cx.cx.CExpression;
+import com.synflow.cx.cx.CxExpression;
 import com.synflow.cx.cx.CxPackage.Literals;
 import com.synflow.cx.cx.ExpressionVariable;
 import com.synflow.cx.cx.StatementAssign;
@@ -91,7 +91,7 @@ public class ExpressionValidator extends AbstractDeclarativeValidator {
 		checkFunctionCalls(stmt.getCondition());
 	}
 
-	private void checkFunctionCalls(CExpression condition) {
+	private void checkFunctionCalls(CxExpression condition) {
 		if (check(new ConstantCallSwitch(), condition)) {
 			error("Scheduling: this expression cannot call functions with side effects", condition,
 					null, ERR_NO_SIDE_EFFECTS);
@@ -113,7 +113,7 @@ public class ExpressionValidator extends AbstractDeclarativeValidator {
 	}
 
 	@Check(NORMAL)
-	public void checkMultipleReads(final CExpression expr) {
+	public void checkMultipleReads(final CxExpression expr) {
 		// Checks that there are at most one read per port in the expression. Otherwise indicate an
 		// error.
 		Task task = EcoreUtil2.getContainerOfType(expr, Task.class);
@@ -203,7 +203,7 @@ public class ExpressionValidator extends AbstractDeclarativeValidator {
 	 *            the condition to visit
 	 */
 	public void computePortSets(Entity entity, Multiset<Port> available, Multiset<Port> read,
-			CExpression condition) {
+			CxExpression condition) {
 		List<ExpressionVariable> exprs;
 		if (condition == null) {
 			return;

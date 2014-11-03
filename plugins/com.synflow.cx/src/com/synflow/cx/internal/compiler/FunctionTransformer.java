@@ -52,7 +52,7 @@ import org.eclipse.emf.ecore.EObject;
 import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.Block;
 import com.synflow.cx.cx.Branch;
-import com.synflow.cx.cx.CExpression;
+import com.synflow.cx.cx.CxExpression;
 import com.synflow.cx.cx.ExpressionBinary;
 import com.synflow.cx.cx.ExpressionBoolean;
 import com.synflow.cx.cx.ExpressionCast;
@@ -225,7 +225,7 @@ public class FunctionTransformer extends CxSwitch<EObject> implements Transforme
 
 	@Override
 	public Expression caseExpressionString(ExpressionString expression) {
-		if (expression.eContainer() instanceof CExpression) {
+		if (expression.eContainer() instanceof CxExpression) {
 			BigInteger value = (BigInteger) builder.instantiator.evaluate(builder.entity,
 					expression);
 			return eINSTANCE.createExprInt(value);
@@ -236,7 +236,7 @@ public class FunctionTransformer extends CxSwitch<EObject> implements Transforme
 
 	@Override
 	public Expression caseExpressionUnary(ExpressionUnary expression) {
-		CExpression subExpr = expression.getExpression();
+		CxExpression subExpr = expression.getExpression();
 
 		Expression value;
 		OpUnary op = OpUnary.getOperator(expression.getUnaryOperator());
@@ -277,7 +277,7 @@ public class FunctionTransformer extends CxSwitch<EObject> implements Transforme
 		// bit selection
 		ExprVar exprVar = eINSTANCE.createExprVar(target);
 		if (dimensions < expression.getIndexes().size()) {
-			CExpression exprIndex = expression.getIndexes().get(dimensions);
+			CxExpression exprIndex = expression.getIndexes().get(dimensions);
 			int index = builder.instantiator.evaluateInt(builder.entity, exprIndex);
 			ExprInt mask = eINSTANCE.createExprInt(ONE.shiftLeft(index));
 			ExprBinary exprBin = eINSTANCE.createExprBinary(exprVar, OpBinary.BITAND, mask);
@@ -317,7 +317,7 @@ public class FunctionTransformer extends CxSwitch<EObject> implements Transforme
 
 			// transform value
 			int lineNumber = getStartLine(assign);
-			CExpression value = AstUtil.getAssignValue(assign);
+			CxExpression value = AstUtil.getAssignValue(assign);
 			builder.storeExpr(lineNumber, target, assign.getTarget().getIndexes(), value);
 		}
 
@@ -332,7 +332,7 @@ public class FunctionTransformer extends CxSwitch<EObject> implements Transforme
 
 		// transforms all branches (including 'else' branch)
 		for (Branch stmt : stmtIf.getBranches()) {
-			CExpression condition = stmt.getCondition();
+			CxExpression condition = stmt.getCondition();
 			if (condition == null) {
 				// 'else' branch
 				doSwitch(stmt.getBody());
@@ -459,7 +459,7 @@ public class FunctionTransformer extends CxSwitch<EObject> implements Transforme
 		Var var = builder.addLocal(variable);
 
 		// assign a value (if any) to the variable
-		CExpression value = (CExpression) variable.getValue();
+		CxExpression value = (CxExpression) variable.getValue();
 		if (value != null) {
 			builder.storeExpr(var.getLineNumber(), var, null, value);
 		}
@@ -483,7 +483,7 @@ public class FunctionTransformer extends CxSwitch<EObject> implements Transforme
 	}
 
 	@Override
-	public final Expression transformExpr(CExpression expression) {
+	public final Expression transformExpr(CxExpression expression) {
 		return (Expression) doSwitch(expression);
 	}
 

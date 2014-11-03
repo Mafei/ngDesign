@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.synflow.cx.CxUtil;
-import com.synflow.cx.cx.CExpression;
+import com.synflow.cx.cx.CxExpression;
 import com.synflow.cx.cx.Variable;
 import com.synflow.cx.instantiation.IInstantiator;
 import com.synflow.cx.internal.services.Typer;
@@ -198,7 +198,7 @@ public class IrBuilder {
 	 *            indexes
 	 * @return the new target scalar variable
 	 */
-	final Var loadVariable(int lineNumber, Var source, List<CExpression> indexes) {
+	final Var loadVariable(int lineNumber, Var source, List<CxExpression> indexes) {
 		Type type = source.getType();
 		int dimensions = Typer.getNumDimensions(type);
 
@@ -212,7 +212,7 @@ public class IrBuilder {
 		Var target = createVar(lineNumber, varType, "local_" + source.getName());
 
 		// loads (but do not perform bit selection)
-		List<CExpression> subIndexes = indexes.subList(0, dimensions);
+		List<CxExpression> subIndexes = indexes.subList(0, dimensions);
 		List<Expression> expressions = transformIndexes(type, subIndexes);
 
 		InstLoad load = eINSTANCE.createInstLoad(lineNumber, target, source, expressions);
@@ -386,8 +386,8 @@ public class IrBuilder {
 	 * @param value
 	 *            Cx value
 	 */
-	public final void storeExpr(int lineNumber, Var target, List<CExpression> indexes,
-			CExpression value) {
+	public final void storeExpr(int lineNumber, Var target, List<CxExpression> indexes,
+			CxExpression value) {
 		Type type = target.getType();
 		boolean hasIndexes = indexes != null && !indexes.isEmpty();
 		int dimensions = Typer.getNumDimensions(type);
@@ -407,11 +407,11 @@ public class IrBuilder {
 			Var local = loadVariable(lineNumber, target, indexes);
 
 			// select indexes (but not bit selection)
-			List<CExpression> subIndexes = indexes.subList(0, dimensions);
+			List<CxExpression> subIndexes = indexes.subList(0, dimensions);
 			List<Expression> expressions = transformIndexes(target.getType(), subIndexes);
 
 			// select bit index
-			CExpression exprIndex = indexes.get(indexes.size() - 1);
+			CxExpression exprIndex = indexes.get(indexes.size() - 1);
 			int index = instantiator.evaluateInt(entity, exprIndex);
 
 			// store the bit
@@ -438,7 +438,7 @@ public class IrBuilder {
 	 *            target type
 	 * @return an IR expression
 	 */
-	protected Expression transformExpr(CExpression expression, Type target) {
+	protected Expression transformExpr(CxExpression expression, Type target) {
 		Expression expr = transformer.transformExpr(expression);
 		if (target.isBool()) {
 			Type type = TypeUtil.getType(expr);
@@ -463,10 +463,10 @@ public class IrBuilder {
 	 *            a list of AST expressions
 	 * @return a list of IR expressions
 	 */
-	final List<Expression> transformExpressions(List<CExpression> expressions) {
+	final List<Expression> transformExpressions(List<CxExpression> expressions) {
 		int length = expressions.size();
 		List<Expression> irExpressions = new ArrayList<Expression>(length);
-		for (CExpression expression : expressions) {
+		for (CxExpression expression : expressions) {
 			irExpressions.add(transformer.transformExpr(expression));
 		}
 
@@ -481,7 +481,7 @@ public class IrBuilder {
 	 *            a list of AST expressions
 	 * @return a list of IR expressions
 	 */
-	private List<Expression> transformIndexes(Type type, List<CExpression> expressions) {
+	private List<Expression> transformIndexes(Type type, List<CxExpression> expressions) {
 		List<Expression> irExpressions = transformExpressions(expressions);
 		List<Expression> casted = new ArrayList<>(irExpressions.size());
 

@@ -33,7 +33,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
 import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.Branch;
-import com.synflow.cx.cx.CExpression;
+import com.synflow.cx.cx.CxExpression;
 import com.synflow.cx.cx.CxPackage.Literals;
 import com.synflow.cx.cx.ExpressionBinary;
 import com.synflow.cx.cx.ExpressionCast;
@@ -104,8 +104,8 @@ public class TypeChecker extends Checker {
 	@Override
 	public Void caseExpressionBinary(ExpressionBinary expression) {
 		OpBinary op = OpBinary.getOperator(expression.getOperator());
-		CExpression e1 = expression.getLeft();
-		CExpression e2 = expression.getRight();
+		CxExpression e1 = expression.getLeft();
+		CxExpression e2 = expression.getRight();
 		if (e1 == null || e2 == null) {
 			return DONE;
 		}
@@ -177,7 +177,7 @@ public class TypeChecker extends Checker {
 	@Override
 	public Void caseExpressionUnary(ExpressionUnary expression) {
 		OpUnary op = OpUnary.getOperator(expression.getUnaryOperator());
-		CExpression subExpr = expression.getExpression();
+		CxExpression subExpr = expression.getExpression();
 		if (subExpr == null) {
 			return DONE;
 		}
@@ -271,7 +271,7 @@ public class TypeChecker extends Checker {
 		}
 
 		// check type
-		CExpression value = AstUtil.getAssignValue(stmt);
+		CxExpression value = AstUtil.getAssignValue(stmt);
 		checkAssign(targetType, typer.getType(entity, value), stmt,
 				Literals.STATEMENT_ASSIGN__VALUE);
 
@@ -289,7 +289,7 @@ public class TypeChecker extends Checker {
 
 	@Override
 	public Void caseStatementPrint(StatementPrint stmt) {
-		for (CExpression expr : stmt.getArgs()) {
+		for (CxExpression expr : stmt.getArgs()) {
 			doSwitch(expr);
 
 			Type type = typer.getType(entity, expr);
@@ -306,7 +306,7 @@ public class TypeChecker extends Checker {
 		Variable function = getContainerOfType(stmt, Variable.class);
 		Type target = typer.getType(entity, function);
 
-		CExpression value = stmt.getValue();
+		CxExpression value = stmt.getValue();
 		if (value == null) {
 			if (target != null && !target.isVoid()) {
 				error("This method must return a result of type "
@@ -355,7 +355,7 @@ public class TypeChecker extends Checker {
 		return DONE;
 	}
 
-	private void checkArrayAccess(EObject source, Type type, EList<CExpression> indexes) {
+	private void checkArrayAccess(EObject source, Type type, EList<CxExpression> indexes) {
 		if (indexes.isEmpty()) {
 			// no indexes, nothing to check
 			return;
@@ -395,7 +395,7 @@ public class TypeChecker extends Checker {
 	 * @param index
 	 *            index as an expression
 	 */
-	private void checkBitSelect(Type type, CExpression index) {
+	private void checkBitSelect(Type type, CxExpression index) {
 		Object value = instantiator.evaluate(entity, index);
 		if (!ValueUtil.isInt(value)) {
 			error("Type mismatch: cannot convert value to constant integer in bit selection",
@@ -452,7 +452,7 @@ public class TypeChecker extends Checker {
 
 	@Check
 	public void checkIdle(StatementIdle idle) {
-		CExpression numCycles = idle.getNumCycles();
+		CxExpression numCycles = idle.getNumCycles();
 		Object value = instantiator.evaluate(entity, numCycles);
 		if (!ValueUtil.isInt(value)) {
 			error("Illegal idle: the number of cycles must be a compile-time constant integer",
@@ -464,10 +464,10 @@ public class TypeChecker extends Checker {
 	}
 
 	private void checkParameters(Variable function, ExpressionVariable call) {
-		EList<CExpression> arguments = call.getParameters();
-		Iterable<Type> types = Iterables.transform(arguments, new Function<CExpression, Type>() {
+		EList<CxExpression> arguments = call.getParameters();
+		Iterable<Type> types = Iterables.transform(arguments, new Function<CxExpression, Type>() {
 			@Override
-			public Type apply(CExpression expression) {
+			public Type apply(CxExpression expression) {
 				return typer.getType(entity, expression);
 			}
 		});
@@ -505,7 +505,7 @@ public class TypeChecker extends Checker {
 				call, null, ERR_TYPE_MISMATCH);
 	}
 
-	// private Range<BigInteger> getRange(CExpression expr, Type type) {
+	// private Range<BigInteger> getRange(CxExpression expr, Type type) {
 	// Object value = Evaluator.getValue(expr);
 	// if (ValueUtil.isInt(value)) {
 	// return Ranges.singleton((BigInteger) value);

@@ -27,8 +27,9 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
-import com.synflow.cx.cx.CExpression;
 import com.synflow.cx.cx.CType;
+import com.synflow.cx.cx.CxExpression;
+import com.synflow.cx.cx.CxPackage.Literals;
 import com.synflow.cx.cx.ExpressionVariable;
 import com.synflow.cx.cx.Module;
 import com.synflow.cx.cx.MultiPortDecl;
@@ -42,7 +43,6 @@ import com.synflow.cx.cx.StatementVariable;
 import com.synflow.cx.cx.Task;
 import com.synflow.cx.cx.VarDecl;
 import com.synflow.cx.cx.Variable;
-import com.synflow.cx.cx.CxPackage.Literals;
 import com.synflow.cx.cx.util.CxSwitch;
 import com.synflow.cx.instantiation.IInstantiator;
 import com.synflow.cx.internal.services.LoopSwitch;
@@ -285,11 +285,11 @@ public class CxUtil {
 	 *            an expression
 	 * @return an EObject
 	 */
-	public static EObject getTarget(CExpression expression) {
+	public static EObject getTarget(CxExpression expression) {
 		EObject result = expression;
 		do {
 			result = result.eContainer();
-		} while (result instanceof CExpression);
+		} while (result instanceof CxExpression);
 		return result;
 	}
 

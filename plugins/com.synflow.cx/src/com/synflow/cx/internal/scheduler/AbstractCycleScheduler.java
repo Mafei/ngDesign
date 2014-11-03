@@ -27,7 +27,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.synflow.cx.CxUtil;
-import com.synflow.cx.cx.CExpression;
+import com.synflow.cx.cx.CxExpression;
 import com.synflow.cx.cx.CxFactory;
 import com.synflow.cx.cx.Enter;
 import com.synflow.cx.cx.ExpressionVariable;
@@ -93,7 +93,7 @@ public abstract class AbstractCycleScheduler extends VoidCxSwitch {
 		return DONE;
 	}
 
-	private Void call(VarRef ref, EList<CExpression> parameters) {
+	private Void call(VarRef ref, EList<CxExpression> parameters) {
 		// visit parameters
 		visit(this, parameters);
 
@@ -327,7 +327,7 @@ public abstract class AbstractCycleScheduler extends VoidCxSwitch {
 	 * @param condition
 	 *            a condition
 	 */
-	protected final void visitNotCondition(CExpression condition) {
+	protected final void visitNotCondition(CxExpression condition) {
 		ignoreAvailable = true;
 		schedule.visitCondition(this, condition);
 		ignoreAvailable = false;

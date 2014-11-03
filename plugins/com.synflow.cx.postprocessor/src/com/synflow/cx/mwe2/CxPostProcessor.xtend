@@ -85,13 +85,13 @@ class CxPostProcessor {
 	 */
 	def private addClasses(EPackage p) {
 		// first get classes, because adding a class to the package clears its name to class map
-		val classCExpression = p.getEClassifier('CExpression') as EClass
+		val classCxExpression = p.getEClassifier('CxExpression') as EClass
 		val classVarRef = p.getEClassifier('VarRef') as EClass
 
 		val classEnter = p.addClass('Enter')
 		classEnter.addReference('function', classVarRef, 1)
 		classEnter.addAttribute('lineNumber', Literals.EINT)
-		classEnter.addReference('parameters', classCExpression, UNBOUNDED_MULTIPLICITY)
+		classEnter.addReference('parameters', classCxExpression, UNBOUNDED_MULTIPLICITY)
 
 		p.addClass('Leave')
 	}

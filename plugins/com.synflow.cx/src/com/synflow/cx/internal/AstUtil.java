@@ -24,8 +24,8 @@ import org.eclipse.emf.ecore.util.EcoreUtil.Copier;
 
 import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.Branch;
-import com.synflow.cx.cx.CExpression;
 import com.synflow.cx.cx.CType;
+import com.synflow.cx.cx.CxExpression;
 import com.synflow.cx.cx.CxFactory;
 import com.synflow.cx.cx.ExpressionBinary;
 import com.synflow.cx.cx.ExpressionBoolean;
@@ -66,7 +66,7 @@ public class AstUtil {
 	 *            second operand
 	 * @return a binary expression
 	 */
-	public static CExpression and(CExpression expr1, CExpression expr2) {
+	public static CxExpression and(CxExpression expr1, CxExpression expr2) {
 		if (isTrue(expr1)) {
 			return copy(expr2);
 		} else if (isTrue(expr2)) {
@@ -80,7 +80,7 @@ public class AstUtil {
 		}
 	}
 
-	public static Branch cond(CExpression condition) {
+	public static Branch cond(CxExpression condition) {
 		Branch cond = eINSTANCE.createBranch();
 		if (condition != null) {
 			cond.setCondition(copy(condition));
@@ -115,8 +115,8 @@ public class AstUtil {
 		return result;
 	}
 
-	private static CExpression createArithmetic(Variable variable, List<CExpression> indexes,
-			String op, CExpression value) {
+	private static CxExpression createArithmetic(Variable variable, List<CxExpression> indexes,
+			String op, CxExpression value) {
 		ExpressionBinary exprBin = eINSTANCE.createExpressionBinary();
 		VarRef varRef = eINSTANCE.createVarRef();
 		varRef.setVariable(variable);
@@ -146,7 +146,7 @@ public class AstUtil {
 	 *            a variable
 	 * @return an expression variable
 	 */
-	public static CExpression expr(Variable variable) {
+	public static CxExpression expr(Variable variable) {
 		ExpressionVariable expr = CxFactory.eINSTANCE.createExpressionVariable();
 		VarRef ref = CxFactory.eINSTANCE.createVarRef();
 		ref.setVariable(variable);
@@ -159,7 +159,7 @@ public class AstUtil {
 	 * 
 	 * @return a boolean expression
 	 */
-	public static CExpression exprTrue() {
+	public static CxExpression exprTrue() {
 		ExpressionBoolean trueExpr = eINSTANCE.createExpressionBoolean();
 		trueExpr.setValue(true);
 		return trueExpr;
@@ -173,11 +173,11 @@ public class AstUtil {
 	 *            an assign statement
 	 * @return an expression
 	 */
-	public static CExpression getAssignValue(StatementAssign assign) {
+	public static CxExpression getAssignValue(StatementAssign assign) {
 		String op = assign.getOp();
 		Variable variable = assign.getTarget().getSource().getVariable();
-		List<CExpression> indexes = assign.getTarget().getIndexes();
-		CExpression value = assign.getValue();
+		List<CxExpression> indexes = assign.getTarget().getIndexes();
+		CxExpression value = assign.getValue();
 		if (value == null) {
 			// handle post-decrement/increment
 			ExpressionInteger one = eINSTANCE.createExpressionInteger();
@@ -205,7 +205,7 @@ public class AstUtil {
 		return value;
 	}
 
-	private static boolean isTrue(CExpression expression) {
+	private static boolean isTrue(CxExpression expression) {
 		if (expression instanceof ExpressionBoolean) {
 			return ((ExpressionBoolean) expression).isValue();
 		}
@@ -218,7 +218,7 @@ public class AstUtil {
 	 * @param expression
 	 * @return
 	 */
-	public static CExpression not(CExpression expression) {
+	public static CxExpression not(CxExpression expression) {
 		ExpressionUnary not = eINSTANCE.createExpressionUnary();
 		not.setExpression(copy(expression));
 		not.setUnaryOperator("!");

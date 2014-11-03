@@ -20,7 +20,7 @@ import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
-import com.synflow.cx.cx.CExpression;
+import com.synflow.cx.cx.CxExpression;
 import com.synflow.cx.cx.Element;
 import com.synflow.cx.cx.Inst;
 import com.synflow.cx.cx.Null;
@@ -44,7 +44,7 @@ public class InstantiationContext extends Node {
 
 	private final Instance instance;
 
-	private final Map<String, CExpression> properties;
+	private final Map<String, CxExpression> properties;
 
 	/**
 	 * Creates a new instantiation context using the given parent context and the given name.
@@ -77,7 +77,7 @@ public class InstantiationContext extends Node {
 				if (element instanceof Primitive) {
 					Primitive primitive = (Primitive) element;
 					EObject value = primitive.getValue();
-					if (value instanceof CExpression) {
+					if (value instanceof CxExpression) {
 						Object val = instantiator.evaluate(instance.getDPN(), value);
 						properties.put(key, Evaluator.getCxExpression(val));
 					} else if (value instanceof Null) {
@@ -130,7 +130,7 @@ public class InstantiationContext extends Node {
 	 * 
 	 * @return a map
 	 */
-	public Map<String, CExpression> getProperties() {
+	public Map<String, CxExpression> getProperties() {
 		return Collections.unmodifiableMap(properties);
 	}
 

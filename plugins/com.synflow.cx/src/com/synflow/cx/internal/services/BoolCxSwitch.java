@@ -15,7 +15,7 @@ import static com.synflow.models.util.SwitchUtil.check;
 import com.google.common.collect.Iterables;
 import com.synflow.cx.cx.Block;
 import com.synflow.cx.cx.Branch;
-import com.synflow.cx.cx.CExpression;
+import com.synflow.cx.cx.CxExpression;
 import com.synflow.cx.cx.ExpressionBinary;
 import com.synflow.cx.cx.ExpressionIf;
 import com.synflow.cx.cx.ExpressionUnary;
@@ -54,7 +54,7 @@ public class BoolCxSwitch extends CxSwitch<Boolean> {
 	}
 
 	@Override
-	public Boolean caseCExpression(CExpression expr) {
+	public Boolean caseCxExpression(CxExpression expr) {
 		return false;
 	}
 
