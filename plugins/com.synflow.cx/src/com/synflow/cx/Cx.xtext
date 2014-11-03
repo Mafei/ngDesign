@@ -102,7 +102,8 @@ Element:
 	Primitive | Obj | Array
 ;
 
-Primitive: value=(Literal | Null);
+Primitive: value=(Literal | SimpleExpressionVariable | Null);
+SimpleExpressionVariable returns ExpressionVariable: source=VarRef;
 Null: {Null} 'null';
 
 ///////////////////////////////////////////////////////////////////////////////
