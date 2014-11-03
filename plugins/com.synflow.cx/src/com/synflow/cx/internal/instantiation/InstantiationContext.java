@@ -15,11 +15,13 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.synflow.cx.cx.CxExpression;
 import com.synflow.cx.cx.Element;
 import com.synflow.cx.cx.Inst;
@@ -39,6 +41,12 @@ import com.synflow.models.node.Node;
  *
  */
 public class InstantiationContext extends Node {
+
+	private static final Set<String> reserved = Sets.newHashSet("clock", "clocks", "reset");
+
+	private static boolean isReservedProperty(String key) {
+		return reserved.contains(key);
+	}
 
 	private final Inst inst;
 
@@ -71,6 +79,9 @@ public class InstantiationContext extends Node {
 		if (obj != null) {
 			for (Pair pair : obj.getMembers()) {
 				String key = pair.getKey();
+				if (isReservedProperty(key)) {
+					continue;
+				}
 				Element element = pair.getValue();
 
 				// only support primitive values for now

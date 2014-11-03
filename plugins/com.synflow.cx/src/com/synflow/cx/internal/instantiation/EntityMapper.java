@@ -191,9 +191,8 @@ public class EntityMapper extends CxSwitch<Entity> {
 		boolean specialized = inst.getTask() != null;
 		Instantiable cxEntity = specialized ? inst.getTask() : inst.getEntity();
 
-		// if the instance depends on parent's properties, it is specialized
-		Map<Variable, CxExpression> values = getVariablesMap(cxEntity, ctx);
-		specialized |= !values.isEmpty();
+		// if the context has properties, specializes
+		specialized |= !ctx.getProperties().isEmpty();
 
 		return createEntityInfo(cxEntity, inst, specialized ? ctx.getName() : null);
 	}
@@ -214,20 +213,6 @@ public class EntityMapper extends CxSwitch<Entity> {
 	}
 
 	/**
-	 * Returns a map of variable - value association based on the given Cx entity's variables and
-	 * the instantiation context. Equivalent to <code>visitProperties(cxEntity, ctx, false)</code>.
-	 * 
-	 * @param cxEntity
-	 *            Cx entity
-	 * @param ctx
-	 *            instantiation context
-	 * @return a map
-	 */
-	private Map<Variable, CxExpression> getVariablesMap(CxEntity cxEntity, InstantiationContext ctx) {
-		return visitProperties(cxEntity, ctx, false);
-	}
-
-	/**
 	 * Restore values using the given map.
 	 * 
 	 * @param values
@@ -241,7 +226,7 @@ public class EntityMapper extends CxSwitch<Entity> {
 
 	/**
 	 * Sets the values of affected variables in the given Cx entity to the values given by the
-	 * instantiation context. Equivalent to <code>visitProperties(cxEntity, ctx, true)</code>.
+	 * instantiation context.
 	 * 
 	 * @param cxEntity
 	 *            Cx entity
@@ -250,24 +235,6 @@ public class EntityMapper extends CxSwitch<Entity> {
 	 * @return a map of variable - value association
 	 */
 	private Map<Variable, CxExpression> setValues(CxEntity cxEntity, InstantiationContext ctx) {
-		return visitProperties(cxEntity, ctx, true);
-	}
-
-	/**
-	 * Returns a map of variable - value association based on the given Cx entity's variables and
-	 * the instantiation context. The <code>set</code> parameter controls whether the value of
-	 * variables are updated to the value given in the context or not.
-	 * 
-	 * @param cxEntity
-	 *            Cx entity
-	 * @param ctx
-	 *            instantiation context
-	 * @param set
-	 *            if true, update the value of affected variables
-	 * @return a map
-	 */
-	private Map<Variable, CxExpression> visitProperties(CxEntity cxEntity, InstantiationContext ctx,
-			boolean set) {
 		Map<Variable, CxExpression> previous = new HashMap<>();
 		if (ctx.getProperties().isEmpty()) {
 			return Collections.emptyMap();
@@ -281,11 +248,10 @@ public class EntityMapper extends CxSwitch<Entity> {
 			if (objDesc != null) {
 				EObject eObject = objDesc.getEObjectOrProxy();
 				if (eObject instanceof Variable) {
+					// saves the previous value and updates the variable's value
 					Variable variable = (Variable) eObject;
 					previous.put(variable, variable.getValue());
-					if (set) {
-						variable.setValue(EcoreUtil.copy(entry.getValue()));
-					}
+					variable.setValue(EcoreUtil.copy(entry.getValue()));
 				}
 			}
 		}
