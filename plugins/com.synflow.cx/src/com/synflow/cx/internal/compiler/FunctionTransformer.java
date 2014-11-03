@@ -76,7 +76,6 @@ import com.synflow.cx.cx.util.CxSwitch;
 import com.synflow.cx.instantiation.IInstantiator;
 import com.synflow.cx.internal.AstUtil;
 import com.synflow.cx.internal.services.Typer;
-import com.synflow.cx.services.Evaluator;
 import com.synflow.models.dpn.Entity;
 import com.synflow.models.ir.BlockIf;
 import com.synflow.models.ir.BlockWhile;
@@ -145,7 +144,7 @@ public class FunctionTransformer extends CxSwitch<EObject> implements Transforme
 		Expression e2;
 
 		if (op == OpBinary.DIV || op == OpBinary.MOD) {
-			Object value = Evaluator.getValue(expression.getRight());
+			Object value = builder.instantiator.evaluate(builder.entity, expression.getRight());
 			BigInteger expr = (BigInteger) value;
 			BigInteger n;
 
@@ -227,7 +226,8 @@ public class FunctionTransformer extends CxSwitch<EObject> implements Transforme
 	@Override
 	public Expression caseExpressionString(ExpressionString expression) {
 		if (expression.eContainer() instanceof CExpression) {
-			BigInteger value = (BigInteger) Evaluator.getValue(expression);
+			BigInteger value = (BigInteger) builder.instantiator.evaluate(builder.entity,
+					expression);
 			return eINSTANCE.createExprInt(value);
 		} else {
 			return eINSTANCE.createExprString(expression.getValue());
@@ -278,7 +278,7 @@ public class FunctionTransformer extends CxSwitch<EObject> implements Transforme
 		ExprVar exprVar = eINSTANCE.createExprVar(target);
 		if (dimensions < expression.getIndexes().size()) {
 			CExpression exprIndex = expression.getIndexes().get(dimensions);
-			int index = Evaluator.getIntValue(exprIndex);
+			int index = builder.instantiator.evaluateInt(builder.entity, exprIndex);
 			ExprInt mask = eINSTANCE.createExprInt(ONE.shiftLeft(index));
 			ExprBinary exprBin = eINSTANCE.createExprBinary(exprVar, OpBinary.BITAND, mask);
 

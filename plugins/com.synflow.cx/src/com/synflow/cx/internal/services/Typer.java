@@ -72,7 +72,6 @@ import com.synflow.cx.cx.VarRef;
 import com.synflow.cx.cx.Variable;
 import com.synflow.cx.cx.util.CxSwitch;
 import com.synflow.cx.instantiation.IInstantiator;
-import com.synflow.cx.services.Evaluator;
 import com.synflow.models.dpn.Entity;
 import com.synflow.models.dpn.Port;
 import com.synflow.models.ir.IrFactory;
@@ -122,7 +121,7 @@ public class Typer extends CxSwitch<Type> {
 		Type t2 = doSwitch(expression.getRight());
 
 		CExpression right = expression.getRight();
-		Object amount = Evaluator.getValue(right);
+		Object amount = instantiator.evaluate(entity, right);
 		return TypeUtil.getTypeBinary(op, t1, t2, amount);
 	}
 
@@ -157,7 +156,7 @@ public class Typer extends CxSwitch<Type> {
 	@Override
 	public Type caseExpressionString(ExpressionString expression) {
 		if (expression.eContainer() instanceof CExpression) {
-			BigInteger value = (BigInteger) Evaluator.getValue(expression);
+			BigInteger value = (BigInteger) instantiator.evaluate(entity, expression);
 			return IrFactory.eINSTANCE.createTypeIntOrUint(value);
 		}
 		return IrFactory.eINSTANCE.createTypeString();
@@ -268,7 +267,7 @@ public class Typer extends CxSwitch<Type> {
 	@Override
 	public Type caseTypeGen(TypeGen typeGen) {
 		Type type = doSwitch(typeGen.getSpec());
-		int size = Evaluator.getIntValue(typeGen.getSize());
+		int size = instantiator.evaluateInt(entity, typeGen.getSize());
 		boolean signed = type.isInt() && ((TypeInt) type).isSigned();
 		return IrFactory.eINSTANCE.createTypeInt(size, signed);
 	}
@@ -311,7 +310,7 @@ public class Typer extends CxSwitch<Type> {
 		array.setElementType(type);
 
 		for (CExpression dimension : dimensions) {
-			Object value = Evaluator.getValue(dimension);
+			Object value = instantiator.evaluate(entity, dimension);
 			if (ValueUtil.isInt(value)) {
 				array.getDimensions().add(((BigInteger) value).intValue());
 			} else {

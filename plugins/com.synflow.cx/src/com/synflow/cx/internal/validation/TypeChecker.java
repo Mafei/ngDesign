@@ -16,6 +16,7 @@ import static com.synflow.cx.validation.IssueCodes.ERR_EXPECTED_CONST;
 import static com.synflow.cx.validation.IssueCodes.ERR_TYPE_MISMATCH;
 import static com.synflow.models.util.SwitchUtil.DONE;
 import static com.synflow.models.util.SwitchUtil.visit;
+import static java.math.BigInteger.ZERO;
 import static org.eclipse.xtext.EcoreUtil2.getContainerOfType;
 import static org.eclipse.xtext.validation.ValidationMessageAcceptor.INSIGNIFICANT_INDEX;
 
@@ -24,6 +25,7 @@ import java.util.Iterator;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.ValidationMessageAcceptor;
 
 import com.google.common.base.Function;
@@ -40,6 +42,7 @@ import com.synflow.cx.cx.ExpressionUnary;
 import com.synflow.cx.cx.ExpressionVariable;
 import com.synflow.cx.cx.Inst;
 import com.synflow.cx.cx.StatementAssign;
+import com.synflow.cx.cx.StatementIdle;
 import com.synflow.cx.cx.StatementLoop;
 import com.synflow.cx.cx.StatementPrint;
 import com.synflow.cx.cx.StatementReturn;
@@ -53,7 +56,6 @@ import com.synflow.cx.instantiation.IInstantiator;
 import com.synflow.cx.internal.AstUtil;
 import com.synflow.cx.internal.services.Typer;
 import com.synflow.cx.services.CxPrinter;
-import com.synflow.cx.services.Evaluator;
 import com.synflow.models.dpn.Entity;
 import com.synflow.models.dpn.Instance;
 import com.synflow.models.ir.IrFactory;
@@ -394,7 +396,7 @@ public class TypeChecker extends Checker {
 	 *            index as an expression
 	 */
 	private void checkBitSelect(Type type, CExpression index) {
-		Object value = Evaluator.getValue(index);
+		Object value = instantiator.evaluate(entity, index);
 		if (!ValueUtil.isInt(value)) {
 			error("Type mismatch: cannot convert value to constant integer in bit selection",
 					index, null, ERR_TYPE_MISMATCH);
@@ -426,7 +428,7 @@ public class TypeChecker extends Checker {
 
 		String op = expr.getOperator();
 		if ("/".equals(op) || "%".equals(op)) {
-			Object value = Evaluator.getValue(expr.getRight());
+			Object value = instantiator.evaluate(entity, expr.getRight());
 			if (value == null || !ValueUtil.isInt(value)) {
 				error("The right operand of operator " + op + " must be constant", expr, null,
 						ERR_DIV_MOD_NOT_CONST_POW_Of_TWO);
@@ -440,11 +442,24 @@ public class TypeChecker extends Checker {
 						ERR_DIV_MOD_NOT_CONST_POW_Of_TWO);
 			}
 		} else if ("<<".equals(op) || ">>".equals(op)) {
-			Object value = Evaluator.getValue(expr.getRight());
+			Object value = instantiator.evaluate(entity, expr.getRight());
 			if (value == null || !ValueUtil.isInt(value)) {
 				error("The right operand of operator " + op + " must be constant", expr, null,
 						ERR_EXPECTED_CONST);
 			}
+		}
+	}
+
+	@Check
+	public void checkIdle(StatementIdle idle) {
+		CExpression numCycles = idle.getNumCycles();
+		Object value = instantiator.evaluate(entity, numCycles);
+		if (!ValueUtil.isInt(value)) {
+			error("Illegal idle: the number of cycles must be a compile-time constant integer",
+					numCycles, null, ERR_EXPECTED_CONST);
+		} else if (!ValueUtil.isTrue(ValueUtil.gt(value, ZERO))) {
+			error("Illegal idle: the number of cycles must be greater than zero", numCycles, null,
+					ERR_EXPECTED_CONST);
 		}
 	}
 

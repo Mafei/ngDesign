@@ -106,7 +106,7 @@ public class CycleDetector extends VoidCxSwitch implements ICycleListener {
 
 	@Override
 	public Void caseStatementLoop(StatementLoop stmt) {
-		if (CxUtil.isLoopSimple(stmt)) {
+		if (CxUtil.isLoopSimple(schedule.instantiator, schedule.actor, stmt)) {
 			return DONE;
 		}
 

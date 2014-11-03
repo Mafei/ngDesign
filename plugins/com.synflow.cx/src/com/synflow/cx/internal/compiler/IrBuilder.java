@@ -35,7 +35,6 @@ import com.synflow.cx.cx.CExpression;
 import com.synflow.cx.cx.Variable;
 import com.synflow.cx.instantiation.IInstantiator;
 import com.synflow.cx.internal.services.Typer;
-import com.synflow.cx.services.Evaluator;
 import com.synflow.models.dpn.Entity;
 import com.synflow.models.ir.Block;
 import com.synflow.models.ir.BlockIf;
@@ -413,7 +412,7 @@ public class IrBuilder {
 
 			// select bit index
 			CExpression exprIndex = indexes.get(indexes.size() - 1);
-			int index = Evaluator.getIntValue(exprIndex);
+			int index = instantiator.evaluateInt(entity, exprIndex);
 
 			// store the bit
 			storeBit(lineNumber, target, expressions, local, index, expr);

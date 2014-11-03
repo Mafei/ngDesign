@@ -35,7 +35,7 @@ import com.synflow.cx.cx.Task;
 import com.synflow.cx.cx.Typedef;
 import com.synflow.cx.cx.Variable;
 import com.synflow.cx.cx.util.CxSwitch;
-import com.synflow.cx.services.Evaluator;
+import com.synflow.cx.services.CxPrinter;
 import com.synflow.models.dpn.InterfaceType;
 import com.synflow.models.ir.util.ValueUtil;
 
@@ -167,7 +167,7 @@ public class CxEObjectHoverProvider extends DefaultEObjectHoverProvider {
 				// dimensions
 				for (CExpression value : variable.getDimensions()) {
 					builder.append('[');
-					builder.append(String.valueOf(Evaluator.getValue(value)));
+					builder.append(new CxPrinter().toString(value));
 					builder.append(']');
 				}
 			}
@@ -177,7 +177,7 @@ public class CxEObjectHoverProvider extends DefaultEObjectHoverProvider {
 				EObject value = variable.getValue();
 				if (value != null) {
 					builder.append(" = ");
-					builder.append(printValue(Evaluator.getValue(value)));
+					builder.append(new CxPrinter().toString(value));
 				}
 			}
 

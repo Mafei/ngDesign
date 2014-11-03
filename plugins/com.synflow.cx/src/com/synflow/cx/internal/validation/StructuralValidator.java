@@ -22,7 +22,6 @@ import static com.synflow.cx.validation.IssueCodes.ERR_SIDE_EFFECTS_FUNCTION;
 import static com.synflow.cx.validation.IssueCodes.ERR_TYPE_ONE_BIT;
 import static com.synflow.cx.validation.IssueCodes.ERR_VAR_DECL;
 import static com.synflow.cx.validation.IssueCodes.SHOULD_REPLACE_NAME;
-import static java.math.BigInteger.ZERO;
 
 import java.util.List;
 
@@ -66,8 +65,6 @@ import com.synflow.cx.cx.TypeDecl;
 import com.synflow.cx.cx.Value;
 import com.synflow.cx.cx.Variable;
 import com.synflow.cx.internal.services.BoolCxSwitch;
-import com.synflow.cx.services.Evaluator;
-import com.synflow.models.ir.util.ValueUtil;
 
 /**
  * This class defines a structural validator.
@@ -215,19 +212,6 @@ public class StructuralValidator extends AbstractDeclarativeValidator {
 						+ "' returns a result and must be declared const", variable,
 						Literals.VARIABLE__NAME, ERR_SIDE_EFFECTS_FUNCTION);
 			}
-		}
-	}
-
-	@Check
-	public void checkIdle(StatementIdle idle) {
-		CExpression numCycles = idle.getNumCycles();
-		Object value = Evaluator.getValue(numCycles);
-		if (!ValueUtil.isInt(value)) {
-			error("Illegal idle: the number of cycles must be a compile-time constant integer",
-					numCycles, null, ERR_EXPECTED_CONST);
-		} else if (!ValueUtil.isTrue(ValueUtil.gt(value, ZERO))) {
-			error("Illegal idle: the number of cycles must be greater than zero", numCycles, null,
-					ERR_EXPECTED_CONST);
 		}
 	}
 

@@ -37,6 +37,25 @@ public interface IInstantiator {
 	void clearData();
 
 	/**
+	 * Returns the value associated with the given object.
+	 * 
+	 * @param eObject
+	 *            an AST node
+	 * @return the value associated with the given object
+	 */
+	Object evaluate(Entity entity, EObject eObject);
+
+	/**
+	 * Returns the integer value associated with the given object. Returns -1 if the value is not an
+	 * integer.
+	 * 
+	 * @param eObject
+	 *            an AST node
+	 * @return the integer value associated with the given object
+	 */
+	int evaluateInt(Entity entity, EObject eObject);
+
+	/**
 	 * Retrieves all IR entities associated to the given Cx entity, and for each <code>entity</code>
 	 * , calls <code>executable.exec(entity)</code>.
 	 * 

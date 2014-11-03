@@ -38,7 +38,7 @@ public class Schedule {
 
 	protected final Actor actor;
 
-	private final IInstantiator instantiator;
+	protected final IInstantiator instantiator;
 
 	private ICycleListener listener;
 

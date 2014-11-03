@@ -105,6 +105,16 @@ public class InstantiatorImpl implements IInstantiator {
 	}
 
 	@Override
+	public Object evaluate(Entity entity, EObject eObject) {
+		return new Evaluator(this).getValue(entity, eObject);
+	}
+
+	@Override
+	public int evaluateInt(Entity entity, EObject eObject) {
+		return new Evaluator(this).getIntValue(entity, eObject);
+	}
+
+	@Override
 	public void forEachMapping(CxEntity cxEntity, Executable<Entity> executable) {
 		Objects.requireNonNull(cxEntity, "cxEntity must not be null in forEachMapping");
 

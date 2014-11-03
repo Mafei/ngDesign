@@ -36,7 +36,7 @@
  * WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.synflow.cx.services;
+package com.synflow.cx.internal.instantiation;
 
 import java.lang.reflect.Array;
 import java.math.BigInteger;
@@ -58,8 +58,11 @@ import com.synflow.cx.cx.ValueExpr;
 import com.synflow.cx.cx.ValueList;
 import com.synflow.cx.cx.Variable;
 import com.synflow.cx.cx.util.CxSwitch;
+import com.synflow.cx.instantiation.IInstantiator;
+import com.synflow.models.dpn.Entity;
 import com.synflow.models.ir.OpBinary;
 import com.synflow.models.ir.OpUnary;
+import com.synflow.models.ir.Var;
 import com.synflow.models.ir.util.ValueUtil;
 
 /**
@@ -70,47 +73,19 @@ import com.synflow.models.ir.util.ValueUtil;
  */
 public class Evaluator extends CxSwitch<Object> {
 
-	/**
-	 * Returns the integer value associated with the given object using its URI. Returns -1 if the
-	 * value is not an integer.
-	 * 
-	 * @param eObject
-	 *            an AST node
-	 * @return the integer value associated with the given object
-	 */
-	public static int getIntValue(EObject eObject) {
-		Object value = getValue(eObject);
-		if (value != null && ValueUtil.isInt(value)) {
-			BigInteger intExpr = (BigInteger) value;
-			if (intExpr.bitLength() < Integer.SIZE) {
-				return intExpr.intValue();
-			}
-		}
+	private Entity entity;
 
-		// evaluated ok, but not as an integer
-		return -1;
-	}
+	private IInstantiator instantiator;
 
-	/**
-	 * Returns the value associated with the given object using its URI.
-	 * 
-	 * @param eObject
-	 *            an AST node
-	 * @return the value associated with the given object
-	 */
-	public static Object getValue(EObject eObject) {
-		try {
-			return new Evaluator().doSwitch(eObject);
-		} catch (IllegalArgumentException e) {
-			return null;
-		}
+	Evaluator(IInstantiator instantiator) {
+		this.instantiator = instantiator;
 	}
 
 	@Override
 	public Object caseExpressionBinary(ExpressionBinary expression) {
 		OpBinary op = OpBinary.getOperator(expression.getOperator());
-		Object val1 = getValue(expression.getLeft());
-		Object val2 = getValue(expression.getRight());
+		Object val1 = doSwitch(expression.getLeft());
+		Object val2 = doSwitch(expression.getRight());
 		return ValueUtil.compute(val1, op, val2);
 	}
 
@@ -126,13 +101,13 @@ public class Evaluator extends CxSwitch<Object> {
 
 	@Override
 	public Object caseExpressionIf(ExpressionIf expression) {
-		Object condition = getValue(expression.getCondition());
+		Object condition = doSwitch(expression.getCondition());
 
 		if (ValueUtil.isBool(condition)) {
 			if (ValueUtil.isTrue(condition)) {
-				return getValue(expression.getThen());
+				return doSwitch(expression.getThen());
 			} else {
-				return getValue(expression.getElse());
+				return doSwitch(expression.getElse());
 			}
 		} else {
 			return null;
@@ -164,7 +139,7 @@ public class Evaluator extends CxSwitch<Object> {
 	@Override
 	public Object caseExpressionUnary(ExpressionUnary expression) {
 		OpUnary op = OpUnary.getOperator(expression.getUnaryOperator());
-		Object value = getValue(expression.getExpression());
+		Object value = doSwitch(expression.getExpression());
 		return ValueUtil.compute(op, value);
 	}
 
@@ -175,13 +150,15 @@ public class Evaluator extends CxSwitch<Object> {
 		if (CxUtil.isConstant(variable)) {
 			// only returns the value for constants
 			// no cross-variable initializations
-			value = getValue(variable.getValue());
+			value = doSwitch(variable.getValue());
+			// TODO Var var = instantiator.getMapping(entity, variable);
+			// value = var.getValue();
 		} else {
 			return null;
 		}
 
 		for (CExpression index : expression.getIndexes()) {
-			Object indexValue = getValue(index);
+			Object indexValue = doSwitch(index);
 			if (ValueUtil.isList(value)) {
 				if (ValueUtil.isInt(indexValue)) {
 					int ind = ((BigInteger) indexValue).intValue();
@@ -221,6 +198,46 @@ public class Evaluator extends CxSwitch<Object> {
 		}
 
 		return super.doSwitch(eObject);
+	}
+
+	/**
+	 * Returns the integer value associated with the given object using its URI. Returns -1 if the
+	 * value is not an integer.
+	 * 
+	 * @param eObject
+	 *            an AST node
+	 * @return the integer value associated with the given object
+	 */
+	int getIntValue(Entity entity, EObject eObject) {
+		Object value = getValue(entity, eObject);
+		if (value != null && ValueUtil.isInt(value)) {
+			BigInteger intExpr = (BigInteger) value;
+			if (intExpr.bitLength() < Integer.SIZE) {
+				return intExpr.intValue();
+			}
+		}
+
+		// evaluated ok, but not as an integer
+		return -1;
+	}
+
+	/**
+	 * Returns the value associated with the given object using its URI.
+	 * 
+	 * @param eObject
+	 *            an AST node
+	 * @return the value associated with the given object
+	 */
+	Object getValue(Entity entity, EObject eObject) {
+		Entity oldEntity = this.entity;
+		this.entity = entity;
+		try {
+			return doSwitch(eObject);
+		} catch (IllegalArgumentException e) {
+			return null;
+		} finally {
+			this.entity = oldEntity;
+		}
 	}
 
 }

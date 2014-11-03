@@ -44,8 +44,10 @@ import com.synflow.cx.cx.VarDecl;
 import com.synflow.cx.cx.Variable;
 import com.synflow.cx.cx.CxPackage.Literals;
 import com.synflow.cx.cx.util.CxSwitch;
+import com.synflow.cx.instantiation.IInstantiator;
 import com.synflow.cx.internal.services.LoopSwitch;
 import com.synflow.cx.internal.services.ScheduleModifierSwitch;
+import com.synflow.models.dpn.Entity;
 import com.synflow.models.dpn.InterfaceType;
 import com.synflow.models.util.Void;
 
@@ -459,8 +461,8 @@ public class CxUtil {
 	 *            loop statement
 	 * @return boolean indicating if the loop can be translated in a simple way or not
 	 */
-	public static boolean isLoopSimple(StatementLoop stmt) {
-		return !new LoopSwitch().doSwitch(stmt);
+	public static boolean isLoopSimple(IInstantiator instantiator, Entity entity, StatementLoop stmt) {
+		return !new LoopSwitch(instantiator, entity).doSwitch(stmt);
 	}
 
 	/**

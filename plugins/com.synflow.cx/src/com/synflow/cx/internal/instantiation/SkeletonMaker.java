@@ -29,7 +29,6 @@ import com.synflow.cx.cx.Typedef;
 import com.synflow.cx.cx.Variable;
 import com.synflow.cx.instantiation.IInstantiator;
 import com.synflow.cx.internal.services.Typer;
-import com.synflow.cx.services.Evaluator;
 import com.synflow.models.dpn.Actor;
 import com.synflow.models.dpn.DPN;
 import com.synflow.models.dpn.DpnFactory;
@@ -148,7 +147,7 @@ public class SkeletonMaker extends DpnSwitch<Void> {
 			boolean assignable = !CxUtil.isConstant(variable);
 
 			// retrieve initial value (may be null)
-			Object value = Evaluator.getValue(variable.getValue());
+			Object value = instantiator.evaluate(entity, variable.getValue());
 			Expression init = ValueUtil.getExpression(value);
 
 			// create var

@@ -47,7 +47,6 @@ import com.synflow.cx.cx.Variable;
 import com.synflow.cx.instantiation.IInstantiator;
 import com.synflow.cx.internal.TransformerUtil;
 import com.synflow.cx.internal.services.VoidCxSwitch;
-import com.synflow.cx.services.Evaluator;
 import com.synflow.models.dpn.Actor;
 import com.synflow.models.dpn.State;
 import com.synflow.models.dpn.Transition;
@@ -163,7 +162,7 @@ public abstract class AbstractCycleScheduler extends VoidCxSwitch {
 
 	@Override
 	public Void caseStatementIdle(StatementIdle stmt) {
-		int numCycles = Evaluator.getIntValue(stmt.getNumCycles());
+		int numCycles = schedule.instantiator.evaluateInt(schedule.actor, stmt.getNumCycles());
 
 		if (isEmptyTransition()) {
 			// no action is associated with current transition yet
@@ -203,7 +202,7 @@ public abstract class AbstractCycleScheduler extends VoidCxSwitch {
 
 	@Override
 	public Void caseStatementLoop(StatementLoop stmt) {
-		if (CxUtil.isLoopSimple(stmt)) {
+		if (CxUtil.isLoopSimple(schedule.instantiator, schedule.actor, stmt)) {
 			// record this statement
 			associate(stmt);
 			return DONE;

@@ -19,7 +19,8 @@ import com.synflow.cx.cx.StatementAssign;
 import com.synflow.cx.cx.StatementLoop;
 import com.synflow.cx.cx.StatementVariable;
 import com.synflow.cx.cx.Variable;
-import com.synflow.cx.services.Evaluator;
+import com.synflow.cx.instantiation.IInstantiator;
+import com.synflow.models.dpn.Entity;
 
 /**
  * This class defines a switch that extends the statement switch to handle loops. It returns true if
@@ -29,6 +30,15 @@ import com.synflow.cx.services.Evaluator;
  * 
  */
 public class LoopSwitch extends ScheduleModifierSwitch {
+
+	private Entity entity;
+
+	private IInstantiator instantiator;
+
+	public LoopSwitch(IInstantiator instantiator, Entity entity) {
+		this.instantiator = instantiator;
+		this.entity = entity;
+	}
 
 	@Override
 	public Boolean caseStatementLoop(StatementLoop stmt) {
@@ -41,7 +51,7 @@ public class LoopSwitch extends ScheduleModifierSwitch {
 					StatementAssign assign = (StatementAssign) init;
 					Variable variable = assign.getTarget().getSource().getVariable();
 					if (CxUtil.isLocal(variable)) {
-						Object value = Evaluator.getValue(assign.getValue());
+						Object value = instantiator.evaluate(entity, assign.getValue());
 						if (value != null) {
 							return checkBounds(variable, value, stmt.getCondition());
 						}
@@ -49,7 +59,7 @@ public class LoopSwitch extends ScheduleModifierSwitch {
 				} else if (init instanceof StatementVariable) {
 					StatementVariable stmtVar = (StatementVariable) init;
 					for (Variable variable : stmtVar.getVariables()) {
-						Object value = Evaluator.getValue(variable.getValue());
+						Object value = instantiator.evaluate(entity, variable.getValue());
 						if (value == null || checkBounds(variable, value, stmt.getCondition())) {
 							return true;
 						}
@@ -71,7 +81,7 @@ public class LoopSwitch extends ScheduleModifierSwitch {
 			if (left instanceof ExpressionVariable) {
 				ExpressionVariable exprVar = (ExpressionVariable) left;
 				if (exprVar.getSource().getVariable() == variable && exprVar.getIndexes().isEmpty()) {
-					Object max = Evaluator.getValue(right);
+					Object max = instantiator.evaluate(entity, right);
 					if (max != null) {
 						// loop is not complex
 						return false;
