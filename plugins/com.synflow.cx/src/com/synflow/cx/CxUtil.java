@@ -27,9 +27,9 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
-import com.synflow.cx.cx.CType;
 import com.synflow.cx.cx.CxExpression;
 import com.synflow.cx.cx.CxPackage.Literals;
+import com.synflow.cx.cx.CxType;
 import com.synflow.cx.cx.ExpressionVariable;
 import com.synflow.cx.cx.Module;
 import com.synflow.cx.cx.MultiPortDecl;
@@ -302,8 +302,8 @@ public class CxUtil {
 	 *            a variable
 	 * @return type of the variable
 	 */
-	public static CType getType(Variable variable) {
-		CType type = variable.getType();
+	public static CxType getType(Variable variable) {
+		CxType type = variable.getType();
 		if (type != null) {
 			// parameters of a function are variables with a type
 			return type;

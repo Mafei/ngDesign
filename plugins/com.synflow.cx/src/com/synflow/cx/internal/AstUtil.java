@@ -24,9 +24,9 @@ import org.eclipse.emf.ecore.util.EcoreUtil.Copier;
 
 import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.Branch;
-import com.synflow.cx.cx.CType;
 import com.synflow.cx.cx.CxExpression;
 import com.synflow.cx.cx.CxFactory;
+import com.synflow.cx.cx.CxType;
 import com.synflow.cx.cx.ExpressionBinary;
 import com.synflow.cx.cx.ExpressionBoolean;
 import com.synflow.cx.cx.ExpressionCast;
@@ -133,7 +133,7 @@ public class AstUtil {
 
 		// add cast
 		ExpressionCast cast = eINSTANCE.createExpressionCast();
-		CType type = IrUtil.copy(CxUtil.getType(variable));
+		CxType type = IrUtil.copy(CxUtil.getType(variable));
 		cast.setType(type);
 		cast.setExpression(exprBin);
 		return cast;

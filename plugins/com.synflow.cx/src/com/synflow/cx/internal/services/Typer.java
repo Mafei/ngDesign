@@ -50,8 +50,8 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import com.google.inject.Inject;
 import com.synflow.cx.CxUtil;
-import com.synflow.cx.cx.CType;
 import com.synflow.cx.cx.CxExpression;
+import com.synflow.cx.cx.CxType;
 import com.synflow.cx.cx.ExpressionBinary;
 import com.synflow.cx.cx.ExpressionBoolean;
 import com.synflow.cx.cx.ExpressionCast;
@@ -291,7 +291,7 @@ public class Typer extends CxSwitch<Type> {
 			return IrFactory.eINSTANCE.createTypeVoid();
 		}
 
-		CType varType = CxUtil.getType(variable);
+		CxType varType = CxUtil.getType(variable);
 
 		Type type = doSwitch(varType);
 		List<CxExpression> dimensions = variable.getDimensions();

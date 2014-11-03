@@ -23,7 +23,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import com.google.common.collect.Iterables;
 import com.synflow.cx.CxUtil;
-import com.synflow.cx.cx.CType;
+import com.synflow.cx.cx.CxType;
 import com.synflow.cx.cx.ExpressionVariable;
 import com.synflow.cx.cx.TypeRef;
 import com.synflow.cx.cx.Typedef;
@@ -108,7 +108,7 @@ public class DependencySolver extends VoidCxSwitch {
 
 	@Override
 	public Void caseVariable(Variable variable) {
-		CType type = CxUtil.getType(variable);
+		CxType type = CxUtil.getType(variable);
 		visit(this, type);
 		visit(this, variable.getDimensions());
 		return visit(this, variable.getValue());

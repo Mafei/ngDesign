@@ -335,12 +335,12 @@ terminal fragment EXPONENT: ('e'|'E') ('+' | '-')? DIGIT_DEC+;
 // types
 ///////////////////////////////////////////////////////////////////////////////
 
-TypeNoGen returns CType:
+TypeNoGen returns CxType:
 	TypeRef
 	| TypeDecl
 ;
 
-TypeWithGen returns CType:
+TypeWithGen returns CxType:
 	TypeNoGen
 	| TypeGen
 ;

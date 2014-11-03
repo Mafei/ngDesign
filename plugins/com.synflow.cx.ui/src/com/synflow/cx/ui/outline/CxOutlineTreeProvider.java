@@ -29,9 +29,10 @@ import org.eclipse.xtext.ui.label.StylerFactory;
 
 import com.google.inject.Inject;
 import com.synflow.cx.CxUtil;
-import com.synflow.cx.cx.CType;
 import com.synflow.cx.cx.Connect;
 import com.synflow.cx.cx.CxEntity;
+import com.synflow.cx.cx.CxPackage.Literals;
+import com.synflow.cx.cx.CxType;
 import com.synflow.cx.cx.Import;
 import com.synflow.cx.cx.Imported;
 import com.synflow.cx.cx.Inst;
@@ -43,7 +44,6 @@ import com.synflow.cx.cx.SinglePortDecl;
 import com.synflow.cx.cx.Typedef;
 import com.synflow.cx.cx.VarDecl;
 import com.synflow.cx.cx.Variable;
-import com.synflow.cx.cx.CxPackage.Literals;
 
 /**
  * This class provides an outline tree for a Cx file. Most methods are declared protected so that
@@ -186,7 +186,7 @@ public class CxOutlineTreeProvider extends DefaultOutlineTreeProvider {
 	 */
 	protected Object _text(Variable variable) {
 		StyledString styledText = (StyledString) super._text(variable);
-		CType type = CxUtil.getType(variable);
+		CxType type = CxUtil.getType(variable);
 		return appendSimpleName(styledText, type);
 	}
 
@@ -200,7 +200,7 @@ public class CxOutlineTreeProvider extends DefaultOutlineTreeProvider {
 	 *            AST type
 	 * @return a StyledString or <code>null</code>
 	 */
-	private Object appendSimpleName(StyledString styledText, CType type) {
+	private Object appendSimpleName(StyledString styledText, CxType type) {
 		if (styledText == null) {
 			return null;
 		}

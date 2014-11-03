@@ -24,8 +24,8 @@ import org.eclipse.xtext.util.IAcceptor;
 
 import com.google.common.collect.ImmutableMap;
 import com.synflow.cx.CxUtil;
-import com.synflow.cx.cx.CType;
 import com.synflow.cx.cx.CxExpression;
+import com.synflow.cx.cx.CxType;
 import com.synflow.cx.cx.Inst;
 import com.synflow.cx.cx.Obj;
 import com.synflow.cx.cx.Task;
@@ -134,7 +134,7 @@ public class CxResourceStrategy extends DefaultResourceDescriptionStrategy {
 	}
 
 	private void getType(StringBuilder builder, Variable variable) {
-		CType type = CxUtil.getType(variable);
+		CxType type = CxUtil.getType(variable);
 		if (type != null) {
 			new CxPrinter(builder).doSwitch(type);
 		}
