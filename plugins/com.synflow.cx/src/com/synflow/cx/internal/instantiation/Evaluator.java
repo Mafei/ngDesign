@@ -199,11 +199,18 @@ public class Evaluator extends CxSwitch<Object> {
 		if (CxUtil.isConstant(variable)) {
 			// only returns the value for constants
 			// no cross-variable initializations
-			Var var = instantiator.getMapping(entity, variable);
-			if (var == null) {
-				value = doSwitch(variable.getValue());
-			} else {
+			if (CxUtil.isFunction(variable)) {
+				// one day we should probably implement an evaluator for functions
+				// until then we'll just return null
+				return null;
+			}
+
+			if (CxUtil.isGlobal(variable)) {
+				// global constant variables have already been mapped by the instantiator
+				Var var = instantiator.getMapping(entity, variable);
 				value = ValueUtil.getValue(var.getInitialValue());
+			} else {
+				value = doSwitch(variable.getValue());
 			}
 		} else {
 			return null;
