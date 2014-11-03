@@ -96,8 +96,11 @@ public class CxReferenceFinder extends ReferenceFinder {
 									if (ref == Literals.INST__ENTITY) {
 										Inst inst = (Inst) sourceCandidate;
 										Instantiable instantiable = inst.getEntity();
-										findLocalReferencesFromElement(targetURIs, instantiable,
-												instantiable.eResource(), acceptor);
+										if (instantiable.eResource() != localResource) {
+											findLocalReferencesFromElement(targetURIs,
+													instantiable, instantiable.eResource(),
+													acceptor);
+										}
 									} else if (ref == Literals.VAR_REF__VARIABLE) {
 										Variable variable = (Variable) instanceOrProxy;
 										if (CxUtil.isPort(variable)) {
