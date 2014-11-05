@@ -20,8 +20,10 @@ import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
 
+import com.google.common.collect.ImmutableList;
 import com.synflow.cx.cx.Branch;
 import com.synflow.cx.cx.CxExpression;
+import com.synflow.cx.cx.CxFactory;
 import com.synflow.cx.cx.StatementIf;
 import com.synflow.cx.cx.Variable;
 import com.synflow.cx.instantiation.IInstantiator;
@@ -79,6 +81,24 @@ public final class CycleScheduler extends AbstractCycleScheduler {
 		boolean oldAssociate = associate;
 		this.associate = false;
 		return oldAssociate;
+	}
+
+	/**
+	 * Returns an iterable of branches based on the given 'if' statement, including an explicit
+	 * 'else' branch if the statement does not have one.
+	 * 
+	 * @param stmtIf
+	 * @return
+	 */
+	private Iterable<Branch> getBranches(StatementIf stmtIf) {
+		List<Branch> branches = stmtIf.getBranches();
+		Branch lastBranch = branches.get(branches.size() - 1);
+		if (lastBranch.getCondition() == null) {
+			return branches;
+		} else {
+			Branch branch = CxFactory.eINSTANCE.createBranch();
+			return ImmutableList.<Branch> builder().addAll(branches).add(branch).build();
+		}
 	}
 
 	/**
@@ -215,7 +235,7 @@ public final class CycleScheduler extends AbstractCycleScheduler {
 
 		// visits all branches
 		List<CxExpression> previousConditions = new ArrayList<>();
-		for (Branch branch : stmtIf.getBranches()) {
+		for (Branch branch : getBranches(stmtIf)) {
 			behavior.startBranch(forkNode);
 			Transition transition = schedule.getTransition();
 
@@ -243,15 +263,6 @@ public final class CycleScheduler extends AbstractCycleScheduler {
 
 			// visits the branch
 			schedule.visitBranch(this, branch);
-		}
-
-		// if this 'if' has no else, adds one transition
-		Branch lastBranch = stmtIf.getBranches().get(stmtIf.getBranches().size() - 1);
-		if (lastBranch.getCondition() != null) {
-			behavior.startBranch(forkNode);
-			if (!breakRequired) {
-				includePreamble(tBefore, schedule.getTransition());
-			}
 		}
 
 		// when no break is required, we must remove the 'tBefore' transition and action
