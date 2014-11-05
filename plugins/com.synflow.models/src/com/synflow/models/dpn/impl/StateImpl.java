@@ -8,9 +8,11 @@ package com.synflow.models.dpn.impl;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+
 import com.synflow.models.dpn.DpnPackage;
 import com.synflow.models.dpn.State;
 import com.synflow.models.graph.impl.VertexImpl;
@@ -175,11 +177,11 @@ public class StateImpl extends VertexImpl implements State {
 		if (eIsProxy())
 			return super.toString();
 
-		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (name: ");
-		result.append(name);
-		result.append(')');
-		return result.toString();
+		if (name == null) {
+			return Integer.toHexString(hashCode());
+		} else {
+			return name;
+		}
 	}
 
-} // StateImpl
+}

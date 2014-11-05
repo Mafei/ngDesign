@@ -305,7 +305,7 @@ public class TransitionImpl extends EdgeImpl implements Transition {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		if (getSource() != null) {
-			builder.append(Integer.toHexString(getSource().hashCode()));
+			builder.append(getSource());
 		}
 		builder.append(" (");
 		if (getAction() != null) {
@@ -313,7 +313,7 @@ public class TransitionImpl extends EdgeImpl implements Transition {
 		}
 		builder.append(") --> ");
 		if (getTarget() != null) {
-			builder.append(Integer.toHexString(getTarget().hashCode()));
+			builder.append(getTarget());
 		}
 		return builder.toString();
 	}

@@ -16,6 +16,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
+import com.google.common.base.Joiner;
 import com.synflow.models.dpn.Action;
 import com.synflow.models.dpn.DpnPackage;
 import com.synflow.models.dpn.FSM;
@@ -215,4 +216,18 @@ public class FSMImpl extends GraphImpl implements FSM {
 					oldInitialState, initialState));
 	}
 
-} // FSMImpl
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("states: [");
+		Joiner.on(", ").appendTo(builder, getStates());
+		builder.append("]\n");
+
+		for (Transition transition : getTransitions()) {
+			builder.append(transition.toString());
+			builder.append('\n');
+		}
+		return builder.toString();
+	}
+
+}
