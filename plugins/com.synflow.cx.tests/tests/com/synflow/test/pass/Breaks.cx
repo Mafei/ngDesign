@@ -138,6 +138,46 @@ task IdleBetweenIf {
 	}
 }
 
+task IdleInIf {
+	properties {
+		num_states: 2, num_transitions: 3
+	}
+
+	in u8 a, sync b; out u16 c;
+
+	u8 i;
+
+	void loop() {
+		i++;
+		fence;
+		if (a.read > 0) {
+			idle(1);
+		} else {
+			i++;
+			print('ola');
+		}
+	}
+}
+
+task IdleInWhile {
+	properties {
+		num_states: 3, num_transitions: 4
+	}
+
+	in u8 a, sync b; out u16 c;
+
+	u8 i;
+
+	void loop() {
+		print("toto");
+		while (a.read > 0) {
+			idle(1);
+			print("titi");
+		}
+		print("tata");
+	}
+}
+
 task MultipleReads {
 	properties {
 		num_states: 3, num_transitions: 3,

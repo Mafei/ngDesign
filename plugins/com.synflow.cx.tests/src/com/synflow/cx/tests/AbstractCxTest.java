@@ -197,7 +197,7 @@ public abstract class AbstractCxTest extends AbstractXtextTests {
 		if (primitive != null) {
 			int numberOfStates = primitive.getAsInt();
 			int actual = actor.hasFsm() ? actor.getFsm().getStates().size() : 0;
-			assertEquals(actor.getName(), numberOfStates, actual);
+			assertEquals("states in " + actor.getSimpleName(), numberOfStates, actual);
 		}
 
 		primitive = actor.getProperties().getAsJsonPrimitive("num_transitions");
@@ -209,7 +209,7 @@ public abstract class AbstractCxTest extends AbstractXtextTests {
 			} else {
 				actual = actor.getActionsOutsideFsm().size();
 			}
-			assertEquals(actor.getName(), numberOfTransitions, actual);
+			assertEquals("transitions in " + actor.getSimpleName(), numberOfTransitions, actual);
 		}
 	}
 
