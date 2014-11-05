@@ -133,6 +133,9 @@ public class InstantiatorImpl implements IInstantiator {
 
 	@Override
 	public CxEntity getEntity(URI uri) {
+		if (data == null) {
+			return null;
+		}
 		return data.getCxEntity(uri);
 	}
 
