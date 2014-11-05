@@ -164,18 +164,24 @@ public abstract class AbstractCycleScheduler extends VoidCxSwitch {
 	public Void caseStatementIdle(StatementIdle stmt) {
 		int numCycles = schedule.instantiator.evaluateInt(schedule.actor, stmt.getNumCycles());
 
-		if (isEmpty(schedule.getTransition().getBody())) {
-			// no action is associated with current transition yet
-			// (e.g. when next is first statement in compound statement)
-			// so first take one cycle
+		// check whether we can start idling in this transition or we need a fence first
+		boolean isFenceNeeded = false;
+		for (Transition transition : schedule.getTransitions()) {
+			if (!isEmpty(transition.getBody())) {
+				isFenceNeeded = true;
+				break;
+			}
+		}
 
-			// creates one action less
+		if (!isFenceNeeded) {
+			associate(stmt);
 			numCycles--;
 		}
 
 		// adds as many transitions as numCycles
 		for (int i = 0; i < numCycles; i++) {
 			schedule.startNewCycle();
+			associate(stmt);
 		}
 
 		schedule.startNewCycle();
