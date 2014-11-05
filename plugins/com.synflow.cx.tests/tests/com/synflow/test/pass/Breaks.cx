@@ -29,7 +29,7 @@ task Fence {
 	}
 }
 
-task Idle1 {
+task IdleSimple {
 	properties {
 		num_states: 2, num_transitions: 2,
 		test: {inp: [ null, 1, null, 5 ], outp: [ null, 2, null, 6 ] }
@@ -43,7 +43,7 @@ task Idle1 {
 	}
 }
 
-task Idle2 {
+task IdleDouble {
 	properties {
 		num_states: 2, num_transitions: 2,
 		test: {inp: [ ], outp: [ ] }
@@ -57,7 +57,7 @@ task Idle2 {
 	}
 }
 
-task Idle3 {
+task IdleSetup {
 	properties {
 		num_states: 2, num_transitions: 2,
 		test: {in1: [ 0, 0 ], in2: [ 0, 255 ], outp: [ 0, 255 ] }
@@ -74,7 +74,7 @@ task Idle3 {
 	}
 }
 
-task Idle4 {
+task IdleFunction {
 	properties {
 		num_states: 3, num_transitions: 3,
 		test: {outp: [ 0 ] }
@@ -92,7 +92,7 @@ task Idle4 {
 	}
 }
 
-task Idle5 {
+task IdleBeforeIf {
 	properties {
 		num_states: 4, num_transitions: 5,
 		test: {
@@ -114,7 +114,7 @@ task Idle5 {
 	}
 }
 
-task Idle6 {
+task IdleBetweenIf {
 	properties {
 		num_states: 6, num_transitions: 8,
 		test: {inp: [ false, null, null, null, true ], outp: [ 4, null, null, null, 5 ] }
