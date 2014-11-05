@@ -10,7 +10,6 @@
  *******************************************************************************/
 package com.synflow.cx.internal.scheduler;
 
-import static com.google.common.collect.Iterables.concat;
 import static com.synflow.cx.CxConstants.PROP_AVAILABLE;
 import static com.synflow.cx.CxConstants.PROP_READ;
 import static com.synflow.cx.internal.AstUtil.not;
@@ -19,6 +18,7 @@ import static com.synflow.models.util.SwitchUtil.visit;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
@@ -164,7 +164,7 @@ public abstract class AbstractCycleScheduler extends VoidCxSwitch {
 	public Void caseStatementIdle(StatementIdle stmt) {
 		int numCycles = schedule.instantiator.evaluateInt(schedule.actor, stmt.getNumCycles());
 
-		if (isEmptyTransition()) {
+		if (isEmpty(schedule.getTransition().getBody())) {
 			// no action is associated with current transition yet
 			// (e.g. when next is first statement in compound statement)
 			// so first take one cycle
@@ -210,12 +210,9 @@ public abstract class AbstractCycleScheduler extends VoidCxSwitch {
 
 		SwitchUtil.visit(this, stmt.getInit());
 
+		// start new cycle for loop's body
+		schedule.startNewCycle();
 		Transition transition = schedule.getTransition();
-		if (!isEmptyTransition()) {
-			// start new cycle for loop's body
-			schedule.startNewCycle();
-			transition = schedule.getTransition();
-		}
 
 		// save 'fork' state
 		State fork = transition.getSource();
@@ -285,24 +282,17 @@ public abstract class AbstractCycleScheduler extends VoidCxSwitch {
 	}
 
 	/**
-	 * Returns <code>true</code> if the current transition and its children (if any) are empty.
+	 * Returns <code>true</code> if the given list of objects is empty (or contains only Enter/Leave
+	 * objects).
 	 * 
-	 * @return a boolean indicating whether the current transition and its children are empty
+	 * @param eObjects
+	 *            a list of objects (like <code>transition.getBody()</code> or
+	 *            <code>transition.getScheduler()</code>).
+	 * @return true if the list is assimilated to empty
 	 */
-	protected final boolean isEmptyTransition() {
-		for (Transition transition : schedule.getTransitions()) {
-			if (!isEmptyTransition(transition)) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	private boolean isEmptyTransition(Transition transition) {
-		Iterable<EObject> iterable = concat(transition.getScheduler(), transition.getBody());
-
+	protected boolean isEmpty(List<EObject> eObjects) {
 		// returns true if iterable is empty or it just contains Enter/Leave instances
-		return Iterables.all(iterable, new Predicate<EObject>() {
+		return Iterables.all(eObjects, new Predicate<EObject>() {
 			@Override
 			public boolean apply(EObject eObject) {
 				return eObject instanceof Enter || eObject instanceof Leave;

@@ -66,6 +66,20 @@ public final class CycleScheduler extends AbstractCycleScheduler {
 		return DONE;
 	}
 
+	/**
+	 * Returns <code>true</code> if the given transition can be safely removed. This means: no
+	 * input/peek pattern, empty body, empty scheduler.
+	 * 
+	 * @param transition
+	 *            a transition
+	 * @return a boolean indicating whether the transition can be deleted
+	 */
+	private boolean canDelete(Transition transition) {
+		return transition.getAction().getInputPattern().isEmpty()
+				&& transition.getAction().getPeekPattern().isEmpty()
+				&& isEmpty(transition.getBody()) && isEmpty(transition.getScheduler());
+	}
+
 	@Override
 	public Void caseStatementIf(StatementIf stmtIf) {
 		if (new CycleDetector(schedule).hasCycleBreaks(stmtIf)) {
@@ -172,10 +186,7 @@ public final class CycleScheduler extends AbstractCycleScheduler {
 		// visit setup
 		if (setup != null) {
 			doSwitch(setup);
-			if (!isEmptyTransition()) {
-				// only starts a new cycle if needed
-				schedule.startNewCycle();
-			}
+			schedule.startNewCycle();
 		}
 
 		// visit loop
@@ -184,27 +195,28 @@ public final class CycleScheduler extends AbstractCycleScheduler {
 			doSwitch(loop);
 		}
 
-		// cleans last transition
-		FSM fsm = schedule.getFsm();
-		if (!isEmptyTransition()) {
-			// make FSM loop back to loop's initial state
-			schedule.mergeTransitions(loopInitial);
-		} else {
-			Transition lastTransition = schedule.getTransition();
-			State lastState = lastTransition.getSource();
-			remove(lastTransition);
+		// make FSM loop back to loop's initial state
+		schedule.mergeTransitions(loopInitial);
 
-			// if necessary make FSM loop
-			// if last == mainInitial, there is exactly one transition already looping
-			if (lastState != loopInitial) {
-				// update the target state of incoming transitions of last state
-				List<Edge> edges = new ArrayList<Edge>(lastState.getIncoming());
-				for (Edge edge : edges) {
-					edge.setTarget(loopInitial);
+		// remove empty transitions
+		FSM fsm = schedule.getFsm();
+		for (Transition transition : new ArrayList<>(fsm.getTransitions())) {
+			if (canDelete(transition)) {
+				State source = transition.getSource();
+				State target = transition.getTarget();
+				if (source == target && source == loopInitial) {
+					fsm.remove(transition);
+					continue;
 				}
 
-				// remove previous last state
-				fsm.remove(lastState);
+				for (Edge edge : new ArrayList<>(source.getIncoming())) {
+					edge.setTarget(target);
+				}
+
+				fsm.remove(source);
+				if (source == fsm.getInitialState()) {
+					fsm.setInitialState(target);
+				}
 			}
 		}
 	}
