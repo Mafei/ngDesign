@@ -26,6 +26,7 @@ import com.synflow.cx.cx.CxExpression;
 import com.synflow.cx.cx.Enter;
 import com.synflow.cx.cx.ExpressionVariable;
 import com.synflow.cx.cx.Leave;
+import com.synflow.cx.cx.StatementIdle;
 import com.synflow.cx.cx.StatementWrite;
 import com.synflow.cx.cx.VarRef;
 import com.synflow.cx.cx.Variable;
@@ -111,14 +112,20 @@ public class ActorTransformer extends FunctionTransformer {
 	}
 
 	@Override
-	public Expression caseLeave(Leave leave) {
+	public EObject caseLeave(Leave leave) {
 		// restore previous line behavior
 		getBuilder().line = lines.pollFirst();
 		return null;
 	}
 
 	@Override
-	public Expression caseStatementWrite(StatementWrite write) {
+	public EObject caseStatementIdle(StatementIdle idle) {
+		hookBefore(idle);
+		return null;
+	}
+
+	@Override
+	public EObject caseStatementWrite(StatementWrite write) {
 		int lineNumber = getStartLine(write);
 		getBuilder().updateLineInfo(lineNumber);
 
