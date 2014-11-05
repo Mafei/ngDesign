@@ -31,7 +31,6 @@ import com.synflow.cx.cx.StatementWrite;
 import com.synflow.cx.cx.VarRef;
 import com.synflow.cx.cx.Variable;
 import com.synflow.cx.instantiation.IInstantiator;
-import com.synflow.cx.internal.TransformerUtil;
 import com.synflow.cx.internal.services.Typer;
 import com.synflow.models.dpn.Actor;
 import com.synflow.models.dpn.FSM;
@@ -126,10 +125,9 @@ public class ActorTransformer extends FunctionTransformer {
 
 	@Override
 	public EObject caseStatementWrite(StatementWrite write) {
-		int lineNumber = getStartLine(write);
-		getBuilder().updateLineInfo(lineNumber);
+		hookBefore(write);
 
-		Var var = getBuilder().getOutput(lineNumber, write.getPort());
+		Var var = getBuilder().getOutput(write.getPort());
 		if (var == null) {
 			// when the write is translated as part of the scheduler
 			// we must ignore it
@@ -137,7 +135,7 @@ public class ActorTransformer extends FunctionTransformer {
 		}
 
 		Expression expr = builder.transformExpr(write.getValue(), var.getType());
-		InstStore store = eINSTANCE.createInstStore(lineNumber, var, expr);
+		InstStore store = eINSTANCE.createInstStore(getStartLine(write), var, expr);
 		builder.add(store);
 
 		return null;
@@ -149,7 +147,7 @@ public class ActorTransformer extends FunctionTransformer {
 
 	@Override
 	protected void hookBefore(EObject eObject) {
-		int lineNumber = TransformerUtil.getStartLine(eObject);
+		int lineNumber = getStartLine(eObject);
 		getBuilder().updateLineInfo(lineNumber);
 	}
 

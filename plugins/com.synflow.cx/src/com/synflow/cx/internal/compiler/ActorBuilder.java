@@ -139,7 +139,7 @@ public class ActorBuilder extends IrBuilder {
 		return (Actor) entity;
 	}
 
-	public Var getOutput(int lineNumber, VarRef ref) {
+	public Var getOutput(VarRef ref) {
 		if (writePattern == null) {
 			return null;
 		}
