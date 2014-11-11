@@ -23,6 +23,7 @@ import com.synflow.models.dpn.State;
 import com.synflow.models.dpn.Transition;
 import com.synflow.models.graph.Edge;
 import com.synflow.models.graph.impl.GraphImpl;
+import com.synflow.models.ir.util.IrUtil;
 
 /**
  * <!-- begin-user-doc --> An implementation of the model object ' <em><b>FSM</b></em>'. <!--
@@ -173,6 +174,16 @@ public class FSMImpl extends GraphImpl implements FSM {
 	@SuppressWarnings("unchecked")
 	public EList<Transition> getTransitions() {
 		return (EList<Transition>) (EList<?>) getEdges();
+	}
+
+	@Override
+	public void remove(Edge edge) {
+		Action action = ((Transition) edge).getAction();
+		if (action != null) {
+			IrUtil.delete(action);
+		}
+
+		super.remove(edge);
 	}
 
 	/**
