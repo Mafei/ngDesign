@@ -240,9 +240,11 @@ public class GraphImpl extends VertexImpl implements Graph {
 
 	@Override
 	public void remove(Edge edge) {
+		// disconnect this edge
 		edge.setSource(null);
 		edge.setTarget(null);
 
+		// remove edge from this graph
 		getEdges().remove(edge);
 	}
 
@@ -259,14 +261,7 @@ public class GraphImpl extends VertexImpl implements Graph {
 		int i = 0;
 		int size = edges.size();
 		while (i < edges.size()) {
-			Edge edge = edges.get(i);
-
-			// disconnect this edge
-			edge.setSource(null);
-			edge.setTarget(null);
-
-			// remove edge from this graph
-			getEdges().remove(edge);
+			remove(edges.get(i));
 
 			// only increment if the list's size did not change
 			if (size == edges.size()) {
