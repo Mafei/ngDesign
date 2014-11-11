@@ -2,7 +2,7 @@
 <feature
       id="com.synflow.ngDesign.ide"
       label="ngDesign IDE"
-      version="0.13.0.qualifier"
+      version="0.14.0.qualifier"
       provider-name="Synflow SAS">
 
    <description>
