@@ -66,12 +66,10 @@ public class IfScheduler {
 			transitions.add(developer.visit(transition, path));
 		}
 
-		FSM fsm = actor.getFsm();
-		actor.getActions().remove(transition.getAction());
-
 		// watch this: we must insert the new transitions AT THE SAME PLACE as the old one
 		// why? because order is important: in the case of a loop, we test the condition first
 		// so this order MUST BE MAINTAINED
+		FSM fsm = actor.getFsm();
 		int index = fsm.getTransitions().indexOf(transition);
 		fsm.remove(transition);
 		fsm.getTransitions().addAll(index, transitions);
