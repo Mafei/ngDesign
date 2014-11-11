@@ -87,30 +87,6 @@ public interface FSM extends Graph {
 	EList<Transition> getTransitions();
 
 	/**
-	 * Removes the transition from the given <code>source</code> state that is associated with the
-	 * given action.
-	 * 
-	 * @param source
-	 *            source state
-	 * @param action
-	 *            action associated with the transition
-	 */
-	void removeTransition(State source, Action action);
-
-	/**
-	 * Replaces the target of the transition from the <code>source</code> state and whose action
-	 * equals to the given action by the given <code>target</code> state.
-	 * 
-	 * @param source
-	 *            source state
-	 * @param action
-	 *            action associated with the transition
-	 * @param target
-	 *            new target state
-	 */
-	void replaceTarget(State source, Action action, State target);
-
-	/**
 	 * Sets the initial state of this FSM to the given state.
 	 * 
 	 * @param state

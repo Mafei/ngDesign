@@ -7,7 +7,6 @@
 package com.synflow.models.dpn.impl;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -174,33 +173,6 @@ public class FSMImpl extends GraphImpl implements FSM {
 	@SuppressWarnings("unchecked")
 	public EList<Transition> getTransitions() {
 		return (EList<Transition>) (EList<?>) getEdges();
-	}
-
-	@Override
-	public void removeTransition(State source, Action action) {
-		Iterator<Edge> it = source.getOutgoing().iterator();
-		while (it.hasNext()) {
-			Transition transition = (Transition) it.next();
-			Action candidate = transition.getAction();
-			if (candidate == action) {
-				it.remove();
-				return;
-			}
-		}
-	}
-
-	@Override
-	public void replaceTarget(State source, Action action, State target) {
-		Iterator<Edge> it = source.getOutgoing().iterator();
-		while (it.hasNext()) {
-			Transition transition = (Transition) it.next();
-			Action candidate = transition.getAction();
-			if (candidate == action) {
-				// updates target state of this transition
-				transition.setTarget(target);
-				return;
-			}
-		}
 	}
 
 	/**
