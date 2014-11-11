@@ -162,19 +162,6 @@ public final class CycleScheduler extends AbstractCycleScheduler {
 	}
 
 	/**
-	 * Removes the given transition from this schedule, and the associated action from the actor to
-	 * which the schedule is linked.
-	 * 
-	 * @param transition
-	 *            an unused transition
-	 */
-	private void remove(Transition transition) {
-		Actor actor = schedule.getActor();
-		actor.getFsm().remove(transition);
-		actor.getActions().remove(transition.getAction());
-	}
-
-	/**
 	 * Schedules the 'setup' and then the 'loop' function.
 	 * 
 	 * @param setup
@@ -209,11 +196,14 @@ public final class CycleScheduler extends AbstractCycleScheduler {
 					continue;
 				}
 
+				// re-attach source's incoming transitions to target
 				for (Edge edge : new ArrayList<>(source.getIncoming())) {
 					edge.setTarget(target);
 				}
 
+				// remove source and its outgoing transitions
 				fsm.remove(source);
+
 				if (source == fsm.getInitialState()) {
 					fsm.setInitialState(target);
 				}
@@ -279,7 +269,7 @@ public final class CycleScheduler extends AbstractCycleScheduler {
 
 		// when no break is required, we must remove the 'tBefore' transition and action
 		if (!breakRequired) {
-			remove(tBefore);
+			schedule.getFsm().remove(tBefore);
 		}
 
 		behavior.join(forkNode);
