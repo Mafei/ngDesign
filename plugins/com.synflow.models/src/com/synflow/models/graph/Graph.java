@@ -6,8 +6,6 @@
  */
 package com.synflow.models.graph;
 
-import java.util.List;
-
 import org.eclipse.emf.common.util.EList;
 
 /**
@@ -117,31 +115,5 @@ public interface Graph extends Vertex {
 	 *            a vertex
 	 */
 	void remove(Vertex vertex);
-
-	/**
-	 * Removes all given edges from the list of edges, and unlinks them (set their source and target
-	 * attributes to <code>null</code>).
-	 * 
-	 * @param edges
-	 *            a list of edges
-	 */
-	void removeEdges(List<? extends Edge> edges);
-
-	/**
-	 * Removes all edges of the given vertex.
-	 * 
-	 * @param vertex
-	 *            a vertex
-	 */
-	void removeEdgesOf(Vertex vertex);
-
-	/**
-	 * Removes all given vertices from the list of vertices, along with all their incoming and
-	 * outgoing edges.
-	 * 
-	 * @param vertices
-	 *            a list of vertices
-	 */
-	void removeVertices(List<? extends Vertex> vertices);
 
 }

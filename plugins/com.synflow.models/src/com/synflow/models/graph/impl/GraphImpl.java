@@ -254,8 +254,7 @@ public class GraphImpl extends VertexImpl implements Graph {
 		getVertices().remove(vertex);
 	}
 
-	@Override
-	public void removeEdges(List<? extends Edge> edges) {
+	private void removeEdges(List<? extends Edge> edges) {
 		// disconnect the edges to remove them from incoming/outgoing
 		// trick so that this method works without the need to copy edges
 		int i = 0;
@@ -270,18 +269,9 @@ public class GraphImpl extends VertexImpl implements Graph {
 		}
 	}
 
-	@Override
-	public void removeEdgesOf(Vertex vertex) {
+	private void removeEdgesOf(Vertex vertex) {
 		removeEdges(vertex.getIncoming());
 		removeEdges(vertex.getOutgoing());
 	}
 
-	@Override
-	public void removeVertices(List<? extends Vertex> vertices) {
-		for (Vertex vertex : vertices) {
-			removeEdgesOf(vertex);
-		}
-		getVertices().removeAll(vertices);
-	}
-
-} // GraphImpl
+}
