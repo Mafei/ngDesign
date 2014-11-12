@@ -11,6 +11,24 @@
  *******************************************************************************/
 package com.synflow.test.pass.misc;
 
+bundle BundleDataDependencies {
+  /**
+   * clock in MHz
+   */
+  u7 CLK_IN_MHZ = 100;
+  u17 BAUD_RATE = 115200;
+
+  /**
+   * clock divisor
+   */
+  u11 DIVISOR = CLK_IN_MHZ * 1000 * 1000 / BAUD_RATE;
+
+  /**
+   * half of divisor
+   */
+  u10 DIVISOR_2 = DIVISOR / 2;
+}
+
 task ConstUse {
 	properties {
 		test: {I: [ 0, 1, 2 ], O: [ 134, 131, 133 ] }
