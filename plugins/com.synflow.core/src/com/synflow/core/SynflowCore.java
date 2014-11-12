@@ -221,7 +221,12 @@ public class SynflowCore implements BundleActivator {
 			return;
 		}
 
-		IStatus status = new Status(IStatus.ERROR, PLUGIN_ID, t.getMessage(), t);
+		IStatus status;
+		if (t instanceof CoreException) {
+			status = ((CoreException) t).getStatus();
+		} else {
+			status = new Status(IStatus.ERROR, PLUGIN_ID, t.getMessage(), t);
+		}
 		Platform.getLog(getBundle()).log(status);
 	}
 
