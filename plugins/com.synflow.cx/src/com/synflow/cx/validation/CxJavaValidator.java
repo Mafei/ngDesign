@@ -27,6 +27,7 @@ import org.eclipse.xtext.validation.Check;
 
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
+import com.synflow.core.SynflowCore;
 import com.synflow.cx.CxUtil;
 import com.synflow.cx.cx.CxEntity;
 import com.synflow.cx.cx.CxPackage.Literals;
@@ -95,7 +96,12 @@ public class CxJavaValidator extends AbstractCxJavaValidator {
 
 		// updates the instantiator to reflect changes in this module
 		// this method only performs an actual update if the instantiator is out of date
-		instantiator.update(module);
+		try {
+			instantiator.update(module);
+		} catch (Exception e) {
+			// log exceptions
+			SynflowCore.log(e);
+		}
 
 		// for each entity of the module
 		final NetworkChecker networkChecker = new NetworkChecker(this, instantiator);
